@@ -1,5 +1,5 @@
 {
-	"admin/services/bandix": {
+	"admin/network/bandix": {
 		"title": "Bandix流量监控",
 		"order": 90,
 		"action": {
@@ -11,7 +11,7 @@
 			"uci": { "bandix": true }
 		}
 	},
-	"admin/services/bandix/settings": {
+	"admin/network/bandix/settings": {
 		"title": "设置",
 		"order": 10,
 		"action": {

@@ -8,20 +8,20 @@
 // 定义自定义格式化函数
 function formatSize(bytes) {
 	if (bytes === 0) return '0 B';
-	
+
 	const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
 	const i = Math.floor(Math.log(bytes) / Math.log(1024));
-	
+
 	// 保留两位小数
 	return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + ' ' + units[i];
 }
 
 function formatByterate(bytes_per_sec) {
 	if (bytes_per_sec === 0) return '0 B/s';
-	
+
 	const units = ['B/s', 'KB/s', 'MB/s', 'GB/s', 'TB/s'];
 	const i = Math.floor(Math.log(bytes_per_sec) / Math.log(1024));
-	
+
 	// 保留两位小数
 	return parseFloat((bytes_per_sec / Math.pow(1024, i)).toFixed(2)) + ' ' + units[i];
 }
@@ -30,7 +30,7 @@ function formatByterate(bytes_per_sec) {
 var callStatus = rpc.declare({
 	object: 'luci.bandix',
 	method: 'status',
-	expect: {}  
+	expect: {}
 });
 
 return view.extend({
@@ -75,10 +75,10 @@ return view.extend({
 			return callStatus().then(function (result) {
 				var trafficDiv = document.getElementById('traffic-status');
 
-				
+
 				// 处理嵌套的响应格式
 				var stats = result;
-				
+
 				if (!stats || !stats.devices) {
 					trafficDiv.textContent = _('无法获取数据');
 					return;
@@ -116,7 +116,7 @@ return view.extend({
 
 				trafficDiv.appendChild(table);
 			});
-		});
+		}, 1000);
 
 		return view;
 	}

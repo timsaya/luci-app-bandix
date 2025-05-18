@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# 检查bandix服务是否存在，存在则删除
+ubus list | grep -q "service.bandix" && ubus call service delete '{"name":"bandix"}' >/dev/null 2>&1 || true
+
 # 创建默认配置
 uci -q batch <<-EOF >/dev/null
 	delete ucitrack.@bandix[-1]
