@@ -1,0 +1,49 @@
+#!/bin/sh
+
+# 创建默认配置
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@bandix[-1]
+	add ucitrack bandix
+	set ucitrack.@bandix[-1].init=bandix
+	commit ucitrack
+	
+	delete firewall.bandix
+	set firewall.bandix=include
+	set firewall.bandix.type=script
+	set firewall.bandix.path=/usr/share/bandix/firewall.include
+	set firewall.bandix.reload=1
+	commit firewall
+EOF
+
+# 完全删除现有的bandix配置
+uci -q delete bandix
+uci -q commit bandix
+
+# 创建新的配置文件
+rm -f /etc/config/bandix
+touch /etc/config/bandix
+
+# 创建单个general部分
+uci -q batch <<-EOF >/dev/null
+	set bandix.general=general
+	set bandix.general.enabled=1
+	commit bandix
+EOF
+
+# 设置权限
+chmod +x /usr/libexec/rpcd/luci.bandix
+chmod +x /etc/init.d/bandix
+chmod +x /usr/share/bandix/firewall.include
+
+# 启动服务
+/etc/init.d/bandix enable
+/etc/init.d/bandix restart
+
+# 确保ubus服务正确注册
+ubus call service add "{\"name\":\"bandix\",\"instances\":{\"bandix\":{\"command\":[\"/usr/bin/bandix\",\"--iface\",\"br-lan\",\"--mode\",\"web\"]}}}" >/dev/null 2>&1 || true
+
+# 清除LuCI缓存
+rm -f /tmp/luci-indexcache
+/etc/init.d/uhttpd restart 2>/dev/null
+
+exit 0 

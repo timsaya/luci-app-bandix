@@ -1,0 +1,40 @@
+#!/bin/sh
+# Copyright 2024 stefanlei
+
+. /usr/share/libubox/jshn.sh
+
+case "$1" in
+	list)
+		json_init
+		json_add_object "status"
+		json_close_object
+		json_dump
+		;;
+	call)
+		case "$2" in
+			status)
+				# 调用bandix的API获取流量信息
+				# 使用curl或者wget请求API
+				
+				# 获取bandix提供的数据
+				api_result=$(wget -q -O - http://127.0.0.1:8686/api/devices 2>/dev/null)
+				
+				# 检查API调用是否成功
+				if [ $? -eq 0 ] && [ -n "$api_result" ]; then
+					# API调用成功，直接输出结果
+					echo "$api_result"
+				else
+					# API调用失败，返回空数据结构
+					json_init
+					json_add_object "status"
+					json_add_boolean "success" 0
+					json_add_string "error" "Failed to connect to bandix service"
+					json_close_object
+					json_add_array "devices"
+					json_close_array
+					json_dump
+				fi
+				;;
+		esac
+		;;
+esac 

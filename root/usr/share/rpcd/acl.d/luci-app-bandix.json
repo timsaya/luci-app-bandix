@@ -1,0 +1,14 @@
+{
+	"luci-app-bandix": {
+		"description": "Grant access to bandix traffic monitoring",
+		"read": {
+			"ubus": {
+				"luci.bandix": [ "status" ]
+			},
+			"uci": [ "bandix" ]
+		},
+		"write": {
+			"uci": [ "bandix" ]
+		}
+	}
+} 
