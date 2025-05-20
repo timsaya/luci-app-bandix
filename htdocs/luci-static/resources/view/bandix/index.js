@@ -100,9 +100,9 @@ return view.extend({
 				// 填充数据
 				stats.devices.forEach(function (device) {
 					table.appendChild(E('div', { 'class': 'tr' }, [
-						E('div', { 'class': 'td' }, '-'),
+						E('div', { 'class': 'td' }, device.hostname || '-'),
 						E('div', { 'class': 'td' }, device.ip),
-						E('div', { 'class': 'td' }, '-'),
+						E('div', { 'class': 'td' }, device.mac || '-'),
 						E('div', { 'class': 'td' }, formatByterate(device.rx_rate)),
 						E('div', { 'class': 'td' }, formatByterate(device.tx_rate)),
 						E('div', { 'class': 'td' }, formatSize(device.rx_bytes)),
@@ -116,7 +116,7 @@ return view.extend({
 
 				trafficDiv.appendChild(table);
 			});
-		}, 1000);
+		}, 1);
 
 		return view;
 	}
