@@ -1,6 +1,6 @@
 {
     "bandix": {
-        "title": "Bandix流量监控",
+        "title": "Bandix 流量监控",
         "description": "局域网设备流量监控和统计服务",
         "instances": {
             "instance": {

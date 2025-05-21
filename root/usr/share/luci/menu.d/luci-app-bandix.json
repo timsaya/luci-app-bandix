@@ -1,6 +1,6 @@
 {
 	"admin/network/bandix": {
-		"title": "Bandix流量监控",
+		"title": "Bandix 流量监控",
 		"order": 90,
 		"action": {
 			"type": "view",
