@@ -1,32 +1,53 @@
-# luci-app-bandix
+# LuCI Bandix
 
-这是一个用于监控局域网流量的OpenWrt LuCI应用。
+[![许可证](https://img.shields.io/badge/许可证-Apache--2.0-blue.svg)](LICENSE)
+
+LuCI Bandix 是一个用于 OpenWrt 的网络流量监控应用，通过 LuCI Web 界面提供直观的流量数据展示和分析功能。
+
+## 简介
+
+LuCI Bandix 基于 LuCI 框架开发，为 OpenWrt 路由器提供网络流量监控能力。此应用依赖于 openwrt-bandix 后端服务，可以帮助用户实时查看和分析网络流量统计。
 
 ## 功能特点
 
-- 实时监控局域网各设备流量
-- 显示设备的IP地址、MAC地址
-- 显示各设备的上传/下载速度
-- 显示各设备的总上传/下载流量
-
-## 依赖
-
-- bandix - Rust编写的后端流量监控程序
-- luci-base - 基本LuCI组件
+- 设备流量统计
+- 网络流量实时监控
+- 直观的数据可视化界面
+- 与 OpenWrt 系统无缝集成
 
 ## 安装
 
-```sh
-opkg update
-opkg install luci-app-bandix
-```
+### 安装步骤
 
-## 使用方法
+1. 先安装 openwrt-bandix 后端
 
-1. 安装后，在LuCI界面的"网络"菜单下可以找到"Bandix流量监控"
-2. 点击进入后可以看到局域网各设备的流量数据
-3. 数据每秒更新一次
+   从 [openwrt-bandix Releases](https://github.com/timsaya/openwrt-bandix/releases) 下载适合您设备的IPK包，然后使用opkg安装：
+
+   ```bash
+   opkg install bandix_版本号_架构.ipk
+   ```
+
+2. 安装 luci-app-bandix 前端
+
+   从 [luci-app-bandix Releases](https://github.com/timsaya/luci-app-bandix/releases) 下载IPK包，然后使用opkg安装：
+
+   ```bash
+   opkg install luci-app-bandix_版本号_all.ipk
+   ```
+
+
+## 配置
+
+安装完成后，可以通过 LuCI Web 界面访问 Bandix 应用。应用位于"网络"菜单下。
+
+## 维护者
+
+- [timsaya](https://github.com/timsaya)
 
 ## 许可证
 
-GPL-2.0 
+本项目采用 [Apache 2.0 许可证](LICENSE)。
+
+## 贡献
+
+欢迎提交问题报告和改进建议！请通过 GitHub Issues 或 Pull Requests 参与贡献。

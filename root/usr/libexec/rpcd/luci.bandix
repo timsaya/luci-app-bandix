@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright 2024 stefanlei
+# Copyright 2024 timsaya
 
 . /usr/share/libubox/jshn.sh
 
