@@ -1,8 +1,9 @@
 # LuCI Bandix
 
+[简体中文](README.md) | English
+
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 
-[中文版](README.md)
 
 LuCI Bandix is a network traffic monitoring application for OpenWrt, providing intuitive traffic data visualization and analysis through the LuCI web interface.
 

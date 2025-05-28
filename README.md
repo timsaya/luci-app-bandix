@@ -1,6 +1,9 @@
 # LuCI Bandix
 
-[![许可证](https://img.shields.io/badge/许可证-Apache--2.0-blue.svg)](LICENSE)
+简体中文 | [English](README.en.md)
+
+[![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
+
 
 LuCI Bandix 是一个用于 OpenWrt 的网络流量监控应用，通过 LuCI Web 界面提供直观的流量数据展示和分析功能。
 
