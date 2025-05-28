@@ -4,37 +4,119 @@
 . /usr/share/libubox/jshn.sh
 
 case "$1" in
-	list)
-		json_init
-		json_add_object "status"
-		json_close_object
-		json_dump
-		;;
-	call)
-		case "$2" in
-			status)
-				# 调用bandix的API获取流量信息
-				# 使用curl或者wget请求API
-				
-				# 获取bandix提供的数据
-				api_result=$(wget -q -O - http://127.0.0.1:8686/api/devices 2>/dev/null)
-				
-				# 检查API调用是否成功
-				if [ $? -eq 0 ] && [ -n "$api_result" ]; then
-					# API调用成功，直接输出结果
-					echo "$api_result"
-				else
-					# API调用失败，返回空数据结构
-					json_init
-					json_add_object "status"
-					json_add_boolean "success" 0
-					json_add_string "error" "Failed to connect to bandix service"
-					json_close_object
-					json_add_array "devices"
-					json_close_array
-					json_dump
+list)
+	json_init
+	json_add_object "status"
+	json_close_object
+	json_dump
+	;;
+call)
+	case "$2" in
+	status)
+		# 调用bandix的API获取流量信息
+		# 使用curl或者wget请求API
+
+		# 获取bandix提供的数据
+		api_result=$(wget -q -O - http://127.0.0.1:8686/api/devices 2>/dev/null)
+
+		# 检查API调用是否成功
+		if [ $? -eq 0 ] && [ -n "$api_result" ]; then
+			# 从原始API结果加载JSON
+			json_load "$api_result"
+
+			# 提取设备数组
+			json_select "devices"
+			json_get_keys device_indexes
+
+			# 创建临时文件来存储修改后的JSON
+			tmp_json=$(mktemp)
+
+			# 开始构建新的JSON
+			echo '{' >"$tmp_json"
+			echo '  "devices": [' >>"$tmp_json"
+
+			# 标记是否是第一个设备
+			first_device=1
+
+			# 遍历每个设备
+			for idx in $device_indexes; do
+				json_select "$idx"
+
+				# 获取设备信息
+				json_get_var mac mac
+				json_get_var ip ip
+				json_get_var hostname hostname
+				json_get_var rx_bytes rx_bytes
+				json_get_var tx_bytes tx_bytes
+				json_get_var rx_rate rx_rate
+				json_get_var tx_rate tx_rate
+
+				# 标准化MAC地址格式以便匹配
+				mac_lower=$(echo "$mac" | tr 'A-Z' 'a-z')
+
+				# 从DHCP租约文件中查找对应的主机名
+				dhcp_hostname=""
+				if [ -f "/tmp/dhcp.leases" ]; then
+					while IFS=' ' read -r lease_time lease_mac lease_ip lease_hostname lease_id; do
+						lease_mac_lower=$(echo "$lease_mac" | tr 'A-Z' 'a-z')
+						if [ "$lease_mac_lower" = "$mac_lower" ]; then
+							[ "$lease_hostname" != "*" ] && dhcp_hostname="$lease_hostname"
+							break
+						fi
+					done </tmp/dhcp.leases
 				fi
-				;;
-		esac
+
+				# 如果找到DHCP租约中的主机名，则替换API返回的主机名
+				if [ -n "$dhcp_hostname" ]; then
+					hostname="$dhcp_hostname"
+				fi
+
+				# 添加逗号分隔符（除了第一个设备）
+				if [ "$first_device" -eq 1 ]; then
+					first_device=0
+				else
+					echo ',' >>"$tmp_json"
+				fi
+
+				# 写入设备信息到JSON
+				cat >>"$tmp_json" <<EOF
+
+				
+				{
+				"mac": "$mac",
+				"ip": "$ip",
+				"hostname": "$hostname",
+				"rx_bytes": $rx_bytes,
+				"tx_bytes": $tx_bytes,
+				"rx_rate": $rx_rate,
+				"tx_rate": $tx_rate
+				}
+EOF
+
+				# 返回到设备数组
+				json_select ..
+			done
+
+			# 完成JSON结构
+			echo >>"$tmp_json"
+			echo '  ]' >>"$tmp_json"
+			echo '}' >>"$tmp_json"
+
+			# 输出最终结果
+			cat "$tmp_json"
+			rm "$tmp_json"
+		else
+			# API调用失败，返回空数据结构
+			json_init
+			json_add_object "status"
+			json_add_boolean "success" 0
+			json_add_string "error" "Failed to connect to bandix service"
+			json_close_object
+			json_add_array "devices"
+			json_close_array
+			json_dump
+		fi
 		;;
-esac 
+	esac
+	;;
+esac
