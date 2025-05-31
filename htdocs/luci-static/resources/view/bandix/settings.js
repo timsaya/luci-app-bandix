@@ -44,7 +44,7 @@ return view.extend({
 
 		// 创建表单
 		m = new form.Map('bandix', _('Bandix流量监控设置'),
-			_('设置和配置 Bandix 流量监控服务'));
+			_('https://github.com/timsaya'));
 
 		// 基本设置部分
 		s = m.section(form.NamedSection, 'general', 'general', _('基本设置'));

@@ -61,10 +61,6 @@ return view.extend({
 		// 添加主要视图容器
 		var view = E('div', {}, [
 			E('h2', {}, _('Bandix 局域网流量监控')),
-			E('div', { 'class': 'cbi-section-descr' }, [
-				E('span', {}, _('GitHub: ')),
-				E('a', { 'href': 'https://github.com/timsaya', 'target': '_blank' }, _('https://github.com/timsaya'))
-			]),
 			E('div', { 'class': 'cbi-section' }, [
 				E('div', {}, [
 					E('div', { id: 'traffic-status' }, [
