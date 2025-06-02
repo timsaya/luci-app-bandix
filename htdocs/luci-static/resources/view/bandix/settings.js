@@ -55,6 +55,18 @@ return view.extend({
 		o.default = '1';
 		o.rmempty = false;
 
+		// 添加语言选择选项
+		o = s.option(form.ListValue, 'language', _('界面语言'),
+			_('选择 Bandix 流量监控的显示语言'));
+		o.value('zh-cn', '简体中文');
+		o.value('zh-tw', '繁体中文');
+		o.value('en', 'English');
+		o.value('fr', 'Français');
+		o.value('ja', '日本語');
+		o.value('ru', 'Русский');
+		o.default = 'zh-cn';
+		o.rmempty = false;
+
 		// 添加端口设置选项
 		o = s.option(form.Value, 'port', _('端口'),
 			_('Bandix 服务监听的端口'));
