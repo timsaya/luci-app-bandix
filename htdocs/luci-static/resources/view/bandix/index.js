@@ -180,28 +180,28 @@ return view.extend({
 				}
 
 				// 重新创建表格
-				var table = E('div', { 'class': 'table' }, [
+				var table = E('div', { 'class': 'table', 'style': 'width: 100%; table-layout: fixed;' }, [
 					E('div', { 'class': 'tr table-titles' }, [
-						E('div', { 'class': 'th' }, getTranslation('主机名', language)),
-						E('div', { 'class': 'th' }, getTranslation('IP地址', language)),
-						E('div', { 'class': 'th' }, getTranslation('MAC地址', language)),
-						E('div', { 'class': 'th' }, getTranslation('下载速度', language)),
-						E('div', { 'class': 'th' }, getTranslation('上传速度', language)),
-						E('div', { 'class': 'th' }, getTranslation('总下载量', language)),
-						E('div', { 'class': 'th' }, getTranslation('总上传量', language))
+						E('div', { 'class': 'th', 'style': 'width: 20%;' }, getTranslation('主机名', language)),
+						E('div', { 'class': 'th', 'style': 'width: 15%;' }, getTranslation('IP地址', language)),
+						E('div', { 'class': 'th', 'style': 'width: 15%;' }, getTranslation('MAC地址', language)),
+						E('div', { 'class': 'th', 'style': 'width: 12.5%;' }, getTranslation('下载速度', language)),
+						E('div', { 'class': 'th', 'style': 'width: 12.5%;' }, getTranslation('上传速度', language)),
+						E('div', { 'class': 'th', 'style': 'width: 12.5%;' }, getTranslation('总下载量', language)),
+						E('div', { 'class': 'th', 'style': 'width: 12.5%;' }, getTranslation('总上传量', language))
 					])
 				]);
 
 				// 填充数据
 				stats.devices.forEach(function (device) {
 					table.appendChild(E('div', { 'class': 'tr' }, [
-						E('div', { 'class': 'td' }, device.hostname || '-'),
-						E('div', { 'class': 'td' }, device.ip),
-						E('div', { 'class': 'td' }, device.mac || '-'),
-						E('div', { 'class': 'td' }, formatByterate(device.rx_rate)),
-						E('div', { 'class': 'td' }, formatByterate(device.tx_rate)),
-						E('div', { 'class': 'td' }, formatSize(device.rx_bytes)),
-						E('div', { 'class': 'td' }, formatSize(device.tx_bytes))
+						E('div', { 'class': 'td', 'style': 'width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, device.hostname || '-'),
+						E('div', { 'class': 'td', 'style': 'width: 15%;' }, device.ip),
+						E('div', { 'class': 'td', 'style': 'width: 15%;' }, device.mac),
+						E('div', { 'class': 'td', 'style': 'width: 12.5%;' }, formatByterate(device.rx_rate)),
+						E('div', { 'class': 'td', 'style': 'width: 12.5%;' }, formatByterate(device.tx_rate)),
+						E('div', { 'class': 'td', 'style': 'width: 12.5%;' }, formatSize(device.rx_bytes)),
+						E('div', { 'class': 'td', 'style': 'width: 12.5%;' }, formatSize(device.tx_bytes))
 					]));
 				});
 
