@@ -1,6 +1,6 @@
 {
 	"admin/network/bandix": {
-		"title": "Bandix 流量监控",
+		"title": "Bandix",
 		"order": 90,
 		"action": {
 			"type": "view",
@@ -12,7 +12,7 @@
 		}
 	},
 	"admin/network/bandix/settings": {
-		"title": "设置",
+		"title": "Settings",
 		"order": 10,
 		"action": {
 			"type": "view",

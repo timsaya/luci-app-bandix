@@ -97,6 +97,19 @@ function getTranslation(key, language) {
     return translations[language]?.[key] || key;
 } 
 
+// 获取系统语言并返回支持的语言代码
+function getSystemLanguage() {
+    // 获取系统语言
+    var systemLang = document.documentElement.lang || 'en';
+    
+    // 检查是否支持该语言
+    if (translations[systemLang]) {
+        return systemLang;
+    }
+    
+    // 如果不支持，返回英语
+    return 'en';
+}
 
 // 定义自定义格式化函数
 function formatSize(bytes) {
@@ -137,7 +150,8 @@ return view.extend({
 	// 渲染页面
 	render: function (data) {
 		var m, s, o;
-		var language = uci.get('bandix', 'general', 'language') || 'en';
+		// 使用系统语言作为默认值
+		var language = uci.get('bandix', 'general', 'language') || getSystemLanguage();
 
 		// 添加主要视图容器
 		var view = E('div', {}, [
