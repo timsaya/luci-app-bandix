@@ -11,12 +11,21 @@ LuCI Bandix is a network traffic monitoring application for OpenWrt, providing i
 
 LuCI Bandix is developed based on the LuCI framework, offering network traffic monitoring capabilities for OpenWrt routers. This application depends on the openwrt-bandix backend service and helps users view and analyze network traffic statistics in real-time.
 
+
+![LuCI Bandix Screenshot](docs/images/index.png)
+
+![LuCI Bandix Screenshot](docs/images/settings.png)
+
+
+
 ## Features
 
-- Device traffic statistics
 - Real-time network traffic monitoring
 - Intuitive data visualization interface
 - Seamless integration with OpenWrt system
+- Automatically obtain the host name from DHCP/DNS (Static Leases)
+- High-performance implementation based on Rust eBPF
+
 
 ## Installation
 
