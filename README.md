@@ -1,56 +1,55 @@
 # LuCI Bandix
 
-简体中文 | [English](README.en.md)
+English | [简体中文](README.zh.md)
 
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 
 
-LuCI Bandix 是一个用于 OpenWrt 的网络流量监控应用，通过 LuCI Web 界面提供直观的流量数据展示和分析功能。
+LuCI Bandix is a network traffic monitoring application for OpenWrt, providing intuitive traffic data visualization and analysis through the LuCI web interface.
 
-## 简介
+## Introduction
 
-LuCI Bandix 基于 LuCI 框架开发，为 OpenWrt 路由器提供网络流量监控能力。此应用依赖于 openwrt-bandix 后端服务，可以帮助用户实时查看和分析网络流量统计。
+LuCI Bandix is developed based on the LuCI framework, offering network traffic monitoring capabilities for OpenWrt routers. This application depends on the openwrt-bandix backend service and helps users view and analyze network traffic statistics in real-time.
 
-## 功能特点
+## Features
 
-- 设备流量统计
-- 网络流量实时监控
-- 直观的数据可视化界面
-- 与 OpenWrt 系统无缝集成
+- Device traffic statistics
+- Real-time network traffic monitoring
+- Intuitive data visualization interface
+- Seamless integration with OpenWrt system
 
-## 安装
+## Installation
 
-### 安装步骤
+### Installation Steps
 
-1. 先安装 openwrt-bandix 后端
+1. First install the openwrt-bandix backend
 
-   从 [openwrt-bandix Releases](https://github.com/timsaya/openwrt-bandix/releases) 下载适合您设备的IPK包，然后使用opkg安装：
-
-   ```bash
-   opkg install bandix_版本号_架构.ipk
-   ```
-
-2. 安装 luci-app-bandix 前端
-
-   从 [luci-app-bandix Releases](https://github.com/timsaya/luci-app-bandix/releases) 下载IPK包，然后使用opkg安装：
+   Download the appropriate IPK package for your device from [openwrt-bandix Releases](https://github.com/timsaya/openwrt-bandix/releases), then install using opkg:
 
    ```bash
-   opkg install luci-app-bandix_版本号_all.ipk
+   opkg install bandix_latest_architecture.ipk
    ```
 
+2. Install the luci-app-bandix frontend
 
-## 配置
+   Download the IPK package from [luci-app-bandix Releases](https://github.com/timsaya/luci-app-bandix/releases), then install using opkg:
 
-安装完成后，可以通过 LuCI Web 界面访问 Bandix 应用。应用位于"网络"菜单下。
+   ```bash
+   opkg install luci-app-bandix_latest_all.ipk
+   ```
 
-## 维护者
+## Configuration
+
+After installation, you can access the Bandix application through the LuCI web interface. The application is located under the "Network" menu.
+
+## Maintainer
 
 - [timsaya](https://github.com/timsaya)
 
-## 许可证
+## License
 
-本项目采用 [Apache 2.0 许可证](LICENSE)。
+This project is licensed under the [Apache 2.0 License](LICENSE).
 
-## 贡献
+## Contributing
 
-欢迎提交问题报告和改进建议！请通过 GitHub Issues 或 Pull Requests 参与贡献。
+Issue reports and improvement suggestions are welcome! Please participate through GitHub Issues or Pull Requests. 
