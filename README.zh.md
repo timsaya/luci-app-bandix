@@ -1,6 +1,6 @@
 # LuCI Bandix
 
-简体中文 | [English](README.en.md)
+简体中文 | [English](README.md)
 
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 
