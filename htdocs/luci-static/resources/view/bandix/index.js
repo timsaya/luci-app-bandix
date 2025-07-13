@@ -18,22 +18,18 @@ const translations = {
         '上传速度': '上传速度',
         '总下载量': '总下载量',
         '总上传量': '总上传量',
+        '下载限速': '下载限速',
+        '上传限速': '上传限速',
         '界面语言': '界面语言',
-        '选择 Bandix 流量监控的显示语言': '选择 Bandix 流量监控的显示语言'
-    },
-    'zh-tw': {
-        'Bandix 局域网流量监控': 'Bandix 區域網流量監控',
-        '正在加载数据...': '正在載入數據...',
-        '无法获取数据': '無法獲取數據',
-        '主机名': '主機名',
-        'IP地址': 'IP地址',
-        'MAC地址': 'MAC地址',
-        '下载速度': '下載速度',
-        '上传速度': '上傳速度',
-        '总下载量': '總下載量',
-        '总上传量': '總上傳量',
-        '界面语言': '界面語言',
-        '选择 Bandix 流量监控的显示语言': '選擇 Bandix 流量監控的顯示語言'
+        '选择 Bandix 流量监控的显示语言': '选择 Bandix 流量监控的显示语言',
+        '设备信息': '设备信息',
+        '局域网流量': '局域网流量',
+        '跨网络流量': '跨网络流量',
+        '限速设置': '限速设置',
+        '操作': '操作',
+        '在线设备': '在线设备',
+        '仅限跨网络': '仅限跨网络',
+        '设置': '设置'
     },
     'en': {
         'Bandix 局域网流量监控': 'Bandix LAN Traffic Monitor',
@@ -46,173 +42,574 @@ const translations = {
         '上传速度': 'Upload Speed',
         '总下载量': 'Total Download',
         '总上传量': 'Total Upload',
+        '下载限速': 'Download Limit',
+        '上传限速': 'Upload Limit',
         '界面语言': 'Interface Language',
-        '选择 Bandix 流量监控的显示语言': 'Select the display language for Bandix Traffic Monitor'
-    },
-    'fr': {
-        'Bandix 局域网流量监控': 'Moniteur de Trafic LAN Bandix',
-        '正在加载数据...': 'Chargement des données...',
-        '无法获取数据': 'Impossible d\'obtenir les données',
-        '主机名': 'Nom d\'hôte',
-        'IP地址': 'Adresse IP',
-        'MAC地址': 'Adresse MAC',
-        '下载速度': 'Vitesse de téléchargement',
-        '上传速度': 'Vitesse d\'envoi',
-        '总下载量': 'Téléchargement total',
-        '总上传量': 'Envoi total',
-        '界面语言': 'Langue de l\'interface',
-        '选择 Bandix 流量监控的显示语言': 'Sélectionnez la langue d\'affichage pour le moniteur de trafic Bandix'
-    },
-    'ja': {
-        'Bandix 局域网流量监控': 'Bandix LAN トラフィックモニター',
-        '正在加载数据...': 'データを読み込み中...',
-        '无法获取数据': 'データを取得できません',
-        '主机名': 'ホスト名',
-        'IP地址': 'IPアドレス',
-        'MAC地址': 'MACアドレス',
-        '下载速度': 'ダウンロード速度',
-        '上传速度': 'アップロード速度',
-        '总下载量': '総ダウンロード量',
-        '总上传量': '総アップロード量',
-        '界面语言': 'インターフェース言語',
-        '选择 Bandix 流量监控的显示语言': 'Bandix トラフィックモニターの表示言語を選択'
-    },
-    'ru': {
-        'Bandix 局域网流量监控': 'Монитор трафика LAN Bandix',
-        '正在加载数据...': 'Загрузка данных...',
-        '无法获取数据': 'Невозможно получить данные',
-        '主机名': 'Имя хоста',
-        'IP地址': 'IP-адрес',
-        'MAC地址': 'MAC-адрес',
-        '下载速度': 'Скорость загрузки',
-        '上传速度': 'Скорость отдачи',
-        '总下载量': 'Всего загружено',
-        '总上传量': 'Всего отдано',
-        '界面语言': 'Язык интерфейса',
-        '选择 Bandix 流量监控的显示语言': 'Выберите язык отображения для монитора трафика Bandix'
+        '选择 Bandix 流量监控的显示语言': 'Select the display language for Bandix Traffic Monitor',
+        '设备信息': 'Device Info',
+        '局域网流量': 'LAN Traffic',
+        '跨网络流量': 'WAN Traffic',
+        '限速设置': 'Rate Limit',
+        '操作': 'Actions',
+        '在线设备': 'Online Devices',
+        '仅限跨网络': 'WAN Only',
+        '设置': 'Settings'
     }
 };
 
 function getTranslation(key, language) {
     return translations[language]?.[key] || key;
-} 
+}
 
-// 获取系统语言并返回支持的语言代码
 function getSystemLanguage() {
-    // 获取系统语言
     var systemLang = document.documentElement.lang || 'en';
-    
-    // 检查是否支持该语言
     if (translations[systemLang]) {
         return systemLang;
     }
-    
-    // 如果不支持，返回英语
     return 'en';
 }
 
-// 定义自定义格式化函数
 function formatSize(bytes) {
-	if (bytes === 0) return '0 B';
-
-	const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
-	const i = Math.floor(Math.log(bytes) / Math.log(1024));
-
-	// 保留两位小数
-	return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + ' ' + units[i];
+    if (bytes === 0) return '0 B';
+    const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + ' ' + units[i];
 }
 
 function formatByterate(bytes_per_sec) {
-	if (bytes_per_sec === 0) return '0 B/s';
-
-	const units = ['B/s', 'KB/s', 'MB/s', 'GB/s', 'TB/s'];
-	const i = Math.floor(Math.log(bytes_per_sec) / Math.log(1024));
-
-	// 保留两位小数
-	return parseFloat((bytes_per_sec / Math.pow(1024, i)).toFixed(2)) + ' ' + units[i];
+    if (bytes_per_sec === 0) return '0 B/s';
+    const units = ['B/s', 'KB/s', 'MB/s', 'GB/s', 'TB/s'];
+    const i = Math.floor(Math.log(bytes_per_sec) / Math.log(1024));
+    return parseFloat((bytes_per_sec / Math.pow(1024, i)).toFixed(2)) + ' ' + units[i];
 }
 
-// 定义RPC调用
 var callStatus = rpc.declare({
-	object: 'luci.bandix',
-	method: 'status',
-	expect: {}
+    object: 'luci.bandix',
+    method: 'status',
+    expect: {}
 });
 
 return view.extend({
-	// 加载配置和数据
-	load: function () {
-		return Promise.all([
-			uci.load('bandix')
-		]);
-	},
+    load: function () {
+        return Promise.all([
+            uci.load('bandix')
+        ]);
+    },
 
-	// 渲染页面
-	render: function (data) {
-		var m, s, o;
-		// 使用系统语言作为默认值
-		var language = uci.get('bandix', 'general', 'language') || getSystemLanguage();
+    render: function (data) {
+        var language = uci.get('bandix', 'general', 'language') || getSystemLanguage();
+        
+        // 添加现代化样式
+        var style = E('style', {}, `
+            .bandix-container {
+                padding: 24px;
+                background-color: #f8fafc;
+                min-height: 100vh;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            }
+            
+            .bandix-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 24px;
+            }
+            
+            .bandix-title {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #1f2937;
+                margin: 0;
+            }
+            
+            .bandix-badge {
+                background-color: #f3f4f6;
+                border: 1px solid #d1d5db;
+                border-radius: 6px;
+                padding: 4px 12px;
+                font-size: 0.875rem;
+                color: #374151;
+            }
+            
+            .bandix-alert {
+                background-color: #fef3c7;
+                border: 1px solid #f59e0b;
+                border-radius: 8px;
+                padding: 12px;
+                margin-bottom: 24px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            .bandix-alert-icon {
+                color: #f59e0b;
+                font-size: 1rem;
+            }
+            
+            .bandix-card {
+                background-color: white;
+                border-radius: 12px;
+                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+                overflow: hidden;
+                margin-bottom: 24px;
+            }
+            
+            .bandix-card-header {
+                padding: 20px 24px;
+                border-bottom: 1px solid #e5e7eb;
+                background-color: #fafafa;
+            }
+            
+            .bandix-card-title {
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: #1f2937;
+                margin: 0;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            .bandix-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            
+            .bandix-table th {
+                background-color: #f9fafb;
+                padding: 16px 20px;
+                text-align: left;
+                font-weight: 600;
+                color: #374151;
+                border-bottom: 1px solid #e5e7eb;
+                font-size: 0.875rem;
+            }
+            
+            .bandix-table td {
+                padding: 16px 20px;
+                border-bottom: 1px solid #f3f4f6;
+                vertical-align: middle;
+            }
+            
+            .bandix-table tr:hover {
+                background-color: #f9fafb;
+            }
+            
+            .device-info {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+            
+            .device-name {
+                font-weight: 600;
+                color: #1f2937;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            .device-status {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                display: inline-block;
+            }
+            
+            .device-status.online {
+                background-color: #10b981;
+            }
+            
+            .device-status.offline {
+                background-color: #9ca3af;
+            }
+            
+            .device-ip {
+                color: #6b7280;
+                font-size: 0.875rem;
+            }
+            
+            .device-mac {
+                color: #9ca3af;
+                font-size: 0.75rem;
+            }
+            
+            .traffic-info {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .traffic-row {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+            
+            .traffic-icon {
+                font-size: 0.75rem;
+                font-weight: bold;
+            }
+            
+            .traffic-icon.upload {
+                color: #ef4444;
+            }
+            
+            .traffic-icon.download {
+                color: #22c55e;
+            }
+            
+            .traffic-speed {
+                font-weight: 600;
+                font-size: 0.875rem;
+            }
+            
+            .traffic-speed.lan {
+                color: #3b82f6;
+            }
+            
+            .traffic-speed.wan {
+                color: #22c55e;
+            }
+            
+            .traffic-total {
+                font-size: 0.75rem;
+                color: #6b7280;
+                margin-left: 4px;
+            }
+            
+            .limit-info {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+            
+            .limit-badge {
+                background-color: #f3f4f6;
+                color: #6b7280;
+                padding: 2px 8px;
+                border-radius: 4px;
+                font-size: 0.75rem;
+                text-align: center;
+                margin-top: 4px;
+            }
+            
+            .action-button {
+                background-color: #f3f4f6;
+                border: 1px solid #d1d5db;
+                border-radius: 6px;
+                padding: 8px 12px;
+                cursor: pointer;
+                transition: all 0.2s;
+                font-size: 0.875rem;
+            }
+            
+            .action-button:hover {
+                background-color: #e5e7eb;
+                border-color: #9ca3af;
+            }
+            
+            .loading {
+                text-align: center;
+                padding: 40px;
+                color: #6b7280;
+                font-style: italic;
+            }
+            
+            .error {
+                text-align: center;
+                padding: 40px;
+                color: #ef4444;
+            }
+            
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 16px;
+                margin-bottom: 24px;
+            }
+            
+            .stats-card {
+                background-color: white;
+                border-radius: 8px;
+                padding: 16px;
+                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            }
+            
+            .stats-title {
+                font-size: 0.875rem;
+                font-weight: 600;
+                color: #374151;
+                margin-bottom: 8px;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+            
+            .stats-value {
+                font-size: 1.25rem;
+                font-weight: 700;
+                color: #1f2937;
+            }
+        `);
+        
+        document.head.appendChild(style);
 
-		// 添加主要视图容器
-		var view = E('div', {}, [
-			E('h2', {}, getTranslation('Bandix 局域网流量监控', language)),
-			E('div', { 'class': 'cbi-section' }, [
-				E('div', {}, [
-					E('div', { id: 'traffic-status' }, [
-						E('em', {}, getTranslation('正在加载数据...', language))
-					])
-				])
-			])
-		]);
+        var view = E('div', { 'class': 'bandix-container' }, [
+            // 头部
+            E('div', { 'class': 'bandix-header' }, [
+                E('h1', { 'class': 'bandix-title' }, getTranslation('Bandix 局域网流量监控', language)),
+                E('div', { 'class': 'bandix-badge', 'id': 'device-count' }, getTranslation('在线设备', language) + ': 0 / 0')
+            ]),
+            
+            // 警告提示
+            E('div', { 'class': 'bandix-alert' }, [
+                E('span', { 'class': 'bandix-alert-icon' }, '⚠️'),
+                E('span', {}, '限速功能仅对跨网络流量生效。')
+            ]),
+            
+            // 统计卡片
+            E('div', { 'class': 'stats-grid', 'id': 'stats-grid' }),
+            
+            // 主要内容卡片
+            E('div', { 'class': 'bandix-card' }, [
+                E('div', { 'id': 'traffic-status' }, [
+                    E('div', { 'class': 'loading' }, getTranslation('正在加载数据...', language))
+                ])
+            ])
+        ]);
 
-		// 轮询获取数据
-		poll.add(function () {
-			return callStatus().then(function (result) {
-				var trafficDiv = document.getElementById('traffic-status');
-				var language = uci.get('bandix', 'general', 'language') || 'en';
+        // 轮询获取数据
+        poll.add(function () {
+            return callStatus().then(function (result) {
+                var trafficDiv = document.getElementById('traffic-status');
+                var deviceCountDiv = document.getElementById('device-count');
+                var statsGrid = document.getElementById('stats-grid');
+                var language = uci.get('bandix', 'general', 'language') || 'en';
 
-				// 处理嵌套的响应格式
-				var stats = result;
+                var stats = result;
+                if (!stats || !stats.devices) {
+                    trafficDiv.innerHTML = '<div class="error">' + getTranslation('无法获取数据', language) + '</div>';
+                    return;
+                }
 
-				if (!stats || !stats.devices) {
-					trafficDiv.textContent = getTranslation('无法获取数据', language);
-					return;
-				}
+                // 更新设备计数
+                var onlineCount = stats.devices.filter(d => d.online !== false).length;
+                deviceCountDiv.textContent = getTranslation('在线设备', language) + ': ' + onlineCount + ' / ' + stats.devices.length;
 
-				// 重新创建表格
-				var table = E('div', { 'class': 'table', 'style': 'width: 100%; table-layout: fixed;' }, [
-					E('div', { 'class': 'tr table-titles' }, [
-						E('div', { 'class': 'th', 'style': 'width: 20%;' }, getTranslation('主机名', language)),
-						E('div', { 'class': 'th', 'style': 'width: 15%;' }, getTranslation('IP地址', language)),
-						E('div', { 'class': 'th', 'style': 'width: 15%;' }, getTranslation('MAC地址', language)),
-						E('div', { 'class': 'th', 'style': 'width: 12.5%;' }, getTranslation('下载速度', language)),
-						E('div', { 'class': 'th', 'style': 'width: 12.5%;' }, getTranslation('上传速度', language)),
-						E('div', { 'class': 'th', 'style': 'width: 12.5%;' }, getTranslation('总下载量', language)),
-						E('div', { 'class': 'th', 'style': 'width: 12.5%;' }, getTranslation('总上传量', language))
-					])
-				]);
+                // 计算统计数据
+                var totalLanUp = stats.devices.reduce((sum, d) => sum + (d.local_tx_bytes || 0), 0);
+                var totalLanDown = stats.devices.reduce((sum, d) => sum + (d.local_rx_bytes || 0), 0);
+                var totalWanUp = stats.devices.reduce((sum, d) => sum + (d.wide_tx_bytes || 0), 0);
+                var totalWanDown = stats.devices.reduce((sum, d) => sum + (d.wide_rx_bytes || 0), 0);
+                var totalLanSpeedUp = stats.devices.reduce((sum, d) => sum + (d.local_tx_rate || 0), 0);
+                var totalLanSpeedDown = stats.devices.reduce((sum, d) => sum + (d.local_rx_rate || 0), 0);
+                var totalWanSpeedUp = stats.devices.reduce((sum, d) => sum + (d.wide_tx_rate || 0), 0);
+                var totalWanSpeedDown = stats.devices.reduce((sum, d) => sum + (d.wide_rx_rate || 0), 0);
+                var totalSpeedUp = totalLanSpeedUp + totalWanSpeedUp;
+                var totalSpeedDown = totalLanSpeedDown + totalWanSpeedDown;
+                var totalUp = totalLanUp + totalWanUp;
+                var totalDown = totalLanDown + totalWanDown;
 
-				// 填充数据
-				stats.devices.forEach(function (device) {
-					table.appendChild(E('div', { 'class': 'tr' }, [
-						E('div', { 'class': 'td', 'style': 'width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' }, device.hostname || '-'),
-						E('div', { 'class': 'td', 'style': 'width: 15%;' }, device.ip),
-						E('div', { 'class': 'td', 'style': 'width: 15%;' }, device.mac),
-						E('div', { 'class': 'td', 'style': 'width: 12.5%;' }, formatByterate(device.rx_rate)),
-						E('div', { 'class': 'td', 'style': 'width: 12.5%;' }, formatByterate(device.tx_rate)),
-						E('div', { 'class': 'td', 'style': 'width: 12.5%;' }, formatSize(device.rx_bytes)),
-						E('div', { 'class': 'td', 'style': 'width: 12.5%;' }, formatSize(device.tx_bytes))
-					]));
-				});
+                // 更新统计卡片
+                statsGrid.innerHTML = '';
 
-				// 更新表格内容
-				while (trafficDiv.firstChild)
-					trafficDiv.removeChild(trafficDiv.firstChild);
+                // 局域网流量卡片
+                statsGrid.appendChild(E('div', { 'class': 'stats-card' }, [
+                    E('div', { 'class': 'stats-title' }, [
+                        E('span', { 'style': 'color: #3b82f6;' }, '📶'),
+                        '局域网流量'
+                    ]),
+                    E('div', { 'style': 'margin-top: 12px;' }, [
+                        // 上传速度和流量
+                        E('div', { 'style': 'margin-bottom: 8px;' }, [
+                            E('div', { 'style': 'display: flex; justify-content: space-between; align-items: center;' }, [
+                                E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
+                                    E('span', { 'style': 'color: #ef4444; font-size: 0.75rem;' }, '↑'),
+                                    E('span', { 'style': 'color: #3b82f6; font-weight: 600;' }, formatByterate(totalLanSpeedUp))
+                                ]),
+                                E('span', { 'style': 'color: #6b7280; font-size: 0.75rem;' }, formatSize(totalLanUp))
+                            ])
+                        ]),
+                        // 下载速度和流量
+                        E('div', {}, [
+                            E('div', { 'style': 'display: flex; justify-content: space-between; align-items: center;' }, [
+                                E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
+                                    E('span', { 'style': 'color: #22c55e; font-size: 0.75rem;' }, '↓'),
+                                    E('span', { 'style': 'color: #3b82f6; font-weight: 600;' }, formatByterate(totalLanSpeedDown))
+                                ]),
+                                E('span', { 'style': 'color: #6b7280; font-size: 0.75rem;' }, formatSize(totalLanDown))
+                            ])
+                        ])
+                    ])
+                ]));
 
-				trafficDiv.appendChild(table);
-			});
-		}, 1);
+                // 跨网络流量卡片
+                statsGrid.appendChild(E('div', { 'class': 'stats-card' }, [
+                    E('div', { 'class': 'stats-title' }, [
+                        E('span', { 'style': 'color: #22c55e;' }, '🌐'),
+                        '跨网络流量'
+                    ]),
+                    E('div', { 'style': 'margin-top: 12px;' }, [
+                        // 上传速度和流量
+                        E('div', { 'style': 'margin-bottom: 8px;' }, [
+                            E('div', { 'style': 'display: flex; justify-content: space-between; align-items: center;' }, [
+                                E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
+                                    E('span', { 'style': 'color: #ef4444; font-size: 0.75rem;' }, '↑'),
+                                    E('span', { 'style': 'color: #22c55e; font-weight: 600;' }, formatByterate(totalWanSpeedUp))
+                                ]),
+                                E('span', { 'style': 'color: #6b7280; font-size: 0.75rem;' }, formatSize(totalWanUp))
+                            ])
+                        ]),
+                        // 下载速度和流量
+                        E('div', {}, [
+                            E('div', { 'style': 'display: flex; justify-content: space-between; align-items: center;' }, [
+                                E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
+                                    E('span', { 'style': 'color: #22c55e; font-size: 0.75rem;' }, '↓'),
+                                    E('span', { 'style': 'color: #22c55e; font-weight: 600;' }, formatByterate(totalWanSpeedDown))
+                                ]),
+                                E('span', { 'style': 'color: #6b7280; font-size: 0.75rem;' }, formatSize(totalWanDown))
+                            ])
+                        ])
+                    ])
+                ]));
 
-		return view;
-	}
-}); 
+                // 实时总流量卡片
+                statsGrid.appendChild(E('div', { 'class': 'stats-card' }, [
+                    E('div', { 'class': 'stats-title' }, [
+                        E('span', {}, '⚡'),
+                        '实时总流量'
+                    ]),
+                    E('div', { 'style': 'margin-top: 12px;' }, [
+                        // 上传速度和流量
+                        E('div', { 'style': 'margin-bottom: 8px;' }, [
+                            E('div', { 'style': 'display: flex; justify-content: space-between; align-items: center;' }, [
+                                E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
+                                    E('span', { 'style': 'color: #ef4444; font-size: 0.75rem;' }, '↑'),
+                                    E('span', { 'style': 'color: #1f2937; font-weight: 600;' }, formatByterate(totalSpeedUp))
+                                ]),
+                                E('span', { 'style': 'color: #6b7280; font-size: 0.75rem;' }, formatSize(totalUp))
+                            ])
+                        ]),
+                        // 下载速度和流量
+                        E('div', {}, [
+                            E('div', { 'style': 'display: flex; justify-content: space-between; align-items: center;' }, [
+                                E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
+                                    E('span', { 'style': 'color: #22c55e; font-size: 0.75rem;' }, '↓'),
+                                    E('span', { 'style': 'color: #1f2937; font-weight: 600;' }, formatByterate(totalSpeedDown))
+                                ]),
+                                E('span', { 'style': 'color: #6b7280; font-size: 0.75rem;' }, formatSize(totalDown))
+                            ])
+                        ])
+                    ])
+                ]));
+
+                // 创建表格
+                var table = E('table', { 'class': 'bandix-table' }, [
+                    E('thead', {}, [
+                        E('tr', {}, [
+                            E('th', {}, getTranslation('设备信息', language)),
+                            E('th', {}, [
+                                E('span', { 'style': 'color: #3b82f6; margin-right: 4px;' }, '📶'),
+                                getTranslation('局域网流量', language)
+                            ]),
+                            E('th', {}, [
+                                E('span', { 'style': 'color: #22c55e; margin-right: 4px;' }, '🌐'),
+                                getTranslation('跨网络流量', language)
+                            ]),
+                            E('th', {}, getTranslation('限速设置', language)),
+                            E('th', {}, getTranslation('操作', language))
+                        ])
+                    ]),
+                    E('tbody', {})
+                ]);
+
+                var tbody = table.querySelector('tbody');
+
+                // 填充数据
+                stats.devices.forEach(function (device) {
+                    var isOnline = device.online !== false;
+                    
+                    var row = E('tr', {}, [
+                        // 设备信息
+                        E('td', {}, [
+                            E('div', { 'class': 'device-info' }, [
+                                E('div', { 'class': 'device-name' }, [
+                                    E('span', { 
+                                        'class': 'device-status ' + (isOnline ? 'online' : 'offline')
+                                    }),
+                                    device.hostname || '-'
+                                ]),
+                                E('div', { 'class': 'device-ip' }, device.ip),
+                                E('div', { 'class': 'device-mac' }, device.mac)
+                            ])
+                        ]),
+                        
+                        // 局域网流量
+                        E('td', {}, [
+                            E('div', { 'class': 'traffic-info' }, [
+                                E('div', { 'class': 'traffic-row' }, [
+                                    E('span', { 'class': 'traffic-icon upload' }, '↑'),
+                                    E('span', { 'class': 'traffic-speed lan' }, formatByterate(device.local_tx_rate || 0)),
+                                    E('span', { 'class': 'traffic-total' }, '(' + formatSize(device.local_tx_bytes || 0) + ')')
+                                ]),
+                                E('div', { 'class': 'traffic-row' }, [
+                                    E('span', { 'class': 'traffic-icon download' }, '↓'),
+                                    E('span', { 'class': 'traffic-speed lan' }, formatByterate(device.local_rx_rate || 0)),
+                                    E('span', { 'class': 'traffic-total' }, '(' + formatSize(device.local_rx_bytes || 0) + ')')
+                                ])
+                            ])
+                        ]),
+                        
+                        // 跨网络流量
+                        E('td', {}, [
+                            E('div', { 'class': 'traffic-info' }, [
+                                E('div', { 'class': 'traffic-row' }, [
+                                    E('span', { 'class': 'traffic-icon upload' }, '↑'),
+                                    E('span', { 'class': 'traffic-speed wan' }, formatByterate(device.wide_tx_rate || 0)),
+                                    E('span', { 'class': 'traffic-total' }, '(' + formatSize(device.wide_tx_bytes || 0) + ')')
+                                ]),
+                                E('div', { 'class': 'traffic-row' }, [
+                                    E('span', { 'class': 'traffic-icon download' }, '↓'),
+                                    E('span', { 'class': 'traffic-speed wan' }, formatByterate(device.wide_rx_rate || 0)),
+                                    E('span', { 'class': 'traffic-total' }, '(' + formatSize(device.wide_rx_bytes || 0) + ')')
+                                ])
+                            ])
+                        ]),
+                        
+                        // 限速设置
+                        E('td', {}, [
+                            E('div', { 'class': 'limit-info' }, [
+                                E('div', { 'class': 'traffic-row' }, [
+                                    E('span', { 'class': 'traffic-icon upload', 'style': 'font-size: 0.75rem;' }, '↑'),
+                                    E('span', { 'style': 'font-size: 0.875rem;' }, formatByterate(device.wide_tx_rate_limit || 0))
+                                ]),
+                                E('div', { 'class': 'traffic-row' }, [
+                                    E('span', { 'class': 'traffic-icon download', 'style': 'font-size: 0.75rem;' }, '↓'),
+                                    E('span', { 'style': 'font-size: 0.875rem;' }, formatByterate(device.wide_rx_rate_limit || 0))
+                                ]),
+                            ])
+                        ]),
+                        
+                        // 操作
+                        E('td', {}, [
+                            E('button', { 
+                                'class': 'action-button',
+                                'title': getTranslation('设置', language)
+                            }, '⚙️')
+                        ])
+                    ]);
+                    
+                    tbody.appendChild(row);
+                });
+
+                // 更新表格内容
+                trafficDiv.innerHTML = '';
+                trafficDiv.appendChild(table);
+            });
+        }, 1);
+
+        return view;
+    }
+});

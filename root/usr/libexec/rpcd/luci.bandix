@@ -46,10 +46,20 @@ call)
 				json_get_var mac mac
 				json_get_var ip ip
 				json_get_var hostname hostname
-				json_get_var rx_bytes rx_bytes
-				json_get_var tx_bytes tx_bytes
-				json_get_var rx_rate rx_rate
-				json_get_var tx_rate tx_rate
+				json_get_var total_rx_bytes total_rx_bytes
+				json_get_var total_tx_bytes total_tx_bytes
+				json_get_var total_rx_rate total_rx_rate
+				json_get_var total_tx_rate total_tx_rate
+				json_get_var wide_rx_rate_limit wide_rx_rate_limit
+				json_get_var wide_tx_rate_limit wide_tx_rate_limit
+				json_get_var local_rx_bytes local_rx_bytes
+				json_get_var local_tx_bytes local_tx_bytes
+				json_get_var local_rx_rate local_rx_rate
+				json_get_var local_tx_rate local_tx_rate
+				json_get_var wide_rx_bytes wide_rx_bytes
+				json_get_var wide_tx_bytes wide_tx_bytes
+				json_get_var wide_rx_rate wide_rx_rate
+				json_get_var wide_tx_rate wide_tx_rate
 
 				# 标准化MAC地址格式以便匹配
 				mac_lower=$(echo "$mac" | tr 'A-Z' 'a-z')
@@ -86,10 +96,20 @@ call)
 				"mac": "$mac",
 				"ip": "$ip",
 				"hostname": "$hostname",
-				"rx_bytes": $rx_bytes,
-				"tx_bytes": $tx_bytes,
-				"rx_rate": $rx_rate,
-				"tx_rate": $tx_rate
+				"total_rx_bytes": ${total_rx_bytes:-0},
+				"total_tx_bytes": ${total_tx_bytes:-0},
+				"total_rx_rate": ${total_rx_rate:-0},
+				"total_tx_rate": ${total_tx_rate:-0},
+				"wide_rx_rate_limit": ${wide_rx_rate_limit:-0},
+				"wide_tx_rate_limit": ${wide_tx_rate_limit:-0},
+				"local_rx_bytes": ${local_rx_bytes:-0},
+				"local_tx_bytes": ${local_tx_bytes:-0},
+				"local_rx_rate": ${local_rx_rate:-0},
+				"local_tx_rate": ${local_tx_rate:-0},
+				"wide_rx_bytes": ${wide_rx_bytes:-0},
+				"wide_tx_bytes": ${wide_tx_bytes:-0},
+				"wide_rx_rate": ${wide_rx_rate:-0},
+				"wide_tx_rate": ${wide_tx_rate:-0}
 				}
 EOF
 
