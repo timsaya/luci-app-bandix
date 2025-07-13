@@ -115,13 +115,13 @@ function formatByterate(bytes_per_sec) {
 // 解析速度字符串为字节/秒
 function parseSpeed(speedStr) {
     if (!speedStr || speedStr === '0' || speedStr === '0 B/s') return 0;
-    
+
     const match = speedStr.match(/^([\d.]+)\s*([KMGT]?B\/s)$/i);
     if (!match) return 0;
-    
+
     const value = parseFloat(match[1]);
     const unit = match[2].toUpperCase();
-    
+
     const multipliers = {
         'B/S': 1,
         'KB/S': 1024,
@@ -129,7 +129,7 @@ function parseSpeed(speedStr) {
         'GB/S': 1024 * 1024 * 1024,
         'TB/S': 1024 * 1024 * 1024 * 1024
     };
-    
+
     return value * (multipliers[unit] || 1);
 }
 
@@ -142,6 +142,7 @@ var callStatus = rpc.declare({
 var callSetRateLimit = rpc.declare({
     object: 'luci.bandix',
     method: 'set_rate_limit',
+    params: ['mac', 'wide_tx_rate_limit', 'wide_rx_rate_limit'],
     expect: {}
 });
 
@@ -707,27 +708,27 @@ return view.extend({
         var showRateLimitModal;
 
         // 显示模态框
-        showRateLimitModal = function(device) {
+        showRateLimitModal = function (device) {
             currentDevice = device;
             var modal = document.getElementById('rate-limit-modal');
             var deviceSummary = document.getElementById('modal-device-summary');
-            
+
             // 更新设备信息
             deviceSummary.innerHTML = E('div', {}, [
                 E('div', { 'class': 'device-summary-name' }, device.hostname || device.ip),
                 E('div', { 'class': 'device-summary-details' }, device.ip + ' (' + device.mac + ')')
             ]).innerHTML;
-            
+
             // 设置当前限速值
             var uploadLimit = device.wide_tx_rate_limit || 0;
             var downloadLimit = device.wide_rx_rate_limit || 0;
-            
+
             var uploadType = uploadLimit > 0 ? 'custom' : 'unlimited';
             var downloadType = downloadLimit > 0 ? 'custom' : 'unlimited';
-            
+
             document.getElementById('upload-limit-type').value = uploadType;
             document.getElementById('download-limit-type').value = downloadType;
-            
+
             if (uploadType === 'custom') {
                 document.getElementById('upload-limit-custom').style.display = 'block';
                 var uploadValue = uploadLimit;
@@ -747,7 +748,7 @@ return view.extend({
             } else {
                 document.getElementById('upload-limit-custom').style.display = 'none';
             }
-            
+
             if (downloadType === 'custom') {
                 document.getElementById('download-limit-custom').style.display = 'block';
                 var downloadValue = downloadLimit;
@@ -767,7 +768,7 @@ return view.extend({
             } else {
                 document.getElementById('download-limit-custom').style.display = 'none';
             }
-            
+
             // 显示模态框并添加动画
             modal.classList.add('show');
         }
@@ -776,9 +777,9 @@ return view.extend({
         function hideRateLimitModal() {
             var modal = document.getElementById('rate-limit-modal');
             modal.classList.remove('show');
-            
+
             // 等待动画完成后清理
-            setTimeout(function() {
+            setTimeout(function () {
                 currentDevice = null;
             }, 300);
         }
@@ -786,20 +787,20 @@ return view.extend({
         // 保存限速设置
         function saveRateLimit() {
             if (!currentDevice) return;
-            
+
             var saveButton = document.getElementById('modal-save');
             var originalText = saveButton.textContent;
-            
+
             // 显示加载状态
             saveButton.innerHTML = '<span class="loading-spinner"></span>' + getTranslation('保存中...', language);
             saveButton.classList.add('btn-loading');
-            
+
             var uploadType = document.getElementById('upload-limit-type').value;
             var downloadType = document.getElementById('download-limit-type').value;
-            
+
             var uploadLimit = 0;
             var downloadLimit = 0;
-            
+
             if (uploadType === 'custom') {
                 var uploadValue = parseInt(document.getElementById('upload-limit-value').value);
                 var uploadUnit = parseInt(document.getElementById('upload-limit-unit').value);
@@ -813,7 +814,7 @@ return view.extend({
                     return;
                 }
             }
-            
+
             if (downloadType === 'custom') {
                 var downloadValue = parseInt(document.getElementById('download-limit-value').value);
                 var downloadUnit = parseInt(document.getElementById('download-limit-unit').value);
@@ -827,24 +828,25 @@ return view.extend({
                     return;
                 }
             }
-            
+
             // 调用API设置限速
             callSetRateLimit({
                 mac: currentDevice.mac,
-                upload_limit: uploadLimit,
-                download_limit: downloadLimit
-            }).then(function(result) {
+                wide_tx_rate_limit: uploadLimit,
+                wide_rx_rate_limit: downloadLimit
+            }).then(function (result) {
                 // 恢复按钮状态
                 saveButton.innerHTML = originalText;
                 saveButton.classList.remove('btn-loading');
-                
-                if (result && result.success !== false) {
+
+                if (result && result.success === true) {
                     ui.addNotification(null, E('p', {}, getTranslation('设置成功', language)), 'info');
                     hideRateLimitModal();
                 } else {
-                    ui.addNotification(null, E('p', {}, getTranslation('设置失败', language)), 'error');
+                    var errorMsg = result && result.error ? result.error : getTranslation('设置失败', language);
+                    ui.addNotification(null, E('p', {}, errorMsg), 'error');
                 }
-            }).catch(function(error) {
+            }).catch(function (error) {
                 // 恢复按钮状态
                 saveButton.innerHTML = originalText;
                 saveButton.classList.remove('btn-loading');
@@ -855,21 +857,21 @@ return view.extend({
         // 绑定模态框事件
         document.getElementById('modal-cancel').addEventListener('click', hideRateLimitModal);
         document.getElementById('modal-save').addEventListener('click', saveRateLimit);
-        
+
         // 点击模态框背景关闭
-        document.getElementById('rate-limit-modal').addEventListener('click', function(e) {
+        document.getElementById('rate-limit-modal').addEventListener('click', function (e) {
             if (e.target === this) {
                 hideRateLimitModal();
             }
         });
 
         // 限速类型切换事件
-        document.getElementById('upload-limit-type').addEventListener('change', function() {
+        document.getElementById('upload-limit-type').addEventListener('change', function () {
             var customDiv = document.getElementById('upload-limit-custom');
             customDiv.style.display = this.value === 'custom' ? 'block' : 'none';
         });
 
-        document.getElementById('download-limit-type').addEventListener('change', function() {
+        document.getElementById('download-limit-type').addEventListener('change', function () {
             var customDiv = document.getElementById('download-limit-custom');
             customDiv.style.display = this.value === 'custom' ? 'block' : 'none';
         });
@@ -1005,9 +1007,9 @@ return view.extend({
                         'class': 'action-button',
                         'title': getTranslation('设置', language)
                     }, '⚙️');
-                    
+
                     // 绑定点击事件
-                    actionButton.addEventListener('click', function() {
+                    actionButton.addEventListener('click', function () {
                         showRateLimitModal(device);
                     });
 

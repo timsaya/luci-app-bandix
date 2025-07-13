@@ -18,19 +18,45 @@ call)
 		# 使用curl或者wget请求API
 
 		# 获取bandix提供的数据
-		api_result=$(wget -q -O - http://127.0.0.1:8686/api/devices 2>/dev/null)
+		api_result=$(curl -s http://127.0.0.1:8686/api/devices 2>/dev/null)
 
 		# 检查API调用是否成功
 		if [ $? -eq 0 ] && [ -n "$api_result" ]; then
 			# 从原始API结果加载JSON
-			json_load "$api_result"
+			if ! json_load "$api_result"; then
+				# JSON解析失败
+				json_init
+				json_add_object "status"
+				json_add_boolean "success" 0
+				json_add_string "error" "Invalid JSON response from bandix service"
+				json_close_object
+				json_add_array "devices"
+				json_close_array
+				json_dump
+				exit 0
+			fi
 
 			# 提取设备数组
-			json_select "devices"
+			if ! json_select "devices"; then
+				# devices字段不存在
+				json_init
+				json_add_object "status"
+				json_add_boolean "success" 0
+				json_add_string "error" "No devices field in API response"
+				json_close_object
+				json_add_array "devices"
+				json_close_array
+				json_dump
+				exit 0
+			fi
+			
 			json_get_keys device_indexes
 
 			# 创建临时文件来存储修改后的JSON
 			tmp_json=$(mktemp)
+			
+			# 设置清理函数
+			trap 'rm -f "$tmp_json" 2>/dev/null' EXIT
 
 			# 开始构建新的JSON
 			echo '{' >"$tmp_json"
@@ -38,6 +64,16 @@ call)
 
 			# 标记是否是第一个设备
 			first_device=1
+
+			# 检查是否有设备数据
+			if [ -z "$device_indexes" ]; then
+				# 没有设备数据，返回空数组
+				echo >>"$tmp_json"
+				echo '  ]' >>"$tmp_json"
+				echo '}' >>"$tmp_json"
+				cat "$tmp_json"
+				exit 0
+			fi
 
 			# 遍历每个设备
 			for idx in $device_indexes; do
@@ -51,8 +87,6 @@ call)
 				json_get_var total_tx_bytes total_tx_bytes
 				json_get_var total_rx_rate total_rx_rate
 				json_get_var total_tx_rate total_tx_rate
-				json_get_var wide_rx_rate_limit wide_rx_rate_limit
-				json_get_var wide_tx_rate_limit wide_tx_rate_limit
 				json_get_var local_rx_bytes local_rx_bytes
 				json_get_var local_tx_bytes local_tx_bytes
 				json_get_var local_rx_rate local_rx_rate
@@ -61,6 +95,8 @@ call)
 				json_get_var wide_tx_bytes wide_tx_bytes
 				json_get_var wide_rx_rate wide_rx_rate
 				json_get_var wide_tx_rate wide_tx_rate
+				json_get_var wide_rx_rate_limit wide_rx_rate_limit
+				json_get_var wide_tx_rate_limit wide_tx_rate_limit
 
 				# 标准化MAC地址格式以便匹配
 				mac_lower=$(echo "$mac" | tr 'A-Z' 'a-z')
@@ -89,6 +125,9 @@ call)
 					echo ',' >>"$tmp_json"
 				fi
 
+				# 转义hostname中的特殊字符
+				hostname_escaped=$(echo "$hostname" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\n/\\n/g; s/\r/\\r/g; s/\t/\\t/g')
+				
 				# 写入设备信息到JSON
 				cat >>"$tmp_json" <<EOF
 
@@ -96,13 +135,11 @@ call)
 				{
 				"mac": "$mac",
 				"ip": "$ip",
-				"hostname": "$hostname",
+				"hostname": "$hostname_escaped",
 				"total_rx_bytes": ${total_rx_bytes:-0},
 				"total_tx_bytes": ${total_tx_bytes:-0},
 				"total_rx_rate": ${total_rx_rate:-0},
 				"total_tx_rate": ${total_tx_rate:-0},
-				"wide_rx_rate_limit": ${wide_rx_rate_limit:-0},
-				"wide_tx_rate_limit": ${wide_tx_rate_limit:-0},
 				"local_rx_bytes": ${local_rx_bytes:-0},
 				"local_tx_bytes": ${local_tx_bytes:-0},
 				"local_rx_rate": ${local_rx_rate:-0},
@@ -110,7 +147,9 @@ call)
 				"wide_rx_bytes": ${wide_rx_bytes:-0},
 				"wide_tx_bytes": ${wide_tx_bytes:-0},
 				"wide_rx_rate": ${wide_rx_rate:-0},
-				"wide_tx_rate": ${wide_tx_rate:-0}
+				"wide_tx_rate": ${wide_tx_rate:-0},
+				"wide_rx_rate_limit": ${wide_rx_rate_limit:-0},
+				"wide_tx_rate_limit": ${wide_tx_rate_limit:-0}
 				}
 EOF
 
@@ -125,7 +164,6 @@ EOF
 
 			# 输出最终结果
 			cat "$tmp_json"
-			rm "$tmp_json"
 		else
 			# API调用失败，返回空数据结构
 			json_init
@@ -140,13 +178,20 @@ EOF
 		;;
 	set_rate_limit)
 		# 设置设备限速
-		# 参数: mac, upload_limit, download_limit
+		# 参数: mac, wide_tx_rate_limit, wide_rx_rate_limit
 		
 		# 获取参数
-		json_load "$3"
+		if ! json_load "$3"; then
+			json_init
+			json_add_boolean "success" 0
+			json_add_string "error" "Invalid input parameters"
+			json_dump
+			exit 0
+		fi
+		
 		json_get_var mac mac
-		json_get_var upload_limit upload_limit
-		json_get_var download_limit download_limit
+		json_get_var wide_tx_rate_limit wide_tx_rate_limit
+		json_get_var wide_rx_rate_limit wide_rx_rate_limit
 		
 		# 验证参数
 		if [ -z "$mac" ]; then
@@ -158,17 +203,35 @@ EOF
 		fi
 		
 		# 调用bandix API设置限速
+		# 转义MAC地址中的特殊字符
+		mac_escaped=$(echo "$mac" | sed 's/\\/\\\\/g; s/"/\\"/g')
+		
 		# 构建请求数据
-		request_data="{\"mac\":\"$mac\",\"upload_limit\":${upload_limit:-0},\"download_limit\":${download_limit:-0}}"
+		request_data="{\"mac\":\"$mac_escaped\",\"wide_tx_rate_limit\":${wide_tx_rate_limit:-0},\"wide_rx_rate_limit\":${wide_rx_rate_limit:-0}}"
 		
+
 		# 发送请求到bandix API
-		response=$(wget -q -O - --post-data="$request_data" --header="Content-Type: application/json" http://127.0.0.1:8686/api/rate_limit 2>/dev/null)
-		
+		response=$(curl -s -X POST -H "Content-Type: application/json" -d "$request_data" http://127.0.0.1:8686/api/limit 2>/dev/null)
+	
+
+
 		if [ $? -eq 0 ] && [ -n "$response" ]; then
-			# 返回成功响应
-			echo "$response"
+			# 检查API响应是否包含success状态
+			if echo "$response" | grep -q '"status":\s*"success"'; then
+				# 返回成功响应
+				json_init
+				json_add_boolean "success" 1
+				json_add_string "message" "Rate limit set successfully"
+				json_dump
+			else
+				# API返回了响应但不是success状态
+				json_init
+				json_add_boolean "success" 0
+				json_add_string "error" "API returned error response"
+				json_add_string "response" "$response"
+				json_dump
+			fi
 		else
-			# 返回错误响应
 			json_init
 			json_add_boolean "success" 0
 			json_add_string "error" "Failed to set rate limit"
