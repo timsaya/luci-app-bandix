@@ -135,15 +135,15 @@ function parseSpeed(speedStr) {
 
 var callStatus = rpc.declare({
     object: 'luci.bandix',
-    method: 'status',
+    method: 'getStatus',
     expect: {}
 });
 
 var callSetRateLimit = rpc.declare({
     object: 'luci.bandix',
-    method: 'set_rate_limit',
+    method: 'setRateLimit',
     params: ['mac', 'wide_tx_rate_limit', 'wide_rx_rate_limit'],
-    expect: {}
+    expect: { success: true }
 });
 
 return view.extend({
@@ -829,15 +829,20 @@ return view.extend({
                 }
             }
 
+            console.log("mac", currentDevice.mac)
+            console.log("uploadLimit", uploadLimit)
+            console.log("downloadLimit", downloadLimit)
+
             // 调用API设置限速
-            callSetRateLimit({
-                mac: currentDevice.mac,
-                wide_tx_rate_limit: uploadLimit,
-                wide_rx_rate_limit: downloadLimit
-            }).then(function (result) {
+            callSetRateLimit(
+                currentDevice.mac,
+                uploadLimit,
+                downloadLimit
+            ).then(function (result) {
                 // 恢复按钮状态
                 saveButton.innerHTML = originalText;
                 saveButton.classList.remove('btn-loading');
+                console.log("result", result)
 
                 if (result && result.success === true) {
                     ui.addNotification(null, E('p', {}, getTranslation('设置成功', language)), 'info');

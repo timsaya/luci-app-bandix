@@ -3,241 +3,317 @@
 
 . /usr/share/libubox/jshn.sh
 
-case "$1" in
-list)
+readonly BANDIX_API_BASE="http://127.0.0.1:8686"
+readonly BANDIX_DEVICES_API="$BANDIX_API_BASE/api/devices"
+readonly BANDIX_LIMIT_API="$BANDIX_API_BASE/api/limit"
+readonly DHCP_LEASES_FILE="/tmp/dhcp.leases"
+
+# 通用函数：创建简单的JSON响应
+make_value() {
 	json_init
-	json_add_object "status"
-	json_add_object "set_rate_limit"
-	json_close_object
+	json_add_string "$1" "$2"
 	json_dump
-	;;
-call)
-	case "$2" in
-	status)
-		# 调用bandix的API获取流量信息
-		# 使用curl或者wget请求API
+	json_cleanup
+}
 
-		# 获取bandix提供的数据
-		api_result=$(curl -s http://127.0.0.1:8686/api/devices 2>/dev/null)
+# 通用函数：创建错误响应
+make_error() {
+	json_init
+	json_add_boolean "success" 0
+	json_add_string "error" "$1"
+	json_dump
+	json_cleanup
+}
 
-		# 检查API调用是否成功
-		if [ $? -eq 0 ] && [ -n "$api_result" ]; then
-			# 从原始API结果加载JSON
-			if ! json_load "$api_result"; then
-				# JSON解析失败
-				json_init
-				json_add_object "status"
-				json_add_boolean "success" 0
-				json_add_string "error" "Invalid JSON response from bandix service"
-				json_close_object
-				json_add_array "devices"
-				json_close_array
-				json_dump
-				exit 0
-			fi
+# 通用函数：创建成功响应
+make_success() {
+	json_init
+	json_add_boolean "success" 1
+	[ -n "$1" ] && json_add_string "message" "$1"
+	json_dump
+	json_cleanup
+}
 
-			# 提取设备数组
-			if ! json_select "devices"; then
-				# devices字段不存在
-				json_init
-				json_add_object "status"
-				json_add_boolean "success" 0
-				json_add_string "error" "No devices field in API response"
-				json_close_object
-				json_add_array "devices"
-				json_close_array
-				json_dump
-				exit 0
-			fi
-			
-			json_get_keys device_indexes
-
-			# 创建临时文件来存储修改后的JSON
-			tmp_json=$(mktemp)
-			
-			# 设置清理函数
-			trap 'rm -f "$tmp_json" 2>/dev/null' EXIT
-
-			# 开始构建新的JSON
-			echo '{' >"$tmp_json"
-			echo '  "devices": [' >>"$tmp_json"
-
-			# 标记是否是第一个设备
-			first_device=1
-
-			# 检查是否有设备数据
-			if [ -z "$device_indexes" ]; then
-				# 没有设备数据，返回空数组
-				echo >>"$tmp_json"
-				echo '  ]' >>"$tmp_json"
-				echo '}' >>"$tmp_json"
-				cat "$tmp_json"
-				exit 0
-			fi
-
-			# 遍历每个设备
-			for idx in $device_indexes; do
-				json_select "$idx"
-
-				# 获取设备信息
-				json_get_var mac mac
-				json_get_var ip ip
-				json_get_var hostname hostname
-				json_get_var total_rx_bytes total_rx_bytes
-				json_get_var total_tx_bytes total_tx_bytes
-				json_get_var total_rx_rate total_rx_rate
-				json_get_var total_tx_rate total_tx_rate
-				json_get_var local_rx_bytes local_rx_bytes
-				json_get_var local_tx_bytes local_tx_bytes
-				json_get_var local_rx_rate local_rx_rate
-				json_get_var local_tx_rate local_tx_rate
-				json_get_var wide_rx_bytes wide_rx_bytes
-				json_get_var wide_tx_bytes wide_tx_bytes
-				json_get_var wide_rx_rate wide_rx_rate
-				json_get_var wide_tx_rate wide_tx_rate
-				json_get_var wide_rx_rate_limit wide_rx_rate_limit
-				json_get_var wide_tx_rate_limit wide_tx_rate_limit
-
-				# 标准化MAC地址格式以便匹配
-				mac_lower=$(echo "$mac" | tr 'A-Z' 'a-z')
-
-				# 从DHCP租约文件中查找对应的主机名
-				dhcp_hostname=""
-				if [ -f "/tmp/dhcp.leases" ]; then
-					while IFS=' ' read -r lease_time lease_mac lease_ip lease_hostname lease_id; do
-						lease_mac_lower=$(echo "$lease_mac" | tr 'A-Z' 'a-z')
-						if [ "$lease_mac_lower" = "$mac_lower" ]; then
-							[ "$lease_hostname" != "*" ] && dhcp_hostname="$lease_hostname"
-							break
-						fi
-					done </tmp/dhcp.leases
-				fi
-
-				# 如果找到DHCP租约中的主机名，则替换API返回的主机名
-				if [ -n "$dhcp_hostname" ]; then
-					hostname="$dhcp_hostname"
-				fi
-
-				# 添加逗号分隔符（除了第一个设备）
-				if [ "$first_device" -eq 1 ]; then
-					first_device=0
-				else
-					echo ',' >>"$tmp_json"
-				fi
-
-				# 转义hostname中的特殊字符
-				hostname_escaped=$(echo "$hostname" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\n/\\n/g; s/\r/\\r/g; s/\t/\\t/g')
-				
-				# 写入设备信息到JSON
-				cat >>"$tmp_json" <<EOF
-
-				
-				{
-				"mac": "$mac",
-				"ip": "$ip",
-				"hostname": "$hostname_escaped",
-				"total_rx_bytes": ${total_rx_bytes:-0},
-				"total_tx_bytes": ${total_tx_bytes:-0},
-				"total_rx_rate": ${total_rx_rate:-0},
-				"total_tx_rate": ${total_tx_rate:-0},
-				"local_rx_bytes": ${local_rx_bytes:-0},
-				"local_tx_bytes": ${local_tx_bytes:-0},
-				"local_rx_rate": ${local_rx_rate:-0},
-				"local_tx_rate": ${local_tx_rate:-0},
-				"wide_rx_bytes": ${wide_rx_bytes:-0},
-				"wide_tx_bytes": ${wide_tx_bytes:-0},
-				"wide_rx_rate": ${wide_rx_rate:-0},
-				"wide_tx_rate": ${wide_tx_rate:-0},
-				"wide_rx_rate_limit": ${wide_rx_rate_limit:-0},
-				"wide_tx_rate_limit": ${wide_tx_rate_limit:-0}
-				}
-EOF
-
-				# 返回到设备数组
-				json_select ..
-			done
-
-			# 完成JSON结构
-			echo >>"$tmp_json"
-			echo '  ]' >>"$tmp_json"
-			echo '}' >>"$tmp_json"
-
-			# 输出最终结果
-			cat "$tmp_json"
-		else
-			# API调用失败，返回空数据结构
-			json_init
-			json_add_object "status"
-			json_add_boolean "success" 0
-			json_add_string "error" "Failed to connect to bandix service"
-			json_close_object
-			json_add_array "devices"
-			json_close_array
-			json_dump
-		fi
-		;;
-	set_rate_limit)
-		# 设置设备限速
-		# 参数: mac, wide_tx_rate_limit, wide_rx_rate_limit
-		
-		# 获取参数
-		if ! json_load "$3"; then
-			json_init
-			json_add_boolean "success" 0
-			json_add_string "error" "Invalid input parameters"
-			json_dump
-			exit 0
-		fi
-		
-		json_get_var mac mac
-		json_get_var wide_tx_rate_limit wide_tx_rate_limit
-		json_get_var wide_rx_rate_limit wide_rx_rate_limit
-		
-		# 验证参数
-		if [ -z "$mac" ]; then
-			json_init
-			json_add_boolean "success" 0
-			json_add_string "error" "MAC address is required"
-			json_dump
-			exit 0
-		fi
-		
-		# 调用bandix API设置限速
-		# 转义MAC地址中的特殊字符
-		mac_escaped=$(echo "$mac" | sed 's/\\/\\\\/g; s/"/\\"/g')
-		
-		# 构建请求数据
-		request_data="{\"mac\":\"$mac_escaped\",\"wide_tx_rate_limit\":${wide_tx_rate_limit:-0},\"wide_rx_rate_limit\":${wide_rx_rate_limit:-0}}"
-		
-
-		# 发送请求到bandix API
-		response=$(curl -s -X POST -H "Content-Type: application/json" -d "$request_data" http://127.0.0.1:8686/api/limit 2>/dev/null)
+# 获取DHCP主机名
+get_dhcp_hostname() {
+	local mac="$1"
+	local mac_lower=$(echo "$mac" | tr 'A-Z' 'a-z')
+	local dhcp_hostname=""
 	
-
-
-		if [ $? -eq 0 ] && [ -n "$response" ]; then
-			# 检查API响应是否包含success状态
-			if echo "$response" | grep -q '"status":\s*"success"'; then
-				# 返回成功响应
-				json_init
-				json_add_boolean "success" 1
-				json_add_string "message" "Rate limit set successfully"
-				json_dump
-			else
-				# API返回了响应但不是success状态
-				json_init
-				json_add_boolean "success" 0
-				json_add_string "error" "API returned error response"
-				json_add_string "response" "$response"
-				json_dump
+	if [ -f "$DHCP_LEASES_FILE" ]; then
+		while IFS=' ' read -r lease_time lease_mac lease_ip lease_hostname lease_id; do
+			lease_mac_lower=$(echo "$lease_mac" | tr 'A-Z' 'a-z')
+			if [ "$lease_mac_lower" = "$mac_lower" ]; then
+				[ "$lease_hostname" != "*" ] && dhcp_hostname="$lease_hostname"
+				break
 			fi
+		done <"$DHCP_LEASES_FILE"
+	fi
+	
+	echo "$dhcp_hostname"
+}
+
+# 转义JSON字符串
+escape_json_string() {
+	echo "$1" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\n/\\n/g; s/\r/\\r/g; s/\t/\\t/g'
+}
+
+# 获取设备状态
+get_device_status() {
+	local api_result=$(curl -s "$BANDIX_DEVICES_API" 2>/dev/null)
+	
+	# 检查API调用是否成功
+	if [ $? -ne 0 ] || [ -z "$api_result" ]; then
+		json_init
+		json_add_object "status"
+		json_add_boolean "success" 0
+		json_add_string "error" "Failed to connect to bandix service"
+		json_close_object
+		json_add_array "devices"
+		json_close_array
+		json_dump
+		json_cleanup
+		return
+	fi
+	
+	# 从原始API结果加载JSON
+	if ! json_load "$api_result"; then
+		json_init
+		json_add_object "status"
+		json_add_boolean "success" 0
+		json_add_string "error" "Invalid JSON response from bandix service"
+		json_close_object
+		json_add_array "devices"
+		json_close_array
+		json_dump
+		json_cleanup
+		return
+	fi
+	
+	# 提取设备数组
+	if ! json_select "devices"; then
+		json_init
+		json_add_object "status"
+		json_add_boolean "success" 0
+		json_add_string "error" "No devices field in API response"
+		json_close_object
+		json_add_array "devices"
+		json_close_array
+		json_dump
+		json_cleanup
+		return
+	fi
+	
+	json_get_keys device_indexes
+	
+	# 创建临时文件来存储修改后的JSON
+	local tmp_json=$(mktemp)
+	
+	# 设置清理函数
+	trap 'rm -f "$tmp_json" 2>/dev/null' EXIT
+	
+	# 开始构建新的JSON
+	echo '{' >"$tmp_json"
+	echo '  "devices": [' >>"$tmp_json"
+	
+	# 标记是否是第一个设备
+	local first_device=1
+	
+	# 检查是否有设备数据
+	if [ -z "$device_indexes" ]; then
+		# 没有设备数据，返回空数组
+		echo >>"$tmp_json"
+		echo '  ]' >>"$tmp_json"
+		echo '}' >>"$tmp_json"
+		cat "$tmp_json"
+		return
+	fi
+	
+	# 遍历每个设备
+	for idx in $device_indexes; do
+		json_select "$idx"
+		
+		# 获取设备信息
+		json_get_var mac mac
+		json_get_var ip ip
+		json_get_var hostname hostname
+		json_get_var total_rx_bytes total_rx_bytes
+		json_get_var total_tx_bytes total_tx_bytes
+		json_get_var total_rx_rate total_rx_rate
+		json_get_var total_tx_rate total_tx_rate
+		json_get_var local_rx_bytes local_rx_bytes
+		json_get_var local_tx_bytes local_tx_bytes
+		json_get_var local_rx_rate local_rx_rate
+		json_get_var local_tx_rate local_tx_rate
+		json_get_var wide_rx_bytes wide_rx_bytes
+		json_get_var wide_tx_bytes wide_tx_bytes
+		json_get_var wide_rx_rate wide_rx_rate
+		json_get_var wide_tx_rate wide_tx_rate
+		json_get_var wide_rx_rate_limit wide_rx_rate_limit
+		json_get_var wide_tx_rate_limit wide_tx_rate_limit
+		
+		# 从DHCP租约文件中查找对应的主机名
+		local dhcp_hostname=$(get_dhcp_hostname "$mac")
+		
+		# 如果找到DHCP租约中的主机名，则替换API返回的主机名
+		if [ -n "$dhcp_hostname" ]; then
+			hostname="$dhcp_hostname"
+		fi
+		
+		# 添加逗号分隔符（除了第一个设备）
+		if [ "$first_device" -eq 1 ]; then
+			first_device=0
 		else
+			echo ',' >>"$tmp_json"
+		fi
+		
+		# 转义hostname中的特殊字符
+		local hostname_escaped=$(escape_json_string "$hostname")
+		
+		# 写入设备信息到JSON
+		cat >>"$tmp_json" <<EOF
+		{
+			"mac": "$mac",
+			"ip": "$ip",
+			"hostname": "$hostname_escaped",
+			"total_rx_bytes": ${total_rx_bytes:-0},
+			"total_tx_bytes": ${total_tx_bytes:-0},
+			"total_rx_rate": ${total_rx_rate:-0},
+			"total_tx_rate": ${total_tx_rate:-0},
+			"local_rx_bytes": ${local_rx_bytes:-0},
+			"local_tx_bytes": ${local_tx_bytes:-0},
+			"local_rx_rate": ${local_rx_rate:-0},
+			"local_tx_rate": ${local_tx_rate:-0},
+			"wide_rx_bytes": ${wide_rx_bytes:-0},
+			"wide_tx_bytes": ${wide_tx_bytes:-0},
+			"wide_rx_rate": ${wide_rx_rate:-0},
+			"wide_tx_rate": ${wide_tx_rate:-0},
+			"wide_rx_rate_limit": ${wide_rx_rate_limit:-0},
+			"wide_tx_rate_limit": ${wide_tx_rate_limit:-0}
+		}
+EOF
+		
+		# 返回到设备数组
+		json_select ..
+	done
+	
+	# 完成JSON结构
+	echo >>"$tmp_json"
+	echo '  ]' >>"$tmp_json"
+	echo '}' >>"$tmp_json"
+	
+	# 输出最终结果
+	cat "$tmp_json"
+}
+
+# 设置设备限速
+set_device_rate_limit() {
+	local mac="$1"
+	local wide_tx_rate_limit="$2"
+	local wide_rx_rate_limit="$3"
+
+	logger "luci.bandix: set_device_rate_limit 参数: mac=$mac tx=$wide_tx_rate_limit rx=$wide_rx_rate_limit"
+	
+	# 验证参数
+	if [ -z "$mac" ]; then
+		make_error "MAC address is required"
+		return
+	fi
+	
+	# 转义MAC地址中的特殊字符
+	local mac_escaped=$(escape_json_string "$mac")
+	
+	# 构建请求数据
+	local request_data="{
+		\"mac\": \"$mac\",
+		\"wide_tx_rate_limit\": $wide_tx_rate_limit,
+		\"wide_rx_rate_limit\": $wide_rx_rate_limit
+	}"
+	
+	# 记录请求数据（用于调试）
+	logger "luci.bandix: request_data=$request_data"
+	
+	# 发送请求到bandix API
+	local response=$(curl -s -X POST -H "Content-Type: application/json" -d "$request_data" "$BANDIX_LIMIT_API" 2>/dev/null)
+	
+	# 把响应写入文件（用于调试）
+	echo "$response" > /tmp/luci.bandix.response
+	logger "luci.bandix: API response=$response"
+	
+	if [ $? -eq 0 ] && [ -n "$response" ]; then
+		# 检查API响应是否包含success状态
+		if echo "$response" | grep -q '"status":\s*"success"'; then
+			make_success "Rate limit set successfully"
+		else
+			# API返回了响应但不是success状态
 			json_init
 			json_add_boolean "success" 0
-			json_add_string "error" "Failed to set rate limit"
+			json_add_string "error" "API returned error response"
+			json_add_string "response" "$response"
 			json_dump
+			json_cleanup
 		fi
+	else
+		make_error "Failed to set rate limit"
+	fi
+}
+
+case "$1" in
+	list)
+		json_init
+		json_add_object "getStatus"
+		json_close_object
+		
+		json_add_object "setRateLimit"
+		json_add_string "mac"
+		json_add_int "wide_rx_rate_limit"
+		json_add_int "wide_tx_rate_limit"
+		json_close_object
+		
+		json_dump
+		json_cleanup
 		;;
-	esac
-	;;
+	call)
+		case "$2" in
+			getStatus)
+				get_device_status
+				;;
+			setRateLimit)
+				logger "luci.bandix: setRateLimit called"
+				
+				# 从 stdin 读取 JSON 参数
+				read input
+				logger "luci.bandix: received input: $input"
+				
+				if [ -n "$input" ]; then
+					# 尝试解析数组格式的 JSON 参数 (LuCI RPC 通常使用数组格式)
+					# 参数格式: ["mac", wide_tx_rate_limit, wide_rx_rate_limit]
+					mac=$(echo "$input" | jsonfilter -e '$[0]' 2>/dev/null)
+					wide_tx_rate_limit=$(echo "$input" | jsonfilter -e '$[1]' 2>/dev/null)
+					wide_rx_rate_limit=$(echo "$input" | jsonfilter -e '$[2]' 2>/dev/null)
+					
+					# 如果数组格式解析失败，尝试对象格式
+					if [ -z "$mac" ]; then
+						mac=$(echo "$input" | jsonfilter -e '$.mac' 2>/dev/null)
+						wide_tx_rate_limit=$(echo "$input" | jsonfilter -e '$.wide_tx_rate_limit' 2>/dev/null)
+						wide_rx_rate_limit=$(echo "$input" | jsonfilter -e '$.wide_rx_rate_limit' 2>/dev/null)
+					fi
+					
+					logger "luci.bandix: parsed - mac=$mac tx=$wide_tx_rate_limit rx=$wide_rx_rate_limit"
+					
+					# 验证参数
+					if [ -n "$mac" ] && [ -n "$wide_tx_rate_limit" ] && [ -n "$wide_rx_rate_limit" ]; then
+						# 调用限速设置函数
+						set_device_rate_limit "$mac" "$wide_tx_rate_limit" "$wide_rx_rate_limit"
+					else
+						logger "luci.bandix: setRateLimit 参数缺失或无效"
+						make_error "Missing or invalid parameters"
+					fi
+				else
+					logger "luci.bandix: setRateLimit 没有接收到输入"
+					make_error "No input received"
+				fi
+				;;
+		esac
+		;;
 esac

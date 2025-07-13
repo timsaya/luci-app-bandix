@@ -3,15 +3,25 @@
 		"description": "Grant access to bandix traffic monitoring",
 		"read": {
 			"ubus": {
-				"luci.bandix": [ "status" ]
+				"luci.bandix": [
+					"getStatus",
+					"setRateLimit"
+				]
 			},
-			"uci": [ "bandix" ]
+			"uci": [
+				"bandix"
+			]
 		},
 		"write": {
 			"ubus": {
-				"luci.bandix": [ "set_rate_limit" ]
+				"luci.bandix": [
+					"setRateLimit",
+					"getStatus"
+				]
 			},
-			"uci": [ "bandix" ]
+			"uci": [
+				"bandix"
+			]
 		}
 	}
-} 
+}
