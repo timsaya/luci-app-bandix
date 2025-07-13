@@ -659,39 +659,27 @@ return view.extend({
                     E('div', { 'class': 'device-summary', 'id': 'modal-device-summary' }),
                     E('div', { 'class': 'form-group' }, [
                         E('label', { 'class': 'form-label' }, getTranslation('上传限速', language)),
-                        E('select', { 'class': 'form-select', 'id': 'upload-limit-type' }, [
-                            E('option', { 'value': 'unlimited' }, getTranslation('无限制', language)),
-                            E('option', { 'value': 'custom' }, '自定义')
-                        ])
-                    ]),
-                    E('div', { 'class': 'form-group', 'id': 'upload-limit-custom', 'style': 'display: none;' }, [
-                        E('label', { 'class': 'form-label' }, '上传速度'),
                         E('div', { 'style': 'display: flex; gap: 8px;' }, [
-                            E('input', { 'type': 'number', 'class': 'form-input', 'id': 'upload-limit-value', 'min': '1', 'step': '1' }),
+                            E('input', { 'type': 'number', 'class': 'form-input', 'id': 'upload-limit-value', 'min': '0', 'step': '1', 'placeholder': '0' }),
                             E('select', { 'class': 'form-select', 'id': 'upload-limit-unit', 'style': 'width: 100px;' }, [
                                 E('option', { 'value': '1024' }, 'KB/s'),
                                 E('option', { 'value': '1048576' }, 'MB/s'),
                                 E('option', { 'value': '1073741824' }, 'GB/s')
                             ])
-                        ])
+                        ]),
+                        E('div', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-top: 4px;' }, '提示：输入 0 表示无限制')
                     ]),
                     E('div', { 'class': 'form-group' }, [
                         E('label', { 'class': 'form-label' }, getTranslation('下载限速', language)),
-                        E('select', { 'class': 'form-select', 'id': 'download-limit-type' }, [
-                            E('option', { 'value': 'unlimited' }, getTranslation('无限制', language)),
-                            E('option', { 'value': 'custom' }, '自定义')
-                        ])
-                    ]),
-                    E('div', { 'class': 'form-group', 'id': 'download-limit-custom', 'style': 'display: none;' }, [
-                        E('label', { 'class': 'form-label' }, '下载速度'),
                         E('div', { 'style': 'display: flex; gap: 8px;' }, [
-                            E('input', { 'type': 'number', 'class': 'form-input', 'id': 'download-limit-value', 'min': '1', 'step': '1' }),
+                            E('input', { 'type': 'number', 'class': 'form-input', 'id': 'download-limit-value', 'min': '0', 'step': '1', 'placeholder': '0' }),
                             E('select', { 'class': 'form-select', 'id': 'download-limit-unit', 'style': 'width: 100px;' }, [
                                 E('option', { 'value': '1024' }, 'KB/s'),
                                 E('option', { 'value': '1048576' }, 'MB/s'),
                                 E('option', { 'value': '1073741824' }, 'GB/s')
                             ])
-                        ])
+                        ]),
+                        E('div', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-top: 4px;' }, '提示：输入 0 表示无限制')
                     ])
                 ]),
                 E('div', { 'class': 'modal-footer' }, [
@@ -723,51 +711,49 @@ return view.extend({
             var uploadLimit = device.wide_tx_rate_limit || 0;
             var downloadLimit = device.wide_rx_rate_limit || 0;
 
-            var uploadType = uploadLimit > 0 ? 'custom' : 'unlimited';
-            var downloadType = downloadLimit > 0 ? 'custom' : 'unlimited';
-
-            document.getElementById('upload-limit-type').value = uploadType;
-            document.getElementById('download-limit-type').value = downloadType;
-
-            if (uploadType === 'custom') {
-                document.getElementById('upload-limit-custom').style.display = 'block';
-                var uploadValue = uploadLimit;
-                var uploadUnit = '1024';
-                if (uploadValue >= 1073741824) {
-                    uploadValue = uploadValue / 1073741824;
-                    uploadUnit = '1073741824';
-                } else if (uploadValue >= 1048576) {
-                    uploadValue = uploadValue / 1048576;
-                    uploadUnit = '1048576';
-                } else if (uploadValue >= 1024) {
-                    uploadValue = uploadValue / 1024;
-                    uploadUnit = '1024';
-                }
+            // 设置上传限速值
+            var uploadValue = uploadLimit;
+            var uploadUnit = '1024';
+            if (uploadValue === 0) {
+                document.getElementById('upload-limit-value').value = 0;
+            } else if (uploadValue >= 1073741824) {
+                uploadValue = uploadValue / 1073741824;
+                uploadUnit = '1073741824';
                 document.getElementById('upload-limit-value').value = Math.round(uploadValue);
-                document.getElementById('upload-limit-unit').value = uploadUnit;
+            } else if (uploadValue >= 1048576) {
+                uploadValue = uploadValue / 1048576;
+                uploadUnit = '1048576';
+                document.getElementById('upload-limit-value').value = Math.round(uploadValue);
+            } else if (uploadValue >= 1024) {
+                uploadValue = uploadValue / 1024;
+                uploadUnit = '1024';
+                document.getElementById('upload-limit-value').value = Math.round(uploadValue);
             } else {
-                document.getElementById('upload-limit-custom').style.display = 'none';
+                document.getElementById('upload-limit-value').value = uploadValue;
             }
+            document.getElementById('upload-limit-unit').value = uploadUnit;
 
-            if (downloadType === 'custom') {
-                document.getElementById('download-limit-custom').style.display = 'block';
-                var downloadValue = downloadLimit;
-                var downloadUnit = '1024';
-                if (downloadValue >= 1073741824) {
-                    downloadValue = downloadValue / 1073741824;
-                    downloadUnit = '1073741824';
-                } else if (downloadValue >= 1048576) {
-                    downloadValue = downloadValue / 1048576;
-                    downloadUnit = '1048576';
-                } else if (downloadValue >= 1024) {
-                    downloadValue = downloadValue / 1024;
-                    downloadUnit = '1024';
-                }
+            // 设置下载限速值
+            var downloadValue = downloadLimit;
+            var downloadUnit = '1024';
+            if (downloadValue === 0) {
+                document.getElementById('download-limit-value').value = 0;
+            } else if (downloadValue >= 1073741824) {
+                downloadValue = downloadValue / 1073741824;
+                downloadUnit = '1073741824';
                 document.getElementById('download-limit-value').value = Math.round(downloadValue);
-                document.getElementById('download-limit-unit').value = downloadUnit;
+            } else if (downloadValue >= 1048576) {
+                downloadValue = downloadValue / 1048576;
+                downloadUnit = '1048576';
+                document.getElementById('download-limit-value').value = Math.round(downloadValue);
+            } else if (downloadValue >= 1024) {
+                downloadValue = downloadValue / 1024;
+                downloadUnit = '1024';
+                document.getElementById('download-limit-value').value = Math.round(downloadValue);
             } else {
-                document.getElementById('download-limit-custom').style.display = 'none';
+                document.getElementById('download-limit-value').value = downloadValue;
             }
+            document.getElementById('download-limit-unit').value = downloadUnit;
 
             // 显示模态框并添加动画
             modal.classList.add('show');
@@ -795,38 +781,21 @@ return view.extend({
             saveButton.innerHTML = '<span class="loading-spinner"></span>' + getTranslation('保存中...', language);
             saveButton.classList.add('btn-loading');
 
-            var uploadType = document.getElementById('upload-limit-type').value;
-            var downloadType = document.getElementById('download-limit-type').value;
-
             var uploadLimit = 0;
             var downloadLimit = 0;
 
-            if (uploadType === 'custom') {
-                var uploadValue = parseInt(document.getElementById('upload-limit-value').value);
-                var uploadUnit = parseInt(document.getElementById('upload-limit-unit').value);
-                if (uploadValue > 0) {
-                    uploadLimit = uploadValue * uploadUnit;
-                } else {
-                    ui.addNotification(null, E('p', {}, getTranslation('速度值必须大于0', language)), 'error');
-                    // 恢复按钮状态
-                    saveButton.innerHTML = originalText;
-                    saveButton.classList.remove('btn-loading');
-                    return;
-                }
+            // 获取上传限速值
+            var uploadValue = parseInt(document.getElementById('upload-limit-value').value) || 0;
+            var uploadUnit = parseInt(document.getElementById('upload-limit-unit').value);
+            if (uploadValue > 0) {
+                uploadLimit = uploadValue * uploadUnit;
             }
 
-            if (downloadType === 'custom') {
-                var downloadValue = parseInt(document.getElementById('download-limit-value').value);
-                var downloadUnit = parseInt(document.getElementById('download-limit-unit').value);
-                if (downloadValue > 0) {
-                    downloadLimit = downloadValue * downloadUnit;
-                } else {
-                    ui.addNotification(null, E('p', {}, getTranslation('速度值必须大于0', language)), 'error');
-                    // 恢复按钮状态
-                    saveButton.innerHTML = originalText;
-                    saveButton.classList.remove('btn-loading');
-                    return;
-                }
+            // 获取下载限速值
+            var downloadValue = parseInt(document.getElementById('download-limit-value').value) || 0;
+            var downloadUnit = parseInt(document.getElementById('download-limit-unit').value);
+            if (downloadValue > 0) {
+                downloadLimit = downloadValue * downloadUnit;
             }
 
             // console.log("mac", currentDevice.mac)
@@ -870,16 +839,7 @@ return view.extend({
             }
         });
 
-        // 限速类型切换事件
-        document.getElementById('upload-limit-type').addEventListener('change', function () {
-            var customDiv = document.getElementById('upload-limit-custom');
-            customDiv.style.display = this.value === 'custom' ? 'block' : 'none';
-        });
 
-        document.getElementById('download-limit-type').addEventListener('change', function () {
-            var customDiv = document.getElementById('download-limit-custom');
-            customDiv.style.display = this.value === 'custom' ? 'block' : 'none';
-        });
 
         // 轮询获取数据
         poll.add(function () {

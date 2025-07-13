@@ -3,7 +3,9 @@
 
 . /usr/share/libubox/jshn.sh
 
-readonly BANDIX_API_BASE="http://127.0.0.1:8686"
+# 从UCI配置读取端口号，如果读取失败则使用默认端口8686
+BANDIX_PORT=$(uci get bandix.general.port 2>/dev/null || echo "8686")
+readonly BANDIX_API_BASE="http://127.0.0.1:$BANDIX_PORT"
 readonly BANDIX_DEVICES_API="$BANDIX_API_BASE/api/devices"
 readonly BANDIX_LIMIT_API="$BANDIX_API_BASE/api/limit"
 readonly DHCP_LEASES_FILE="/tmp/dhcp.leases"
