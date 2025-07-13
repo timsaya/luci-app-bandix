@@ -43,7 +43,8 @@ const translations = {
         '设置成功': '设置成功',
         '设置失败': '设置失败',
         '请输入有效的速度值': '请输入有效的速度值',
-        '速度值必须大于0': '速度值必须大于0'
+        '速度值必须大于0': '速度值必须大于0',
+        '保存中...': '保存中...'
     },
     'en': {
         'Bandix 局域网流量监控': 'Bandix LAN Traffic Monitor',
@@ -80,7 +81,8 @@ const translations = {
         '设置成功': 'Settings saved successfully',
         '设置失败': 'Failed to save settings',
         '请输入有效的速度值': 'Please enter a valid speed value',
-        '速度值必须大于0': 'Speed value must be greater than 0'
+        '速度值必须大于0': 'Speed value must be greater than 0',
+        '保存中...': 'Saving...'
     }
 };
 
@@ -384,14 +386,9 @@ return view.extend({
                 border-radius: 6px;
                 padding: 8px 12px;
                 cursor: pointer;
-                transition: all 0.2s;
                 font-size: 0.875rem;
             }
             
-            .action-button:hover {
-                background-color: #e5e7eb;
-                border-color: #9ca3af;
-            }
             
             .loading {
                 text-align: center;
@@ -443,11 +440,20 @@ return view.extend({
                 left: 0;
                 right: 0;
                 bottom: 0;
-                background-color: rgba(0, 0, 0, 0.5);
+                background-color: rgba(0, 0, 0, 0);
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 z-index: 1000;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            
+            .modal-overlay.show {
+                background-color: rgba(0, 0, 0, 0.5);
+                opacity: 1;
+                visibility: visible;
             }
             
             .modal {
@@ -458,6 +464,14 @@ return view.extend({
                 width: 90%;
                 max-height: 90vh;
                 overflow-y: auto;
+                transform: scale(0.9) translateY(20px);
+                opacity: 0;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            
+            .modal-overlay.show .modal {
+                transform: scale(1) translateY(0);
+                opacity: 1;
             }
             
             .modal-header {
@@ -502,14 +516,16 @@ return view.extend({
                 border: 1px solid #d1d5db;
                 border-radius: 6px;
                 font-size: 0.875rem;
-                transition: border-color 0.2s;
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
                 box-sizing: border-box;
+                transform: translateY(0);
             }
             
             .form-input:focus {
                 outline: none;
                 border-color: #3b82f6;
                 box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+                transform: translateY(-1px);
             }
             
             .form-select {
@@ -519,14 +535,16 @@ return view.extend({
                 border-radius: 6px;
                 font-size: 0.875rem;
                 background-color: white;
-                transition: border-color 0.2s;
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
                 box-sizing: border-box;
+                transform: translateY(0);
             }
             
             .form-select:focus {
                 outline: none;
                 border-color: #3b82f6;
                 box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+                transform: translateY(-1px);
             }
             
             .btn {
@@ -535,8 +553,9 @@ return view.extend({
                 font-size: 0.875rem;
                 font-weight: 500;
                 cursor: pointer;
-                transition: all 0.2s;
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
                 border: none;
+                transform: translateY(0);
             }
             
             .btn-primary {
@@ -546,6 +565,8 @@ return view.extend({
             
             .btn-primary:hover {
                 background-color: #2563eb;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
             }
             
             .btn-secondary {
@@ -556,6 +577,8 @@ return view.extend({
             
             .btn-secondary:hover {
                 background-color: #e5e7eb;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             }
             
             .device-summary {
@@ -575,6 +598,27 @@ return view.extend({
             .device-summary-details {
                 color: #6b7280;
                 font-size: 0.875rem;
+            }
+            
+            /* 加载动画 */
+            .loading-spinner {
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                border: 2px solid #f3f4f6;
+                border-radius: 50%;
+                border-top-color: #3b82f6;
+                animation: spin 1s ease-in-out infinite;
+                margin-right: 8px;
+            }
+            
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+            
+            .btn-loading {
+                opacity: 0.7;
+                pointer-events: none;
             }
         `);
 
@@ -605,7 +649,7 @@ return view.extend({
         ]);
 
         // 创建限速设置模态框
-        var modal = E('div', { 'class': 'modal-overlay', 'id': 'rate-limit-modal', 'style': 'display: none;' }, [
+        var modal = E('div', { 'class': 'modal-overlay', 'id': 'rate-limit-modal' }, [
             E('div', { 'class': 'modal' }, [
                 E('div', { 'class': 'modal-header' }, [
                     E('h3', { 'class': 'modal-title' }, getTranslation('设置限速', language))
@@ -724,18 +768,31 @@ return view.extend({
                 document.getElementById('download-limit-custom').style.display = 'none';
             }
             
-            modal.style.display = 'flex';
+            // 显示模态框并添加动画
+            modal.classList.add('show');
         }
 
         // 隐藏模态框
         function hideRateLimitModal() {
-            document.getElementById('rate-limit-modal').style.display = 'none';
-            currentDevice = null;
+            var modal = document.getElementById('rate-limit-modal');
+            modal.classList.remove('show');
+            
+            // 等待动画完成后清理
+            setTimeout(function() {
+                currentDevice = null;
+            }, 300);
         }
 
         // 保存限速设置
         function saveRateLimit() {
             if (!currentDevice) return;
+            
+            var saveButton = document.getElementById('modal-save');
+            var originalText = saveButton.textContent;
+            
+            // 显示加载状态
+            saveButton.innerHTML = '<span class="loading-spinner"></span>' + getTranslation('保存中...', language);
+            saveButton.classList.add('btn-loading');
             
             var uploadType = document.getElementById('upload-limit-type').value;
             var downloadType = document.getElementById('download-limit-type').value;
@@ -750,6 +807,9 @@ return view.extend({
                     uploadLimit = uploadValue * uploadUnit;
                 } else {
                     ui.addNotification(null, E('p', {}, getTranslation('速度值必须大于0', language)), 'error');
+                    // 恢复按钮状态
+                    saveButton.innerHTML = originalText;
+                    saveButton.classList.remove('btn-loading');
                     return;
                 }
             }
@@ -761,6 +821,9 @@ return view.extend({
                     downloadLimit = downloadValue * downloadUnit;
                 } else {
                     ui.addNotification(null, E('p', {}, getTranslation('速度值必须大于0', language)), 'error');
+                    // 恢复按钮状态
+                    saveButton.innerHTML = originalText;
+                    saveButton.classList.remove('btn-loading');
                     return;
                 }
             }
@@ -771,6 +834,10 @@ return view.extend({
                 upload_limit: uploadLimit,
                 download_limit: downloadLimit
             }).then(function(result) {
+                // 恢复按钮状态
+                saveButton.innerHTML = originalText;
+                saveButton.classList.remove('btn-loading');
+                
                 if (result && result.success !== false) {
                     ui.addNotification(null, E('p', {}, getTranslation('设置成功', language)), 'info');
                     hideRateLimitModal();
@@ -778,6 +845,9 @@ return view.extend({
                     ui.addNotification(null, E('p', {}, getTranslation('设置失败', language)), 'error');
                 }
             }).catch(function(error) {
+                // 恢复按钮状态
+                saveButton.innerHTML = originalText;
+                saveButton.classList.remove('btn-loading');
                 ui.addNotification(null, E('p', {}, getTranslation('设置失败', language)), 'error');
             });
         }
