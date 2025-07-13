@@ -829,9 +829,9 @@ return view.extend({
                 }
             }
 
-            console.log("mac", currentDevice.mac)
-            console.log("uploadLimit", uploadLimit)
-            console.log("downloadLimit", downloadLimit)
+            // console.log("mac", currentDevice.mac)
+            // console.log("uploadLimit", uploadLimit)
+            // console.log("downloadLimit", downloadLimit)
 
             // 调用API设置限速
             callSetRateLimit(
@@ -842,20 +842,20 @@ return view.extend({
                 // 恢复按钮状态
                 saveButton.innerHTML = originalText;
                 saveButton.classList.remove('btn-loading');
-                console.log("result", result)
+                // console.log("result", result)
 
-                if (result && result.success === true) {
-                    ui.addNotification(null, E('p', {}, getTranslation('设置成功', language)), 'info');
+                if (result === true) {
+                    // ui.addNotification(null, E('p', {}, getTranslation('设置成功', language)), 'info');
                     hideRateLimitModal();
                 } else {
-                    var errorMsg = result && result.error ? result.error : getTranslation('设置失败', language);
+                    var errorMsg = result && result.error ? result.error : getTranslation('设置失败1', language);
                     ui.addNotification(null, E('p', {}, errorMsg), 'error');
                 }
             }).catch(function (error) {
                 // 恢复按钮状态
                 saveButton.innerHTML = originalText;
                 saveButton.classList.remove('btn-loading');
-                ui.addNotification(null, E('p', {}, getTranslation('设置失败', language)), 'error');
+                ui.addNotification(null, E('p', {}, getTranslation('设置失败2', language)), 'error');
             });
         }
 
