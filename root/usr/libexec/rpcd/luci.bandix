@@ -7,6 +7,7 @@ case "$1" in
 list)
 	json_init
 	json_add_object "status"
+	json_add_object "set_rate_limit"
 	json_close_object
 	json_dump
 	;;
@@ -134,6 +135,43 @@ EOF
 			json_close_object
 			json_add_array "devices"
 			json_close_array
+			json_dump
+		fi
+		;;
+	set_rate_limit)
+		# 设置设备限速
+		# 参数: mac, upload_limit, download_limit
+		
+		# 获取参数
+		json_load "$3"
+		json_get_var mac mac
+		json_get_var upload_limit upload_limit
+		json_get_var download_limit download_limit
+		
+		# 验证参数
+		if [ -z "$mac" ]; then
+			json_init
+			json_add_boolean "success" 0
+			json_add_string "error" "MAC address is required"
+			json_dump
+			exit 0
+		fi
+		
+		# 调用bandix API设置限速
+		# 构建请求数据
+		request_data="{\"mac\":\"$mac\",\"upload_limit\":${upload_limit:-0},\"download_limit\":${download_limit:-0}}"
+		
+		# 发送请求到bandix API
+		response=$(wget -q -O - --post-data="$request_data" --header="Content-Type: application/json" http://127.0.0.1:8686/api/rate_limit 2>/dev/null)
+		
+		if [ $? -eq 0 ] && [ -n "$response" ]; then
+			# 返回成功响应
+			echo "$response"
+		else
+			# 返回错误响应
+			json_init
+			json_add_boolean "success" 0
+			json_add_string "error" "Failed to set rate limit"
 			json_dump
 		fi
 		;;

@@ -8,6 +8,9 @@
 			"uci": [ "bandix" ]
 		},
 		"write": {
+			"ubus": {
+				"luci.bandix": [ "set_rate_limit" ]
+			},
 			"uci": [ "bandix" ]
 		}
 	}
