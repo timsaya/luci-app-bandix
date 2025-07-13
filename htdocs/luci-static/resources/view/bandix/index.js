@@ -6,6 +6,7 @@
 'require poll';
 'use strict';
 
+
 const translations = {
     'zh-cn': {
         'Bandix 局域网流量监控': 'Bandix 局域网流量监控',
@@ -98,7 +99,7 @@ return view.extend({
 
     render: function (data) {
         var language = uci.get('bandix', 'general', 'language') || getSystemLanguage();
-        
+
         // 添加现代化样式
         var style = E('style', {}, `
             .bandix-container {
@@ -112,7 +113,7 @@ return view.extend({
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                margin-bottom: 24px;
+                margin-bottom: 12px;
             }
             
             .bandix-title {
@@ -135,8 +136,8 @@ return view.extend({
                 background-color: #fef3c7;
                 border: 1px solid #f59e0b;
                 border-radius: 8px;
-                padding: 12px;
-                margin-bottom: 24px;
+                padding: 8px;
+                margin-bottom: 12px;
                 display: flex;
                 align-items: center;
                 gap: 8px;
@@ -153,6 +154,7 @@ return view.extend({
                 box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
                 overflow: hidden;
                 margin-bottom: 24px;
+                border: 1px solid #3333331c;
             }
             
             .bandix-card-header {
@@ -174,6 +176,7 @@ return view.extend({
             .bandix-table {
                 width: 100%;
                 border-collapse: collapse;
+                table-layout: fixed;
             }
             
             .bandix-table th {
@@ -182,14 +185,41 @@ return view.extend({
                 text-align: left;
                 font-weight: 600;
                 color: #374151;
-                border-bottom: 1px solid #e5e7eb;
+                border: none;
                 font-size: 0.875rem;
             }
             
             .bandix-table td {
                 padding: 16px 20px;
-                border-bottom: 1px solid #f3f4f6;
+                border: none;
                 vertical-align: middle;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+            
+            .bandix-table th:nth-child(1),
+            .bandix-table td:nth-child(1) {
+                width: 20%;
+            }
+            
+            .bandix-table th:nth-child(2),
+            .bandix-table td:nth-child(2) {
+                width: 20%;
+            }
+            
+            .bandix-table th:nth-child(3),
+            .bandix-table td:nth-child(3) {
+                width: 20%;
+            }
+            
+            .bandix-table th:nth-child(4),
+            .bandix-table td:nth-child(4) {
+                width: 20%;
+            }
+            
+            .bandix-table th:nth-child(5),
+            .bandix-table td:nth-child(5) {
+                width: 20%;
             }
             
             .bandix-table tr:hover {
@@ -353,7 +383,7 @@ return view.extend({
                 color: #1f2937;
             }
         `);
-        
+
         document.head.appendChild(style);
 
         var view = E('div', { 'class': 'bandix-container' }, [
@@ -362,16 +392,16 @@ return view.extend({
                 E('h1', { 'class': 'bandix-title' }, getTranslation('Bandix 局域网流量监控', language)),
                 E('div', { 'class': 'bandix-badge', 'id': 'device-count' }, getTranslation('在线设备', language) + ': 0 / 0')
             ]),
-            
+
             // 警告提示
             E('div', { 'class': 'bandix-alert' }, [
                 E('span', { 'class': 'bandix-alert-icon' }, '⚠️'),
                 E('span', {}, '限速功能仅对跨网络流量生效。')
             ]),
-            
+
             // 统计卡片
             E('div', { 'class': 'stats-grid', 'id': 'stats-grid' }),
-            
+
             // 主要内容卡片
             E('div', { 'class': 'bandix-card' }, [
                 E('div', { 'id': 'traffic-status' }, [
@@ -421,26 +451,18 @@ return view.extend({
                         E('span', { 'style': 'color: #3b82f6;' }, '📶'),
                         '局域网流量'
                     ]),
-                    E('div', { 'style': 'margin-top: 12px;' }, [
-                        // 上传速度和流量
-                        E('div', { 'style': 'margin-bottom: 8px;' }, [
-                            E('div', { 'style': 'display: flex; justify-content: space-between; align-items: center;' }, [
-                                E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
-                                    E('span', { 'style': 'color: #ef4444; font-size: 0.75rem;' }, '↑'),
-                                    E('span', { 'style': 'color: #3b82f6; font-weight: 600;' }, formatByterate(totalLanSpeedUp))
-                                ]),
-                                E('span', { 'style': 'color: #6b7280; font-size: 0.75rem;' }, formatSize(totalLanUp))
-                            ])
+                    E('div', { 'style': 'margin-top: 12px; display: flex; flex-direction: column; gap: 8px;' }, [
+                        // 上传行
+                        E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
+                            E('span', { 'style': 'color: #ef4444; font-size: 0.75rem; font-weight: bold;' }, '↑'),
+                            E('span', { 'style': 'color: #3b82f6; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalLanSpeedUp)),
+                            E('span', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-left: 4px;' }, '(' + formatSize(totalLanUp) + ')')
                         ]),
-                        // 下载速度和流量
-                        E('div', {}, [
-                            E('div', { 'style': 'display: flex; justify-content: space-between; align-items: center;' }, [
-                                E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
-                                    E('span', { 'style': 'color: #22c55e; font-size: 0.75rem;' }, '↓'),
-                                    E('span', { 'style': 'color: #3b82f6; font-weight: 600;' }, formatByterate(totalLanSpeedDown))
-                                ]),
-                                E('span', { 'style': 'color: #6b7280; font-size: 0.75rem;' }, formatSize(totalLanDown))
-                            ])
+                        // 下载行
+                        E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
+                            E('span', { 'style': 'color: #22c55e; font-size: 0.75rem; font-weight: bold;' }, '↓'),
+                            E('span', { 'style': 'color: #3b82f6; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalLanSpeedDown)),
+                            E('span', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-left: 4px;' }, '(' + formatSize(totalLanDown) + ')')
                         ])
                     ])
                 ]));
@@ -451,26 +473,18 @@ return view.extend({
                         E('span', { 'style': 'color: #22c55e;' }, '🌐'),
                         '跨网络流量'
                     ]),
-                    E('div', { 'style': 'margin-top: 12px;' }, [
-                        // 上传速度和流量
-                        E('div', { 'style': 'margin-bottom: 8px;' }, [
-                            E('div', { 'style': 'display: flex; justify-content: space-between; align-items: center;' }, [
-                                E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
-                                    E('span', { 'style': 'color: #ef4444; font-size: 0.75rem;' }, '↑'),
-                                    E('span', { 'style': 'color: #22c55e; font-weight: 600;' }, formatByterate(totalWanSpeedUp))
-                                ]),
-                                E('span', { 'style': 'color: #6b7280; font-size: 0.75rem;' }, formatSize(totalWanUp))
-                            ])
+                    E('div', { 'style': 'margin-top: 12px; display: flex; flex-direction: column; gap: 8px;' }, [
+                        // 上传行
+                        E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
+                            E('span', { 'style': 'color: #ef4444; font-size: 0.75rem; font-weight: bold;' }, '↑'),
+                            E('span', { 'style': 'color: #22c55e; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalWanSpeedUp)),
+                            E('span', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-left: 4px;' }, '(' + formatSize(totalWanUp) + ')')
                         ]),
-                        // 下载速度和流量
-                        E('div', {}, [
-                            E('div', { 'style': 'display: flex; justify-content: space-between; align-items: center;' }, [
-                                E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
-                                    E('span', { 'style': 'color: #22c55e; font-size: 0.75rem;' }, '↓'),
-                                    E('span', { 'style': 'color: #22c55e; font-weight: 600;' }, formatByterate(totalWanSpeedDown))
-                                ]),
-                                E('span', { 'style': 'color: #6b7280; font-size: 0.75rem;' }, formatSize(totalWanDown))
-                            ])
+                        // 下载行
+                        E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
+                            E('span', { 'style': 'color: #22c55e; font-size: 0.75rem; font-weight: bold;' }, '↓'),
+                            E('span', { 'style': 'color: #22c55e; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalWanSpeedDown)),
+                            E('span', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-left: 4px;' }, '(' + formatSize(totalWanDown) + ')')
                         ])
                     ])
                 ]));
@@ -481,26 +495,18 @@ return view.extend({
                         E('span', {}, '⚡'),
                         '实时总流量'
                     ]),
-                    E('div', { 'style': 'margin-top: 12px;' }, [
-                        // 上传速度和流量
-                        E('div', { 'style': 'margin-bottom: 8px;' }, [
-                            E('div', { 'style': 'display: flex; justify-content: space-between; align-items: center;' }, [
-                                E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
-                                    E('span', { 'style': 'color: #ef4444; font-size: 0.75rem;' }, '↑'),
-                                    E('span', { 'style': 'color: #1f2937; font-weight: 600;' }, formatByterate(totalSpeedUp))
-                                ]),
-                                E('span', { 'style': 'color: #6b7280; font-size: 0.75rem;' }, formatSize(totalUp))
-                            ])
+                    E('div', { 'style': 'margin-top: 12px; display: flex; flex-direction: column; gap: 8px;' }, [
+                        // 上传行
+                        E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
+                            E('span', { 'style': 'color: #ef4444; font-size: 0.75rem; font-weight: bold;' }, '↑'),
+                            E('span', { 'style': 'color: #1f2937; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalSpeedUp)),
+                            E('span', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-left: 4px;' }, '(' + formatSize(totalUp) + ')')
                         ]),
-                        // 下载速度和流量
-                        E('div', {}, [
-                            E('div', { 'style': 'display: flex; justify-content: space-between; align-items: center;' }, [
-                                E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
-                                    E('span', { 'style': 'color: #22c55e; font-size: 0.75rem;' }, '↓'),
-                                    E('span', { 'style': 'color: #1f2937; font-weight: 600;' }, formatByterate(totalSpeedDown))
-                                ]),
-                                E('span', { 'style': 'color: #6b7280; font-size: 0.75rem;' }, formatSize(totalDown))
-                            ])
+                        // 下载行
+                        E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
+                            E('span', { 'style': 'color: #22c55e; font-size: 0.75rem; font-weight: bold;' }, '↓'),
+                            E('span', { 'style': 'color: #1f2937; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalSpeedDown)),
+                            E('span', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-left: 4px;' }, '(' + formatSize(totalDown) + ')')
                         ])
                     ])
                 ]));
@@ -530,13 +536,13 @@ return view.extend({
                 // 填充数据
                 stats.devices.forEach(function (device) {
                     var isOnline = device.online !== false;
-                    
+
                     var row = E('tr', {}, [
                         // 设备信息
                         E('td', {}, [
                             E('div', { 'class': 'device-info' }, [
                                 E('div', { 'class': 'device-name' }, [
-                                    E('span', { 
+                                    E('span', {
                                         'class': 'device-status ' + (isOnline ? 'online' : 'offline')
                                     }),
                                     device.hostname || '-'
@@ -545,7 +551,7 @@ return view.extend({
                                 E('div', { 'class': 'device-mac' }, device.mac)
                             ])
                         ]),
-                        
+
                         // 局域网流量
                         E('td', {}, [
                             E('div', { 'class': 'traffic-info' }, [
@@ -561,7 +567,7 @@ return view.extend({
                                 ])
                             ])
                         ]),
-                        
+
                         // 跨网络流量
                         E('td', {}, [
                             E('div', { 'class': 'traffic-info' }, [
@@ -577,7 +583,7 @@ return view.extend({
                                 ])
                             ])
                         ]),
-                        
+
                         // 限速设置
                         E('td', {}, [
                             E('div', { 'class': 'limit-info' }, [
@@ -591,16 +597,16 @@ return view.extend({
                                 ]),
                             ])
                         ]),
-                        
+
                         // 操作
                         E('td', {}, [
-                            E('button', { 
+                            E('button', {
                                 'class': 'action-button',
                                 'title': getTranslation('设置', language)
                             }, '⚙️')
                         ])
                     ]);
-                    
+
                     tbody.appendChild(row);
                 });
 
