@@ -25,7 +25,19 @@ LuCI Bandix is developed based on the LuCI framework, offering network traffic m
 - Seamless integration with OpenWrt system
 - Automatically obtain the host name from DHCP/DNS (Static Leases)
 - High-performance implementation based on Rust eBPF
+- Support for LAN/WAN speed monitoring
+- Support for WAN speed limitation
 
+## Version Dependencies
+
+The following table shows the version dependency relationship between luci-app-bandix and openwrt-bandix:
+
+| luci-app-bandix version | Required openwrt-bandix version |
+|------------------------|--------------------------------|
+| 0.2.x                  | 0.2.x                          |
+| 0.3.x                  | 0.3.x                          |
+
+Please ensure you install matching versions to ensure compatibility and proper functionality.
 
 ## Installation
 

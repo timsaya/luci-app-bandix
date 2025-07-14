@@ -24,6 +24,20 @@ LuCI Bandix 基于 LuCI 框架开发，为 OpenWrt 路由器提供网络流量�
 - 与 OpenWrt 系统无缝集成
 - 自动获取 DHCP/DNS 中主机名 (静态地址分配)
 - 基于 Rust eBPF 高性能实现
+- 支持 LAN/WAN 网速监控
+- 支持 WAN 网速限制
+
+
+## 版本依赖
+
+下表显示了 luci-app-bandix 和 openwrt-bandix 之间的版本依赖关系：
+
+| luci-app-bandix 版本 | 所需的 openwrt-bandix 版本 |
+|---------------------|-------------------------|
+| 0.2.x               | 0.2.x                   |
+| 0.3.x               | 0.3.x                   |
+
+请确保安装匹配的版本以确保兼容性和正常功能。
 
 ## 安装
 
