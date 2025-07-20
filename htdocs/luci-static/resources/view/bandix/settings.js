@@ -8,7 +8,6 @@
 const translations = {
 	'zh-cn': {
 		'Bandix流量监控设置': 'Bandix流量监控设置',
-		'基本设置': '基本设置',
 		'启用': '启用',
 		'启用 Bandix 流量监控服务': '启用 Bandix 流量监控服务',
 		'界面语言': '界面语言',
@@ -22,11 +21,16 @@ const translations = {
 		'网速单位': '网速单位',
 		'选择网速显示的单位格式': '选择网速显示的单位格式',
 		'字节单位 (B/s, KB/s, MB/s)': '字节单位 (B/s, KB/s, MB/s)',
-		'比特单位 (bps, Kbps, Mbps)': '比特单位 (bps, Kbps, Mbps)'
+		'比特单位 (bps, Kbps, Mbps)': '比特单位 (bps, Kbps, Mbps)',
+		'界面主题': '界面主题',
+		'选择 Bandix 流量监控的显示主题': '选择 Bandix 流量监控的显示主题',
+		'跟随系统': '跟随系统',
+		'明亮模式': '明亮模式',
+		'暗黑模式': '暗黑模式',
+		'意见反馈': '意见反馈'
 	},
 	'zh-tw': {
-		'Bandix流量监控设置': 'Bandix流量監控設置',
-		'基本设置': '基本設置',
+		'Bandix流量监控设置': 'Bandix 流量監控設置',
 		'启用': '啟用',
 		'启用 Bandix 流量监控服务': '啟用 Bandix 流量監控服務',
 		'界面语言': '界面語言',
@@ -40,11 +44,16 @@ const translations = {
 		'网速单位': '網速單位',
 		'选择网速显示的单位格式': '選擇網速顯示的單位格式',
 		'字节单位 (B/s, KB/s, MB/s)': '字節單位 (B/s, KB/s, MB/s)',
-		'比特单位 (bps, Kbps, Mbps)': '比特單位 (bps, Kbps, Mbps)'
+		'比特单位 (bps, Kbps, Mbps)': '比特單位 (bps, Kbps, Mbps)',
+		'界面主题': '介面主題',
+		'选择 Bandix 流量监控的显示主题': '選擇 Bandix 流量監控的顯示主題',
+		'跟随系统': '跟隨系統',
+		'明亮模式': '明亮模式',
+		'暗黑模式': '暗黑模式',
+		'意见反馈': '意見反饋'
 	},
 	'en': {
 		'Bandix流量监控设置': 'Bandix Traffic Monitor Settings',
-		'基本设置': 'Basic Settings',
 		'启用': 'Enable',
 		'启用 Bandix 流量监控服务': 'Enable Bandix Traffic Monitor Service',
 		'界面语言': 'Interface Language',
@@ -58,11 +67,16 @@ const translations = {
 		'网速单位': 'Speed Units',
 		'选择网速显示的单位格式': 'Select the speed display unit format',
 		'字节单位 (B/s, KB/s, MB/s)': 'Bytes Units (B/s, KB/s, MB/s)',
-		'比特单位 (bps, Kbps, Mbps)': 'Bits Units (bps, Kbps, Mbps)'
+		'比特单位 (bps, Kbps, Mbps)': 'Bits Units (bps, Kbps, Mbps)',
+		'界面主题': 'Interface Theme',
+		'选择 Bandix 流量监控的显示主题': 'Select the display theme for Bandix Traffic Monitor',
+		'跟随系统': 'Follow System',
+		'明亮模式': 'Light Mode',
+		'暗黑模式': 'Dark Mode',
+		'意见反馈': 'Feedback'
 	},
 	'fr': {
-		'Bandix流量监控设置': 'Paramètres du Moniteur de Trafic Bandix',
-		'基本设置': 'Paramètres de Base',
+		'Bandix流量监控设置': 'Paramètres de Surveillance du Trafic Bandix',
 		'启用': 'Activer',
 		'启用 Bandix 流量监控服务': 'Activer le Service de Surveillance du Trafic Bandix',
 		'界面语言': 'Langue de l\'Interface',
@@ -76,11 +90,16 @@ const translations = {
 		'网速单位': 'Unités de Vitesse',
 		'选择网速显示的单位格式': 'Sélectionner le format d\'unité d\'affichage de la vitesse',
 		'字节单位 (B/s, KB/s, MB/s)': 'Unités d\'Octets (B/s, KB/s, MB/s)',
-		'比特单位 (bps, Kbps, Mbps)': 'Unités de Bits (bps, Kbps, Mbps)'
+		'比特单位 (bps, Kbps, Mbps)': 'Unités de Bits (bps, Kbps, Mbps)',
+		'界面主题': 'Thème de l\'Interface',
+		'选择 Bandix 流量监控的显示主题': 'Sélectionner le thème d\'affichage pour le Moniteur de Trafic Bandix',
+		'跟随系统': 'Suivre le Système',
+		'明亮模式': 'Mode Clair',
+		'暗黑模式': 'Mode Sombre',
+		'意见反馈': 'Commentaires'
 	},
 	'ja': {
 		'Bandix流量监控设置': 'Bandix トラフィックモニター設定',
-		'基本设置': '基本設定',
 		'启用': '有効',
 		'启用 Bandix 流量监控服务': 'Bandix トラフィックモニターサービスを有効にする',
 		'界面语言': 'インターフェース言語',
@@ -94,11 +113,16 @@ const translations = {
 		'网速单位': '速度単位',
 		'选择网速显示的单位格式': '速度表示の単位形式を選択',
 		'字节单位 (B/s, KB/s, MB/s)': 'バイト単位 (B/s, KB/s, MB/s)',
-		'比特单位 (bps, Kbps, Mbps)': 'ビット単位 (bps, Kbps, Mbps)'
+		'比特单位 (bps, Kbps, Mbps)': 'ビット単位 (bps, Kbps, Mbps)',
+		'界面主题': 'インターフェーステーマ',
+		'选择 Bandix 流量监控的显示主题': 'Bandix トラフィックモニターの表示テーマを選択',
+		'跟随系统': 'システムに従う',
+		'明亮模式': 'ライトモード',
+		'暗黑模式': 'ダークモード',
+		'意见反馈': 'フィードバック'
 	},
 	'ru': {
 		'Bandix流量监控设置': 'Настройки Монитора Трафика Bandix',
-		'基本设置': 'Основные Настройки',
 		'启用': 'Включить',
 		'启用 Bandix 流量监控服务': 'Включить Службу Мониторинга Трафика Bandix',
 		'界面语言': 'Язык Интерфейса',
@@ -112,7 +136,13 @@ const translations = {
 		'网速单位': 'Единицы Скорости',
 		'选择网速显示的单位格式': 'Выберите формат единиц отображения скорости',
 		'字节单位 (B/s, KB/s, MB/s)': 'Единицы Байтов (B/s, KB/s, MB/s)',
-		'比特单位 (bps, Kbps, Mbps)': 'Единицы Битов (bps, Kbps, Mbps)'
+		'比特单位 (bps, Kbps, Mbps)': 'Единицы Битов (bps, Kbps, Mbps)',
+		'界面主题': 'Тема Интерфейса',
+		'选择 Bandix 流量监控的显示主题': 'Выберите тему отображения для Монитора Трафика Bandix',
+		'跟随系统': 'Следовать Системе',
+		'明亮模式': 'Светлый Режим',
+		'暗黑模式': 'Темный Режим',
+		'意见反馈': 'Обратная связь'
 	}
 };
 
@@ -122,7 +152,14 @@ function getTranslation(key, language) {
 
 // 获取系统语言并返回支持的语言代码
 function getSystemLanguage() {
-	// 获取系统语言
+	// 尝试获取 LuCI 的语言设置
+	var luciLang = uci.get('luci', 'main', 'lang');
+	
+	if (luciLang && translations[luciLang]) {
+		return luciLang;
+	}
+	
+	// 如果没有 LuCI 语言设置，尝试获取浏览器语言作为回退
 	var systemLang = document.documentElement.lang || 'en';
 	
 	// 检查是否支持该语言
@@ -134,11 +171,45 @@ function getSystemLanguage() {
 	return 'en';
 }
 
+function isDarkMode() {
+	// 首先检查用户设置的主题
+	var userTheme = uci.get('bandix', 'general', 'theme');
+	if (userTheme) {
+		if (userTheme === 'dark') {
+			return true;
+		} else if (userTheme === 'light') {
+			return false;
+		}
+		// 如果是 'auto'，继续检查系统主题
+	}
+	
+	// 获取 LuCI 主题设置
+	var mediaUrlBase = uci.get('luci', 'main', 'mediaurlbase');
+	if (mediaUrlBase && mediaUrlBase.toLowerCase().includes('dark')) {
+		return true;
+	}
+	
+	// 如果是 argon 主题，检查 argon 配置
+	if (mediaUrlBase && mediaUrlBase.toLowerCase().includes('argon')) {
+		var argonMode = uci.get('argon', '@global[0]', 'mode');
+		if (argonMode && argonMode.toLowerCase().includes('dark')) {
+			return true;
+		}
+	}
+	
+	return false;
+}
+
 return view.extend({
 	load: function () {
 		return Promise.all([
 			uci.load('bandix'),
-			uci.load('network')
+			uci.load('network'),
+			uci.load('luci'),
+			uci.load('argon').catch(function() {
+				// argon 配置可能不存在，忽略错误
+				return null;
+			})
 		]);
 	},
 
@@ -146,7 +217,112 @@ return view.extend({
 		var m, s, o;
 		var networkConfig = uci.sections('network', 'device');
 		var physicalInterfaces = [];
-		var language = uci.get('bandix', 'general', 'language') || getSystemLanguage();
+		var language = uci.get('bandix', 'general', 'language');
+		if (!language || language === 'auto') {
+			language = getSystemLanguage();
+		}
+		var darkMode = isDarkMode();
+
+		// 添加暗黑模式样式支持
+		if (darkMode) {
+			var style = E('style', {}, `
+				body, .main {
+					background-color: #0f172a !important;
+					color: #e2e8f0 !important;
+				}
+				
+				.cbi-section {
+					background-color: #1E1E1E !important;
+					
+					border-radius: 8px !important;
+				}
+				
+				.cbi-section h3 {
+					color: #f1f5f9 !important;
+					background-color: #333333 !important;
+					border-bottom: 1px solid #1E1E1E !important;
+				}
+				
+				.cbi-section-descr {
+					color: #94a3b8 !important;
+				}
+				
+				.cbi-value {
+					border-bottom: 1px solid #1E1E1E !important;
+				}
+				
+				.cbi-value-title {
+					color: #e2e8f0 !important;
+				}
+				
+				.cbi-value-description {
+					color: #94a3b8 !important;
+				}
+				
+				input[type="text"], input[type="number"], select, textarea {
+					background-color: #333333 !important;
+					
+					color: #e2e8f0 !important;
+				}
+				
+				input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
+					border-color: #3b82f6 !important;
+					box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+				}
+				
+				input[type="checkbox"] {
+					accent-color: #3b82f6 !important;
+				}
+				
+				.cbi-button, .btn {
+					background-color: #333333 !important;
+					
+					color: #e2e8f0 !important;
+				}
+				
+				.cbi-button:hover, .btn:hover {
+					background-color: #1E1E1E !important;
+				}
+				
+				.cbi-button-save {
+					background-color: #3b82f6 !important;
+					border-color: #3b82f6 !important;
+					color: white !important;
+				}
+				
+				.cbi-button-save:hover {
+					background-color: #2563eb !important;
+				}
+				
+				.cbi-section-error {
+					background-color: #7f1d1d !important;
+					border-color: #dc2626 !important;
+					color: #fca5a5 !important;
+				}
+				
+				/* 表格样式 */
+				.table {
+					background-color: #1E1E1E !important;
+					
+				}
+				
+				.table th {
+					background-color: #333333 !important;
+					color: #e2e8f0 !important;
+					border-bottom: 1px solid #1E1E1E !important;
+				}
+				
+				.table td {
+					color: #cbd5e1 !important;
+					border-bottom: 1px solid #1E1E1E !important;
+				}
+				
+				.table tr:hover {
+					background-color: #1E1E1E !important;
+				}
+			`);
+			document.head.appendChild(style);
+		}
 
 		// 从network配置中提取物理接口名称
 		if (networkConfig && networkConfig.length > 0) {
@@ -173,11 +349,10 @@ return view.extend({
 		}
 
 		// 创建表单
-		m = new form.Map('bandix', getTranslation('Bandix流量监控设置', language),
-			_('https://github.com/timsaya'));
+		m = new form.Map('bandix');
 
-		// 基本设置部分
-		s = m.section(form.NamedSection, 'general', 'general', getTranslation('基本设置', language));
+		// Bandix流量监控设置部分
+		s = m.section(form.NamedSection, 'general', 'general', getTranslation('Bandix流量监控设置', language));
 		s.addremove = false;
 
 		o = s.option(form.Flag, 'enabled', getTranslation('启用', language),
@@ -188,13 +363,14 @@ return view.extend({
 		// 添加语言选择选项
 		o = s.option(form.ListValue, 'language', getTranslation('界面语言', language),
 			getTranslation('选择 Bandix 流量监控的显示语言', language));
+		o.value('auto', getTranslation('跟随系统', language));
 		o.value('zh-cn', getTranslation('简体中文', language));
 		o.value('zh-tw', getTranslation('繁体中文', language));
 		o.value('en', 'English');
 		o.value('fr', 'Français');
 		o.value('ja', '日本語');
 		o.value('ru', 'Русский');
-		o.default = 'zh-cn';
+		o.default = 'auto';
 		o.rmempty = false;
 
 		// 添加端口设置选项
@@ -231,6 +407,22 @@ return view.extend({
 		o.value('bits', getTranslation('比特单位 (bps, Kbps, Mbps)', language));
 		o.default = 'bytes';
 		o.rmempty = false;
+
+		// 添加主题选择选项
+		o = s.option(form.ListValue, 'theme', getTranslation('界面主题', language),
+			getTranslation('选择 Bandix 流量监控的显示主题', language));
+		o.value('auto', getTranslation('跟随系统', language));
+		o.value('light', getTranslation('明亮模式', language));
+		o.value('dark', getTranslation('暗黑模式', language));
+		o.default = 'auto';
+		o.rmempty = false;
+
+		// 添加意见反馈信息
+		o = s.option(form.DummyValue, 'feedback_info', getTranslation('意见反馈', language));
+		o.href = 'https://github.com/timsaya';
+		o.cfgvalue = function() {
+			return 'https://github.com/timsaya';
+		};
 
 		return m.render();
 	}

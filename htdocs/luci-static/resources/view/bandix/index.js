@@ -261,11 +261,51 @@ function getTranslation(key, language) {
 }
 
 function getSystemLanguage() {
+    // 尝试获取 LuCI 的语言设置
+    var luciLang = uci.get('luci', 'main', 'lang');
+    
+    if (luciLang && translations[luciLang]) {
+        return luciLang;
+    }
+    
+    // 如果没有 LuCI 语言设置，尝试获取浏览器语言作为回退
     var systemLang = document.documentElement.lang || 'en';
+    
     if (translations[systemLang]) {
         return systemLang;
     }
+    
+    // 最终回退到英语
     return 'en';
+}
+
+function isDarkMode() {
+    // 首先检查用户设置的主题
+    var userTheme = uci.get('bandix', 'general', 'theme');
+    if (userTheme) {
+        if (userTheme === 'dark') {
+            return true;
+        } else if (userTheme === 'light') {
+            return false;
+        }
+        // 如果是 'auto'，继续检查系统主题
+    }
+    
+    // 获取 LuCI 主题设置
+    var mediaUrlBase = uci.get('luci', 'main', 'mediaurlbase');
+    if (mediaUrlBase && mediaUrlBase.toLowerCase().includes('dark')) {
+        return true;
+    }
+    
+    // 如果是 argon 主题，检查 argon 配置
+    if (mediaUrlBase && mediaUrlBase.toLowerCase().includes('argon')) {
+        var argonMode = uci.get('argon', '@global[0]', 'mode');
+        if (argonMode && argonMode.toLowerCase().includes('dark')) {
+            return true;
+        }
+    }
+    
+    return false;
 }
 
 function formatSize(bytes) {
@@ -352,20 +392,30 @@ var callSetRateLimit = rpc.declare({
 return view.extend({
     load: function () {
         return Promise.all([
-            uci.load('bandix')
+            uci.load('bandix'),
+            uci.load('luci'),
+            uci.load('argon').catch(function() {
+                // argon 配置可能不存在，忽略错误
+                return null;
+            })
         ]);
     },
 
     render: function (data) {
-        var language = uci.get('bandix', 'general', 'language') || getSystemLanguage();
+        var language = uci.get('bandix', 'general', 'language');
+        if (!language || language === 'auto') {
+            language = getSystemLanguage();
+        }
+        var darkMode = isDarkMode();
 
-        // 添加现代化样式
+        // 添加现代化样式，支持暗黑模式
         var style = E('style', {}, `
             .bandix-container {
                 padding: 24px;
-                background-color: #f8fafc;
+                background-color: ${darkMode ? '#1E1E1E' : '#f8fafc'};
                 min-height: 100vh;
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                color: ${darkMode ? '#e2e8f0' : '#1f2937'};
             }
             
             .bandix-header {
@@ -378,54 +428,55 @@ return view.extend({
             .bandix-title {
                 font-size: 1.5rem;
                 font-weight: 700;
-                color: #1f2937;
+                color: ${darkMode ? '#f1f5f9' : '#1f2937'};
                 margin: 0;
             }
             
             .bandix-badge {
-                background-color: #f3f4f6;
-                border: 1px solid #d1d5db;
+                background-color: ${darkMode ? '#333333' : '#f3f4f6'};
+                border: 1px solid ${darkMode ? '#252526' : '#d1d5db'};
                 border-radius: 6px;
                 padding: 4px 12px;
                 font-size: 0.875rem;
-                color: #374151;
+                color: ${darkMode ? '#e2e8f0' : '#374151'};
             }
             
             .bandix-alert {
-                background-color: #fef3c7;
-                border: 1px solid #f59e0b;
+                background-color: ${darkMode ? '#451a03' : '#fef3c7'};
+                border: 1px solid ${darkMode ? '#92400e' : '#f59e0b'};
                 border-radius: 8px;
                 padding: 8px;
                 margin-bottom: 12px;
                 display: flex;
                 align-items: center;
                 gap: 8px;
+                color: ${darkMode ? '#fbbf24' : '#92400e'};
             }
             
             .bandix-alert-icon {
-                color: #f59e0b;
+                color: ${darkMode ? '#fbbf24' : '#f59e0b'};
                 font-size: 1rem;
             }
             
             .bandix-card {
-                background-color: white;
+                background-color: ${darkMode ? '#252526' : 'white'};
                 border-radius: 12px;
-                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, ${darkMode ? '0.3' : '0.1'});
                 overflow: hidden;
                 margin-bottom: 24px;
-                border: 1px solid #3333331c;
+                border: 1px solid ${darkMode ? '#252526' : '#3333331c'};
             }
             
             .bandix-card-header {
                 padding: 20px 24px;
-                border-bottom: 1px solid #e5e7eb;
-                background-color: #fafafa;
+                border-bottom: 1px solid ${darkMode ? '#252526' : '#e5e7eb'};
+                background-color: ${darkMode ? '#333333' : '#fafafa'};
             }
             
             .bandix-card-title {
                 font-size: 1.25rem;
                 font-weight: 600;
-                color: #1f2937;
+                color: ${darkMode ? '#f1f5f9' : '#1f2937'};
                 margin: 0;
                 display: flex;
                 align-items: center;
@@ -439,11 +490,11 @@ return view.extend({
             }
             
             .bandix-table th {
-                background-color: #f9fafb;
+                background-color: ${darkMode ? '#333333' : '#f9fafb'};
                 padding: 16px 20px;
                 text-align: left;
                 font-weight: 600;
-                color: #374151;
+                color: ${darkMode ? '#e2e8f0' : '#374151'};
                 border: none;
                 font-size: 0.875rem;
             }
@@ -454,6 +505,16 @@ return view.extend({
                 vertical-align: middle;
                 word-wrap: break-word;
                 overflow-wrap: break-word;
+                color: ${darkMode ? '#cbd5e1' : 'inherit'};
+            }
+            
+            /* 斑马纹效果 - 交替行颜色 */
+            .bandix-table tbody tr:nth-child(odd) {
+                background-color: ${darkMode ? '#252526' : '#ffffff'};
+            }
+            
+            .bandix-table tbody tr:nth-child(even) {
+                background-color: ${darkMode ? '#1E1E1E' : '#f9fafb'};
             }
             
             .bandix-table th:nth-child(1),
@@ -481,9 +542,6 @@ return view.extend({
                 width: 20%;
             }
             
-            .bandix-table tr:hover {
-                background-color: #f9fafb;
-            }
             
             .device-info {
                 display: flex;
@@ -493,7 +551,7 @@ return view.extend({
             
             .device-name {
                 font-weight: 600;
-                color: #1f2937;
+                color: ${darkMode ? '#f1f5f9' : '#1f2937'};
                 display: flex;
                 align-items: center;
                 gap: 8px;
@@ -515,12 +573,12 @@ return view.extend({
             }
             
             .device-ip {
-                color: #6b7280;
+                color: ${darkMode ? '#94a3b8' : '#6b7280'};
                 font-size: 0.875rem;
             }
             
             .device-mac {
-                color: #9ca3af;
+                color: ${darkMode ? '#64748b' : '#9ca3af'};
                 font-size: 0.75rem;
             }
             
@@ -575,8 +633,8 @@ return view.extend({
             }
             
             .limit-badge {
-                background-color: #f3f4f6;
-                color: #6b7280;
+                background-color: ${darkMode ? '#333333' : '#f3f4f6'};
+                color: ${darkMode ? '#94a3b8' : '#6b7280'};
                 padding: 2px 8px;
                 border-radius: 4px;
                 font-size: 0.75rem;
@@ -585,26 +643,27 @@ return view.extend({
             }
             
             .action-button {
-                background-color: #f3f4f6;
-                border: 1px solid #d1d5db;
+                background-color: ${darkMode ? '#333333' : '#f3f4f6'};
+                border: 1px solid ${darkMode ? '#252526' : '#d1d5db'};
                 border-radius: 6px;
                 padding: 8px 12px;
                 cursor: pointer;
                 font-size: 0.875rem;
+                color: ${darkMode ? '#e2e8f0' : 'inherit'};
             }
             
             
             .loading {
                 text-align: center;
                 padding: 40px;
-                color: #6b7280;
+                color: ${darkMode ? '#94a3b8' : '#6b7280'};
                 font-style: italic;
             }
             
             .error {
                 text-align: center;
                 padding: 40px;
-                color: #ef4444;
+                color: ${darkMode ? '#f87171' : '#ef4444'};
             }
             
             .stats-grid {
@@ -615,16 +674,17 @@ return view.extend({
             }
             
             .stats-card {
-                background-color: white;
+                background-color: ${darkMode ? '#252526' : 'white'};
                 border-radius: 8px;
                 padding: 16px;
-                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, ${darkMode ? '0.3' : '0.1'});
+                border: 1px solid ${darkMode ? '#252526' : 'transparent'};
             }
             
             .stats-title {
                 font-size: 0.875rem;
                 font-weight: 600;
-                color: #374151;
+                color: ${darkMode ? '#e2e8f0' : '#374151'};
                 margin-bottom: 8px;
                 display: flex;
                 align-items: center;
@@ -634,7 +694,7 @@ return view.extend({
             .stats-value {
                 font-size: 1.25rem;
                 font-weight: 700;
-                color: #1f2937;
+                color: ${darkMode ? '#f1f5f9' : '#1f2937'};
             }
             
             /* 模态框样式 */
@@ -661,9 +721,9 @@ return view.extend({
             }
             
             .modal {
-                background-color: white;
+                background-color: ${darkMode ? '#252526' : 'white'};
                 border-radius: 12px;
-                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, ${darkMode ? '0.4' : '0.1'});
                 max-width: 500px;
                 width: 90%;
                 max-height: 90vh;
@@ -671,6 +731,7 @@ return view.extend({
                 transform: scale(0.9) translateY(20px);
                 opacity: 0;
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                border: 1px solid ${darkMode ? '#252526' : 'transparent'};
             }
             
             .modal-overlay.show .modal {
@@ -680,14 +741,14 @@ return view.extend({
             
             .modal-header {
                 padding: 24px 24px 0 24px;
-                border-bottom: 1px solid #e5e7eb;
+                border-bottom: 1px solid ${darkMode ? '#252526' : '#e5e7eb'};
                 padding-bottom: 16px;
             }
             
             .modal-title {
                 font-size: 1.25rem;
                 font-weight: 600;
-                color: #1f2937;
+                color: ${darkMode ? '#f1f5f9' : '#1f2937'};
                 margin: 0;
             }
             
@@ -709,7 +770,7 @@ return view.extend({
             .form-label {
                 display: block;
                 font-weight: 600;
-                color: #374151;
+                color: ${darkMode ? '#e2e8f0' : '#374151'};
                 margin-bottom: 8px;
                 font-size: 0.875rem;
             }
@@ -717,37 +778,40 @@ return view.extend({
             .form-input {
                 width: 100%;
                 padding: 12px;
-                border: 1px solid #d1d5db;
+                border: 1px solid ${darkMode ? '#252526' : '#d1d5db'};
                 border-radius: 6px;
                 font-size: 0.875rem;
                 transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
                 box-sizing: border-box;
                 transform: translateY(0);
+                background-color: ${darkMode ? '#333333' : 'white'};
+                color: ${darkMode ? '#e2e8f0' : 'inherit'};
             }
             
             .form-input:focus {
                 outline: none;
                 border-color: #3b82f6;
-                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, ${darkMode ? '0.2' : '0.1'});
                 transform: translateY(-1px);
             }
             
             .form-select {
                 width: 100%;
                 padding: 12px;
-                border: 1px solid #d1d5db;
+                border: 1px solid ${darkMode ? '#252526' : '#d1d5db'};
                 border-radius: 6px;
                 font-size: 0.875rem;
-                background-color: white;
+                background-color: ${darkMode ? '#333333' : 'white'};
                 transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
                 box-sizing: border-box;
                 transform: translateY(0);
+                color: ${darkMode ? '#e2e8f0' : 'inherit'};
             }
             
             .form-select:focus {
                 outline: none;
                 border-color: #3b82f6;
-                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, ${darkMode ? '0.2' : '0.1'});
                 transform: translateY(-1px);
             }
             
@@ -774,20 +838,20 @@ return view.extend({
             }
             
             .btn-secondary {
-                background-color: #f3f4f6;
-                color: #374151;
-                border: 1px solid #d1d5db;
+                background-color: ${darkMode ? '#374151' : '#f3f4f6'};
+                color: ${darkMode ? '#e2e8f0' : '#374151'};
+                border: 1px solid ${darkMode ? '#252526' : '#d1d5db'};
             }
             
             .btn-secondary:hover {
-                background-color: #e5e7eb;
+                background-color: ${darkMode ? '#252526' : '#e5e7eb'};
                 transform: translateY(-1px);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, ${darkMode ? '0.3' : '0.1'});
             }
             
             .device-summary {
-                background-color: #f9fafb;
-                border: 1px solid #e5e7eb;
+                background-color: ${darkMode ? '#333333' : '#f9fafb'};
+                border: 1px solid ${darkMode ? '#252526' : '#e5e7eb'};
                 border-radius: 6px;
                 padding: 12px;
                 margin-bottom: 16px;
@@ -795,12 +859,12 @@ return view.extend({
             
             .device-summary-name {
                 font-weight: 600;
-                color: #1f2937;
+                color: ${darkMode ? '#f1f5f9' : '#1f2937'};
                 margin-bottom: 4px;
             }
             
             .device-summary-details {
-                color: #6b7280;
+                color: ${darkMode ? '#94a3b8' : '#6b7280'};
                 font-size: 0.875rem;
             }
             
@@ -1104,7 +1168,10 @@ return view.extend({
                 var trafficDiv = document.getElementById('traffic-status');
                 var deviceCountDiv = document.getElementById('device-count');
                 var statsGrid = document.getElementById('stats-grid');
-                var language = uci.get('bandix', 'general', 'language') || 'en';
+                var language = uci.get('bandix', 'general', 'language');
+                if (!language || language === 'auto') {
+                    language = getSystemLanguage();
+                }
                 var speedUnit = uci.get('bandix', 'general', 'speed_unit') || 'bytes';
 
                 var stats = result;
@@ -1188,13 +1255,13 @@ return view.extend({
                         // 上传行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
                             E('span', { 'style': 'color: #ef4444; font-size: 0.75rem; font-weight: bold;' }, '↑'),
-                            E('span', { 'style': 'color: #1f2937; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalSpeedUp, speedUnit)),
+                            E('span', { 'style': 'color: ' + (darkMode ? '#f1f5f9' : '#1f2937') + '; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalSpeedUp, speedUnit)),
                             E('span', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-left: 4px;' }, '(' + formatSize(totalUp) + ')')
                         ]),
                         // 下载行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
                             E('span', { 'style': 'color: #22c55e; font-size: 0.75rem; font-weight: bold;' }, '↓'),
-                            E('span', { 'style': 'color: #1f2937; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalSpeedDown, speedUnit)),
+                            E('span', { 'style': 'color: ' + (darkMode ? '#f1f5f9' : '#1f2937') + '; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalSpeedDown, speedUnit)),
                             E('span', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-left: 4px;' }, '(' + formatSize(totalDown) + ')')
                         ])
                     ])
