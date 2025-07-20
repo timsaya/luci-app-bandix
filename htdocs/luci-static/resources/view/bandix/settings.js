@@ -18,7 +18,11 @@ const translations = {
 		'端口': '端口',
 		'Bandix 服务监听的端口': 'Bandix 服务监听的端口',
 		'监控网卡': '监控网卡',
-		'选择要监控流量的物理网络接口': '选择要监控流量的物理网络接口'
+		'选择要监控流量的物理网络接口': '选择要监控流量的物理网络接口',
+		'网速单位': '网速单位',
+		'选择网速显示的单位格式': '选择网速显示的单位格式',
+		'字节单位 (B/s, KB/s, MB/s)': '字节单位 (B/s, KB/s, MB/s)',
+		'比特单位 (bps, Kbps, Mbps)': '比特单位 (bps, Kbps, Mbps)'
 	},
 	'zh-tw': {
 		'Bandix流量监控设置': 'Bandix流量監控設置',
@@ -32,7 +36,11 @@ const translations = {
 		'端口': '端口',
 		'Bandix 服务监听的端口': 'Bandix 服務監聽的端口',
 		'监控网卡': '監控網卡',
-		'选择要监控流量的物理网络接口': '選擇要監控流量的物理網絡接口'
+		'选择要监控流量的物理网络接口': '選擇要監控流量的物理網絡接口',
+		'网速单位': '網速單位',
+		'选择网速显示的单位格式': '選擇網速顯示的單位格式',
+		'字节单位 (B/s, KB/s, MB/s)': '字節單位 (B/s, KB/s, MB/s)',
+		'比特单位 (bps, Kbps, Mbps)': '比特單位 (bps, Kbps, Mbps)'
 	},
 	'en': {
 		'Bandix流量监控设置': 'Bandix Traffic Monitor Settings',
@@ -46,7 +54,11 @@ const translations = {
 		'端口': 'Port',
 		'Bandix 服务监听的端口': 'Port for Bandix service to listen on',
 		'监控网卡': 'Monitor Interface',
-		'选择要监控流量的物理网络接口': 'Select the physical network interface to monitor traffic'
+		'选择要监控流量的物理网络接口': 'Select the physical network interface to monitor traffic',
+		'网速单位': 'Speed Units',
+		'选择网速显示的单位格式': 'Select the speed display unit format',
+		'字节单位 (B/s, KB/s, MB/s)': 'Bytes Units (B/s, KB/s, MB/s)',
+		'比特单位 (bps, Kbps, Mbps)': 'Bits Units (bps, Kbps, Mbps)'
 	},
 	'fr': {
 		'Bandix流量监控设置': 'Paramètres du Moniteur de Trafic Bandix',
@@ -60,7 +72,11 @@ const translations = {
 		'端口': 'Port',
 		'Bandix 服务监听的端口': 'Port d\'écoute du service Bandix',
 		'监控网卡': 'Interface de Surveillance',
-		'选择要监控流量的物理网络接口': 'Sélectionner l\'interface réseau physique à surveiller'
+		'选择要监控流量的物理网络接口': 'Sélectionner l\'interface réseau physique à surveiller',
+		'网速单位': 'Unités de Vitesse',
+		'选择网速显示的单位格式': 'Sélectionner le format d\'unité d\'affichage de la vitesse',
+		'字节单位 (B/s, KB/s, MB/s)': 'Unités d\'Octets (B/s, KB/s, MB/s)',
+		'比特单位 (bps, Kbps, Mbps)': 'Unités de Bits (bps, Kbps, Mbps)'
 	},
 	'ja': {
 		'Bandix流量监控设置': 'Bandix トラフィックモニター設定',
@@ -74,7 +90,11 @@ const translations = {
 		'端口': 'ポート',
 		'Bandix 服务监听的端口': 'Bandix サービスのリッスンポート',
 		'监控网卡': '監視インターフェース',
-		'选择要监控流量的物理网络接口': 'トラフィックを監視する物理ネットワークインターフェースを選択'
+		'选择要监控流量的物理网络接口': 'トラフィックを監視する物理ネットワークインターフェースを選択',
+		'网速单位': '速度単位',
+		'选择网速显示的单位格式': '速度表示の単位形式を選択',
+		'字节单位 (B/s, KB/s, MB/s)': 'バイト単位 (B/s, KB/s, MB/s)',
+		'比特单位 (bps, Kbps, Mbps)': 'ビット単位 (bps, Kbps, Mbps)'
 	},
 	'ru': {
 		'Bandix流量监控设置': 'Настройки Монитора Трафика Bandix',
@@ -88,7 +108,11 @@ const translations = {
 		'端口': 'Порт',
 		'Bandix 服务监听的端口': 'Порт прослушивания службы Bandix',
 		'监控网卡': 'Интерфейс Мониторинга',
-		'选择要监控流量的物理网络接口': 'Выберите физический сетевой интерфейс для мониторинга трафика'
+		'选择要监控流量的物理网络接口': 'Выберите физический сетевой интерфейс для мониторинга трафика',
+		'网速单位': 'Единицы Скорости',
+		'选择网速显示的单位格式': 'Выберите формат единиц отображения скорости',
+		'字节单位 (B/s, KB/s, MB/s)': 'Единицы Байтов (B/s, KB/s, MB/s)',
+		'比特单位 (bps, Kbps, Mbps)': 'Единицы Битов (bps, Kbps, Mbps)'
 	}
 };
 
@@ -199,6 +223,14 @@ return view.extend({
 				o.value(iface, iface);
 			}
 		});
+
+		// 添加网速单位选择选项
+		o = s.option(form.ListValue, 'speed_unit', getTranslation('网速单位', language),
+			getTranslation('选择网速显示的单位格式', language));
+		o.value('bytes', getTranslation('字节单位 (B/s, KB/s, MB/s)', language));
+		o.value('bits', getTranslation('比特单位 (bps, Kbps, Mbps)', language));
+		o.default = 'bytes';
+		o.rmempty = false;
 
 		return m.render();
 	}

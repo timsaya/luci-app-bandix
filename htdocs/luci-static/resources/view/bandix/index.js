@@ -275,32 +275,65 @@ function formatSize(bytes) {
     return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + ' ' + units[i];
 }
 
-function formatByterate(bytes_per_sec) {
-    if (bytes_per_sec === 0) return '0 B/s';
-    const units = ['B/s', 'KB/s', 'MB/s', 'GB/s', 'TB/s'];
-    const i = Math.floor(Math.log(bytes_per_sec) / Math.log(1024));
-    return parseFloat((bytes_per_sec / Math.pow(1024, i)).toFixed(2)) + ' ' + units[i];
+function formatByterate(bytes_per_sec, unit) {
+    if (bytes_per_sec === 0) {
+        return unit === 'bits' ? '0 bps' : '0 B/s';
+    }
+    
+    if (unit === 'bits') {
+        // 转换为比特单位
+        const bits_per_sec = bytes_per_sec * 8;
+        const units = ['bps', 'Kbps', 'Mbps', 'Gbps', 'Tbps'];
+        const i = Math.floor(Math.log(bits_per_sec) / Math.log(1000));
+        return parseFloat((bits_per_sec / Math.pow(1000, i)).toFixed(2)) + ' ' + units[i];
+    } else {
+        // 默认字节单位
+        const units = ['B/s', 'KB/s', 'MB/s', 'GB/s', 'TB/s'];
+        const i = Math.floor(Math.log(bytes_per_sec) / Math.log(1024));
+        return parseFloat((bytes_per_sec / Math.pow(1024, i)).toFixed(2)) + ' ' + units[i];
+    }
 }
 
 // 解析速度字符串为字节/秒
 function parseSpeed(speedStr) {
-    if (!speedStr || speedStr === '0' || speedStr === '0 B/s') return 0;
+    if (!speedStr || speedStr === '0' || speedStr === '0 B/s' || speedStr === '0 bps') return 0;
 
-    const match = speedStr.match(/^([\d.]+)\s*([KMGT]?B\/s)$/i);
-    if (!match) return 0;
+    // 匹配字节单位
+    const bytesMatch = speedStr.match(/^([\d.]+)\s*([KMGT]?B\/s)$/i);
+    if (bytesMatch) {
+        const value = parseFloat(bytesMatch[1]);
+        const unit = bytesMatch[2].toUpperCase();
 
-    const value = parseFloat(match[1]);
-    const unit = match[2].toUpperCase();
+        const bytesMultipliers = {
+            'B/S': 1,
+            'KB/S': 1024,
+            'MB/S': 1024 * 1024,
+            'GB/S': 1024 * 1024 * 1024,
+            'TB/S': 1024 * 1024 * 1024 * 1024
+        };
 
-    const multipliers = {
-        'B/S': 1,
-        'KB/S': 1024,
-        'MB/S': 1024 * 1024,
-        'GB/S': 1024 * 1024 * 1024,
-        'TB/S': 1024 * 1024 * 1024 * 1024
-    };
+        return value * (bytesMultipliers[unit] || 1);
+    }
 
-    return value * (multipliers[unit] || 1);
+    // 匹配比特单位
+    const bitsMatch = speedStr.match(/^([\d.]+)\s*([KMGT]?bps)$/i);
+    if (bitsMatch) {
+        const value = parseFloat(bitsMatch[1]);
+        const unit = bitsMatch[2].toLowerCase();
+
+        const bitsMultipliers = {
+            'bps': 1,
+            'kbps': 1000,
+            'mbps': 1000 * 1000,
+            'gbps': 1000 * 1000 * 1000,
+            'tbps': 1000 * 1000 * 1000 * 1000
+        };
+
+        // 转换为字节/秒
+        return (value * (bitsMultipliers[unit] || 1)) / 8;
+    }
+
+    return 0;
 }
 
 var callStatus = rpc.declare({
@@ -831,11 +864,7 @@ return view.extend({
                         E('label', { 'class': 'form-label' }, getTranslation('上传限速', language)),
                         E('div', { 'style': 'display: flex; gap: 8px;' }, [
                             E('input', { 'type': 'number', 'class': 'form-input', 'id': 'upload-limit-value', 'min': '0', 'step': '1', 'placeholder': '0' }),
-                            E('select', { 'class': 'form-select', 'id': 'upload-limit-unit', 'style': 'width: 100px;' }, [
-                                E('option', { 'value': '1024' }, 'KB/s'),
-                                E('option', { 'value': '1048576' }, 'MB/s'),
-                                E('option', { 'value': '1073741824' }, 'GB/s')
-                            ])
+                            E('select', { 'class': 'form-select', 'id': 'upload-limit-unit', 'style': 'width: 100px;' })
                         ]),
                         E('div', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-top: 4px;' }, getTranslation('提示：输入 0 表示无限制', language))
                     ]),
@@ -843,11 +872,7 @@ return view.extend({
                         E('label', { 'class': 'form-label' }, getTranslation('下载限速', language)),
                         E('div', { 'style': 'display: flex; gap: 8px;' }, [
                             E('input', { 'type': 'number', 'class': 'form-input', 'id': 'download-limit-value', 'min': '0', 'step': '1', 'placeholder': '0' }),
-                            E('select', { 'class': 'form-select', 'id': 'download-limit-unit', 'style': 'width: 100px;' }, [
-                                E('option', { 'value': '1024' }, 'KB/s'),
-                                E('option', { 'value': '1048576' }, 'MB/s'),
-                                E('option', { 'value': '1073741824' }, 'GB/s')
-                            ])
+                            E('select', { 'class': 'form-select', 'id': 'download-limit-unit', 'style': 'width: 100px;' })
                         ]),
                         E('div', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-top: 4px;' }, getTranslation('提示：输入 0 表示无限制', language))
                     ])
@@ -870,6 +895,35 @@ return view.extend({
             currentDevice = device;
             var modal = document.getElementById('rate-limit-modal');
             var deviceSummary = document.getElementById('modal-device-summary');
+            var speedUnit = uci.get('bandix', 'general', 'speed_unit') || 'bytes';
+
+            // 动态填充单位选择器
+            var uploadUnitSelect = document.getElementById('upload-limit-unit');
+            var downloadUnitSelect = document.getElementById('download-limit-unit');
+            
+            // 清空现有选项
+            uploadUnitSelect.innerHTML = '';
+            downloadUnitSelect.innerHTML = '';
+            
+            if (speedUnit === 'bits') {
+                // 比特单位选项 - 直接设置为对应的字节数
+                uploadUnitSelect.appendChild(E('option', { 'value': '125' }, 'Kbps'));       // 1000 bits/s / 8 = 125 bytes/s
+                uploadUnitSelect.appendChild(E('option', { 'value': '125000' }, 'Mbps'));    // 1000000 bits/s / 8 = 125000 bytes/s
+                uploadUnitSelect.appendChild(E('option', { 'value': '125000000' }, 'Gbps')); // 1000000000 bits/s / 8 = 125000000 bytes/s
+                
+                downloadUnitSelect.appendChild(E('option', { 'value': '125' }, 'Kbps'));
+                downloadUnitSelect.appendChild(E('option', { 'value': '125000' }, 'Mbps'));
+                downloadUnitSelect.appendChild(E('option', { 'value': '125000000' }, 'Gbps'));
+            } else {
+                // 字节单位选项
+                uploadUnitSelect.appendChild(E('option', { 'value': '1024' }, 'KB/s'));
+                uploadUnitSelect.appendChild(E('option', { 'value': '1048576' }, 'MB/s'));
+                uploadUnitSelect.appendChild(E('option', { 'value': '1073741824' }, 'GB/s'));
+                
+                downloadUnitSelect.appendChild(E('option', { 'value': '1024' }, 'KB/s'));
+                downloadUnitSelect.appendChild(E('option', { 'value': '1048576' }, 'MB/s'));
+                downloadUnitSelect.appendChild(E('option', { 'value': '1073741824' }, 'GB/s'));
+            }
 
             // 更新设备信息
             deviceSummary.innerHTML = E('div', {}, [
@@ -883,45 +937,75 @@ return view.extend({
 
             // 设置上传限速值
             var uploadValue = uploadLimit;
-            var uploadUnit = '1024';
+            var uploadUnit;
             if (uploadValue === 0) {
                 document.getElementById('upload-limit-value').value = 0;
-            } else if (uploadValue >= 1073741824) {
-                uploadValue = uploadValue / 1073741824;
-                uploadUnit = '1073741824';
-                document.getElementById('upload-limit-value').value = Math.round(uploadValue);
-            } else if (uploadValue >= 1048576) {
-                uploadValue = uploadValue / 1048576;
-                uploadUnit = '1048576';
-                document.getElementById('upload-limit-value').value = Math.round(uploadValue);
-            } else if (uploadValue >= 1024) {
-                uploadValue = uploadValue / 1024;
-                uploadUnit = '1024';
-                document.getElementById('upload-limit-value').value = Math.round(uploadValue);
+                uploadUnit = speedUnit === 'bits' ? '125' : '1024';
             } else {
-                document.getElementById('upload-limit-value').value = uploadValue;
+                if (speedUnit === 'bits') {
+                    // 转换为比特单位显示
+                    var uploadBits = uploadValue * 8;
+                    if (uploadBits >= 1000000000) {
+                        uploadValue = uploadBits / 1000000000;
+                        uploadUnit = '125000000';  // Gbps对应的字节倍数
+                    } else if (uploadBits >= 1000000) {
+                        uploadValue = uploadBits / 1000000;
+                        uploadUnit = '125000';     // Mbps对应的字节倍数
+                    } else {
+                        uploadValue = uploadBits / 1000;
+                        uploadUnit = '125';        // Kbps对应的字节倍数
+                    }
+                } else {
+                    // 字节单位显示
+                    if (uploadValue >= 1073741824) {
+                        uploadValue = uploadValue / 1073741824;
+                        uploadUnit = '1073741824';
+                    } else if (uploadValue >= 1048576) {
+                        uploadValue = uploadValue / 1048576;
+                        uploadUnit = '1048576';
+                    } else {
+                        uploadValue = uploadValue / 1024;
+                        uploadUnit = '1024';
+                    }
+                }
+                document.getElementById('upload-limit-value').value = Math.round(uploadValue);
             }
             document.getElementById('upload-limit-unit').value = uploadUnit;
 
             // 设置下载限速值
             var downloadValue = downloadLimit;
-            var downloadUnit = '1024';
+            var downloadUnit;
             if (downloadValue === 0) {
                 document.getElementById('download-limit-value').value = 0;
-            } else if (downloadValue >= 1073741824) {
-                downloadValue = downloadValue / 1073741824;
-                downloadUnit = '1073741824';
-                document.getElementById('download-limit-value').value = Math.round(downloadValue);
-            } else if (downloadValue >= 1048576) {
-                downloadValue = downloadValue / 1048576;
-                downloadUnit = '1048576';
-                document.getElementById('download-limit-value').value = Math.round(downloadValue);
-            } else if (downloadValue >= 1024) {
-                downloadValue = downloadValue / 1024;
-                downloadUnit = '1024';
-                document.getElementById('download-limit-value').value = Math.round(downloadValue);
+                downloadUnit = speedUnit === 'bits' ? '125' : '1024';
             } else {
-                document.getElementById('download-limit-value').value = downloadValue;
+                if (speedUnit === 'bits') {
+                    // 转换为比特单位显示
+                    var downloadBits = downloadValue * 8;
+                    if (downloadBits >= 1000000000) {
+                        downloadValue = downloadBits / 1000000000;
+                        downloadUnit = '125000000';  // Gbps对应的字节倍数
+                    } else if (downloadBits >= 1000000) {
+                        downloadValue = downloadBits / 1000000;
+                        downloadUnit = '125000';     // Mbps对应的字节倍数
+                    } else {
+                        downloadValue = downloadBits / 1000;
+                        downloadUnit = '125';        // Kbps对应的字节倍数
+                    }
+                } else {
+                    // 字节单位显示
+                    if (downloadValue >= 1073741824) {
+                        downloadValue = downloadValue / 1073741824;
+                        downloadUnit = '1073741824';
+                    } else if (downloadValue >= 1048576) {
+                        downloadValue = downloadValue / 1048576;
+                        downloadUnit = '1048576';
+                    } else {
+                        downloadValue = downloadValue / 1024;
+                        downloadUnit = '1024';
+                    }
+                }
+                document.getElementById('download-limit-value').value = Math.round(downloadValue);
             }
             document.getElementById('download-limit-unit').value = downloadUnit;
 
@@ -953,11 +1037,13 @@ return view.extend({
 
             var uploadLimit = 0;
             var downloadLimit = 0;
+            var speedUnit = uci.get('bandix', 'general', 'speed_unit') || 'bytes';
 
             // 获取上传限速值
             var uploadValue = parseInt(document.getElementById('upload-limit-value').value) || 0;
             var uploadUnit = parseInt(document.getElementById('upload-limit-unit').value);
             if (uploadValue > 0) {
+                // 选择器的值已经是正确的字节倍数，直接计算即可
                 uploadLimit = uploadValue * uploadUnit;
             }
 
@@ -965,6 +1051,7 @@ return view.extend({
             var downloadValue = parseInt(document.getElementById('download-limit-value').value) || 0;
             var downloadUnit = parseInt(document.getElementById('download-limit-unit').value);
             if (downloadValue > 0) {
+                // 选择器的值已经是正确的字节倍数，直接计算即可
                 downloadLimit = downloadValue * downloadUnit;
             }
 
@@ -1018,6 +1105,7 @@ return view.extend({
                 var deviceCountDiv = document.getElementById('device-count');
                 var statsGrid = document.getElementById('stats-grid');
                 var language = uci.get('bandix', 'general', 'language') || 'en';
+                var speedUnit = uci.get('bandix', 'general', 'speed_unit') || 'bytes';
 
                 var stats = result;
                 if (!stats || !stats.devices) {
@@ -1056,13 +1144,13 @@ return view.extend({
                         // 上传行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
                             E('span', { 'style': 'color: #ef4444; font-size: 0.75rem; font-weight: bold;' }, '↑'),
-                            E('span', { 'style': 'color: #3b82f6; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalLanSpeedUp)),
+                            E('span', { 'style': 'color: #3b82f6; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalLanSpeedUp, speedUnit)),
                             E('span', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-left: 4px;' }, '(' + formatSize(totalLanUp) + ')')
                         ]),
                         // 下载行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
                             E('span', { 'style': 'color: #22c55e; font-size: 0.75rem; font-weight: bold;' }, '↓'),
-                            E('span', { 'style': 'color: #3b82f6; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalLanSpeedDown)),
+                            E('span', { 'style': 'color: #3b82f6; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalLanSpeedDown, speedUnit)),
                             E('span', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-left: 4px;' }, '(' + formatSize(totalLanDown) + ')')
                         ])
                     ])
@@ -1078,13 +1166,13 @@ return view.extend({
                         // 上传行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
                             E('span', { 'style': 'color: #ef4444; font-size: 0.75rem; font-weight: bold;' }, '↑'),
-                            E('span', { 'style': 'color: #22c55e; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalWanSpeedUp)),
+                            E('span', { 'style': 'color: #22c55e; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalWanSpeedUp, speedUnit)),
                             E('span', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-left: 4px;' }, '(' + formatSize(totalWanUp) + ')')
                         ]),
                         // 下载行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
                             E('span', { 'style': 'color: #22c55e; font-size: 0.75rem; font-weight: bold;' }, '↓'),
-                            E('span', { 'style': 'color: #22c55e; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalWanSpeedDown)),
+                            E('span', { 'style': 'color: #22c55e; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalWanSpeedDown, speedUnit)),
                             E('span', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-left: 4px;' }, '(' + formatSize(totalWanDown) + ')')
                         ])
                     ])
@@ -1100,13 +1188,13 @@ return view.extend({
                         // 上传行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
                             E('span', { 'style': 'color: #ef4444; font-size: 0.75rem; font-weight: bold;' }, '↑'),
-                            E('span', { 'style': 'color: #1f2937; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalSpeedUp)),
+                            E('span', { 'style': 'color: #1f2937; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalSpeedUp, speedUnit)),
                             E('span', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-left: 4px;' }, '(' + formatSize(totalUp) + ')')
                         ]),
                         // 下载行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
                             E('span', { 'style': 'color: #22c55e; font-size: 0.75rem; font-weight: bold;' }, '↓'),
-                            E('span', { 'style': 'color: #1f2937; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalSpeedDown)),
+                            E('span', { 'style': 'color: #1f2937; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalSpeedDown, speedUnit)),
                             E('span', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-left: 4px;' }, '(' + formatSize(totalDown) + ')')
                         ])
                     ])
@@ -1168,12 +1256,12 @@ return view.extend({
                             E('div', { 'class': 'traffic-info' }, [
                                 E('div', { 'class': 'traffic-row' }, [
                                     E('span', { 'class': 'traffic-icon upload' }, '↑'),
-                                    E('span', { 'class': 'traffic-speed lan' }, formatByterate(device.local_tx_rate || 0)),
+                                    E('span', { 'class': 'traffic-speed lan' }, formatByterate(device.local_tx_rate || 0, speedUnit)),
                                     E('span', { 'class': 'traffic-total' }, '(' + formatSize(device.local_tx_bytes || 0) + ')')
                                 ]),
                                 E('div', { 'class': 'traffic-row' }, [
                                     E('span', { 'class': 'traffic-icon download' }, '↓'),
-                                    E('span', { 'class': 'traffic-speed lan' }, formatByterate(device.local_rx_rate || 0)),
+                                    E('span', { 'class': 'traffic-speed lan' }, formatByterate(device.local_rx_rate || 0, speedUnit)),
                                     E('span', { 'class': 'traffic-total' }, '(' + formatSize(device.local_rx_bytes || 0) + ')')
                                 ])
                             ])
@@ -1184,12 +1272,12 @@ return view.extend({
                             E('div', { 'class': 'traffic-info' }, [
                                 E('div', { 'class': 'traffic-row' }, [
                                     E('span', { 'class': 'traffic-icon upload' }, '↑'),
-                                    E('span', { 'class': 'traffic-speed wan' }, formatByterate(device.wide_tx_rate || 0)),
+                                    E('span', { 'class': 'traffic-speed wan' }, formatByterate(device.wide_tx_rate || 0, speedUnit)),
                                     E('span', { 'class': 'traffic-total' }, '(' + formatSize(device.wide_tx_bytes || 0) + ')')
                                 ]),
                                 E('div', { 'class': 'traffic-row' }, [
                                     E('span', { 'class': 'traffic-icon download' }, '↓'),
-                                    E('span', { 'class': 'traffic-speed wan' }, formatByterate(device.wide_rx_rate || 0)),
+                                    E('span', { 'class': 'traffic-speed wan' }, formatByterate(device.wide_rx_rate || 0, speedUnit)),
                                     E('span', { 'class': 'traffic-total' }, '(' + formatSize(device.wide_rx_bytes || 0) + ')')
                                 ])
                             ])
@@ -1200,11 +1288,11 @@ return view.extend({
                             E('div', { 'class': 'limit-info' }, [
                                 E('div', { 'class': 'traffic-row' }, [
                                     E('span', { 'class': 'traffic-icon upload', 'style': 'font-size: 0.75rem;' }, '↑'),
-                                    E('span', { 'style': 'font-size: 0.875rem;' }, formatByterate(device.wide_tx_rate_limit || 0))
+                                    E('span', { 'style': 'font-size: 0.875rem;' }, formatByterate(device.wide_tx_rate_limit || 0, speedUnit))
                                 ]),
                                 E('div', { 'class': 'traffic-row' }, [
                                     E('span', { 'class': 'traffic-icon download', 'style': 'font-size: 0.75rem;' }, '↓'),
-                                    E('span', { 'style': 'font-size: 0.875rem;' }, formatByterate(device.wide_rx_rate_limit || 0))
+                                    E('span', { 'style': 'font-size: 0.875rem;' }, formatByterate(device.wide_rx_rate_limit || 0, speedUnit))
                                 ]),
                             ])
                         ]),
