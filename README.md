@@ -59,6 +59,10 @@ Please ensure you install matching versions to ensure compatibility and proper f
    opkg install luci-app-bandix_latest_all.ipk
    ```
 
+3. Configure your LAN interface in settings
+
+   After installation, go to the Bandix settings page and select your LAN interface to enable proper monitoring.
+
 ## Configuration
 
 After installation, you can access the Bandix application through the LuCI web interface. The application is located under the "Network" menu.

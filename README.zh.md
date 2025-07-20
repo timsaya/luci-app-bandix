@@ -59,6 +59,10 @@ LuCI Bandix 基于 LuCI 框架开发，为 OpenWrt 路由器提供网络流量�
    opkg install luci-app-bandix_最新版本_all.ipk
    ```
 
+3. 在设置中配置您的 LAN 接口
+
+   安装完成后，进入 Bandix 设置页面，选择您的 LAN 接口以启用正确的监控功能。
+
 
 ## 配置
 
