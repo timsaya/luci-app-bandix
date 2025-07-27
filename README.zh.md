@@ -17,6 +17,14 @@ LuCI Bandix 基于 LuCI 框架开发，为 OpenWrt 路由器提供网络流量�
 ![LuCI Bandix Screenshot](docs/images/settings.png)
 
 
+## 社区与支持
+
+加入我们的 Discord 社区获取帮助、参与讨论和接收更新：
+
+- https://discord.gg/zNxxA2J2
+
+
+
 ## 功能特点
 
 - 网络流量实时监控
@@ -67,6 +75,8 @@ LuCI Bandix 基于 LuCI 框架开发，为 OpenWrt 路由器提供网络流量�
 ## 配置
 
 安装完成后，可以通过 LuCI Web 界面访问 Bandix 应用。应用位于"网络"菜单下。
+
+
 
 ## 维护者
 

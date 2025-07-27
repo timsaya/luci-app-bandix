@@ -17,6 +17,14 @@ LuCI Bandix is developed based on the LuCI framework, offering network traffic m
 ![LuCI Bandix Screenshot](docs/images/settings.png)
 
 
+## Community & Support
+
+Join our Discord community for help, discussions, and updates:
+
+
+- https://discord.gg/zNxxA2J2
+
+
 
 ## Features
 
@@ -66,6 +74,8 @@ Please ensure you install matching versions to ensure compatibility and proper f
 ## Configuration
 
 After installation, you can access the Bandix application through the LuCI web interface. The application is located under the "Network" menu.
+
+
 
 ## Maintainer
 
