@@ -27,7 +27,9 @@ const translations = {
 		'跟随系统': '跟随系统',
 		'明亮模式': '明亮模式',
 		'暗黑模式': '暗黑模式',
-		'意见反馈': '意见反馈'
+		'意见反馈': '意见反馈',
+		'持久化循环周期': '持久化循环周期',
+		'设置数据持久化循环周期（秒）': '设置数据持久化循环周期（秒）'
 	},
 	'zh-tw': {
 		'Bandix流量监控设置': 'Bandix 流量監控設置',
@@ -50,7 +52,9 @@ const translations = {
 		'跟随系统': '跟隨系統',
 		'明亮模式': '明亮模式',
 		'暗黑模式': '暗黑模式',
-		'意见反馈': '意見反饋'
+		'意见反馈': '意見反饋',
+		'持久化循环周期': '持久化循環週期',
+		'设置数据持久化循环周期（秒）': '設定資料持久化循環週期（秒）'
 	},
 	'en': {
 		'Bandix流量监控设置': 'Bandix Traffic Monitor Settings',
@@ -73,7 +77,9 @@ const translations = {
 		'跟随系统': 'Follow System',
 		'明亮模式': 'Light Mode',
 		'暗黑模式': 'Dark Mode',
-		'意见反馈': 'Feedback'
+		'意见反馈': 'Feedback',
+		'持久化循环周期': 'Persistence Interval',
+		'设置数据持久化循环周期（秒）': 'Set persistence loop interval (seconds)'
 	},
 	'fr': {
 		'Bandix流量监控设置': 'Paramètres de Surveillance du Trafic Bandix',
@@ -96,7 +102,9 @@ const translations = {
 		'跟随系统': 'Suivre le Système',
 		'明亮模式': 'Mode Clair',
 		'暗黑模式': 'Mode Sombre',
-		'意见反馈': 'Commentaires'
+		'意见反馈': 'Commentaires',
+		'持久化循环周期': 'Intervalle de persistance',
+		'设置数据持久化循环周期（秒）': "Définir l’intervalle de persistance (secondes)"
 	},
 	'ja': {
 		'Bandix流量监控设置': 'Bandix トラフィックモニター設定',
@@ -119,7 +127,9 @@ const translations = {
 		'跟随系统': 'システムに従う',
 		'明亮模式': 'ライトモード',
 		'暗黑模式': 'ダークモード',
-		'意见反馈': 'フィードバック'
+		'意见反馈': 'フィードバック',
+		'持久化循环周期': '永続化ループ間隔',
+		'设置数据持久化循环周期（秒）': 'データ永続化のループ間隔（秒）を設定'
 	},
 	'ru': {
 		'Bandix流量监控设置': 'Настройки Монитора Трафика Bandix',
@@ -142,7 +152,9 @@ const translations = {
 		'跟随系统': 'Следовать Системе',
 		'明亮模式': 'Светлый Режим',
 		'暗黑模式': 'Темный Режим',
-		'意见反馈': 'Обратная связь'
+		'意见反馈': 'Обратная связь',
+		'持久化循环周期': 'Интервал персистенции',
+		'设置数据持久化循环周期（秒）': 'Установить интервал цикла персистенции (сек)'
 	}
 };
 
@@ -416,6 +428,13 @@ return view.extend({
 		o.value('dark', getTranslation('暗黑模式', language));
 		o.default = 'auto';
 		o.rmempty = false;
+
+		// 添加持久化循环周期（秒）
+		o = s.option(form.Value, 'retention_seconds', getTranslation('持久化循环周期', language),
+			getTranslation('设置数据持久化循环周期（秒）', language));
+		o.datatype = 'uinteger';
+		o.placeholder = '60';
+		o.rmempty = true; // 留空则不写入 UCI，由后端决定默认值
 
 		// 添加意见反馈信息
 		o = s.option(form.DummyValue, 'feedback_info', getTranslation('意见反馈', language));
