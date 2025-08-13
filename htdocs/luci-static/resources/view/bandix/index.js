@@ -594,6 +594,10 @@ return view.extend({
             .bandix-table td:nth-child(5) {
                 width: 20%;
             }
+
+			/* 类型联动的高亮与弱化 */
+			.bandix-table .hi { font-weight: 700; }
+			.bandix-table .dim { opacity: 0.6; }
             
             
             .device-info {
@@ -977,10 +981,11 @@ return view.extend({
             .legend-up { background-color: #ef4444; }
             .legend-down { background-color: #22c55e; }
             #history-canvas { width: 100%; height: 240px; display: block; }
-            .history-tooltip {
-                position: absolute;
+			.history-tooltip {
+				position: fixed;
                 display: none;
-                max-width: 320px;
+				width: 320px;
+				box-sizing: border-box;
                 background-color: ${darkMode ? 'rgba(37, 37, 38, 0.95)' : 'rgba(255, 255, 255, 0.98)'};
                 color: ${darkMode ? '#e2e8f0' : '#1f2937'};
                 border: 1px solid ${darkMode ? '#3a3a3a' : '#e5e7eb'};
@@ -997,6 +1002,15 @@ return view.extend({
             .history-tooltip .ht-row { display: flex; justify-content: space-between; gap: 12px; }
             .history-tooltip .ht-key { color: ${darkMode ? '#94a3b8' : '#6b7280'}; }
             .history-tooltip .ht-val { color: ${darkMode ? '#e2e8f0' : '#111827'}; }
+			.history-tooltip .ht-device { margin-top: 4px; margin-bottom: 6px; color: ${darkMode ? '#94a3b8' : '#6b7280'}; font-size: 0.75rem; }
+			/* 强调关键信息的排版 */
+			.history-tooltip .ht-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 2px; margin-bottom: 6px; }
+			.history-tooltip .ht-kpi .ht-k-label { color: ${darkMode ? '#94a3b8' : '#6b7280'}; font-size: 0.75rem; }
+			.history-tooltip .ht-kpi .ht-k-value { font-size: 1rem; font-weight: 700; }
+			.history-tooltip .ht-kpi.down .ht-k-value { color: #22c55e; }
+			.history-tooltip .ht-kpi.up .ht-k-value { color: #ef4444; }
+			.history-tooltip .ht-divider { height: 1px; background-color: ${darkMode ? '#3a3a3a' : '#e5e7eb'}; margin: 8px 0; }
+			.history-tooltip .ht-section-title { font-weight: 600; font-size: 0.75rem; color: ${darkMode ? '#94a3b8' : '#6b7280'}; margin: 4px 0 6px 0; }
         `);
 
         document.head.appendChild(style);
@@ -1459,27 +1473,97 @@ return view.extend({
         }
 
         function buildTooltipHtml(point, language) {
-            if (!point) return '';
-            var lines = [];
-            lines.push('<div class="ht-title">' + msToTimeLabel(point.ts_ms) + '</div>');
-            function row(key, val) {
-                lines.push('<div class="ht-row"><span class="ht-key">' + key + '</span><span class="ht-val">' + val + '</span></div>');
-            }
-            var speedUnit = uci.get('bandix', 'general', 'speed_unit') || 'bytes';
-            // 显示所有字段
-            row('total_tx_rate', formatByterate(point.total_tx_rate||0, speedUnit));
-            row('total_rx_rate', formatByterate(point.total_rx_rate||0, speedUnit));
-            row('local_tx_rate', formatByterate(point.local_tx_rate||0, speedUnit));
-            row('local_rx_rate', formatByterate(point.local_rx_rate||0, speedUnit));
-            row('wide_tx_rate', formatByterate(point.wide_tx_rate||0, speedUnit));
-            row('wide_rx_rate', formatByterate(point.wide_rx_rate||0, speedUnit));
-            row('total_tx_bytes', formatSize(point.total_tx_bytes||0));
-            row('total_rx_bytes', formatSize(point.total_rx_bytes||0));
-            row('local_tx_bytes', formatSize(point.local_tx_bytes||0));
-            row('local_rx_bytes', formatSize(point.local_rx_bytes||0));
-            row('wide_tx_bytes', formatSize(point.wide_tx_bytes||0));
-            row('wide_rx_bytes', formatSize(point.wide_rx_bytes||0));
-            return lines.join('');
+			if (!point) return '';
+			var lines = [];
+			var zh = (language === 'zh-cn' || language === 'zh-tw');
+			var typeSel = (typeof document !== 'undefined' ? document.getElementById('history-type-select') : null);
+			var selType = (typeSel && typeSel.value) ? typeSel.value : 'total';
+			var speedUnit = uci.get('bandix', 'general', 'speed_unit') || 'bytes';
+
+			function row(label, val) {
+				lines.push('<div class="ht-row"><span class="ht-key">' + label + '</span><span class="ht-val">' + val + '</span></div>');
+			}
+
+			function rateValue(key) {
+				return formatByterate(point[key] || 0, speedUnit);
+			}
+
+			function bytesValue(key) {
+				return formatSize(point[key] || 0);
+			}
+
+			function labelsFor(type) {
+				if (type === 'lan') return { up: zh ? '局域上传速率' : 'LAN Upload', down: zh ? '局域下载速率' : 'LAN Download' };
+				if (type === 'wan') return { up: zh ? '跨网上传速率' : 'WAN Upload', down: zh ? '跨网下载速率' : 'WAN Download' };
+				return { up: zh ? '总上传速率' : 'Total Upload', down: zh ? '总下载速率' : 'Total Download' };
+			}
+
+			function rateKeysFor(type) {
+				if (type === 'lan') return { up: 'local_tx_rate', down: 'local_rx_rate' };
+				if (type === 'wan') return { up: 'wide_tx_rate', down: 'wide_rx_rate' };
+				return { up: 'total_tx_rate', down: 'total_rx_rate' };
+			}
+
+			function bytesKeysFor(type) {
+				if (type === 'lan') return { up: 'local_tx_bytes', down: 'local_rx_bytes' };
+				if (type === 'wan') return { up: 'wide_tx_bytes', down: 'wide_rx_bytes' };
+				return { up: 'total_tx_bytes', down: 'total_rx_bytes' };
+			}
+
+			lines.push('<div class="ht-title">' + msToTimeLabel(point.ts_ms) + '</div>');
+
+			// 若选择了设备，显示设备信息
+			try {
+				var macSel = (typeof document !== 'undefined' ? document.getElementById('history-device-select') : null);
+				var macVal = (macSel && macSel.value) ? macSel.value : '';
+				if (macVal && Array.isArray(latestDevices)) {
+					var dev = latestDevices.find(function(d){ return d.mac === macVal; });
+					if (dev) {
+						var devLabel = (dev.hostname || '-') + (dev.ip ? ' (' + dev.ip + ')' : '') + (dev.mac ? ' [' + dev.mac + ']' : '');
+						lines.push('<div class="ht-device">' + (zh ? '设备: ' : 'Device: ') + devLabel + '</div>');
+					}
+				}
+			} catch (e) {}
+
+			// 关键信息：选中类型的上下行速率（大号显示）
+			var kpiLabels = labelsFor(selType);
+			var kpiRateKeys = rateKeysFor(selType);
+			lines.push(
+				'<div class="ht-kpis">' +
+					'<div class="ht-kpi up">' +
+						'<div class="ht-k-label">' + kpiLabels.up + '</div>' +
+						'<div class="ht-k-value">' + rateValue(kpiRateKeys.up) + '</div>' +
+					'</div>' +
+					'<div class="ht-kpi down">' +
+						'<div class="ht-k-label">' + kpiLabels.down + '</div>' +
+						'<div class="ht-k-value">' + rateValue(kpiRateKeys.down) + '</div>' +
+					'</div>' +
+				'</div>'
+			);
+
+			// 次要信息：其余类型的速率（精简展示）
+			var otherTypes = ['total', 'lan', 'wan'].filter(function (t) { return t !== selType; });
+			if (otherTypes.length) {
+				lines.push('<div class="ht-section-title">' + (zh ? '其他速率' : 'Other Rates') + '</div>');
+				otherTypes.forEach(function (t) {
+					var lbs = labelsFor(t);
+					var ks = rateKeysFor(t);
+					row(lbs.up, rateValue(ks.up));
+					row(lbs.down, rateValue(ks.down));
+				});
+			}
+
+			// 累计：区分局域网与公网
+			lines.push('<div class="ht-divider"></div>');
+			lines.push('<div class="ht-section-title">' + (zh ? '累计流量' : 'Cumulative') + '</div>');
+			row(zh ? '总上传' : 'Total Uploaded', bytesValue('total_tx_bytes'));
+			row(zh ? '总下载' : 'Total Downloaded', bytesValue('total_rx_bytes'));
+			row(zh ? '局域上传' : 'LAN Uploaded', bytesValue('local_tx_bytes'));
+			row(zh ? '局域下载' : 'LAN Downloaded', bytesValue('local_rx_bytes'));
+			row(zh ? '公网上传' : 'WAN Uploaded', bytesValue('wide_tx_bytes'));
+			row(zh ? '公网下载' : 'WAN Downloaded', bytesValue('wide_rx_bytes'));
+
+			return lines.join('');
         }
 
         function formatRetentionSeconds(seconds, language) {
@@ -1581,7 +1665,6 @@ return view.extend({
 					}
 					var point = lastHistoryData[idx];
 					tooltip.innerHTML = buildTooltipHtml(point, language);
-					var parentRect = canvas.parentElement.getBoundingClientRect();
 					// 先显示以计算尺寸
 					tooltip.style.display = 'block';
 					tooltip.style.left = '-9999px';
@@ -1589,18 +1672,20 @@ return view.extend({
 					var tw = tooltip.offsetWidth || 0;
 					var th = tooltip.offsetHeight || 0;
 					var padding = 12;
-					var maxX = parentRect.width - 4;
-					var maxY = parentRect.height - 4;
-					var baseX = evt.clientX - parentRect.left + padding;
-					var baseY = evt.clientY - parentRect.top - th - padding; // 在鼠标上方
-					// X方向避免溢出
-					if (baseX + tw > maxX) baseX = maxX - tw;
-					if (baseX < 4) baseX = 4;
-					// 如果上方放不下，改为放在下方，并做边界收缩
-					if (baseY < 4) {
-						baseY = evt.clientY - parentRect.top + padding;
-						if (baseY + th > maxY) baseY = Math.max(4, maxY - th);
+					var maxX = (typeof window !== 'undefined' ? window.innerWidth : document.documentElement.clientWidth) - 4;
+					var maxY = (typeof window !== 'undefined' ? window.innerHeight : document.documentElement.clientHeight) - 4;
+					var cx = evt.clientX;
+					var cy = evt.clientY;
+					var baseX = cx + padding; // 右上（水平向右）
+					var baseY = cy - th - padding; // 上方
+					// 若右侧溢出，改为左上
+					if (baseX + tw > maxX) {
+						baseX = cx - tw - padding;
 					}
+					// 边界收缩（不改动上方定位的语义）
+					if (baseX < 4) baseX = 4;
+					if (baseY < 4) baseY = 4;
+
 					tooltip.style.left = baseX + 'px';
 					tooltip.style.top = baseY + 'px';
 				}
@@ -1615,7 +1700,7 @@ return view.extend({
                 var ctx = canvas.getContext('2d');
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 drawHistoryChart(canvas, [], [], []);
-                ui.addNotification(null, E('p', {}, getTranslation('无法获取历史数据', language)), 'error');
+                // ui.addNotification(null, E('p', {}, getTranslation('无法获取历史数据', language)), 'error');
             }).finally(function () {
                 isHistoryLoading = false;
             });
@@ -1626,8 +1711,13 @@ return view.extend({
             var typeSel = document.getElementById('history-type-select');
             var devSel = document.getElementById('history-device-select');
             if (typeSel) typeSel.value = 'total';
-            if (typeSel) typeSel.addEventListener('change', refreshHistory);
-            if (devSel) devSel.addEventListener('change', refreshHistory);
+			function onFilterChange() {
+				refreshHistory();
+				// 同步刷新表格（立即生效，不等轮询）
+				try { window.__bandixRenderTable && window.__bandixRenderTable(); } catch (e) {}
+			}
+			if (typeSel) typeSel.addEventListener('change', onFilterChange);
+			if (devSel) devSel.addEventListener('change', onFilterChange);
 
             window.addEventListener('resize', function () {
                 if (lastHistoryData && lastHistoryData.length) {
@@ -1785,8 +1875,12 @@ return view.extend({
 
                 var tbody = table.querySelector('tbody');
 
-                // 填充数据
-                stats.devices.forEach(function (device) {
+				// 过滤：按选择设备
+				var selectedMac = (typeof document !== 'undefined' ? (document.getElementById('history-device-select')?.value || '') : '');
+				var filteredDevices = (!selectedMac) ? stats.devices : stats.devices.filter(function(d){ return (d.mac === selectedMac); });
+
+				// 填充数据
+				filteredDevices.forEach(function (device) {
                     var isOnline = device.online !== false;
 
                     var actionButton = E('button', {
@@ -1870,8 +1964,16 @@ return view.extend({
                 });
 
                 // 更新表格内容
-                trafficDiv.innerHTML = '';
-                trafficDiv.appendChild(table);
+				trafficDiv.innerHTML = '';
+				trafficDiv.appendChild(table);
+				// 暴露一个立即重绘表格的函数，供筛选变化时调用
+				try { window.__bandixRenderTable = function(){
+					var evt = new Event('resize'); // 触发重绘逻辑较重，这里直接复用渲染块
+					// 简单方式：再次触发轮询渲染函数体
+					// 此处不重复请求，依赖最近一次 callStatus 的 stats 缓存
+					trafficDiv.innerHTML = '';
+					trafficDiv.appendChild(table);
+				}; } catch (e) {}
 
                 // 更新历史趋势中的设备下拉
                 try {
