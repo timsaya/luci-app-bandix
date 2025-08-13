@@ -29,7 +29,7 @@ const translations = {
 		'暗黑模式': '暗黑模式',
 		'意见反馈': '意见反馈',
 		'持久化循环周期': '持久化循环周期',
-		'设置数据持久化循环周期（秒）': '设置数据持久化循环周期（秒）'
+		'设置数据持久化循环周期（秒）': '设置数据持久化循环周期(秒)。修改会删除已有数据。600秒循环周期下, 1 个设备, 固定占用约 60KB'
 	},
 	'zh-tw': {
 		'Bandix流量监控设置': 'Bandix 流量監控設置',
@@ -54,7 +54,7 @@ const translations = {
 		'暗黑模式': '暗黑模式',
 		'意见反馈': '意見反饋',
 		'持久化循环周期': '持久化循環週期',
-		'设置数据持久化循环周期（秒）': '設定資料持久化循環週期（秒）'
+		'设置数据持久化循环周期（秒）': '設定資料持久化循環週期(秒)。修改會刪除已有資料。600秒循環週期下, 1 個設備, 固定占用約 60KB'
 	},
 	'en': {
 		'Bandix流量监控设置': 'Bandix Traffic Monitor Settings',
@@ -79,7 +79,7 @@ const translations = {
 		'暗黑模式': 'Dark Mode',
 		'意见反馈': 'Feedback',
 		'持久化循环周期': 'Persistence Interval',
-		'设置数据持久化循环周期（秒）': 'Set persistence loop interval (seconds)'
+		'设置数据持久化循环周期（秒）': 'Set persistence loop interval (seconds). Changing this will delete existing data. With a 600-second interval, 1 device uses a fixed size of about 60 KB'
 	},
 	'fr': {
 		'Bandix流量监控设置': 'Paramètres de Surveillance du Trafic Bandix',
@@ -104,7 +104,7 @@ const translations = {
 		'暗黑模式': 'Mode Sombre',
 		'意见反馈': 'Commentaires',
 		'持久化循环周期': 'Intervalle de persistance',
-		'设置数据持久化循环周期（秒）': "Définir l’intervalle de persistance (secondes)"
+		'设置数据持久化循环周期（秒）': "Définir l’intervalle de persistance (secondes). La modification supprimera les données existantes. Avec un intervalle de 600 secondes, un appareil occupe environ 60 Ko (taille fixe)"
 	},
 	'ja': {
 		'Bandix流量监控设置': 'Bandix トラフィックモニター設定',
@@ -129,7 +129,7 @@ const translations = {
 		'暗黑模式': 'ダークモード',
 		'意见反馈': 'フィードバック',
 		'持久化循环周期': '永続化ループ間隔',
-		'设置数据持久化循环周期（秒）': 'データ永続化のループ間隔（秒）を設定'
+		'设置数据持久化循环周期（秒）': 'データ永続化のループ間隔（秒）を設定。この設定を変更すると既存データが削除されます。600 秒のループ間隔では、1 台のデバイスで固定サイズとして約 60 KB を使用します'
 	},
 	'ru': {
 		'Bandix流量监控设置': 'Настройки Монитора Трафика Bandix',
@@ -154,7 +154,7 @@ const translations = {
 		'暗黑模式': 'Темный Режим',
 		'意见反馈': 'Обратная связь',
 		'持久化循环周期': 'Интервал персистенции',
-		'设置数据持久化循环周期（秒）': 'Установить интервал цикла персистенции (сек)'
+		'设置数据持久化循环周期（秒）': 'Установить интервал цикла персистенции (сек). Изменение этого параметра удалит существующие данные. При интервале 600 секунд одно устройство занимает около 60 КБ (фиксированный размер)'
 	}
 };
 
@@ -433,7 +433,7 @@ return view.extend({
 		o = s.option(form.Value, 'retention_seconds', getTranslation('持久化循环周期', language),
 			getTranslation('设置数据持久化循环周期（秒）', language));
 		o.datatype = 'uinteger';
-		o.placeholder = '60';
+		o.placeholder = '600';
 		o.rmempty = true; // 留空则不写入 UCI，由后端决定默认值
 
 		// 添加意见反馈信息
