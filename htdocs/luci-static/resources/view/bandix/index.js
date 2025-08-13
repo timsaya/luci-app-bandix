@@ -12,6 +12,7 @@ const translations = {
         'Bandix 局域网流量监控': 'Bandix 局域网流量监控',
         '正在加载数据...': '正在加载数据...',
         '无法获取数据': '无法获取数据',
+        '无法获取历史数据': '无法获取历史数据',
         '主机名': '主机名',
         'IP地址': 'IP地址',
         'MAC地址': 'MAC地址',
@@ -47,12 +48,27 @@ const translations = {
         '保存中...': '保存中...',
         '限速功能仅对跨网络流量生效。': '限速功能仅对跨网络流量生效。',
         '提示：输入 0 表示无限制': '提示：输入 0 表示无限制',
-        '实时总流量': '实时总流量'
+        '实时总流量': '实时总流量',
+        '历史流量趋势': '历史流量趋势',
+        '选择设备': '选择设备',
+        '所有设备': '所有设备',
+        '时间范围': '时间范围',
+        '最近5分钟': '最近5分钟',
+        '最近30分钟': '最近30分钟',
+        '最近2小时': '最近2小时',
+        '类型': '类型',
+        '总流量': '总流量',
+        '局域网': '局域网',
+        '跨网络': '跨网络',
+        '刷新': '刷新',
+        '上传速率': '上传速率',
+        '下载速率': '下载速率'
     },
     'zh-tw': {
         'Bandix 局域网流量监控': 'Bandix 局域網流量監控',
         '正在加载数据...': '正在載入資料...',
         '无法获取数据': '無法獲取資料',
+        '无法获取历史数据': '無法獲取歷史資料',
         '主机名': '主機名',
         'IP地址': 'IP地址',
         'MAC地址': 'MAC地址',
@@ -88,12 +104,27 @@ const translations = {
         '保存中...': '儲存中...',
         '限速功能仅对跨网络流量生效。': '限速功能僅對跨網路流量生效。',
         '提示：输入 0 表示无限制': '提示：輸入 0 表示無限制',
-        '实时总流量': '即時總流量'
+        '实时总流量': '即時總流量',
+        '历史流量趋势': '歷史流量趨勢',
+        '选择设备': '選擇設備',
+        '所有设备': '所有設備',
+        '时间范围': '時間範圍',
+        '最近5分钟': '最近5分鐘',
+        '最近30分钟': '最近30分鐘',
+        '最近2小时': '最近2小時',
+        '类型': '類型',
+        '总流量': '總流量',
+        '局域网': '局域網',
+        '跨网络': '跨網路',
+        '刷新': '重新整理',
+        '上传速率': '上傳速率',
+        '下载速率': '下載速率'
     },
     'en': {
         'Bandix 局域网流量监控': 'Bandix LAN Traffic Monitor',
         '正在加载数据...': 'Loading data...',
         '无法获取数据': 'Unable to fetch data',
+        '无法获取历史数据': 'Unable to fetch history data',
         '主机名': 'Hostname',
         'IP地址': 'IP Address',
         'MAC地址': 'MAC Address',
@@ -129,7 +160,21 @@ const translations = {
         '保存中...': 'Saving...',
         '限速功能仅对跨网络流量生效。': 'Rate limiting only applies to WAN traffic.',
         '提示：输入 0 表示无限制': 'Tip: Enter 0 for unlimited',
-        '实时总流量': 'Real-time Total Traffic'
+        '实时总流量': 'Real-time Total Traffic',
+        '历史流量趋势': 'Traffic History',
+        '选择设备': 'Select Device',
+        '所有设备': 'All Devices',
+        '时间范围': 'Time Range',
+        '最近5分钟': 'Last 5 minutes',
+        '最近30分钟': 'Last 30 minutes',
+        '最近2小时': 'Last 2 hours',
+        '类型': 'Type',
+        '总流量': 'Total',
+        '局域网': 'LAN',
+        '跨网络': 'WAN',
+        '刷新': 'Refresh',
+        '上传速率': 'Upload Rate',
+        '下载速率': 'Download Rate'
     },
     'fr': {
         'Bandix 局域网流量监控': 'Moniteur de Trafic LAN Bandix',
@@ -387,6 +432,14 @@ var callSetRateLimit = rpc.declare({
     method: 'setRateLimit',
     params: ['mac', 'wide_tx_rate_limit', 'wide_rx_rate_limit'],
     expect: { success: true }
+});
+
+// 历史指标 RPC
+var callGetMetrics = rpc.declare({
+    object: 'luci.bandix',
+    method: 'getMetrics',
+    params: ['mac'],
+    expect: {}
 });
 
 return view.extend({
@@ -888,6 +941,41 @@ return view.extend({
                 opacity: 0.7;
                 pointer-events: none;
             }
+
+            /* 历史趋势 */
+            .history-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .history-controls {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 12px;
+                align-items: center;
+                padding: 12px 16px;
+                border-bottom: 1px solid ${darkMode ? '#252526' : '#e5e7eb'};
+                background-color: ${darkMode ? '#333333' : '#fafafa'};
+            }
+            .history-controls .form-select,
+            .history-controls .form-input {
+                width: auto;
+                min-width: 160px;
+            }
+            .history-card-body {
+                padding: 12px 16px 16px 16px;
+            }
+            .history-legend {
+                margin-left: auto;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.875rem; color: ${darkMode ? '#e2e8f0' : '#374151'}; }
+            .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+            .legend-up { background-color: #ef4444; }
+            .legend-down { background-color: #22c55e; }
+            #history-canvas { width: 100%; height: 240px; display: block; }
         `);
 
         document.head.appendChild(style);
@@ -907,6 +995,42 @@ return view.extend({
 
             // 统计卡片
             E('div', { 'class': 'stats-grid', 'id': 'stats-grid' }),
+
+            // 历史趋势卡片（无时间范围筛选）
+            E('div', { 'class': 'bandix-card', 'id': 'history-card' }, [
+                E('div', { 'class': 'bandix-card-header history-header' }, [
+                    E('div', { 'class': 'bandix-card-title' }, [
+                        E('span', {}, '📈'),
+                        getTranslation('历史流量趋势', language)
+                    ]),
+                    E('div', { 'class': 'history-legend' }, [
+                        E('div', { 'class': 'legend-item' }, [
+                            E('span', { 'class': 'legend-dot legend-up' }),
+                            getTranslation('上传速率', language)
+                        ]),
+                        E('div', { 'class': 'legend-item' }, [
+                            E('span', { 'class': 'legend-dot legend-down' }),
+                            getTranslation('下载速率', language)
+                        ])
+                    ])
+                ]),
+                E('div', { 'class': 'history-controls' }, [
+                    E('label', { 'class': 'form-label', 'style': 'margin: 0;' }, getTranslation('选择设备', language)),
+                    E('select', { 'class': 'form-select', 'id': 'history-device-select' }, [
+                        E('option', { 'value': '' }, getTranslation('所有设备', language))
+                    ]),
+                    E('label', { 'class': 'form-label', 'style': 'margin: 0;' }, getTranslation('类型', language)),
+                    E('select', { 'class': 'form-select', 'id': 'history-type-select' }, [
+                        E('option', { 'value': 'total' }, getTranslation('总流量', language)),
+                        E('option', { 'value': 'lan' }, getTranslation('局域网', language)),
+                        E('option', { 'value': 'wan' }, getTranslation('跨网络', language))
+                    ]),
+                    E('span', { 'class': 'bandix-badge', 'id': 'history-retention', 'style': 'margin-left: auto;' }, '')
+                ]),
+                E('div', { 'class': 'history-card-body' }, [
+                    E('canvas', { 'id': 'history-canvas', 'height': '240' })
+                ])
+            ]),
 
             // 主要内容卡片
             E('div', { 'class': 'bandix-card' }, [
@@ -1160,6 +1284,261 @@ return view.extend({
             }
         });
 
+        // 历史趋势：状态与工具
+        var latestDevices = [];
+        var lastHistoryData = null; // 最近一次拉取的原始 metrics 数据
+        var isHistoryLoading = false; // 防止轮询重入
+
+        function updateDeviceOptions(devices) {
+            var select = document.getElementById('history-device-select');
+            if (!select) return;
+            // 对比是否需要更新
+            var currentValues = Array.from(select.options).map(o => o.value);
+            var desiredValues = [''].concat(devices.map(d => d.mac));
+            var same = currentValues.length === desiredValues.length && currentValues.every((v, i) => v === desiredValues[i]);
+            if (same) return;
+
+            var prev = select.value;
+            // 重建选项
+            select.innerHTML = '';
+            select.appendChild(E('option', { 'value': '' }, getTranslation('所有设备', language)));
+            devices.forEach(function (d) {
+                var label = (d.hostname || d.ip || d.mac || '-') + (d.ip ? ' (' + d.ip + ')' : '') + (d.mac ? ' [' + d.mac + ']' : '');
+                select.appendChild(E('option', { 'value': d.mac }, label));
+            });
+            // 尽量保留之前选择
+            if (desiredValues.indexOf(prev) !== -1) select.value = prev;
+        }
+
+        function getTypeKeys(type) {
+            if (type === 'lan') return { up: 'local_tx_rate', down: 'local_rx_rate' };
+            if (type === 'wan') return { up: 'wide_tx_rate', down: 'wide_rx_rate' };
+            return { up: 'total_tx_rate', down: 'total_rx_rate' };
+        }
+
+        function fetchMetricsData(mac) {
+            // 通过 ubus RPC 获取，避免跨域与鉴权问题
+            return callGetMetrics(mac || '').then(function (res) { return res || { metrics: [] }; });
+        }
+
+        function drawHistoryChart(canvas, labels, upSeries, downSeries) {
+            if (!canvas) return;
+            var dpr = window.devicePixelRatio || 1;
+            var rect = canvas.getBoundingClientRect();
+            var cssWidth = rect.width;
+            var cssHeight = rect.height;
+            canvas.width = Math.max(1, Math.floor(cssWidth * dpr));
+            canvas.height = Math.max(1, Math.floor(cssHeight * dpr));
+            var ctx = canvas.getContext('2d');
+            ctx.scale(dpr, dpr);
+
+            var width = cssWidth;
+            var height = cssHeight;
+            // 预留更大边距，避免标签被裁剪
+            var padding = { left: 72, right: 36, top: 16, bottom: 36 };
+
+            // 背景
+            ctx.clearRect(0, 0, width, height);
+
+            var speedUnit = uci.get('bandix', 'general', 'speed_unit') || 'bytes';
+            var maxVal = 0;
+            for (var i = 0; i < upSeries.length; i++) maxVal = Math.max(maxVal, upSeries[i] || 0);
+            for (var j = 0; j < downSeries.length; j++) maxVal = Math.max(maxVal, downSeries[j] || 0);
+            if (!isFinite(maxVal) || maxVal <= 0) maxVal = 1;
+
+            // 动态测量Y轴最大标签宽度，增大左边距
+            ctx.font = '12px sans-serif';
+            var maxLabelText = formatByterate(maxVal, speedUnit);
+            var zeroLabelText = formatByterate(0, speedUnit);
+            var maxLabelWidth = Math.max(ctx.measureText(maxLabelText).width, ctx.measureText(zeroLabelText).width);
+            padding.left = Math.max(padding.left, Math.ceil(maxLabelWidth) + 20);
+            // 保证右侧时间不被裁剪
+            var rightMin = 36; // 最小右边距
+            padding.right = Math.max(padding.right, rightMin);
+
+            var innerW = Math.max(1, width - padding.left - padding.right);
+            var innerH = Math.max(1, height - padding.top - padding.bottom);
+
+            // 网格与Y轴刻度
+            var gridLines = 4;
+            ctx.strokeStyle = '#e5e7eb';
+            ctx.lineWidth = 1;
+            for (var g = 0; g <= gridLines; g++) {
+                var y = padding.top + (innerH * g / gridLines);
+                ctx.beginPath();
+                ctx.moveTo(padding.left, y);
+                ctx.lineTo(width - padding.right, y);
+                ctx.stroke();
+                var val = Math.round(maxVal * (gridLines - g) / gridLines);
+                ctx.fillStyle = '#9ca3af';
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'middle';
+                var yLabelY = (g === gridLines) ? y - 4 : y; // 底部刻度上移，避免贴近X轴
+                ctx.fillText(formatByterate(val, speedUnit), padding.left - 8, yLabelY);
+            }
+
+            function pathSeries(series, color) {
+                if (!series || series.length === 0) return;
+                ctx.beginPath();
+                var n = series.length;
+                var stepX = n > 1 ? (innerW / (n - 1)) : 0;
+                for (var k = 0; k < n; k++) {
+                    var v = Math.max(0, series[k] || 0);
+                    var x = padding.left + (n > 1 ? stepX * k : innerW / 2);
+                    var y = padding.top + innerH - (v / maxVal) * innerH;
+                    if (k === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                }
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            pathSeries(upSeries, '#ef4444');
+            pathSeries(downSeries, '#22c55e');
+
+            // X 轴时间标签（首尾）
+            if (labels && labels.length > 0) {
+                ctx.fillStyle = '#9ca3af';
+                ctx.font = '12px sans-serif';
+                ctx.textBaseline = 'top';
+                var firstX = padding.left;
+                var lastX = width - padding.right;
+                var yBase = height - padding.bottom + 4;
+                // 左侧时间靠左对齐
+                ctx.textAlign = 'left';
+                ctx.fillText(labels[0], firstX, yBase);
+                // 右侧时间靠右对齐，避免被裁剪
+                if (labels.length > 1) {
+                    ctx.textAlign = 'right';
+                    ctx.fillText(labels[labels.length - 1], lastX, yBase);
+                }
+            }
+        }
+
+        function msToTimeLabel(ts) {
+            var d = new Date(ts);
+            var hh = ('' + d.getHours()).padStart(2, '0');
+            var mm = ('' + d.getMinutes()).padStart(2, '0');
+            var ss = ('' + d.getSeconds()).padStart(2, '0');
+            return hh + ':' + mm + ':' + ss;
+        }
+
+        function formatRetentionSeconds(seconds, language) {
+            if (!seconds || seconds <= 0) return '';
+            var zh = (language === 'zh-cn' || language === 'zh-tw');
+            var value, unitZh, unitEn;
+            if (seconds < 60) {
+                value = Math.round(seconds);
+                unitZh = '秒';
+                unitEn = value > 1 ? 'seconds' : 'second';
+            } else if (seconds < 3600) {
+                value = Math.round(seconds / 60);
+                if (value < 1) value = 1;
+                unitZh = '分钟';
+                unitEn = value > 1 ? 'minutes' : 'minute';
+            } else if (seconds < 86400) {
+                value = Math.round(seconds / 3600);
+                if (value < 1) value = 1;
+                unitZh = '小时';
+                unitEn = value > 1 ? 'hours' : 'hour';
+            } else if (seconds < 604800) {
+                value = Math.round(seconds / 86400);
+                if (value < 1) value = 1;
+                unitZh = '天';
+                unitEn = value > 1 ? 'days' : 'day';
+            } else {
+                value = Math.round(seconds / 604800);
+                if (value < 1) value = 1;
+                unitZh = '周';
+                unitEn = value > 1 ? 'weeks' : 'week';
+            }
+            return zh ? ('最近' + value + unitZh) : ('Last ' + value + ' ' + unitEn);
+        }
+
+        function refreshHistory() {
+            var mac = document.getElementById('history-device-select')?.value || '';
+            var type = document.getElementById('history-type-select')?.value || 'total';
+            var canvas = document.getElementById('history-canvas');
+            if (!canvas) return Promise.resolve();
+
+            if (isHistoryLoading) return Promise.resolve();
+            isHistoryLoading = true;
+
+            
+
+            return fetchMetricsData(mac).then(function (res) {
+                var data = Array.isArray(res && res.metrics) ? res.metrics.slice() : [];
+                lastHistoryData = data;
+
+                var retentionBadge = document.getElementById('history-retention');
+                if (retentionBadge) {
+                    var text = formatRetentionSeconds(res && res.retention_seconds, language);
+                    retentionBadge.textContent = text || '';
+                }
+
+                if (!data.length) {
+                    var ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    drawHistoryChart(canvas, [], [], []);
+                    return;
+                }
+
+                // 不做时间过滤，按时间升序排序，完整展示
+                var filtered = data.slice();
+                filtered.sort(function (a, b) { return (a.ts_ms || 0) - (b.ts_ms || 0); });
+
+                var keys = getTypeKeys(type);
+                var upSeries = filtered.map(function (x) { return x[keys.up] || 0; });
+                var downSeries = filtered.map(function (x) { return x[keys.down] || 0; });
+                var labels = filtered.map(function (x) { return msToTimeLabel(x.ts_ms); });
+
+                drawHistoryChart(canvas, labels, upSeries, downSeries);
+            }).catch(function () {
+                var ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawHistoryChart(canvas, [], [], []);
+                ui.addNotification(null, E('p', {}, getTranslation('无法获取历史数据', language)), 'error');
+            }).finally(function () {
+                isHistoryLoading = false;
+            });
+        }
+
+        // 历史趋势：事件绑定
+        (function initHistoryControls() {
+            var typeSel = document.getElementById('history-type-select');
+            var devSel = document.getElementById('history-device-select');
+            if (typeSel) typeSel.value = 'total';
+            if (typeSel) typeSel.addEventListener('change', refreshHistory);
+            if (devSel) devSel.addEventListener('change', refreshHistory);
+
+            window.addEventListener('resize', function () {
+                if (lastHistoryData && lastHistoryData.length) {
+                    // 重新绘制当前数据（保持当前筛选）
+                    var type = document.getElementById('history-type-select')?.value || 'total';
+                    var canvas = document.getElementById('history-canvas');
+                    if (!canvas) return;
+                    var filtered = lastHistoryData.slice();
+                    filtered.sort(function (a, b) { return (a.ts_ms || 0) - (b.ts_ms || 0); });
+                    var keys = getTypeKeys(type);
+                    var upSeries = filtered.map(function (x) { return x[keys.up] || 0; });
+                    var downSeries = filtered.map(function (x) { return x[keys.down] || 0; });
+                    var labels = filtered.map(function (x) { return msToTimeLabel(x.ts_ms); });
+                    drawHistoryChart(canvas, labels, upSeries, downSeries);
+                } else {
+                    refreshHistory();
+                }
+            });
+
+            // 首次加载
+            refreshHistory();
+        })();
+
+        // 历史趋势轮询（每1秒）
+        poll.add(function () {
+            return refreshHistory();
+        },1);
+
 
 
         // 轮询获取数据
@@ -1376,6 +1755,12 @@ return view.extend({
                 // 更新表格内容
                 trafficDiv.innerHTML = '';
                 trafficDiv.appendChild(table);
+
+                // 更新历史趋势中的设备下拉
+                try {
+                    latestDevices = stats.devices || [];
+                    updateDeviceOptions(latestDevices);
+                } catch (e) {}
             });
         }, 1);
 

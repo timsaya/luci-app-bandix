@@ -5,6 +5,7 @@
 			"ubus": {
 				"luci.bandix": [
 					"getStatus",
+					"getMetrics",
 					"setRateLimit"
 				]
 			},
@@ -16,7 +17,8 @@
 			"ubus": {
 				"luci.bandix": [
 					"setRateLimit",
-					"getStatus"
+					"getStatus",
+					"getMetrics"
 				]
 			},
 			"uci": [

@@ -8,6 +8,7 @@ BANDIX_PORT=$(uci get bandix.general.port 2>/dev/null || echo "8686")
 readonly BANDIX_API_BASE="http://127.0.0.1:$BANDIX_PORT"
 readonly BANDIX_DEVICES_API="$BANDIX_API_BASE/api/devices"
 readonly BANDIX_LIMIT_API="$BANDIX_API_BASE/api/limit"
+readonly BANDIX_METRICS_API="$BANDIX_API_BASE/api/metrics"
 readonly DHCP_LEASES_FILE="/tmp/dhcp.leases"
 
 # 通用函数：创建简单的JSON响应
@@ -208,6 +209,31 @@ EOF
 	cat "$tmp_json"
 }
 
+# 获取历史指标（可选MAC）
+get_metrics() {
+    local mac="$1"
+    local url="$BANDIX_METRICS_API"
+    if [ -n "$mac" ]; then
+        # 转义MAC
+        local mac_escaped=$(echo "$mac" | sed 's/\//\\\//g')
+        url="$url?mac=$mac_escaped"
+    fi
+
+    local api_result=$(curl -s "$url" 2>/dev/null)
+    if [ $? -ne 0 ] || [ -z "$api_result" ]; then
+        # 返回空结果
+        json_init
+        json_add_array "metrics"
+        json_close_array
+        json_dump
+        json_cleanup
+        return
+    fi
+
+    # 直接输出API返回（应为合法JSON）
+    echo "$api_result"
+}
+
 # 设置设备限速
 set_device_rate_limit() {
 	local mac="$1"
@@ -266,6 +292,10 @@ case "$1" in
 		json_add_object "getStatus"
 		json_close_object
 		
+		json_add_object "getMetrics"
+		json_add_string "mac"
+		json_close_object
+		
 		json_add_object "setRateLimit"
 		json_add_string "mac"
 		json_add_int "wide_rx_rate_limit"
@@ -279,6 +309,17 @@ case "$1" in
 		case "$2" in
 			getStatus)
 				get_device_status
+				;;
+			getMetrics)
+				# 从 stdin 读取 JSON 参数（可为空），解析 mac
+				mac=""
+				if read -t 1 input; then
+					[ -n "$input" ] && mac=$(echo "$input" | jsonfilter -e '$[0]' 2>/dev/null)
+					if [ -z "$mac" ] && [ -n "$input" ]; then
+						mac=$(echo "$input" | jsonfilter -e '$.mac' 2>/dev/null)
+					fi
+				fi
+				get_metrics "$mac"
 				;;
 			setRateLimit)
 				logger "luci.bandix: setRateLimit called"
