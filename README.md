@@ -12,7 +12,9 @@ LuCI Bandix is a network traffic monitoring application for OpenWrt, providing i
 LuCI Bandix is developed based on the LuCI framework, offering network traffic monitoring capabilities for OpenWrt routers. This application depends on the openwrt-bandix backend service and helps users view and analyze network traffic statistics in real-time.
 
 
-![LuCI Bandix Screenshot](docs/images/index.png)
+![LuCI Bandix Screenshot](docs/images/index-1.png)
+
+![LuCI Bandix Screenshot](docs/images/index-2.png)
 
 ![LuCI Bandix Screenshot](docs/images/settings.png)
 
@@ -35,6 +37,8 @@ Join our Discord community for help, discussions, and updates:
 - High-performance implementation based on Rust eBPF
 - Support for LAN/WAN speed monitoring
 - Support for WAN speed limitation
+- Persistent data storage
+- Historical traffic trends and charts
 
 ## Version Dependencies
 
@@ -44,6 +48,7 @@ The following table shows the version dependency relationship between luci-app-b
 |------------------------|--------------------------------|
 | 0.2.x                  | 0.2.x                          |
 | 0.3.x                  | 0.3.x                          |
+| 0.4.x                  | 0.4.x                          |
 
 Please ensure you install matching versions to ensure compatibility and proper functionality.
 
