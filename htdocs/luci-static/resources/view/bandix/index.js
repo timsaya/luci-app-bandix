@@ -964,6 +964,7 @@ return view.extend({
             }
             .history-card-body {
                 padding: 12px 16px 16px 16px;
+                position: relative;
             }
             .history-legend {
                 margin-left: auto;
@@ -976,6 +977,26 @@ return view.extend({
             .legend-up { background-color: #ef4444; }
             .legend-down { background-color: #22c55e; }
             #history-canvas { width: 100%; height: 240px; display: block; }
+            .history-tooltip {
+                position: absolute;
+                display: none;
+                max-width: 320px;
+                background-color: ${darkMode ? 'rgba(37, 37, 38, 0.95)' : 'rgba(255, 255, 255, 0.98)'};
+                color: ${darkMode ? '#e2e8f0' : '#1f2937'};
+                border: 1px solid ${darkMode ? '#3a3a3a' : '#e5e7eb'};
+                border-radius: 8px;
+                box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2), 0 4px 6px -4px rgba(0,0,0,0.2);
+                padding: 10px 12px;
+                z-index: 10;
+                pointer-events: none;
+                font-size: 12px;
+                line-height: 1.4;
+                white-space: nowrap;
+            }
+            .history-tooltip .ht-title { font-weight: 700; margin-bottom: 6px; }
+            .history-tooltip .ht-row { display: flex; justify-content: space-between; gap: 12px; }
+            .history-tooltip .ht-key { color: ${darkMode ? '#94a3b8' : '#6b7280'}; }
+            .history-tooltip .ht-val { color: ${darkMode ? '#e2e8f0' : '#111827'}; }
         `);
 
         document.head.appendChild(style);
@@ -1028,7 +1049,8 @@ return view.extend({
                     E('span', { 'class': 'bandix-badge', 'id': 'history-retention', 'style': 'margin-left: auto;' }, '')
                 ]),
                 E('div', { 'class': 'history-card-body' }, [
-                    E('canvas', { 'id': 'history-canvas', 'height': '240' })
+                    E('canvas', { 'id': 'history-canvas', 'height': '240' }),
+                    E('div', { 'class': 'history-tooltip', 'id': 'history-tooltip' })
                 ])
             ]),
 
@@ -1359,6 +1381,18 @@ return view.extend({
             var innerW = Math.max(1, width - padding.left - padding.right);
             var innerH = Math.max(1, height - padding.top - padding.bottom);
 
+            // 记录用于交互的几何信息
+            canvas.__bandixChart = {
+                padding: padding,
+                innerW: innerW,
+                innerH: innerH,
+                width: width,
+                height: height,
+                labels: labels,
+                upSeries: upSeries,
+                downSeries: downSeries
+            };
+
             // 网格与Y轴刻度
             var gridLines = 4;
             ctx.strokeStyle = '#e5e7eb';
@@ -1424,6 +1458,30 @@ return view.extend({
             return hh + ':' + mm + ':' + ss;
         }
 
+        function buildTooltipHtml(point, language) {
+            if (!point) return '';
+            var lines = [];
+            lines.push('<div class="ht-title">' + msToTimeLabel(point.ts_ms) + '</div>');
+            function row(key, val) {
+                lines.push('<div class="ht-row"><span class="ht-key">' + key + '</span><span class="ht-val">' + val + '</span></div>');
+            }
+            var speedUnit = uci.get('bandix', 'general', 'speed_unit') || 'bytes';
+            // 显示所有字段
+            row('total_tx_rate', formatByterate(point.total_tx_rate||0, speedUnit));
+            row('total_rx_rate', formatByterate(point.total_rx_rate||0, speedUnit));
+            row('local_tx_rate', formatByterate(point.local_tx_rate||0, speedUnit));
+            row('local_rx_rate', formatByterate(point.local_rx_rate||0, speedUnit));
+            row('wide_tx_rate', formatByterate(point.wide_tx_rate||0, speedUnit));
+            row('wide_rx_rate', formatByterate(point.wide_rx_rate||0, speedUnit));
+            row('total_tx_bytes', formatSize(point.total_tx_bytes||0));
+            row('total_rx_bytes', formatSize(point.total_rx_bytes||0));
+            row('local_tx_bytes', formatSize(point.local_tx_bytes||0));
+            row('local_rx_bytes', formatSize(point.local_rx_bytes||0));
+            row('wide_tx_bytes', formatSize(point.wide_tx_bytes||0));
+            row('wide_rx_bytes', formatSize(point.wide_rx_bytes||0));
+            return lines.join('');
+        }
+
         function formatRetentionSeconds(seconds, language) {
             if (!seconds || seconds <= 0) return '';
             var zh = (language === 'zh-cn' || language === 'zh-tw');
@@ -1460,6 +1518,7 @@ return view.extend({
             var mac = document.getElementById('history-device-select')?.value || '';
             var type = document.getElementById('history-type-select')?.value || 'total';
             var canvas = document.getElementById('history-canvas');
+            var tooltip = document.getElementById('history-tooltip');
             if (!canvas) return Promise.resolve();
 
             if (isHistoryLoading) return Promise.resolve();
@@ -1494,6 +1553,64 @@ return view.extend({
                 var labels = filtered.map(function (x) { return msToTimeLabel(x.ts_ms); });
 
                 drawHistoryChart(canvas, labels, upSeries, downSeries);
+
+                // 绑定或更新鼠标事件用于展示浮窗
+                function findNearestIndex(evt) {
+                    var rect = canvas.getBoundingClientRect();
+                    var x = evt.clientX - rect.left;
+                    var info = canvas.__bandixChart;
+                    if (!info || !info.labels || info.labels.length === 0) return -1;
+                    var n = info.labels.length;
+                    var stepX = n > 1 ? (info.innerW / (n - 1)) : 0;
+                    var minIdx = 0;
+                    var minDist = Infinity;
+                    for (var k = 0; k < n; k++) {
+                        var px = info.padding.left + (n > 1 ? stepX * k : info.innerW / 2);
+                        var dist = Math.abs(px - x);
+                        if (dist < minDist) { minDist = dist; minIdx = k; }
+                    }
+                    return minIdx;
+                }
+
+				function onMove(evt) {
+					if (!tooltip) return;
+					var idx = findNearestIndex(evt);
+					if (idx < 0 || !lastHistoryData || !lastHistoryData[idx]) {
+						tooltip.style.display = 'none';
+						return;
+					}
+					var point = lastHistoryData[idx];
+					tooltip.innerHTML = buildTooltipHtml(point, language);
+					var parentRect = canvas.parentElement.getBoundingClientRect();
+					// 先显示以计算尺寸
+					tooltip.style.display = 'block';
+					tooltip.style.left = '-9999px';
+					tooltip.style.top = '-9999px';
+					var tw = tooltip.offsetWidth || 0;
+					var th = tooltip.offsetHeight || 0;
+					var padding = 12;
+					var maxX = parentRect.width - 4;
+					var maxY = parentRect.height - 4;
+					var baseX = evt.clientX - parentRect.left + padding;
+					var baseY = evt.clientY - parentRect.top - th - padding; // 在鼠标上方
+					// X方向避免溢出
+					if (baseX + tw > maxX) baseX = maxX - tw;
+					if (baseX < 4) baseX = 4;
+					// 如果上方放不下，改为放在下方，并做边界收缩
+					if (baseY < 4) {
+						baseY = evt.clientY - parentRect.top + padding;
+						if (baseY + th > maxY) baseY = Math.max(4, maxY - th);
+					}
+					tooltip.style.left = baseX + 'px';
+					tooltip.style.top = baseY + 'px';
+				}
+
+                function onLeave() {
+                    if (tooltip) tooltip.style.display = 'none';
+                }
+
+                canvas.onmousemove = onMove;
+                canvas.onmouseleave = onLeave;
             }).catch(function () {
                 var ctx = canvas.getContext('2d');
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
