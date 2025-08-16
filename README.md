@@ -74,7 +74,7 @@ Please ensure you install matching versions to ensure compatibility and proper f
 
 3. Configure your LAN interface in settings
 
-   After installation, go to the Bandix settings page and select your LAN interface to enable proper monitoring.
+   After installation, go to the Bandix settings page and select your LAN interface to enable proper monitoring. Make sure to check the "Enable" option to start the service.
 
 ## Configuration
 
