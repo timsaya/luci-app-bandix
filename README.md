@@ -19,12 +19,10 @@ LuCI Bandix is developed based on the LuCI framework, offering network traffic m
 ![LuCI Bandix Screenshot](docs/images/settings.png)
 
 
-## Community & Support
+## System Requirements
 
-Join our Discord community for help, discussions, and updates:
-
-
-- https://discord.gg/zNxxA2J2
+- **OpenWrt Version**: Recommended OpenWrt 24.10 and above
+- **Package Format Support**: Supports APK and IPK package formats
 
 
 
@@ -54,7 +52,6 @@ Please ensure you install matching versions to ensure compatibility and proper f
 
 ## Installation
 
-### Installation Steps
 
 1. First install the openwrt-bandix backend
 
@@ -79,6 +76,14 @@ Please ensure you install matching versions to ensure compatibility and proper f
 ## Configuration
 
 After installation, you can access the Bandix application through the LuCI web interface. The application is located under the "Network" menu.
+
+
+## Community & Support
+
+Join our Discord community for help, discussions, and updates:
+
+
+- https://discord.gg/zNxxA2J2
 
 
 

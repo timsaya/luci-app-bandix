@@ -11,7 +11,6 @@ LuCI Bandix 是一个用于 OpenWrt 的网络流量监控应用，通过 LuCI We
 
 LuCI Bandix 基于 LuCI 框架开发，为 OpenWrt 路由器提供网络流量监控能力。此应用依赖于 openwrt-bandix 后端服务，可以帮助用户实时查看和分析网络流量统计。
 
-
 ![LuCI Bandix Screenshot](docs/images/index-1.png)
 
 ![LuCI Bandix Screenshot](docs/images/index-2.png)
@@ -19,12 +18,10 @@ LuCI Bandix 基于 LuCI 框架开发，为 OpenWrt 路由器提供网络流量�
 ![LuCI Bandix Screenshot](docs/images/settings.png)
 
 
-## 社区与支持
+## 系统要求
 
-加入我们的 Discord 社区获取帮助、参与讨论和接收更新：
-
-- https://discord.gg/zNxxA2J2
-
+- **OpenWrt 版本**: 建议使用 OpenWrt 24.10 及以上版本
+- **包格式支持**: 支持 APK 和 IPK 包格式
 
 
 ## 功能特点
@@ -54,7 +51,6 @@ LuCI Bandix 基于 LuCI 框架开发，为 OpenWrt 路由器提供网络流量�
 
 ## 安装
 
-### 安装步骤
 
 1. 先安装 openwrt-bandix 后端
 
@@ -80,6 +76,17 @@ LuCI Bandix 基于 LuCI 框架开发，为 OpenWrt 路由器提供网络流量�
 ## 配置
 
 安装完成后，可以通过 LuCI Web 界面访问 Bandix 应用。应用位于"网络"菜单下。
+
+
+
+
+## 社区与支持
+
+加入我们的 Discord 社区获取帮助、参与讨论和接收更新：
+
+- https://discord.gg/zNxxA2J2
+
+
 
 
 
