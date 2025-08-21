@@ -708,15 +708,6 @@ return view.extend({
                 color: ${darkMode ? '#cbd5e1' : 'inherit'};
             }
             
-            /* 斑马纹效果 - 交替行颜色 */
-            .bandix-table tbody tr:nth-child(odd) {
-                background-color: ${darkMode ? '#252526' : '#ffffff'};
-            }
-            
-            .bandix-table tbody tr:nth-child(even) {
-                background-color: ${darkMode ? '#1E1E1E' : '#f9fafb'};
-            }
-            
             .bandix-table th:nth-child(1),
             .bandix-table td:nth-child(1) {
                 width: 20%;
@@ -957,7 +948,7 @@ return view.extend({
             }
             
             .modal-body {
-                padding: 24px;
+                padding: 10px;
             }
             
             .modal-footer {
@@ -981,7 +972,6 @@ return view.extend({
             
             .form-input {
                 width: 100%;
-                padding: 12px;
                 border: 1px solid ${darkMode ? '#252526' : '#d1d5db'};
                 border-radius: 6px;
                 font-size: 0.875rem;
@@ -1001,7 +991,6 @@ return view.extend({
             
             .form-select {
                 width: 100%;
-                padding: 12px;
                 border: 1px solid ${darkMode ? '#252526' : '#d1d5db'};
                 border-radius: 6px;
                 font-size: 0.875rem;
