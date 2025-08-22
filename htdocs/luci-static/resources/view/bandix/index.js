@@ -9,7 +9,7 @@
 
 const translations = {
     'zh-cn': {
-        'Bandix 局域网流量监控': 'Bandix 局域网流量监控',
+        'Bandix 流量监控': 'Bandix 流量监控',
         '正在加载数据...': '正在加载数据...',
         '无法获取数据': '无法获取数据',
         '无法获取历史数据': '无法获取历史数据',
@@ -85,7 +85,7 @@ const translations = {
         '跨网下载速率': '跨网下载速率'
     },
     'zh-tw': {
-        'Bandix 局域网流量监控': 'Bandix 局域網流量監控',
+        'Bandix 流量监控': 'Bandix 流量監控',
         '正在加载数据...': '正在載入資料...',
         '无法获取数据': '無法獲取資料',
         '无法获取历史数据': '無法獲取歷史資料',
@@ -161,7 +161,7 @@ const translations = {
         '跨网下载速率': '跨網下載速率'
     },
     'en': {
-        'Bandix 局域网流量监控': 'Bandix LAN Traffic Monitor',
+        'Bandix 流量监控': 'Bandix Traffic Monitor',
         '正在加载数据...': 'Loading data...',
         '无法获取数据': 'Unable to fetch data',
         '无法获取历史数据': 'Unable to fetch history data',
@@ -237,7 +237,7 @@ const translations = {
         '跨网下载速率': 'WAN Download'
     },
     'fr': {
-        'Bandix 局域网流量监控': 'Moniteur de Trafic LAN Bandix',
+        'Bandix 流量监控': 'Moniteur de Trafic Bandix',
         '正在加载数据...': 'Chargement des données...',
         '无法获取数据': 'Impossible de récupérer les données',
         '主机名': 'Nom d\'hôte',
@@ -307,7 +307,7 @@ const translations = {
         '跨网下载速率': 'Vitesse de téléchargement WAN'
     },
     'ja': {
-        'Bandix 局域网流量监控': 'Bandix LAN トラフィックモニター',
+        'Bandix 流量监控': 'Bandix トラフィックモニター',
         '正在加载数据...': 'データを読み込み中...',
         '无法获取数据': 'データを取得できません',
         '主机名': 'ホスト名',
@@ -377,7 +377,7 @@ const translations = {
         '跨网下载速率': 'WAN ダウンロード速度'
     },
     'ru': {
-        'Bandix 局域网流量监控': 'Монитор Трафика LAN Bandix',
+        'Bandix 流量监控': 'Монитор Трафика Bandix',
         '正在加载数据...': 'Загрузка данных...',
         '无法获取数据': 'Не удалось получить данные',
         '主机名': 'Имя хоста',
@@ -1154,7 +1154,7 @@ return view.extend({
         var view = E('div', { 'class': 'bandix-container' }, [
             // 头部
             E('div', { 'class': 'bandix-header' }, [
-                E('h1', { 'class': 'bandix-title' }, getTranslation('Bandix 局域网流量监控', language)),
+                E('h1', { 'class': 'bandix-title' }, getTranslation('Bandix 流量监控', language)),
                 // E('div', { 'class': 'bandix-badge', 'id': 'device-count' }, getTranslation('在线设备', language) + ': 0 / 0')
             ]),
 

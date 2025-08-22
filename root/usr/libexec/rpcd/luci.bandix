@@ -10,6 +10,14 @@ readonly BANDIX_DEVICES_API="$BANDIX_API_BASE/api/devices"
 readonly BANDIX_LIMIT_API="$BANDIX_API_BASE/api/limit"
 readonly BANDIX_METRICS_API="$BANDIX_API_BASE/api/metrics"
 readonly DHCP_LEASES_FILE="/tmp/dhcp.leases"
+readonly BANDIX_TMP_DIR="/tmp/bandix"
+
+# 确保临时目录存在
+ensure_tmp_dir() {
+	if [ ! -d "$BANDIX_TMP_DIR" ]; then
+		mkdir -p "$BANDIX_TMP_DIR" 2>/dev/null
+	fi
+}
 
 # 通用函数：创建简单的JSON响应
 make_value() {
@@ -109,8 +117,11 @@ get_device_status() {
 	
 	json_get_keys device_indexes
 	
+	# 确保临时目录存在
+	ensure_tmp_dir
+	
 	# 创建临时文件来存储修改后的JSON
-	local tmp_json=$(mktemp)
+	local tmp_json=$(mktemp "$BANDIX_TMP_DIR/bandix_devices.XXXXXX")
 	
 	# 设置清理函数
 	trap 'rm -f "$tmp_json" 2>/dev/null' EXIT
@@ -129,6 +140,7 @@ get_device_status() {
 		echo '  ]' >>"$tmp_json"
 		echo '}' >>"$tmp_json"
 		cat "$tmp_json"
+		rm -f "$tmp_json" 2>/dev/null
 		return
 	fi
 	
@@ -207,6 +219,9 @@ EOF
 	
 	# 输出最终结果
 	cat "$tmp_json"
+	
+	# 删除临时文件
+	rm -f "$tmp_json" 2>/dev/null
 }
 
 # 获取历史指标（可选MAC）
@@ -264,8 +279,11 @@ set_device_rate_limit() {
 	# 发送请求到bandix API
 	local response=$(curl -s -X POST -H "Content-Type: application/json" -d "$request_data" "$BANDIX_LIMIT_API" 2>/dev/null)
 	
+	# 确保临时目录存在
+	ensure_tmp_dir
+	
 	# 把响应写入文件（用于调试）
-	echo "$response" > /tmp/luci.bandix.response
+	echo "$response" > "$BANDIX_TMP_DIR/luci.bandix.response"
 	# logger "luci.bandix: API response=$response"
 	
 	if [ $? -eq 0 ] && [ -n "$response" ]; then
@@ -284,6 +302,9 @@ set_device_rate_limit() {
 	else
 		make_error "Failed to set rate limit"
 	fi
+	
+	# 删除调试文件（可选，用于清理）
+	rm -f "$BANDIX_TMP_DIR/luci.bandix.response" 2>/dev/null
 }
 
 case "$1" in

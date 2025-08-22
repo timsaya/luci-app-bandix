@@ -7,7 +7,7 @@
 
 const translations = {
 	'zh-cn': {
-		'Bandix流量监控设置': 'Bandix流量监控设置',
+		'Bandix 流量监控设置': 'Bandix 流量监控设置',
 		'启用': '启用',
 		'启用 Bandix 流量监控服务': '启用 Bandix 流量监控服务',
 		'界面语言': '界面语言',
@@ -32,7 +32,7 @@ const translations = {
 		'设置数据持久化循环周期（秒）': '设置数据持久化循环周期(秒)。修改会删除已有数据。600秒循环周期下, 1 个设备, 固定占用约 60KB'
 	},
 	'zh-tw': {
-		'Bandix流量监控设置': 'Bandix 流量監控設置',
+		'Bandix 流量监控设置': 'Bandix 流量監控設置',
 		'启用': '啟用',
 		'启用 Bandix 流量监控服务': '啟用 Bandix 流量監控服務',
 		'界面语言': '界面語言',
@@ -57,7 +57,7 @@ const translations = {
 		'设置数据持久化循环周期（秒）': '設定資料持久化循環週期(秒)。修改會刪除已有資料。600秒循環週期下, 1 個設備, 固定占用約 60KB'
 	},
 	'en': {
-		'Bandix流量监控设置': 'Bandix Traffic Monitor Settings',
+		'Bandix 流量监控设置': 'Bandix Traffic Monitor Settings',
 		'启用': 'Enable',
 		'启用 Bandix 流量监控服务': 'Enable Bandix Traffic Monitor Service',
 		'界面语言': 'Interface Language',
@@ -82,7 +82,7 @@ const translations = {
 		'设置数据持久化循环周期（秒）': 'Set persistence loop interval (seconds). Changing this will delete existing data. With a 600-second interval, 1 device uses a fixed size of about 60 KB'
 	},
 	'fr': {
-		'Bandix流量监控设置': 'Paramètres de Surveillance du Trafic Bandix',
+		'Bandix 流量监控设置': 'Paramètres de Surveillance du Trafic Bandix',
 		'启用': 'Activer',
 		'启用 Bandix 流量监控服务': 'Activer le Service de Surveillance du Trafic Bandix',
 		'界面语言': 'Langue de l\'Interface',
@@ -107,7 +107,7 @@ const translations = {
 		'设置数据持久化循环周期（秒）': "Définir l’intervalle de persistance (secondes). La modification supprimera les données existantes. Avec un intervalle de 600 secondes, un appareil occupe environ 60 Ko (taille fixe)"
 	},
 	'ja': {
-		'Bandix流量监控设置': 'Bandix トラフィックモニター設定',
+		'Bandix 流量监控设置': 'Bandix トラフィックモニター設定',
 		'启用': '有効',
 		'启用 Bandix 流量监控服务': 'Bandix トラフィックモニターサービスを有効にする',
 		'界面语言': 'インターフェース言語',
@@ -132,7 +132,7 @@ const translations = {
 		'设置数据持久化循环周期（秒）': 'データ永続化のループ間隔（秒）を設定。この設定を変更すると既存データが削除されます。600 秒のループ間隔では、1 台のデバイスで固定サイズとして約 60 KB を使用します'
 	},
 	'ru': {
-		'Bandix流量监控设置': 'Настройки Монитора Трафика Bandix',
+		'Bandix 流量监控设置': 'Настройки Монитора Трафика Bandix',
 		'启用': 'Включить',
 		'启用 Bandix 流量监控服务': 'Включить Службу Мониторинга Трафика Bandix',
 		'界面语言': 'Язык Интерфейса',
@@ -363,8 +363,8 @@ return view.extend({
 		// 创建表单
 		m = new form.Map('bandix');
 
-		// Bandix流量监控设置部分
-		s = m.section(form.NamedSection, 'general', 'general', getTranslation('Bandix流量监控设置', language));
+		// Bandix 流量监控设置部分
+		s = m.section(form.NamedSection, 'general', 'general', getTranslation('Bandix 流量监控设置', language));
 		s.addremove = false;
 
 		o = s.option(form.Flag, 'enabled', getTranslation('启用', language),
