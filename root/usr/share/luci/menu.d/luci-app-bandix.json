@@ -3,24 +3,28 @@
 		"title": "Bandix",
 		"order": 90,
 		"action": {
-			"type": "view",
-			"path": "bandix/index"
+			"type": "alias",
+			"path": "admin/network/bandix/index"
 		},
 		"depends": {
 			"acl": [ "luci-app-bandix" ],
 			"uci": { "bandix": true }
 		}
 	},
-	"admin/network/bandix/settings": {
-		"title": "Settings",
+	"admin/network/bandix/index": {
+		"title": "状态",
 		"order": 10,
 		"action": {
 			"type": "view",
-			"path": "bandix/settings"
-		},
-		"depends": {
-			"acl": [ "luci-app-bandix" ],
-			"uci": { "bandix": true }
+			"path": "bandix/index"
 		}
+	},
+	"admin/network/bandix/settings": {
+		"title": "Settings",
+		"order": 20,
+		"action": {
+			"type": "view",
+			"path": "bandix/settings"
+		}  
 	}
 } 
