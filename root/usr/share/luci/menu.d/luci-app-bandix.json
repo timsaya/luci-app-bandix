@@ -12,7 +12,7 @@
 		}
 	},
 	"admin/network/bandix/index": {
-		"title": "状态",
+		"title": "Status",
 		"order": 10,
 		"action": {
 			"type": "view",
