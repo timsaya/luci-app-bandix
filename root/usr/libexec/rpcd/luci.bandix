@@ -166,6 +166,7 @@ get_device_status() {
 		json_get_var wide_tx_rate wide_tx_rate
 		json_get_var wide_rx_rate_limit wide_rx_rate_limit
 		json_get_var wide_tx_rate_limit wide_tx_rate_limit
+		json_get_var last_online_ts last_online_ts
 		
 		# 从DHCP租约文件中查找对应的主机名
 		local dhcp_hostname=$(get_dhcp_hostname "$mac")
@@ -204,7 +205,8 @@ get_device_status() {
 			"wide_rx_rate": ${wide_rx_rate:-0},
 			"wide_tx_rate": ${wide_tx_rate:-0},
 			"wide_rx_rate_limit": ${wide_rx_rate_limit:-0},
-			"wide_tx_rate_limit": ${wide_tx_rate_limit:-0}
+			"wide_tx_rate_limit": ${wide_tx_rate_limit:-0},
+			"last_online_ts": ${last_online_ts:-0}
 		}
 EOF
 		

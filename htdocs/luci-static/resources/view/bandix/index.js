@@ -82,7 +82,15 @@ const translations = {
         '局域上传速率': '局域上传速率',
         '局域下载速率': '局域下载速率',
         '跨网上传速率': '跨网上传速率',
-        '跨网下载速率': '跨网下载速率'
+        '跨网下载速率': '跨网下载速率',
+        '从未上线': '从未上线',
+        '刚刚': '刚刚',
+        '分钟前': '分钟前',
+        '小时前': '小时前',
+        '天前': '天前',
+        '个月前': '个月前',
+        '年前': '年前',
+        '最后上线': '最后上线'
     },
     'zh-tw': {
         'Bandix 流量监控': 'Bandix 流量監控',
@@ -158,7 +166,15 @@ const translations = {
         '局域上传速率': '局域上傳速率',
         '局域下载速率': '局域下載速率',
         '跨网上传速率': '跨網上傳速率',
-        '跨网下载速率': '跨網下載速率'
+        '跨网下载速率': '跨網下載速率',
+        '从未上线': '從未上線',
+        '刚刚': '剛剛',
+        '分钟前': '分鐘前',
+        '小时前': '小時前',
+        '天前': '天前',
+        '个月前': '個月前',
+        '年前': '年前',
+        '最后上线': '最後上線'
     },
     'en': {
         'Bandix 流量监控': 'Bandix Traffic Monitor',
@@ -234,7 +250,15 @@ const translations = {
         '局域上传速率': 'LAN Upload',
         '局域下载速率': 'LAN Download',
         '跨网上传速率': 'WAN Upload',
-        '跨网下载速率': 'WAN Download'
+        '跨网下载速率': 'WAN Download',
+        '从未上线': 'Never Online',
+        '刚刚': 'Just Now',
+        '分钟前': 'min ago',
+        '小时前': 'h ago',
+        '天前': 'days ago',
+        '个月前': 'months ago',
+        '年前': 'years ago',
+        '最后上线': 'Last Online'
     },
     'fr': {
         'Bandix 流量监控': 'Moniteur de Trafic Bandix',
@@ -304,7 +328,15 @@ const translations = {
         '局域上传速率': 'Vitesse de téléversement LAN',
         '局域下载速率': 'Vitesse de téléchargement LAN',
         '跨网上传速率': 'Vitesse de téléversement WAN',
-        '跨网下载速率': 'Vitesse de téléchargement WAN'
+        '跨网下载速率': 'Vitesse de téléchargement WAN',
+        '从未上线': 'Jamais en ligne',
+        '刚刚': 'À l\'instant',
+        '分钟前': 'min',
+        '小时前': 'h',
+        '天前': 'j',
+        '个月前': 'mois',
+        '年前': 'an',
+        '最后上线': 'Dernière connexion'
     },
     'ja': {
         'Bandix 流量监控': 'Bandix トラフィックモニター',
@@ -374,7 +406,15 @@ const translations = {
         '局域上传速率': 'LAN アップロード速度',
         '局域下载速率': 'LAN ダウンロード速度',
         '跨网上传速率': 'WAN アップロード速度',
-        '跨网下载速率': 'WAN ダウンロード速度'
+        '跨网下载速率': 'WAN ダウンロード速度',
+        '从未上线': 'オンライン未経験',
+        '刚刚': '今',
+        '分钟前': '分前',
+        '小时前': '時間前',
+        '天前': '日前',
+        '个月前': 'ヶ月前',
+        '年前': '年前',
+        '最后上线': '最終オンライン'
     },
     'ru': {
         'Bandix 流量监控': 'Монитор Трафика Bandix',
@@ -444,7 +484,15 @@ const translations = {
         '局域上传速率': 'Скорость отправки LAN',
         '局域下载速率': 'Скорость загрузки LAN',
         '跨网上传速率': 'Скорость отправки WAN',
-        '跨网下载速率': 'Скорость загрузки WAN'
+        '跨网下载速率': 'Скорость загрузки WAN',
+        '从未上线': 'Никогда не был онлайн',
+        '刚刚': 'Только что',
+        '分钟前': 'мин назад',
+        '小时前': 'ч назад',
+        '天前': 'дн назад',
+        '个月前': 'мес назад',
+        '年前': 'лет назад',
+        '最后上线': 'Последний онлайн'
     }
 };
 
@@ -1155,7 +1203,7 @@ return view.extend({
             // 头部
             E('div', { 'class': 'bandix-header' }, [
                 E('h1', { 'class': 'bandix-title' }, getTranslation('Bandix 流量监控', language)),
-                // E('div', { 'class': 'bandix-badge', 'id': 'device-count' }, getTranslation('在线设备', language) + ': 0 / 0')
+                E('div', { 'class': 'bandix-badge', 'id': 'device-count' }, getTranslation('在线设备', language) + ': 0 / 0')
             ]),
 
             // 警告提示
@@ -1464,9 +1512,40 @@ return view.extend({
         function updateDeviceOptions(devices) {
             var select = document.getElementById('history-device-select');
             if (!select) return;
+            
+            // 对设备列表进行排序：在线设备在前，离线设备在后，然后按IP地址从小到大排序
+            var sortedDevices = devices.slice().sort(function(a, b) {
+                var aOnline = isDeviceOnline(a);
+                var bOnline = isDeviceOnline(b);
+                
+                // 首先按在线状态排序：在线设备在前
+                if (aOnline && !bOnline) return -1;
+                if (!aOnline && bOnline) return 1;
+                
+                // 在线状态相同时，按IP地址排序
+                var aIp = a.ip || '';
+                var bIp = b.ip || '';
+                
+                // 将IP地址转换为数字进行比较
+                var aIpParts = aIp.split('.').map(function(part) { return parseInt(part) || 0; });
+                var bIpParts = bIp.split('.').map(function(part) { return parseInt(part) || 0; });
+                
+                // 逐段比较IP地址
+                for (var i = 0; i < 4; i++) {
+                    var aPart = aIpParts[i] || 0;
+                    var bPart = bIpParts[i] || 0;
+                    if (aPart !== bPart) {
+                        return aPart - bPart;
+                    }
+                }
+                
+                // IP地址相同时，按MAC地址排序
+                return (a.mac || '').localeCompare(b.mac || '');
+            });
+            
             // 对比是否需要更新
             var currentValues = Array.from(select.options).map(o => o.value);
-            var desiredValues = [''].concat(devices.map(d => d.mac));
+            var desiredValues = [''].concat(sortedDevices.map(d => d.mac));
             var same = currentValues.length === desiredValues.length && currentValues.every((v, i) => v === desiredValues[i]);
             if (same) return;
 
@@ -1474,7 +1553,7 @@ return view.extend({
             // 重建选项
             select.innerHTML = '';
             select.appendChild(E('option', { 'value': '' }, getTranslation('所有设备', language)));
-            devices.forEach(function (d) {
+            sortedDevices.forEach(function (d) {
                 var label = (d.hostname || d.ip || d.mac || '-') + (d.ip ? ' (' + d.ip + ')' : '') + (d.mac ? ' [' + d.mac + ']' : '');
                 select.appendChild(E('option', { 'value': d.mac }, label));
             });
@@ -1702,57 +1781,142 @@ return view.extend({
 			return lines.join('');
         }
 
-        function formatRetentionSeconds(seconds, language) {
-            if (!seconds || seconds <= 0) return '';
-            var value;
-            var unitKey;
-            if (seconds < 60) {
-                value = Math.round(seconds);
-                unitKey = '秒';
-            } else if (seconds < 3600) {
-                value = Math.round(seconds / 60);
-                if (value < 1) value = 1;
-                unitKey = '分钟';
-            } else if (seconds < 86400) {
-                value = Math.round(seconds / 3600);
-                if (value < 1) value = 1;
-                unitKey = '小时';
-            } else if (seconds < 604800) {
-                value = Math.round(seconds / 86400);
-                if (value < 1) value = 1;
-                unitKey = '天';
-            } else {
-                value = Math.round(seconds / 604800);
-                if (value < 1) value = 1;
-                unitKey = '周';
-            }
+        // 判断设备是否在线（基于 last_online_ts）
+function isDeviceOnline(device) {
+    // 如果没有 last_online_ts 字段，使用原有的 online 字段
+    if (typeof device.last_online_ts === 'undefined') {
+        return device.online !== false;
+    }
+    
+    // 如果 last_online_ts 为 0 或无效值，认为离线
+    if (!device.last_online_ts || device.last_online_ts <= 0) {
+        return false;
+    }
+    
+    // 计算当前时间与最后在线时间的差值（毫秒）
+    var currentTime = Date.now();
+    // 如果时间戳小于1000000000000，说明是秒级时间戳，需要转换为毫秒
+    var lastOnlineTime = device.last_online_ts < 1000000000000 ? device.last_online_ts * 1000 : device.last_online_ts;
+    var timeDiff = currentTime - lastOnlineTime;
+    
+    // 从UCI配置获取离线超时时间（秒），默认10分钟
+    var offlineTimeoutSeconds = uci.get('bandix', 'general', 'offline_timeout') || 600;
+    var offlineThreshold = offlineTimeoutSeconds * 1000; // 转换为毫秒
+    
+    return timeDiff <= offlineThreshold;
+}
 
-            // 多语言格式化
-            if (language === 'zh-cn' || language === 'zh-tw') {
-                return getTranslation('最近', language) + value + getTranslation(unitKey, language);
-            }
+// 格式化最后上线时间
+function formatLastOnlineTime(lastOnlineTs, language) {
+    if (!lastOnlineTs || lastOnlineTs <= 0) {
+        return getTranslation('从未上线', language);
+    }
+    
+    // 如果时间戳小于1000000000000，说明是秒级时间戳，需要转换为毫秒
+    var lastOnlineTime = lastOnlineTs < 1000000000000 ? lastOnlineTs * 1000 : lastOnlineTs;
+    var currentTime = Date.now();
+    var timeDiff = currentTime - lastOnlineTime;
+    
+    // 转换为分钟
+    var minutesDiff = Math.floor(timeDiff / (60 * 1000));
+    
+    // 1分钟以内显示"刚刚"
+    if (minutesDiff < 1) {
+        return getTranslation('刚刚', language);
+    }
+    
+    // 10分钟以内显示具体的"几分钟前"
+    if (minutesDiff <= 10) {
+        return minutesDiff + getTranslation('分钟前', language);
+    }
+    
+    // 转换为小时
+    var hoursDiff = Math.floor(timeDiff / (60 * 60 * 1000));
+    
+    // 如果不满1小时，显示分钟
+    if (hoursDiff < 1) {
+        return minutesDiff + getTranslation('分钟前', language);
+    }
+    
+    // 转换为天
+    var daysDiff = Math.floor(timeDiff / (24 * 60 * 60 * 1000));
+    
+    // 如果不满1天，显示小时（忽略分钟）
+    if (daysDiff < 1) {
+        return hoursDiff + getTranslation('小时前', language);
+    }
+    
+    // 转换为月（按30天计算）
+    var monthsDiff = Math.floor(daysDiff / 30);
+    
+    // 如果不满1个月，显示天（忽略小时）
+    if (monthsDiff < 1) {
+        return daysDiff + getTranslation('天前', language);
+    }
+    
+    // 转换为年（按365天计算）
+    var yearsDiff = Math.floor(daysDiff / 365);
+    
+    // 如果不满1年，显示月（忽略天）
+    if (yearsDiff < 1) {
+        return monthsDiff + getTranslation('个月前', language);
+    }
+    
+    // 超过1年，显示年（忽略月）
+    return yearsDiff + getTranslation('年前', language);
+}
 
-            if (language === 'ja') {
-                return getTranslation('最近', language) + value + getTranslation(unitKey, language);
-            }
+function formatRetentionSeconds(seconds, language) {
+    if (!seconds || seconds <= 0) return '';
+    var value;
+    var unitKey;
+    if (seconds < 60) {
+        value = Math.round(seconds);
+        unitKey = '秒';
+    } else if (seconds < 3600) {
+        value = Math.round(seconds / 60);
+        if (value < 1) value = 1;
+        unitKey = '分钟';
+    } else if (seconds < 86400) {
+        value = Math.round(seconds / 3600);
+        if (value < 1) value = 1;
+        unitKey = '小时';
+    } else if (seconds < 604800) {
+        value = Math.round(seconds / 86400);
+        if (value < 1) value = 1;
+        unitKey = '天';
+    } else {
+        value = Math.round(seconds / 604800);
+        if (value < 1) value = 1;
+        unitKey = '周';
+    }
 
-            if (language === 'fr') {
-                // 法语单复数：值>1 用复数，天/周/小时/分钟/秒分别加 s
-                var unitFr = getTranslation(unitKey, 'fr');
-                if (value > 1) unitFr = unitFr + 's';
-                return getTranslation('最近', 'fr') + ' ' + value + ' ' + unitFr;
-            }
+    // 多语言格式化
+    if (language === 'zh-cn' || language === 'zh-tw') {
+        return getTranslation('最近', language) + value + getTranslation(unitKey, language);
+    }
 
-            if (language === 'ru') {
-                // 俄语用缩写，避免复杂变格
-                return getTranslation('最近', 'ru') + ' ' + value + ' ' + getTranslation(unitKey, 'ru');
-            }
+    if (language === 'ja') {
+        return getTranslation('最近', language) + value + getTranslation(unitKey, language);
+    }
 
-            // 英语默认
-            var unitEn = getTranslation(unitKey, 'en');
-            if (value > 1) unitEn = unitEn + 's';
-            return getTranslation('最近', 'en') + ' ' + value + ' ' + unitEn;
-        }
+    if (language === 'fr') {
+        // 法语单复数：值>1 用复数，天/周/小时/分钟/秒分别加 s
+        var unitFr = getTranslation(unitKey, 'fr');
+        if (value > 1) unitFr = unitFr + 's';
+        return getTranslation('最近', 'fr') + ' ' + value + ' ' + unitFr;
+    }
+
+    if (language === 'ru') {
+        // 俄语用缩写，避免复杂变格
+        return getTranslation('最近', 'ru') + ' ' + value + ' ' + getTranslation(unitKey, 'ru');
+    }
+
+    // 英语默认
+    var unitEn = getTranslation(unitKey, 'en');
+    if (value > 1) unitEn = unitEn + 's';
+    return getTranslation('最近', 'en') + ' ' + value + ' ' + unitEn;
+}
 
         function refreshHistory() {
             var mac = document.getElementById('history-device-select')?.value || '';
@@ -1923,10 +2087,10 @@ return view.extend({
                 }
 
                 // 更新设备计数
-                var onlineCount = stats.devices.filter(d => d.online !== false).length;
-                // deviceCountDiv.textContent = getTranslation('在线设备', language) + ': ' + onlineCount + ' / ' + stats.devices.length;
+                var onlineCount = stats.devices.filter(d => isDeviceOnline(d)).length;
+                deviceCountDiv.textContent = getTranslation('在线设备', language) + ': ' + onlineCount + ' / ' + stats.devices.length;
 
-                // 计算统计数据
+                // 计算统计数据（包含所有设备）
                 var totalLanUp = stats.devices.reduce((sum, d) => sum + (d.local_tx_bytes || 0), 0);
                 var totalLanDown = stats.devices.reduce((sum, d) => sum + (d.local_rx_bytes || 0), 0);
                 var totalWanUp = stats.devices.reduce((sum, d) => sum + (d.wide_tx_bytes || 0), 0);
@@ -2035,9 +2199,39 @@ return view.extend({
 				var selectedMac = (typeof document !== 'undefined' ? (document.getElementById('history-device-select')?.value || '') : '');
 				var filteredDevices = (!selectedMac) ? stats.devices : stats.devices.filter(function(d){ return (d.mac === selectedMac); });
 
+				// 排序：在线设备在前，离线设备在后，然后按IP地址从小到大排序
+				filteredDevices.sort(function(a, b) {
+					var aOnline = isDeviceOnline(a);
+					var bOnline = isDeviceOnline(b);
+					
+					// 首先按在线状态排序：在线设备在前
+					if (aOnline && !bOnline) return -1;
+					if (!aOnline && bOnline) return 1;
+					
+					// 在线状态相同时，按IP地址排序
+					var aIp = a.ip || '';
+					var bIp = b.ip || '';
+					
+					// 将IP地址转换为数字进行比较
+					var aIpParts = aIp.split('.').map(function(part) { return parseInt(part) || 0; });
+					var bIpParts = bIp.split('.').map(function(part) { return parseInt(part) || 0; });
+					
+					// 逐段比较IP地址
+					for (var i = 0; i < 4; i++) {
+						var aPart = aIpParts[i] || 0;
+						var bPart = bIpParts[i] || 0;
+						if (aPart !== bPart) {
+							return aPart - bPart;
+						}
+					}
+					
+					// IP地址相同时，按MAC地址排序
+					return (a.mac || '').localeCompare(b.mac || '');
+				});
+
 				// 填充数据
 				filteredDevices.forEach(function (device) {
-                    var isOnline = device.online !== false;
+                    var isOnline = isDeviceOnline(device);
 
                     var actionButton = E('button', {
                         'class': 'action-button',
@@ -2060,7 +2254,11 @@ return view.extend({
                                     device.hostname || '-'
                                 ]),
                                 E('div', { 'class': 'device-ip' }, device.ip),
-                                E('div', { 'class': 'device-mac' }, device.mac)
+                                E('div', { 'class': 'device-mac' }, device.mac),
+                                E('div', { 'class': 'device-last-online' }, [
+                                    E('span', { 'style': 'color: #6b7280; font-size: 0.75rem;' }, getTranslation('最后上线', language) + ': '),
+                                    E('span', { 'style': 'color: #9ca3af; font-size: 0.75rem;' }, formatLastOnlineTime(device.last_online_ts, language))
+                                ])
                             ])
                         ]),
 
