@@ -58,7 +58,7 @@ Please ensure you install matching versions to ensure compatibility and proper f
    Download the appropriate package for your device from [openwrt-bandix Releases](https://github.com/timsaya/openwrt-bandix/releases), then install:
 
    ```bash
-   opkg install bandix_latest_architecture.ipk  # (or apk add bandix_latest_architecture.apk)
+   opkg install bandix_latest_architecture.ipk  # (or apk add --allow-untrusted bandix_latest_architecture.apk)
    ```
 
 2. Install the luci-app-bandix frontend
@@ -66,7 +66,7 @@ Please ensure you install matching versions to ensure compatibility and proper f
    Download the package from [luci-app-bandix Releases](https://github.com/timsaya/luci-app-bandix/releases), then install:
 
    ```bash
-   opkg install luci-app-bandix_latest_all.ipk  # (or apk add luci-app-bandix_latest_all.apk)
+   opkg install luci-app-bandix_latest_all.ipk  # (or apk add --allow-untrusted luci-app-bandix_latest_all.apk)
    ```
 
 3. Configure your LAN interface in settings
