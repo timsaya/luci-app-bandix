@@ -86,6 +86,12 @@ Please ensure you install matching versions to ensure compatibility and proper f
 
 
 
+## Known Issues
+
+When the persistence cycle is set too large (e.g., 1 hour, 10 hours, etc.), the rpcd service may crash on some devices, making it impossible to access the router's management interface via web. The system may display password error messages, though the exact reason for this prompt is unclear.
+
+**Solution**: Access the terminal via SSH, reinstall bandix, and execute `service rpcd restart`. Also, set a smaller persistence cycle (e.g., 10 minutes).
+
 ## Maintainer
 
 - [timsaya](https://github.com/timsaya)
