@@ -1139,10 +1139,10 @@ return view.extend({
             .history-controls {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 12px;
+                gap: 8px;
                 align-items: center;
-                padding: 12px 16px;
-                border-bottom: 1px solid ${darkMode ? '#252526' : '#e5e7eb'};
+                padding: 8px 12px; /* 更窄的内边距 */
+                border-bottom: 1px solid ${darkMode ? '#252526' : '#f1f5f9'}; /* 更轻的分割线 */
                 background-color: ${darkMode ? '#333333' : '#fafafa'};
             }
             .history-controls .form-select,
@@ -1151,7 +1151,7 @@ return view.extend({
                 min-width: 160px;
             }
             .history-card-body {
-                padding: 12px 16px 16px 16px;
+                padding: 8px 12px 12px 12px; /* 更紧凑 */
                 position: relative;
             }
             .history-legend {
@@ -1164,7 +1164,7 @@ return view.extend({
             .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
             .legend-up { background-color: #ef4444; }
             .legend-down { background-color: #22c55e; }
-            #history-canvas { width: 100%; height: 240px; display: block; }
+            #history-canvas { width: 100%; height: 200px; display: block; } /* 变窄的高度 */
 			.history-tooltip {
 				position: fixed;
                 display: none;
@@ -1628,10 +1628,10 @@ return view.extend({
             };
             if (typeof prevHover === 'number') canvas.__bandixChart.hoverIndex = prevHover;
 
-            // 网格与Y轴刻度
+            // 网格与Y轴刻度（更细更淡）
             var gridLines = 4;
-            ctx.strokeStyle = '#e5e7eb';
-            ctx.lineWidth = 1;
+            ctx.strokeStyle = (darkMode ? 'rgba(148,163,184,0.06)' : 'rgba(148,163,184,0.08)');
+            ctx.lineWidth = 0.8;
             for (var g = 0; g <= gridLines; g++) {
                 var y = padding.top + (innerH * g / gridLines);
                 ctx.beginPath();
@@ -1639,7 +1639,7 @@ return view.extend({
                 ctx.lineTo(width - padding.right, y);
                 ctx.stroke();
                 var val = Math.round(maxVal * (gridLines - g) / gridLines);
-                ctx.fillStyle = '#9ca3af';
+                ctx.fillStyle = (darkMode ? 'rgba(148,163,184,0.7)' : '#9ca3af');
                 ctx.font = '12px sans-serif';
                 ctx.textAlign = 'right';
                 ctx.textBaseline = 'middle';
@@ -1647,24 +1647,58 @@ return view.extend({
                 ctx.fillText(formatByterate(val, speedUnit), padding.left - 8, yLabelY);
             }
 
-            function pathSeries(series, color) {
+            function drawAreaSeries(series, color, gradientFrom, gradientTo) {
                 if (!series || series.length === 0) return;
-                ctx.beginPath();
                 var n = series.length;
                 var stepX = n > 1 ? (innerW / (n - 1)) : 0;
+
+                // 先绘制填充区域路径
+                ctx.beginPath();
                 for (var k = 0; k < n; k++) {
                     var v = Math.max(0, series[k] || 0);
                     var x = padding.left + (n > 1 ? stepX * k : innerW / 2);
                     var y = padding.top + innerH - (v / maxVal) * innerH;
                     if (k === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
                 }
+                // 关闭到底部以形成区域
+                ctx.lineTo(padding.left + innerW, padding.top + innerH);
+                ctx.lineTo(padding.left, padding.top + innerH);
+                ctx.closePath();
+
+                // 创建渐变填充
+                var grad = ctx.createLinearGradient(0, padding.top, 0, padding.top + innerH);
+                grad.addColorStop(0, gradientFrom);
+                grad.addColorStop(1, gradientTo);
+                ctx.fillStyle = grad;
+                ctx.fill();
+
+                // 然后绘制细线
+                ctx.beginPath();
+                for (var k2 = 0; k2 < n; k2++) {
+                    var v2 = Math.max(0, series[k2] || 0);
+                    var x2 = padding.left + (n > 1 ? stepX * k2 : innerW / 2);
+                    var y2 = padding.top + innerH - (v2 / maxVal) * innerH;
+                    if (k2 === 0) ctx.moveTo(x2, y2); else ctx.lineTo(x2, y2);
+                }
                 ctx.strokeStyle = color;
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 1.2; // 更细的线
                 ctx.stroke();
+
+                // 小圆点（常态较小，hover 放大会通过 tooltip 控制）
+                ctx.fillStyle = color;
+                for (var p = 0; p < n; p++) {
+                    var vp = Math.max(0, series[p] || 0);
+                    var xp = padding.left + (n > 1 ? stepX * p : innerW / 2);
+                    var yp = padding.top + innerH - (vp / maxVal) * innerH;
+                    ctx.beginPath();
+                    ctx.arc(xp, yp, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
             }
 
-            pathSeries(upSeries, '#ef4444');
-            pathSeries(downSeries, '#22c55e');
+            // 红色上行，绿色下行，使用半透明渐变
+            drawAreaSeries(upSeries, '#ef4444', 'rgba(239,68,68,0.16)', 'rgba(239,68,68,0.02)');
+            drawAreaSeries(downSeries, '#22c55e', 'rgba(34,197,94,0.12)', 'rgba(34,197,94,0.02)');
 
             // X 轴时间标签（首尾）
             if (labels && labels.length > 0) {
