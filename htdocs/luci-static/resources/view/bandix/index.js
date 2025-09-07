@@ -90,7 +90,8 @@ const translations = {
         '天前': '天前',
         '个月前': '个月前',
         '年前': '年前',
-        '最后上线': '最后上线'
+        '最后上线': '最后上线',
+        '缩放': '缩放'
     },
     'zh-tw': {
         'Bandix 流量监控': 'Bandix 流量監控',
@@ -174,7 +175,8 @@ const translations = {
         '天前': '天前',
         '个月前': '個月前',
         '年前': '年前',
-        '最后上线': '最後上線'
+        '最后上线': '最後上線',
+        '缩放': '縮放'
     },
     'en': {
         'Bandix 流量监控': 'Bandix Traffic Monitor',
@@ -258,7 +260,8 @@ const translations = {
         '天前': 'days ago',
         '个月前': 'months ago',
         '年前': 'years ago',
-        '最后上线': 'Last Online'
+        '最后上线': 'Last Online',
+        '缩放': 'Zoom'
     },
     'fr': {
         'Bandix 流量监控': 'Moniteur de Trafic Bandix',
@@ -336,7 +339,8 @@ const translations = {
         '天前': 'j',
         '个月前': 'mois',
         '年前': 'an',
-        '最后上线': 'Dernière connexion'
+        '最后上线': 'Dernière connexion',
+        '缩放': 'Zoom'
     },
     'ja': {
         'Bandix 流量监控': 'Bandix トラフィックモニター',
@@ -414,7 +418,8 @@ const translations = {
         '天前': '日前',
         '个月前': 'ヶ月前',
         '年前': '年前',
-        '最后上线': '最終オンライン'
+        '最后上线': '最終オンライン',
+        '缩放': 'ズーム'
     },
     'ru': {
         'Bandix 流量监控': 'Монитор Трафика Bandix',
@@ -492,7 +497,8 @@ const translations = {
         '天前': 'дн назад',
         '个月前': 'мес назад',
         '年前': 'лет назад',
-        '最后上线': 'Последний онлайн'
+        '最后上线': 'Последний онлайн',
+        '缩放': 'Масштаб'
     }
 };
 
@@ -1244,6 +1250,7 @@ return view.extend({
                         E('option', { 'value': 'lan' }, getTranslation('局域网', language)),
                         E('option', { 'value': 'wan' }, getTranslation('跨网络', language))
                     ]),
+                    E('span', { 'class': 'bandix-badge', 'id': 'history-zoom-level', 'style': 'margin-left: 16px; display: none;' }, ''),
                     E('span', { 'class': 'bandix-badge', 'id': 'history-retention', 'style': 'margin-left: auto;' }, '')
                 ]),
                 E('div', { 'class': 'history-card-body' }, [
@@ -1508,10 +1515,15 @@ return view.extend({
         var latestDevices = [];
         var lastHistoryData = null; // 最近一次拉取的原始 metrics 数据
         var isHistoryLoading = false; // 防止轮询重入
-    // 当鼠标悬停在历史图表上时，置为 true，轮询将暂停刷新（实现“鼠标在趋势图上时不自动滚动”）
+    // 当鼠标悬停在历史图表上时，置为 true，轮询将暂停刷新（实现"鼠标在趋势图上时不自动滚动"）
     var historyHover = false;
     // 鼠标悬停时的索引（独立于 canvas.__bandixChart，避免重绘覆盖问题）
     var historyHoverIndex = null;
+    // 缩放功能相关变量
+    var zoomEnabled = false; // 缩放是否启用
+    var zoomScale = 1; // 缩放比例
+    var zoomOffsetX = 0; // X轴偏移
+    var zoomTimer = null; // 延迟启用缩放的计时器
 
         function updateDeviceOptions(devices) {
             var select = document.getElementById('history-device-select');
@@ -1576,8 +1588,31 @@ return view.extend({
             return callGetMetrics(mac || '').then(function (res) { return res || { metrics: [] }; });
         }
 
-        function drawHistoryChart(canvas, labels, upSeries, downSeries) {
+        // 辅助函数：使用当前缩放设置绘制图表
+        function drawHistoryChartWithZoom(canvas, labels, upSeries, downSeries) {
+            drawHistoryChart(canvas, labels, upSeries, downSeries, zoomScale, zoomOffsetX);
+        }
+
+        // 更新缩放倍率显示
+        function updateZoomLevelDisplay() {
+            var zoomLevelElement = document.getElementById('history-zoom-level');
+            if (!zoomLevelElement) return;
+            
+            if (zoomScale <= 1) {
+                zoomLevelElement.style.display = 'none';
+            } else {
+                zoomLevelElement.style.display = 'inline-block';
+                zoomLevelElement.textContent = getTranslation('缩放', language) + ': ' + zoomScale.toFixed(1) + 'x';
+            }
+        }
+
+        function drawHistoryChart(canvas, labels, upSeries, downSeries, scale, offsetX) {
             if (!canvas) return;
+            
+            // 缩放参数默认值
+            scale = scale || 1;
+            offsetX = offsetX || 0;
+            
             var dpr = window.devicePixelRatio || 1;
             var rect = canvas.getBoundingClientRect();
             var cssWidth = rect.width;
@@ -1590,10 +1625,26 @@ return view.extend({
             var width = cssWidth;
             var height = cssHeight;
             // 预留更大边距，避免标签被裁剪
-            var padding = { left: 72, right: 36, top: 16, bottom: 36 };
+            var padding = { left: 90, right: 50, top: 16, bottom: 36 };
 
             // 背景
             ctx.clearRect(0, 0, width, height);
+
+            // 根据缩放和偏移处理数据
+            var originalLabels = labels;
+            var originalUpSeries = upSeries;
+            var originalDownSeries = downSeries;
+            
+            if (scale > 1) {
+                var totalLen = labels.length;
+                var visibleLen = Math.ceil(totalLen / scale);
+                var startIdx = Math.max(0, Math.floor(offsetX));
+                var endIdx = Math.min(totalLen, startIdx + visibleLen);
+                
+                labels = labels.slice(startIdx, endIdx);
+                upSeries = upSeries.slice(startIdx, endIdx);
+                downSeries = downSeries.slice(startIdx, endIdx);
+            }
 
             var speedUnit = uci.get('bandix', 'general', 'speed_unit') || 'bytes';
             var maxVal = 0;
@@ -1606,9 +1657,9 @@ return view.extend({
             var maxLabelText = formatByterate(maxVal, speedUnit);
             var zeroLabelText = formatByterate(0, speedUnit);
             var maxLabelWidth = Math.max(ctx.measureText(maxLabelText).width, ctx.measureText(zeroLabelText).width);
-            padding.left = Math.max(padding.left, Math.ceil(maxLabelWidth) + 20);
+            padding.left = Math.max(padding.left, Math.ceil(maxLabelWidth) + 30);
             // 保证右侧时间不被裁剪
-            var rightMin = 36; // 最小右边距
+            var rightMin = 50; // 最小右边距
             padding.right = Math.max(padding.right, rightMin);
 
             var innerW = Math.max(1, width - padding.left - padding.right);
@@ -1624,7 +1675,13 @@ return view.extend({
                 height: height,
                 labels: labels,
                 upSeries: upSeries,
-                downSeries: downSeries
+                downSeries: downSeries,
+                // 缩放相关信息
+                scale: scale,
+                offsetX: offsetX,
+                originalLabels: originalLabels,
+                originalUpSeries: originalUpSeries,
+                originalDownSeries: originalDownSeries
             };
             if (typeof prevHover === 'number') canvas.__bandixChart.hoverIndex = prevHover;
 
@@ -1727,19 +1784,33 @@ return view.extend({
                 if (useIdx !== null && info.labels && info.labels.length > 0) {
                     var n = info.labels.length;
                     var stepX = n > 1 ? (innerW / (n - 1)) : 0;
-                    var hoverIdx = Math.max(0, Math.min(n - 1, useIdx));
-                    var hoverX = info.padding.left + (n > 1 ? stepX * hoverIdx : innerW / 2);
-                    ctx.save();
-                    var hoverColor = (typeof darkMode !== 'undefined' && darkMode) ? 'rgba(148,163,184,0.7)' : 'rgba(156,163,175,0.9)';
-                    ctx.strokeStyle = hoverColor;
-                    ctx.lineWidth = 1;
-                    ctx.setLineDash([6, 4]);
-                    ctx.beginPath();
-                    ctx.moveTo(hoverX, padding.top);
-                    ctx.lineTo(hoverX, padding.top + innerH);
-                    ctx.stroke();
-                    ctx.setLineDash([]);
-                    ctx.restore();
+                    var hoverIdx = useIdx;
+                    
+                    // 在缩放状态下，需要将原始索引转换为显示索引
+                    if (scale > 1 && originalLabels && originalLabels.length > 0) {
+                        var startIdx = Math.floor(offsetX || 0);
+                        hoverIdx = useIdx - startIdx;
+                        // 检查索引是否在当前显示范围内
+                        if (hoverIdx < 0 || hoverIdx >= n) {
+                            hoverIdx = null; // 不在显示范围内，不绘制虚线
+                        }
+                    }
+                    
+                    if (hoverIdx !== null) {
+                        hoverIdx = Math.max(0, Math.min(n - 1, hoverIdx));
+                        var hoverX = info.padding.left + (n > 1 ? stepX * hoverIdx : innerW / 2);
+                        ctx.save();
+                        var hoverColor = (typeof darkMode !== 'undefined' && darkMode) ? 'rgba(148,163,184,0.7)' : 'rgba(156,163,175,0.9)';
+                        ctx.strokeStyle = hoverColor;
+                        ctx.lineWidth = 1;
+                        ctx.setLineDash([6, 4]);
+                        ctx.beginPath();
+                        ctx.moveTo(hoverX, padding.top);
+                        ctx.lineTo(hoverX, padding.top + innerH);
+                        ctx.stroke();
+                        ctx.setLineDash([]);
+                        ctx.restore();
+                    }
                 }
             } catch (e) { /* 安全兜底 */ }
         }
@@ -2010,7 +2081,7 @@ function formatRetentionSeconds(seconds, language) {
                 if (!data.length) {
                     var ctx = canvas.getContext('2d');
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    drawHistoryChart(canvas, [], [], []);
+                    drawHistoryChart(canvas, [], [], [], 1, 0);
                     return;
                 }
 
@@ -2023,7 +2094,7 @@ function formatRetentionSeconds(seconds, language) {
                 var downSeries = filtered.map(function (x) { return x[keys.down] || 0; });
                 var labels = filtered.map(function (x) { return msToTimeLabel(x.ts_ms); });
 
-                drawHistoryChart(canvas, labels, upSeries, downSeries);
+                drawHistoryChartWithZoom(canvas, labels, upSeries, downSeries);
 
                 // 绑定或更新鼠标事件用于展示浮窗
                 function findNearestIndex(evt) {
@@ -2031,15 +2102,26 @@ function formatRetentionSeconds(seconds, language) {
                     var x = evt.clientX - rect.left;
                     var info = canvas.__bandixChart;
                     if (!info || !info.labels || info.labels.length === 0) return -1;
+                    
+                    // 当前显示的数据长度（缩放后）
                     var n = info.labels.length;
                     var stepX = n > 1 ? (info.innerW / (n - 1)) : 0;
                     var minIdx = 0;
                     var minDist = Infinity;
+                    
+                    // 在当前显示的数据范围内找最近的点
                     for (var k = 0; k < n; k++) {
                         var px = info.padding.left + (n > 1 ? stepX * k : info.innerW / 2);
                         var dist = Math.abs(px - x);
                         if (dist < minDist) { minDist = dist; minIdx = k; }
                     }
+                    
+                    // 如果处于缩放状态，需要将显示索引映射回原始数据索引
+                    if (info.scale && info.scale > 1 && info.originalLabels) {
+                        var startIdx = Math.floor(info.offsetX || 0);
+                        return startIdx + minIdx;
+                    }
+                    
                     return minIdx;
                 }
 
@@ -2050,7 +2132,7 @@ function formatRetentionSeconds(seconds, language) {
                         tooltip.style.display = 'none';
                         // 清除 hover 状态并请求重绘去掉虚线
                         historyHover = false;
-                        try { if (canvas && canvas.__bandixChart) { delete canvas.__bandixChart.hoverIndex; drawHistoryChart(canvas, canvas.__bandixChart.labels || [], canvas.__bandixChart.upSeries || [], canvas.__bandixChart.downSeries || []); } } catch(e){}
+                        try { if (canvas && canvas.__bandixChart) { delete canvas.__bandixChart.hoverIndex; drawHistoryChart(canvas, canvas.__bandixChart.originalLabels || [], canvas.__bandixChart.originalUpSeries || [], canvas.__bandixChart.originalDownSeries || [], zoomScale, zoomOffsetX); } } catch(e){}
 						return;
 					}
                     var point = lastHistoryData[idx];
@@ -2058,7 +2140,7 @@ function formatRetentionSeconds(seconds, language) {
                     historyHover = true;
                     historyHoverIndex = idx;
                     // 立即重绘以显示垂直虚线
-                    try { drawHistoryChart(canvas, canvas.__bandixChart && canvas.__bandixChart.labels ? canvas.__bandixChart.labels : labels, canvas.__bandixChart && canvas.__bandixChart.upSeries ? canvas.__bandixChart.upSeries : upSeries, canvas.__bandixChart && canvas.__bandixChart.downSeries ? canvas.__bandixChart.downSeries : downSeries); } catch(e){}
+                    try { drawHistoryChart(canvas, canvas.__bandixChart && canvas.__bandixChart.originalLabels ? canvas.__bandixChart.originalLabels : labels, canvas.__bandixChart && canvas.__bandixChart.originalUpSeries ? canvas.__bandixChart.originalUpSeries : upSeries, canvas.__bandixChart && canvas.__bandixChart.originalDownSeries ? canvas.__bandixChart.originalDownSeries : downSeries, zoomScale, zoomOffsetX); } catch(e){}
 					tooltip.innerHTML = buildTooltipHtml(point, language);
 					// 先显示以计算尺寸
 					tooltip.style.display = 'block';
@@ -2090,15 +2172,81 @@ function formatRetentionSeconds(seconds, language) {
                     // 清除 hover 状态并请求重绘去掉虚线
                     historyHover = false;
                     historyHoverIndex = null;
-                    try { drawHistoryChart(canvas, canvas.__bandixChart && canvas.__bandixChart.labels ? canvas.__bandixChart.labels : labels, canvas.__bandixChart && canvas.__bandixChart.upSeries ? canvas.__bandixChart.upSeries : upSeries, canvas.__bandixChart && canvas.__bandixChart.downSeries ? canvas.__bandixChart.downSeries : downSeries); } catch(e){}
+                    // 重置缩放状态
+                    if (zoomTimer) {
+                        clearTimeout(zoomTimer);
+                        zoomTimer = null;
+                    }
+                    zoomEnabled = false;
+                    zoomScale = 1;
+                    zoomOffsetX = 0;
+                    // 更新缩放倍率显示
+                    updateZoomLevelDisplay();
+                    // 清除canvas中的hover信息
+                    if (canvas && canvas.__bandixChart) {
+                        delete canvas.__bandixChart.hoverIndex;
+                    }
+                    try { drawHistoryChart(canvas, canvas.__bandixChart && canvas.__bandixChart.originalLabels ? canvas.__bandixChart.originalLabels : labels, canvas.__bandixChart && canvas.__bandixChart.originalUpSeries ? canvas.__bandixChart.originalUpSeries : upSeries, canvas.__bandixChart && canvas.__bandixChart.originalDownSeries ? canvas.__bandixChart.originalDownSeries : downSeries, 1, 0); } catch(e){}
                 }
+
+                // 鼠标进入事件：启动延迟计时器
+                canvas.onmouseenter = function() {
+                    if (zoomTimer) clearTimeout(zoomTimer);
+                    zoomTimer = setTimeout(function() {
+                        zoomEnabled = true;
+                        zoomTimer = null;
+                    }, 1000); // 1秒后启用缩放
+                };
+
+                // 鼠标滚轮事件：处理缩放
+                canvas.onwheel = function(evt) {
+                    if (!zoomEnabled) return;
+                    evt.preventDefault();
+                    
+                    var delta = evt.deltaY > 0 ? 0.9 : 1.1;
+                    var newScale = zoomScale * delta;
+                    
+                    // 限制缩放范围
+                    if (newScale < 1) newScale = 1;
+                    if (newScale > 10) newScale = 10;
+                    
+                    var rect = canvas.getBoundingClientRect();
+                    var mouseX = evt.clientX - rect.left;
+                    var info = canvas.__bandixChart;
+                    if (!info || !info.originalLabels) return;
+                    
+                    // 计算鼠标在数据中的相对位置
+                    var relativeX = (mouseX - info.padding.left) / info.innerW;
+                    var totalLen = info.originalLabels.length;
+                    var mouseDataIndex = relativeX * totalLen;
+                    
+                    // 调整偏移以保持鼠标位置为缩放中心
+                    var oldVisibleLen = totalLen / zoomScale;
+                    var newVisibleLen = totalLen / newScale;
+                    var centerShift = (oldVisibleLen - newVisibleLen) * (mouseDataIndex / totalLen);
+                    
+                    zoomScale = newScale;
+                    zoomOffsetX = Math.max(0, Math.min(totalLen - newVisibleLen, zoomOffsetX + centerShift));
+                    
+                    // 更新缩放倍率显示
+                    updateZoomLevelDisplay();
+                    
+                    // 重绘图表 - 保持当前的hover状态
+                    try { 
+                        drawHistoryChart(canvas, info.originalLabels, info.originalUpSeries, info.originalDownSeries, zoomScale, zoomOffsetX); 
+                        // 如果有当前的hover索引，重新绘制虚线
+                        if (typeof historyHoverIndex === 'number' && canvas.__bandixChart) {
+                            canvas.__bandixChart.hoverIndex = historyHoverIndex;
+                        }
+                    } catch(e){}
+                };
 
                 canvas.onmousemove = onMove;
                 canvas.onmouseleave = onLeave;
             }).catch(function () {
                 var ctx = canvas.getContext('2d');
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                drawHistoryChart(canvas, [], [], []);
+                drawHistoryChart(canvas, [], [], [], 1, 0);
                 // ui.addNotification(null, E('p', {}, getTranslation('无法获取历史数据', language)), 'error');
             }).finally(function () {
                 isHistoryLoading = false;
@@ -2110,6 +2258,9 @@ function formatRetentionSeconds(seconds, language) {
             var typeSel = document.getElementById('history-type-select');
             var devSel = document.getElementById('history-device-select');
             if (typeSel) typeSel.value = 'total';
+            
+            // 初始化缩放倍率显示
+            updateZoomLevelDisplay();
 			function onFilterChange() {
 				refreshHistory();
 				// 同步刷新表格（立即生效，不等轮询）
@@ -2130,7 +2281,7 @@ function formatRetentionSeconds(seconds, language) {
                     var upSeries = filtered.map(function (x) { return x[keys.up] || 0; });
                     var downSeries = filtered.map(function (x) { return x[keys.down] || 0; });
                     var labels = filtered.map(function (x) { return msToTimeLabel(x.ts_ms); });
-                    drawHistoryChart(canvas, labels, upSeries, downSeries);
+                    drawHistoryChartWithZoom(canvas, labels, upSeries, downSeries);
                 } else {
                     refreshHistory();
                 }
