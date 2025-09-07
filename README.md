@@ -103,7 +103,3 @@ This project is licensed under the [Apache 2.0 License](LICENSE).
 ## Contributing
 
 Issue reports and improvement suggestions are welcome! Please participate through GitHub Issues or Pull Requests.
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=timsaya/luci-app-bandix&type=Date)](https://www.star-history.com/#timsaya/luci-app-bandix&Date) 

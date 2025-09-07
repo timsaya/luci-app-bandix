@@ -104,7 +104,3 @@ luci-app-bandix 需要以下依赖包：
 ## 贡献
 
 欢迎提交问题报告和改进建议！请通过 GitHub Issues 或 Pull Requests 参与贡献。
-
-## Star 历史
-
-[![Star History Chart](https://api.star-history.com/svg?repos=timsaya/luci-app-bandix&type=Date)](https://www.star-history.com/#timsaya/luci-app-bandix&Date)
