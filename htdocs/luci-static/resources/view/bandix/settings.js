@@ -17,7 +17,7 @@ const translations = {
 		'端口': '端口',
 		'Bandix 服务监听的端口': 'Bandix 服务监听的端口',
 		'监控网卡': '监控网卡',
-		'选择要监控流量的物理网络接口': '选择要监控流量的物理网络接口',
+		'选择要监控的网络接口': '选择要监控的LAN网络接口',
 		'网速单位': '网速单位',
 		'选择网速显示的单位格式': '选择网速显示的单位格式',
 		'字节单位 (B/s, KB/s, MB/s)': '字节单位 (B/s, KB/s, MB/s)',
@@ -31,7 +31,14 @@ const translations = {
 		'离线超时时间': '离线超时时间',
 		'设置设备离线判断的超时时间（秒）': '设置设备离线判断的超时时间（秒）。超过此时间未活动的设备将被标记为离线',
 		'持久化循环周期': '持久化循环周期',
-		'设置数据持久化循环周期（秒）': '设置数据持久化循环周期(秒)。修改会删除已有数据。600秒循环周期下, 1 个设备, 固定占用约 60KB'
+		'设置数据持久化循环周期': '10分钟下，1个设备固定占用约60KB，修改会清空已有数据。\n由于ubus单次通信限制，无法设置更大的值。',
+		'1 分钟': '1 分钟',
+		'5 分钟': '5 分钟',
+		'10 分钟': '10 分钟',
+		'15 分钟': '15 分钟',
+		'20 分钟': '20 分钟',
+		'25 分钟': '25 分钟',
+		'30 分钟': '30 分钟'
 	},
 	'zh-tw': {
 		'Bandix 流量监控设置': 'Bandix 流量監控設置',
@@ -44,7 +51,7 @@ const translations = {
 		'端口': '端口',
 		'Bandix 服务监听的端口': 'Bandix 服務監聽的端口',
 		'监控网卡': '監控網卡',
-		'选择要监控流量的物理网络接口': '選擇要監控流量的物理網絡接口',
+		'选择要监控的网络接口': '選擇要監控的LAN網絡接口',
 		'网速单位': '網速單位',
 		'选择网速显示的单位格式': '選擇網速顯示的單位格式',
 		'字节单位 (B/s, KB/s, MB/s)': '字節單位 (B/s, KB/s, MB/s)',
@@ -58,7 +65,14 @@ const translations = {
 		'离线超时时间': '離線超時時間',
 		'设置设备离线判断的超时时间（秒）': '設定設備離線判斷的超時時間（秒）。超過此時間未活動的設備將被標記為離線',
 		'持久化循环周期': '持久化循環週期',
-		'设置数据持久化循环周期（秒）': '設定資料持久化循環週期(秒)。修改會刪除已有資料。600秒循環週期下, 1 個設備, 固定占用約 60KB'
+		'设置数据持久化循环周期': '10分鐘下，1個設備固定占用約60KB，修改會清空已有資料。\n由於ubus單次通信限制，無法設置更大的值。',
+		'1 分钟': '1 分鐘',
+		'5 分钟': '5 分鐘',
+		'10 分钟': '10 分鐘',
+		'15 分钟': '15 分鐘',
+		'20 分钟': '20 分鐘',
+		'25 分钟': '25 分鐘',
+		'30 分钟': '30 分鐘'
 	},
 	'en': {
 		'Bandix 流量监控设置': 'Bandix Traffic Monitor Settings',
@@ -71,7 +85,7 @@ const translations = {
 		'端口': 'Port',
 		'Bandix 服务监听的端口': 'Port for Bandix service to listen on',
 		'监控网卡': 'Monitor Interface',
-		'选择要监控流量的物理网络接口': 'Select the physical network interface to monitor traffic',
+		'选择要监控的网络接口': 'Select the LAN network interface to monitor',
 		'网速单位': 'Speed Units',
 		'选择网速显示的单位格式': 'Select the speed display unit format',
 		'字节单位 (B/s, KB/s, MB/s)': 'Bytes Units (B/s, KB/s, MB/s)',
@@ -85,7 +99,14 @@ const translations = {
 		'离线超时时间': 'Offline Timeout',
 		'设置设备离线判断的超时时间（秒）': 'Set the timeout for device offline detection (seconds). Devices inactive for longer than this time will be marked as offline',
 		'持久化循环周期': 'Persistence Interval',
-		'设置数据持久化循环周期（秒）': 'Set persistence loop interval (seconds). Changing this will delete existing data. With a 600-second interval, 1 device uses a fixed size of about 60 KB'
+		'设置数据持久化循环周期': 'With 10-minute interval, 1 device uses a fixed size of about 60 KB, changing will clear existing data.\nDue to ubus single communication limit, larger values cannot be set.',
+		'1 分钟': '1 minute',
+		'5 分钟': '5 minutes',
+		'10 分钟': '10 minutes',
+		'15 分钟': '15 minutes',
+		'20 分钟': '20 minutes',
+		'25 分钟': '25 minutes',
+		'30 分钟': '30 minutes'
 	},
 	'fr': {
 		'Bandix 流量监控设置': 'Paramètres de Surveillance du Trafic Bandix',
@@ -98,7 +119,7 @@ const translations = {
 		'端口': 'Port',
 		'Bandix 服务监听的端口': 'Port d\'écoute du service Bandix',
 		'监控网卡': 'Interface de Surveillance',
-		'选择要监控流量的物理网络接口': 'Sélectionner l\'interface réseau physique à surveiller',
+		'选择要监控的网络接口': 'Sélectionner l\'interface réseau LAN à surveiller',
 		'网速单位': 'Unités de Vitesse',
 		'选择网速显示的单位格式': 'Sélectionner le format d\'unité d\'affichage de la vitesse',
 		'字节单位 (B/s, KB/s, MB/s)': 'Unités d\'Octets (B/s, KB/s, MB/s)',
@@ -112,7 +133,14 @@ const translations = {
 		'离线超时时间': 'Délai d\'expiration hors ligne',
 		'设置设备离线判断的超时时间（秒）': 'Définir le délai d\'expiration pour la détection hors ligne des appareils (secondes). Les appareils inactifs plus longtemps que cette durée seront marqués comme hors ligne',
 		'持久化循环周期': 'Intervalle de persistance',
-		'设置数据持久化循环周期（秒）': "Définir l’intervalle de persistance (secondes). La modification supprimera les données existantes. Avec un intervalle de 600 secondes, un appareil occupe environ 60 Ko (taille fixe)"
+		'设置数据持久化循环周期': "Avec un intervalle de 10 minutes, 1 appareil occupe environ 60 Ko (taille fixe), la modification effacera les données existantes.\nEn raison de la limite de communication unique d'ubus, des valeurs plus importantes ne peuvent pas être définies.",
+		'1 分钟': '1 minute',
+		'5 分钟': '5 minutes',
+		'10 分钟': '10 minutes',
+		'15 分钟': '15 minutes',
+		'20 分钟': '20 minutes',
+		'25 分钟': '25 minutes',
+		'30 分钟': '30 minutes'
 	},
 	'ja': {
 		'Bandix 流量监控设置': 'Bandix トラフィックモニター設定',
@@ -125,7 +153,7 @@ const translations = {
 		'端口': 'ポート',
 		'Bandix 服务监听的端口': 'Bandix サービスのリッスンポート',
 		'监控网卡': '監視インターフェース',
-		'选择要监控流量的物理网络接口': 'トラフィックを監視する物理ネットワークインターフェースを選択',
+		'选择要监控的网络接口': '監視するLANネットワークインターフェースを選択',
 		'网速单位': '速度単位',
 		'选择网速显示的单位格式': '速度表示の単位形式を選択',
 		'字节单位 (B/s, KB/s, MB/s)': 'バイト単位 (B/s, KB/s, MB/s)',
@@ -139,7 +167,14 @@ const translations = {
 		'离线超时时间': 'オフラインタイムアウト',
 		'设置设备离线判断的超时时间（秒）': 'デバイスのオフライン検出のタイムアウト時間（秒）を設定。この時間を超えて非アクティブなデバイスはオフラインとしてマークされます',
 		'持久化循环周期': '永続化ループ間隔',
-		'设置数据持久化循环周期（秒）': 'データ永続化のループ間隔（秒）を設定。この設定を変更すると既存データが削除されます。600 秒のループ間隔では、1 台のデバイスで固定サイズとして約 60 KB を使用します'
+		'设置数据持久化循环周期': '10分間隔では、1台のデバイスで固定サイズとして約60KBを使用し、変更すると既存データがクリアされます。\nubusの単一通信制限により、より大きな値を設定することはできません。',
+		'1 分钟': '1 分',
+		'5 分钟': '5 分',
+		'10 分钟': '10 分',
+		'15 分钟': '15 分',
+		'20 分钟': '20 分',
+		'25 分钟': '25 分',
+		'30 分钟': '30 分'
 	},
 	'ru': {
 		'Bandix 流量监控设置': 'Настройки Монитора Трафика Bandix',
@@ -152,7 +187,7 @@ const translations = {
 		'端口': 'Порт',
 		'Bandix 服务监听的端口': 'Порт прослушивания службы Bandix',
 		'监控网卡': 'Интерфейс Мониторинга',
-		'选择要监控流量的物理网络接口': 'Выберите физический сетевой интерфейс для мониторинга трафика',
+		'选择要监控的网络接口': 'Выберите сетевой интерфейс LAN для мониторинга',
 		'网速单位': 'Единицы Скорости',
 		'选择网速显示的单位格式': 'Выберите формат единиц отображения скорости',
 		'字节单位 (B/s, KB/s, MB/s)': 'Единицы Байтов (B/s, KB/s, MB/s)',
@@ -166,7 +201,14 @@ const translations = {
 		'离线超时时间': 'Таймаут отключения',
 		'设置设备离线判断的超时时间（秒）': 'Установить таймаут для обнаружения отключения устройств (секунды). Устройства, неактивные дольше этого времени, будут помечены как отключенные',
 		'持久化循环周期': 'Интервал персистенции',
-		'设置数据持久化循环周期（秒）': 'Установить интервал цикла персистенции (сек). Изменение этого параметра удалит существующие данные. При интервале 600 секунд одно устройство занимает около 60 КБ (фиксированный размер)'
+		'设置数据持久化循环周期': 'При интервале 10 минут одно устройство занимает около 60 КБ (фиксированный размер), изменение очистит существующие данные.\nИз-за ограничения единичной связи ubus нельзя установить большие значения.',
+		'1 分钟': '1 минута',
+		'5 分钟': '5 минут',
+		'10 分钟': '10 минут',
+		'15 分钟': '15 минут',
+		'20 分钟': '20 минут',
+		'25 分钟': '25 минут',
+		'30 分钟': '30 минут'
 	}
 };
 
@@ -407,7 +449,7 @@ return view.extend({
 
 		// 添加网卡选择下拉菜单
 		o = s.option(form.ListValue, 'interface', getTranslation('监控网卡', language),
-			getTranslation('选择要监控流量的物理网络接口', language));
+			getTranslation('选择要监控的网络接口', language));
 		o.default = 'br-lan';
 		o.rmempty = false;
 
@@ -442,11 +484,17 @@ return view.extend({
 		o.rmempty = false;
 
 		// 添加持久化循环周期（秒）
-		o = s.option(form.Value, 'retention_seconds', getTranslation('持久化循环周期', language),
-			getTranslation('设置数据持久化循环周期（秒）', language));
-		o.datatype = 'uinteger';
-		o.placeholder = '600';
-		o.rmempty = true; // 留空则不写入 UCI，由后端决定默认值
+		o = s.option(form.ListValue, 'retention_seconds', getTranslation('持久化循环周期', language),
+			getTranslation('设置数据持久化循环周期', language));
+		o.value('60', getTranslation('1 分钟', language));
+		o.value('300', getTranslation('5 分钟', language));
+		o.value('600', getTranslation('10 分钟', language));
+		o.value('900', getTranslation('15 分钟', language));
+		o.value('1200', getTranslation('20 分钟', language));
+		o.value('1500', getTranslation('25 分钟', language));
+		o.value('1800', getTranslation('30 分钟', language));
+		o.default = '600';
+		o.rmempty = false;
 
 		// 添加离线超时时间（秒）
 		o = s.option(form.Value, 'offline_timeout', getTranslation('离线超时时间', language),
