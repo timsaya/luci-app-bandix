@@ -1508,6 +1508,10 @@ return view.extend({
         var latestDevices = [];
         var lastHistoryData = null; // 最近一次拉取的原始 metrics 数据
         var isHistoryLoading = false; // 防止轮询重入
+    // 当鼠标悬停在历史图表上时，置为 true，轮询将暂停刷新（实现“鼠标在趋势图上时不自动滚动”）
+    var historyHover = false;
+    // 鼠标悬停时的索引（独立于 canvas.__bandixChart，避免重绘覆盖问题）
+    var historyHoverIndex = null;
 
         function updateDeviceOptions(devices) {
             var select = document.getElementById('history-device-select');
@@ -1610,7 +1614,8 @@ return view.extend({
             var innerW = Math.max(1, width - padding.left - padding.right);
             var innerH = Math.max(1, height - padding.top - padding.bottom);
 
-            // 记录用于交互的几何信息
+            // 记录用于交互的几何信息；保留已有的 hoverIndex 避免在重绘时丢失
+            var prevHover = (canvas.__bandixChart && typeof canvas.__bandixChart.hoverIndex === 'number') ? canvas.__bandixChart.hoverIndex : undefined;
             canvas.__bandixChart = {
                 padding: padding,
                 innerW: innerW,
@@ -1621,6 +1626,7 @@ return view.extend({
                 upSeries: upSeries,
                 downSeries: downSeries
             };
+            if (typeof prevHover === 'number') canvas.__bandixChart.hoverIndex = prevHover;
 
             // 网格与Y轴刻度
             var gridLines = 4;
@@ -1677,6 +1683,31 @@ return view.extend({
                     ctx.fillText(labels[labels.length - 1], lastX, yBase);
                 }
             }
+
+            // 如果存在 hoverIndex，则绘制垂直虚线（鼠标对着的 x 轴）
+            try {
+                var info = canvas.__bandixChart || {};
+                var useIdx = null;
+                if (typeof historyHoverIndex === 'number') useIdx = historyHoverIndex;
+                else if (typeof info.hoverIndex === 'number') useIdx = info.hoverIndex;
+                if (useIdx !== null && info.labels && info.labels.length > 0) {
+                    var n = info.labels.length;
+                    var stepX = n > 1 ? (innerW / (n - 1)) : 0;
+                    var hoverIdx = Math.max(0, Math.min(n - 1, useIdx));
+                    var hoverX = info.padding.left + (n > 1 ? stepX * hoverIdx : innerW / 2);
+                    ctx.save();
+                    var hoverColor = (typeof darkMode !== 'undefined' && darkMode) ? 'rgba(148,163,184,0.7)' : 'rgba(156,163,175,0.9)';
+                    ctx.strokeStyle = hoverColor;
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([6, 4]);
+                    ctx.beginPath();
+                    ctx.moveTo(hoverX, padding.top);
+                    ctx.lineTo(hoverX, padding.top + innerH);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    ctx.restore();
+                }
+            } catch (e) { /* 安全兜底 */ }
         }
 
         function msToTimeLabel(ts) {
@@ -1919,6 +1950,8 @@ function formatRetentionSeconds(seconds, language) {
 }
 
         function refreshHistory() {
+            // 若鼠标在历史图上悬停，则暂停刷新以避免自动滚动
+            if (historyHover) return Promise.resolve();
             var mac = document.getElementById('history-device-select')?.value || '';
             var type = document.getElementById('history-type-select')?.value || 'total';
             var canvas = document.getElementById('history-canvas');
@@ -1980,10 +2013,18 @@ function formatRetentionSeconds(seconds, language) {
 					if (!tooltip) return;
 					var idx = findNearestIndex(evt);
 					if (idx < 0 || !lastHistoryData || !lastHistoryData[idx]) {
-						tooltip.style.display = 'none';
+                        tooltip.style.display = 'none';
+                        // 清除 hover 状态并请求重绘去掉虚线
+                        historyHover = false;
+                        try { if (canvas && canvas.__bandixChart) { delete canvas.__bandixChart.hoverIndex; drawHistoryChart(canvas, canvas.__bandixChart.labels || [], canvas.__bandixChart.upSeries || [], canvas.__bandixChart.downSeries || []); } } catch(e){}
 						return;
 					}
-					var point = lastHistoryData[idx];
+                    var point = lastHistoryData[idx];
+                    // 设置 hover 状态，暂停历史轮询刷新
+                    historyHover = true;
+                    historyHoverIndex = idx;
+                    // 立即重绘以显示垂直虚线
+                    try { drawHistoryChart(canvas, canvas.__bandixChart && canvas.__bandixChart.labels ? canvas.__bandixChart.labels : labels, canvas.__bandixChart && canvas.__bandixChart.upSeries ? canvas.__bandixChart.upSeries : upSeries, canvas.__bandixChart && canvas.__bandixChart.downSeries ? canvas.__bandixChart.downSeries : downSeries); } catch(e){}
 					tooltip.innerHTML = buildTooltipHtml(point, language);
 					// 先显示以计算尺寸
 					tooltip.style.display = 'block';
@@ -2012,6 +2053,10 @@ function formatRetentionSeconds(seconds, language) {
 
                 function onLeave() {
                     if (tooltip) tooltip.style.display = 'none';
+                    // 清除 hover 状态并请求重绘去掉虚线
+                    historyHover = false;
+                    historyHoverIndex = null;
+                    try { drawHistoryChart(canvas, canvas.__bandixChart && canvas.__bandixChart.labels ? canvas.__bandixChart.labels : labels, canvas.__bandixChart && canvas.__bandixChart.upSeries ? canvas.__bandixChart.upSeries : upSeries, canvas.__bandixChart && canvas.__bandixChart.downSeries ? canvas.__bandixChart.downSeries : downSeries); } catch(e){}
                 }
 
                 canvas.onmousemove = onMove;
