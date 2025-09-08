@@ -1741,16 +1741,7 @@ return view.extend({
                 ctx.lineWidth = 1.2; // 更细的线
                 ctx.stroke();
 
-                // 小圆点（常态较小，hover 放大会通过 tooltip 控制）
-                ctx.fillStyle = color;
-                for (var p = 0; p < n; p++) {
-                    var vp = Math.max(0, series[p] || 0);
-                    var xp = padding.left + (n > 1 ? stepX * p : innerW / 2);
-                    var yp = padding.top + innerH - (vp / maxVal) * innerH;
-                    ctx.beginPath();
-                    ctx.arc(xp, yp, 1.5, 0, Math.PI * 2);
-                    ctx.fill();
-                }
+                // 圆点已移除，只保留线条
             }
 
             // 红色上行，绿色下行，使用半透明渐变
