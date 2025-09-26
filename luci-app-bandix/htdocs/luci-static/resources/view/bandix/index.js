@@ -861,11 +861,11 @@ return view.extend({
             }
             
             .traffic-icon.upload {
-                color: #ef4444;
+                color: #f97316;
             }
             
             .traffic-icon.download {
-                color: #22c55e;
+                color: #06b6d4;
             }
             
             .traffic-speed {
@@ -873,17 +873,13 @@ return view.extend({
                 font-size: 0.875rem;
             }
             
-            .traffic-speed.lan {
-                color: #3b82f6;
-            }
-            
-            .traffic-speed.wan {
-                color: #22c55e;
+            .traffic-speed {
+                color: ${darkMode ? '#e2e8f0' : '#374151'};
             }
             
             .traffic-total {
                 font-size: 0.75rem;
-                color: #6b7280;
+                color: #64748b;
                 margin-left: 4px;
             }
             
@@ -1238,8 +1234,8 @@ return view.extend({
             }
             .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.875rem; color: ${darkMode ? '#e2e8f0' : '#374151'}; }
             .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-            .legend-up { background-color: #ef4444; }
-            .legend-down { background-color: #22c55e; }
+            .legend-up { background-color: #f97316; }
+            .legend-down { background-color: #06b6d4; }
             #history-canvas { width: 100%; height: 200px; display: block; } /* 变窄的高度 */
 			.history-tooltip {
 				position: fixed;
@@ -1267,8 +1263,8 @@ return view.extend({
 			.history-tooltip .ht-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 2px; margin-bottom: 6px; }
 			.history-tooltip .ht-kpi .ht-k-label { color: ${darkMode ? '#94a3b8' : '#6b7280'}; font-size: 0.75rem; }
 			.history-tooltip .ht-kpi .ht-k-value { font-size: 1rem; font-weight: 700; }
-			.history-tooltip .ht-kpi.down .ht-k-value { color: #22c55e; }
-			.history-tooltip .ht-kpi.up .ht-k-value { color: #ef4444; }
+			.history-tooltip .ht-kpi.down .ht-k-value { color: #06b6d4; }
+			.history-tooltip .ht-kpi.up .ht-k-value { color: #f97316; }
 			.history-tooltip .ht-divider { height: 1px; background-color: ${darkMode ? '#3a3a3a' : '#e5e7eb'}; margin: 8px 0; }
 			.history-tooltip .ht-section-title { font-weight: 600; font-size: 0.75rem; color: ${darkMode ? '#94a3b8' : '#6b7280'}; margin: 4px 0 6px 0; }
         `);
@@ -1813,9 +1809,9 @@ return view.extend({
                 // 圆点已移除，只保留线条
             }
 
-            // 红色上行，绿色下行，使用半透明渐变
-            drawAreaSeries(upSeries, '#ef4444', 'rgba(239,68,68,0.16)', 'rgba(239,68,68,0.02)');
-            drawAreaSeries(downSeries, '#22c55e', 'rgba(34,197,94,0.12)', 'rgba(34,197,94,0.02)');
+            // 橙色上行，青色下行，使用半透明渐变
+            drawAreaSeries(upSeries, '#f97316', 'rgba(249,115,22,0.16)', 'rgba(249,115,22,0.02)');
+            drawAreaSeries(downSeries, '#06b6d4', 'rgba(6,182,212,0.12)', 'rgba(6,182,212,0.02)');
 
             // X 轴时间标签（首尾）
             if (labels && labels.length > 0) {
@@ -1969,10 +1965,10 @@ return view.extend({
 			lines.push('<div class="ht-section-title">' + getTranslation('累计流量', language) + '</div>');
 			row(getTranslation('总上传', language), bytesValue('total_tx_bytes'));
 			row(getTranslation('总下载', language), bytesValue('total_rx_bytes'));
-			row(getTranslation('LAN 上传', language), bytesValue('local_tx_bytes'));
-			row(getTranslation('LAN 下载', language), bytesValue('local_rx_bytes'));
-			row(getTranslation('WAN 上传', language), bytesValue('wide_tx_bytes'));
-			row(getTranslation('WAN 下载', language), bytesValue('wide_rx_bytes'));
+			row(getTranslation('LAN 已上传', language), bytesValue('local_tx_bytes'));
+			row(getTranslation('LAN 已下载', language), bytesValue('local_rx_bytes'));
+			row(getTranslation('WAN 已上传', language), bytesValue('wide_tx_bytes'));
+			row(getTranslation('WAN 已下载', language), bytesValue('wide_rx_bytes'));
 
 			return lines.join('');
         }
@@ -2406,15 +2402,15 @@ function formatRetentionSeconds(seconds, language) {
                     E('div', { 'style': 'margin-top: 12px; display: flex; flex-direction: column; gap: 8px;' }, [
                         // 上传行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
-                            E('span', { 'style': 'color: #ef4444; font-size: 0.75rem; font-weight: bold;' }, '↑'),
-                            E('span', { 'style': 'color: #3b82f6; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalLanSpeedUp, speedUnit)),
-                            E('span', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-left: 4px;' }, '(' + formatSize(totalLanUp) + ')')
+                            E('span', { 'style': 'color: #f97316; font-size: 0.75rem; font-weight: bold;' }, '↑'),
+                            E('span', { 'style': 'color: #f97316; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalLanSpeedUp, speedUnit)),
+                            E('span', { 'style': 'font-size: 0.75rem; color: #64748b; margin-left: 4px;' }, '(' + formatSize(totalLanUp) + ')')
                         ]),
                         // 下载行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
-                            E('span', { 'style': 'color: #22c55e; font-size: 0.75rem; font-weight: bold;' }, '↓'),
-                            E('span', { 'style': 'color: #3b82f6; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalLanSpeedDown, speedUnit)),
-                            E('span', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-left: 4px;' }, '(' + formatSize(totalLanDown) + ')')
+                            E('span', { 'style': 'color: #06b6d4; font-size: 0.75rem; font-weight: bold;' }, '↓'),
+                            E('span', { 'style': 'color: #06b6d4; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalLanSpeedDown, speedUnit)),
+                            E('span', { 'style': 'font-size: 0.75rem; color: #64748b; margin-left: 4px;' }, '(' + formatSize(totalLanDown) + ')')
                         ])
                     ])
                 ]));
@@ -2428,15 +2424,15 @@ function formatRetentionSeconds(seconds, language) {
                     E('div', { 'style': 'margin-top: 12px; display: flex; flex-direction: column; gap: 8px;' }, [
                         // 上传行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
-                            E('span', { 'style': 'color: #ef4444; font-size: 0.75rem; font-weight: bold;' }, '↑'),
-                            E('span', { 'style': 'color: #22c55e; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalWanSpeedUp, speedUnit)),
-                            E('span', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-left: 4px;' }, '(' + formatSize(totalWanUp) + ')')
+                            E('span', { 'style': 'color: #f97316; font-size: 0.75rem; font-weight: bold;' }, '↑'),
+                            E('span', { 'style': 'color: #f97316; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalWanSpeedUp, speedUnit)),
+                            E('span', { 'style': 'font-size: 0.75rem; color: #64748b; margin-left: 4px;' }, '(' + formatSize(totalWanUp) + ')')
                         ]),
                         // 下载行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
-                            E('span', { 'style': 'color: #22c55e; font-size: 0.75rem; font-weight: bold;' }, '↓'),
-                            E('span', { 'style': 'color: #22c55e; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalWanSpeedDown, speedUnit)),
-                            E('span', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-left: 4px;' }, '(' + formatSize(totalWanDown) + ')')
+                            E('span', { 'style': 'color: #06b6d4; font-size: 0.75rem; font-weight: bold;' }, '↓'),
+                            E('span', { 'style': 'color: #06b6d4; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalWanSpeedDown, speedUnit)),
+                            E('span', { 'style': 'font-size: 0.75rem; color: #64748b; margin-left: 4px;' }, '(' + formatSize(totalWanDown) + ')')
                         ])
                     ])
                 ]));
@@ -2450,15 +2446,15 @@ function formatRetentionSeconds(seconds, language) {
                     E('div', { 'style': 'margin-top: 12px; display: flex; flex-direction: column; gap: 8px;' }, [
                         // 上传行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
-                            E('span', { 'style': 'color: #ef4444; font-size: 0.75rem; font-weight: bold;' }, '↑'),
-                            E('span', { 'style': 'color: ' + (darkMode ? '#f1f5f9' : '#1f2937') + '; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalSpeedUp, speedUnit)),
-                            E('span', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-left: 4px;' }, '(' + formatSize(totalUp) + ')')
+                            E('span', { 'style': 'color: #f97316; font-size: 0.75rem; font-weight: bold;' }, '↑'),
+                            E('span', { 'style': 'color: #f97316; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalSpeedUp, speedUnit)),
+                            E('span', { 'style': 'font-size: 0.75rem; color: #64748b; margin-left: 4px;' }, '(' + formatSize(totalUp) + ')')
                         ]),
                         // 下载行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
-                            E('span', { 'style': 'color: #22c55e; font-size: 0.75rem; font-weight: bold;' }, '↓'),
-                            E('span', { 'style': 'color: ' + (darkMode ? '#f1f5f9' : '#1f2937') + '; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalSpeedDown, speedUnit)),
-                            E('span', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-left: 4px;' }, '(' + formatSize(totalDown) + ')')
+                            E('span', { 'style': 'color: #06b6d4; font-size: 0.75rem; font-weight: bold;' }, '↓'),
+                            E('span', { 'style': 'color: #06b6d4; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalSpeedDown, speedUnit)),
+                            E('span', { 'style': 'font-size: 0.75rem; color: #64748b; margin-left: 4px;' }, '(' + formatSize(totalDown) + ')')
                         ])
                     ])
                 ]));
