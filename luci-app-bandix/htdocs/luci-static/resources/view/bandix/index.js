@@ -25,12 +25,12 @@ const translations = {
         '界面语言': '界面语言',
         '选择 Bandix 流量监控的显示语言': '选择 Bandix 流量监控的显示语言',
         '设备信息': '设备信息',
-        '局域网流量': '局域网流量',
-        '跨网络流量': '跨网络流量',
+        'LAN 流量': 'LAN 流量',
+        'WAN 流量': 'WAN 流量',
         '限速设置': '限速设置',
         '操作': '操作',
         '在线设备': '在线设备',
-        '仅限跨网络': '仅限跨网络',
+        '仅限WAN 流量': '仅限WAN 流量',
         '设置': '设置',
         '限速设置': '限速设置',
         '取消限速': '取消限速',
@@ -46,9 +46,8 @@ const translations = {
         '请输入有效的速度值': '请输入有效的速度值',
         '速度值必须大于0': '速度值必须大于0',
         '保存中...': '保存中...',
-        '限速功能仅对跨网络流量生效。': '限速功能仅对跨网络流量生效。',
+        '限速功能仅对 WAN 流量生效。': '限速功能仅对 WAN 流量生效。',
         '提示：输入 0 表示无限制': '提示：输入 0 表示无限制',
-        '实时总流量': '实时总流量',
         '历史流量趋势': '历史流量趋势',
         '选择设备': '选择设备',
         '所有设备': '所有设备',
@@ -58,8 +57,8 @@ const translations = {
         '最近2小时': '最近2小时',
         '类型': '类型',
         '总流量': '总流量',
-        '局域网': '局域网',
-        '跨网络': '跨网络',
+        'LAN 流量': 'LAN 流量',
+        'WAN 流量': 'WAN 流量',
         '刷新': '刷新',
         '上传速率': '上传速率',
         '下载速率': '下载速率',
@@ -73,16 +72,16 @@ const translations = {
         '累计流量': '累计流量',
         '总上传': '总上传',
         '总下载': '总下载',
-        '局域上传': '局域上传',
-        '局域下载': '局域下载',
-        '公网上传': '公网上传',
-        '公网下载': '公网下载',
+        'LAN 已上传': 'LAN 已上传',
+        'LAN 已下载': 'LAN 已下载',
+        'WAN 已上传': 'WAN 已上传',
+        'WAN 已下载': 'WAN 已下载',
         '总上传速率': '总上传速率',
         '总下载速率': '总下载速率',
-        '局域上传速率': '局域上传速率',
-        '局域下载速率': '局域下载速率',
-        '跨网上传速率': '跨网上传速率',
-        '跨网下载速率': '跨网下载速率',
+        'LAN 上传速率': 'LAN 上传速率',
+        'LAN 下载速率': 'LAN 下载速率',
+        'WAN 上传速率': 'WAN 上传速率',
+        'WAN 下载速率': 'WAN 下载速率',
         '从未上线': '从未上线',
         '刚刚': '刚刚',
         '分钟前': '分钟前',
@@ -110,12 +109,12 @@ const translations = {
         '界面语言': '介面語言',
         '选择 Bandix 流量监控的显示语言': '選擇 Bandix 流量監控的顯示語言',
         '设备信息': '設備資訊',
-        '局域网流量': '局域網流量',
-        '跨网络流量': '跨網路流量',
+        'LAN 流量': '局域網流量',
+        'WAN 流量': '跨網路流量',
         '限速设置': '限速設定',
         '操作': '操作',
         '在线设备': '線上設備',
-        '仅限跨网络': '僅限跨網路',
+        '仅限WAN 流量': '僅限跨網路',
         '设置': '設定',
         '限速设置': '限速設定',
         '取消限速': '取消限速',
@@ -131,9 +130,8 @@ const translations = {
         '请输入有效的速度值': '請輸入有效的速度值',
         '速度值必须大于0': '速度值必須大於0',
         '保存中...': '儲存中...',
-        '限速功能仅对跨网络流量生效。': '限速功能僅對跨網路流量生效。',
+        '限速功能仅对 WAN 流量生效。': '限速功能僅對跨網路流量生效。',
         '提示：输入 0 表示无限制': '提示：輸入 0 表示無限制',
-        '实时总流量': '即時總流量',
         '历史流量趋势': '歷史流量趨勢',
         '选择设备': '選擇設備',
         '所有设备': '所有設備',
@@ -143,8 +141,8 @@ const translations = {
         '最近2小时': '最近2小時',
         '类型': '類型',
         '总流量': '總流量',
-        '局域网': '局域網',
-        '跨网络': '跨網路',
+        'LAN 流量': '局域網',
+        'WAN 流量': '跨網路',
         '刷新': '重新整理',
         '上传速率': '上傳速率',
         '下载速率': '下載速率',
@@ -158,16 +156,16 @@ const translations = {
         '累计流量': '累計流量',
         '总上传': '總上傳',
         '总下载': '總下載',
-        '局域上传': '局域上傳',
-        '局域下载': '局域下載',
-        '公网上传': '公網上傳',
-        '公网下载': '公網下載',
+        'LAN 已上传': 'LAN 已上傳',
+        'LAN 已下载': 'LAN 已下載',
+        'WAN 已上传': 'WAN 已上傳',
+        'WAN 已下载': 'WAN 已下載',
         '总上传速率': '總上傳速率',
         '总下载速率': '總下載速率',
-        '局域上传速率': '局域上傳速率',
-        '局域下载速率': '局域下載速率',
-        '跨网上传速率': '跨網上傳速率',
-        '跨网下载速率': '跨網下載速率',
+        'LAN 上传速率': '局域上傳速率',
+        'LAN 下载速率': '局域下載速率',
+        'WAN 上传速率': '跨網上傳速率',
+        'WAN 下载速率': '跨網下載速率',
         '从未上线': '從未上線',
         '刚刚': '剛剛',
         '分钟前': '分鐘前',
@@ -195,12 +193,12 @@ const translations = {
         '界面语言': 'Interface Language',
         '选择 Bandix 流量监控的显示语言': 'Select the display language for Bandix Traffic Monitor',
         '设备信息': 'Device Info',
-        '局域网流量': 'LAN Traffic',
-        '跨网络流量': 'WAN Traffic',
+        'LAN 流量': 'LAN Traffic',
+        'WAN 流量': 'WAN Traffic',
         '限速设置': 'Rate Limit',
         '操作': 'Actions',
         '在线设备': 'Online Devices',
-        '仅限跨网络': 'WAN Only',
+        '仅限WAN 流量': 'WAN Only',
         '设置': 'Settings',
         '限速设置': 'Rate Limit Settings',
         '取消限速': 'Remove Rate Limit',
@@ -216,9 +214,8 @@ const translations = {
         '请输入有效的速度值': 'Please enter a valid speed value',
         '速度值必须大于0': 'Speed value must be greater than 0',
         '保存中...': 'Saving...',
-        '限速功能仅对跨网络流量生效。': 'Rate limiting only applies to WAN traffic.',
+        '限速功能仅对 WAN 流量生效。': 'Rate limiting only applies to WAN traffic.',
         '提示：输入 0 表示无限制': 'Tip: Enter 0 for unlimited',
-        '实时总流量': 'Real-time Total Traffic',
         '历史流量趋势': 'Traffic History',
         '选择设备': 'Select Device',
         '所有设备': 'All Devices',
@@ -228,8 +225,8 @@ const translations = {
         '最近2小时': 'Last 2 hours',
         '类型': 'Type',
         '总流量': 'Total',
-        '局域网': 'LAN',
-        '跨网络': 'WAN',
+        'LAN 流量': 'LAN',
+        'WAN 流量': 'WAN',
         '刷新': 'Refresh',
         '上传速率': 'Upload Rate',
         '下载速率': 'Download Rate',
@@ -243,16 +240,16 @@ const translations = {
         '累计流量': 'Cumulative',
         '总上传': 'Total Uploaded',
         '总下载': 'Total Downloaded',
-        '局域上传': 'LAN Uploaded',
-        '局域下载': 'LAN Downloaded',
-        '公网上传': 'WAN Uploaded',
-        '公网下载': 'WAN Downloaded',
+        'LAN 已上传': 'LAN Uploaded',
+        'LAN 已下载': 'LAN Downloaded',
+        'WAN 已上传': 'WAN Uploaded',
+        'WAN 已下载': 'WAN Downloaded',
         '总上传速率': 'Total Upload',
         '总下载速率': 'Total Download',
-        '局域上传速率': 'LAN Upload',
-        '局域下载速率': 'LAN Download',
-        '跨网上传速率': 'WAN Upload',
-        '跨网下载速率': 'WAN Download',
+        'LAN 上传速率': 'LAN Upload',
+        'LAN 下载速率': 'LAN Download',
+        'WAN 上传速率': 'WAN Upload',
+        'WAN 下载速率': 'WAN Download',
         '从未上线': 'Never Online',
         '刚刚': 'Just Now',
         '分钟前': 'min ago',
@@ -267,6 +264,7 @@ const translations = {
         'Bandix 流量监控': 'Moniteur de Trafic Bandix',
         '正在加载数据...': 'Chargement des données...',
         '无法获取数据': 'Impossible de récupérer les données',
+        '无法获取历史数据': 'Impossible de récupérer les données historiques',
         '主机名': 'Nom d\'hôte',
         'IP地址': 'Adresse IP',
         'MAC地址': 'Adresse MAC',
@@ -279,12 +277,12 @@ const translations = {
         '界面语言': 'Langue de l\'interface',
         '选择 Bandix 流量监控的显示语言': 'Sélectionner la langue d\'affichage pour le Moniteur de Trafic Bandix',
         '设备信息': 'Informations sur l\'appareil',
-        '局域网流量': 'Trafic LAN',
-        '跨网络流量': 'Trafic WAN',
+        'LAN 流量': 'Trafic LAN',
+        'WAN 流量': 'Trafic WAN',
         '限速设置': 'Limitation de débit',
         '操作': 'Actions',
         '在线设备': 'Appareils en ligne',
-        '仅限跨网络': 'WAN uniquement',
+        '仅限WAN 流量': 'WAN uniquement',
         '设置': 'Paramètres',
         '限速设置': 'Paramètres de limitation',
         '取消限速': 'Supprimer la limitation',
@@ -300,16 +298,20 @@ const translations = {
         '请输入有效的速度值': 'Veuillez entrer une valeur de vitesse valide',
         '速度值必须大于0': 'La valeur de vitesse doit être supérieure à 0',
         '保存中...': 'Enregistrement...',
-        '限速功能仅对跨网络流量生效。': 'La limitation de débit ne s\'applique qu\'au trafic WAN.',
+        '限速功能仅对 WAN 流量生效。': 'La limitation de débit ne s\'applique qu\'au trafic WAN.',
         '提示：输入 0 表示无限制': 'Conseil : Entrez 0 pour illimité',
-        '实时总流量': 'Trafic total en temps réel',
         '历史流量趋势': 'Historique du trafic',
         '选择设备': 'Sélectionner l\'appareil',
         '所有设备': 'Tous les appareils',
+        '时间范围': 'Plage de temps',
+        '最近5分钟': '5 dernières minutes',
+        '最近30分钟': '30 dernières minutes',
+        '最近2小时': '2 dernières heures',
         '类型': 'Type',
         '总流量': 'Total',
-        '局域网': 'LAN',
-        '跨网络': 'WAN',
+        'LAN 流量': 'LAN',
+        'WAN 流量': 'WAN',
+        '刷新': 'Actualiser',
         '上传速率': 'Débit montant',
         '下载速率': 'Débit descendant',
         '最近': 'Dernières',
@@ -322,16 +324,16 @@ const translations = {
         '累计流量': 'Trafic cumulé',
         '总上传': 'Total téléversé',
         '总下载': 'Total téléchargé',
-        '局域上传': 'Téléversé LAN',
-        '局域下载': 'Téléchargé LAN',
-        '公网上传': 'Téléversé WAN',
-        '公网下载': 'Téléchargé WAN',
+        'LAN 已上传': 'LAN Téléversé',
+        'LAN 已下载': 'LAN Téléchargé',
+        'WAN 已上传': 'WAN Téléversé',
+        'WAN 已下载': 'WAN Téléchargé',
         '总上传速率': 'Vitesse de téléversement totale',
         '总下载速率': 'Vitesse de téléchargement totale',
-        '局域上传速率': 'Vitesse de téléversement LAN',
-        '局域下载速率': 'Vitesse de téléchargement LAN',
-        '跨网上传速率': 'Vitesse de téléversement WAN',
-        '跨网下载速率': 'Vitesse de téléchargement WAN',
+        'LAN 上传速率': 'Vitesse de téléversement LAN',
+        'LAN 下载速率': 'Vitesse de téléchargement LAN',
+        'WAN 上传速率': 'Vitesse de téléversement WAN',
+        'WAN 下载速率': 'Vitesse de téléchargement WAN',
         '从未上线': 'Jamais en ligne',
         '刚刚': 'À l\'instant',
         '分钟前': 'min',
@@ -346,6 +348,7 @@ const translations = {
         'Bandix 流量监控': 'Bandix トラフィックモニター',
         '正在加载数据...': 'データを読み込み中...',
         '无法获取数据': 'データを取得できません',
+        '无法获取历史数据': '履歴データを取得できません',
         '主机名': 'ホスト名',
         'IP地址': 'IPアドレス',
         'MAC地址': 'MACアドレス',
@@ -358,12 +361,12 @@ const translations = {
         '界面语言': 'インターフェース言語',
         '选择 Bandix 流量监控的显示语言': 'Bandix トラフィックモニターの表示言語を選択',
         '设备信息': 'デバイス情報',
-        '局域网流量': 'LAN トラフィック',
-        '跨网络流量': 'WAN トラフィック',
+        'LAN 流量': 'LAN トラフィック',
+        'WAN 流量': 'WAN トラフィック',
         '限速设置': '速度制限',
         '操作': '操作',
         '在线设备': 'オンラインデバイス',
-        '仅限跨网络': 'WAN のみ',
+        '仅限WAN 流量': 'WAN のみ',
         '设置': '設定',
         '限速设置': '速度制限設定',
         '取消限速': '速度制限を削除',
@@ -379,16 +382,20 @@ const translations = {
         '请输入有效的速度值': '有効な速度値を入力してください',
         '速度值必须大于0': '速度値は0より大きい必要があります',
         '保存中...': '保存中...',
-        '限速功能仅对跨网络流量生效。': '速度制限はWANトラフィックにのみ適用されます。',
+        '限速功能仅对 WAN 流量生效。': '速度制限はWANトラフィックにのみ適用されます。',
         '提示：输入 0 表示无限制': 'ヒント：0を入力すると無制限になります',
-        '实时总流量': 'リアルタイム総トラフィック',
         '历史流量趋势': 'トラフィック履歴',
         '选择设备': 'デバイスを選択',
         '所有设备': 'すべてのデバイス',
+        '时间范围': '時間範囲',
+        '最近5分钟': '最近5分',
+        '最近30分钟': '最近30分',
+        '最近2小时': '最近2時間',
         '类型': 'タイプ',
         '总流量': '合計',
-        '局域网': 'LAN',
-        '跨网络': 'WAN',
+        'LAN 流量': 'LAN',
+        'WAN 流量': 'WAN',
+        '刷新': '更新',
         '上传速率': 'アップロードレート',
         '下载速率': 'ダウンロードレート',
         '最近': '直近',
@@ -401,16 +408,16 @@ const translations = {
         '累计流量': '累計トラフィック',
         '总上传': '総アップロード',
         '总下载': '総ダウンロード',
-        '局域上传': 'LAN アップロード',
-        '局域下载': 'LAN ダウンロード',
-        '公网上传': 'WAN アップロード',
-        '公网下载': 'WAN ダウンロード',
+        'LAN 已上传': 'LAN アップロード済み',
+        'LAN 已下载': 'LAN ダウンロード済み',
+        'WAN 已上传': 'WAN アップロード済み',
+        'WAN 已下载': 'WAN ダウンロード済み',
         '总上传速率': '総アップロード速度',
         '总下载速率': '総ダウンロード速度',
-        '局域上传速率': 'LAN アップロード速度',
-        '局域下载速率': 'LAN ダウンロード速度',
-        '跨网上传速率': 'WAN アップロード速度',
-        '跨网下载速率': 'WAN ダウンロード速度',
+        'LAN 上传速率': 'LAN アップロード速度',
+        'LAN 下载速率': 'LAN ダウンロード速度',
+        'WAN 上传速率': 'WAN アップロード速度',
+        'WAN 下载速率': 'WAN ダウンロード速度',
         '从未上线': 'オンライン未経験',
         '刚刚': '今',
         '分钟前': '分前',
@@ -425,6 +432,7 @@ const translations = {
         'Bandix 流量监控': 'Монитор Трафика Bandix',
         '正在加载数据...': 'Загрузка данных...',
         '无法获取数据': 'Не удалось получить данные',
+        '无法获取历史数据': 'Не удалось получить исторические данные',
         '主机名': 'Имя хоста',
         'IP地址': 'IP-адрес',
         'MAC地址': 'MAC-адрес',
@@ -437,12 +445,12 @@ const translations = {
         '界面语言': 'Язык интерфейса',
         '选择 Bandix 流量监控的显示语言': 'Выберите язык отображения для Монитора Трафика Bandix',
         '设备信息': 'Информация об устройстве',
-        '局域网流量': 'Трафик LAN',
-        '跨网络流量': 'Трафик WAN',
+        'LAN 流量': 'Трафик LAN',
+        'WAN 流量': 'Трафик WAN',
         '限速设置': 'Ограничение скорости',
         '操作': 'Действия',
         '在线设备': 'Онлайн устройства',
-        '仅限跨网络': 'Только WAN',
+        '仅限WAN 流量': 'Только WAN',
         '设置': 'Настройки',
         '限速设置': 'Настройки ограничения',
         '取消限速': 'Удалить ограничение',
@@ -458,16 +466,20 @@ const translations = {
         '请输入有效的速度值': 'Пожалуйста, введите допустимое значение скорости',
         '速度值必须大于0': 'Значение скорости должно быть больше 0',
         '保存中...': 'Сохранение...',
-        '限速功能仅对跨网络流量生效。': 'Ограничение скорости применяется только к WAN-трафику.',
+        '限速功能仅对 WAN 流量生效。': 'Ограничение скорости применяется только к WAN-трафику.',
         '提示：输入 0 表示无限制': 'Совет: Введите 0 для снятия ограничений',
-        '实时总流量': 'Общий трафик в реальном времени',
         '历史流量趋势': 'История трафика',
         '选择设备': 'Выбрать устройство',
         '所有设备': 'Все устройства',
+        '时间范围': 'Временной диапазон',
+        '最近5分钟': 'Последние 5 минут',
+        '最近30分钟': 'Последние 30 минут',
+        '最近2小时': 'Последние 2 часа',
         '类型': 'Тип',
         '总流量': 'Общий',
-        '局域网': 'LAN',
-        '跨网络': 'WAN',
+        'LAN 流量': 'LAN',
+        'WAN 流量': 'WAN',
+        '刷新': 'Обновить',
         '上传速率': 'Скорость отправки',
         '下载速率': 'Скорость загрузки',
         '最近': 'За последние',
@@ -480,16 +492,16 @@ const translations = {
         '累计流量': 'Суммарный трафик',
         '总上传': 'Всего отправлено',
         '总下载': 'Всего получено',
-        '局域上传': 'LAN отправлено',
-        '局域下载': 'LAN получено',
-        '公网上传': 'WAN отправлено',
-        '公网下载': 'WAN получено',
+        'LAN 已上传': 'LAN Отправлено',
+        'LAN 已下载': 'LAN Получено',
+        'WAN 已上传': 'WAN Отправлено',
+        'WAN 已下载': 'WAN Получено',
         '总上传速率': 'Общая скорость отправки',
         '总下载速率': 'Общая скорость загрузки',
-        '局域上传速率': 'Скорость отправки LAN',
-        '局域下载速率': 'Скорость загрузки LAN',
-        '跨网上传速率': 'Скорость отправки WAN',
-        '跨网下载速率': 'Скорость загрузки WAN',
+        'LAN 上传速率': 'Скорость отправки LAN',
+        'LAN 下载速率': 'Скорость загрузки LAN',
+        'WAN 上传速率': 'Скорость отправки WAN',
+        'WAN 下载速率': 'Скорость загрузки WAN',
         '从未上线': 'Никогда не был онлайн',
         '刚刚': 'Только что',
         '分钟前': 'мин назад',
@@ -722,7 +734,7 @@ return view.extend({
             }
             
             .bandix-card-header {
-                padding: 20px 24px;
+                padding: 20px 12px;
                 border-bottom: 1px solid ${darkMode ? '#252526' : '#e5e7eb'};
                 background-color: ${darkMode ? '#333333' : '#fafafa'};
             }
@@ -917,17 +929,75 @@ return view.extend({
             
             .stats-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                gap: 16px;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 20px;
                 margin-bottom: 24px;
             }
             
             .stats-card {
                 background-color: ${darkMode ? '#252526' : 'white'};
-                border-radius: 8px;
-                padding: 16px;
-                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, ${darkMode ? '0.3' : '0.1'});
+                border-radius: 12px;
+                padding: 24px;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, ${darkMode ? '0.3' : '0.1'}), 0 2px 4px -1px rgba(0, 0, 0, ${darkMode ? '0.2' : '0.06'});
                 border: 1px solid ${darkMode ? '#252526' : 'transparent'};
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .stats-card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 20px;
+            }
+            
+            .stats-card-title {
+                font-size: 0.875rem;
+                font-weight: 500;
+                color: ${darkMode ? '#9ca3af' : '#6b7280'};
+                margin: 0;
+            }
+            
+            .stats-card-icon {
+                font-size: 1.5rem;
+                opacity: 0.8;
+            }
+            
+            .stats-card-main-value {
+                font-size: 2.25rem;
+                font-weight: 700;
+                color: ${darkMode ? '#f1f5f9' : '#1f2937'};
+                margin: 0 0 8px 0;
+                line-height: 1;
+            }
+            
+            .stats-card-sub-value {
+                font-size: 0.875rem;
+                color: ${darkMode ? '#9ca3af' : '#6b7280'};
+                margin: 0;
+            }
+            
+            .stats-card-details {
+                margin-top: 16px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .stats-detail-row {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 0.875rem;
+            }
+            
+            .stats-detail-label {
+                color: ${darkMode ? '#9ca3af' : '#6b7280'};
+                font-weight: 500;
+            }
+            
+            .stats-detail-value {
+                font-weight: 600;
             }
             
             .stats-title {
@@ -1215,7 +1285,7 @@ return view.extend({
             // 警告提示
             E('div', { 'class': 'bandix-alert' }, [
                 E('span', { 'class': 'bandix-alert-icon' }, '⚠️'),
-                E('span', {}, getTranslation('限速功能仅对跨网络流量生效。', language))
+                E('span', {}, getTranslation('限速功能仅对 WAN 流量生效。', language))
             ]),
 
             // 统计卡片
@@ -1225,7 +1295,6 @@ return view.extend({
             E('div', { 'class': 'bandix-card', 'id': 'history-card' }, [
                 E('div', { 'class': 'bandix-card-header history-header' }, [
                     E('div', { 'class': 'bandix-card-title' }, [
-                        E('span', {}, '📈'),
                         getTranslation('历史流量趋势', language)
                     ]),
                     E('div', { 'class': 'history-legend' }, [
@@ -1247,8 +1316,8 @@ return view.extend({
                     E('label', { 'class': 'form-label', 'style': 'margin: 0;' }, getTranslation('类型', language)),
                     E('select', { 'class': 'form-select', 'id': 'history-type-select' }, [
                         E('option', { 'value': 'total' }, getTranslation('总流量', language)),
-                        E('option', { 'value': 'lan' }, getTranslation('局域网', language)),
-                        E('option', { 'value': 'wan' }, getTranslation('跨网络', language))
+                        E('option', { 'value': 'lan' }, getTranslation('LAN 流量', language)),
+                        E('option', { 'value': 'wan' }, getTranslation('WAN 流量', language))
                     ]),
                     E('span', { 'class': 'bandix-badge', 'id': 'history-zoom-level', 'style': 'margin-left: 16px; display: none;' }, ''),
                     E('span', { 'class': 'bandix-badge', 'id': 'history-retention', 'style': 'margin-left: auto;' }, '')
@@ -1835,8 +1904,8 @@ return view.extend({
 			}
 
 			function labelsFor(type) {
-				if (type === 'lan') return { up: getTranslation('局域上传速率', language), down: getTranslation('局域下载速率', language) };
-				if (type === 'wan') return { up: getTranslation('跨网上传速率', language), down: getTranslation('跨网下载速率', language) };
+				if (type === 'lan') return { up: getTranslation('LAN 上传速率', language), down: getTranslation('LAN 下载速率', language) };
+				if (type === 'wan') return { up: getTranslation('WAN 上传速率', language), down: getTranslation('WAN 下载速率', language) };
 				return { up: getTranslation('总上传速率', language), down: getTranslation('总下载速率', language) };
 			}
 
@@ -1895,15 +1964,15 @@ return view.extend({
 				});
 			}
 
-			// 累计：区分局域网与公网
+			// 累计：区分LAN 流量与公网
 			lines.push('<div class="ht-divider"></div>');
 			lines.push('<div class="ht-section-title">' + getTranslation('累计流量', language) + '</div>');
 			row(getTranslation('总上传', language), bytesValue('total_tx_bytes'));
 			row(getTranslation('总下载', language), bytesValue('total_rx_bytes'));
-			row(getTranslation('局域上传', language), bytesValue('local_tx_bytes'));
-			row(getTranslation('局域下载', language), bytesValue('local_rx_bytes'));
-			row(getTranslation('公网上传', language), bytesValue('wide_tx_bytes'));
-			row(getTranslation('公网下载', language), bytesValue('wide_rx_bytes'));
+			row(getTranslation('LAN 上传', language), bytesValue('local_tx_bytes'));
+			row(getTranslation('LAN 下载', language), bytesValue('local_rx_bytes'));
+			row(getTranslation('WAN 上传', language), bytesValue('wide_tx_bytes'));
+			row(getTranslation('WAN 下载', language), bytesValue('wide_rx_bytes'));
 
 			return lines.join('');
         }
@@ -2328,11 +2397,11 @@ function formatRetentionSeconds(seconds, language) {
                 // 更新统计卡片
                 statsGrid.innerHTML = '';
 
-                // 局域网流量卡片
+                // LAN 流量卡片
                 statsGrid.appendChild(E('div', { 'class': 'stats-card' }, [
-                    E('div', { 'class': 'stats-title' }, [
-                        E('span', { 'style': 'color: #3b82f6;' }, '📶'),
-                        getTranslation('局域网流量', language)
+                    E('div', { 'class': 'stats-card-header' }, [
+                        E('div', { 'class': 'stats-card-title' }, getTranslation('LAN 流量', language)),
+                        E('div', { 'class': 'stats-card-icon', 'style': 'color: #3b82f6;' }, '🖥️')
                     ]),
                     E('div', { 'style': 'margin-top: 12px; display: flex; flex-direction: column; gap: 8px;' }, [
                         // 上传行
@@ -2350,11 +2419,11 @@ function formatRetentionSeconds(seconds, language) {
                     ])
                 ]));
 
-                // 跨网络流量卡片
+                // WAN 流量卡片
                 statsGrid.appendChild(E('div', { 'class': 'stats-card' }, [
-                    E('div', { 'class': 'stats-title' }, [
-                        E('span', { 'style': 'color: #22c55e;' }, '🌐'),
-                        getTranslation('跨网络流量', language)
+                    E('div', { 'class': 'stats-card-header' }, [
+                        E('div', { 'class': 'stats-card-title' }, getTranslation('WAN 流量', language)),
+                        E('div', { 'class': 'stats-card-icon', 'style': 'color: #22c55e;' }, '🌐')
                     ]),
                     E('div', { 'style': 'margin-top: 12px; display: flex; flex-direction: column; gap: 8px;' }, [
                         // 上传行
@@ -2372,11 +2441,11 @@ function formatRetentionSeconds(seconds, language) {
                     ])
                 ]));
 
-                // 实时总流量卡片
+                // 总流量卡片
                 statsGrid.appendChild(E('div', { 'class': 'stats-card' }, [
-                    E('div', { 'class': 'stats-title' }, [
-                        E('span', {}, '⚡'),
-                        getTranslation('实时总流量', language)
+                    E('div', { 'class': 'stats-card-header' }, [
+                        E('div', { 'class': 'stats-card-title' }, getTranslation('总流量', language)),
+                        E('div', { 'class': 'stats-card-icon', 'style': 'color: ' + (darkMode ? '#f1f5f9' : '#1f2937') + ';' }, '⚡')
                     ]),
                     E('div', { 'style': 'margin-top: 12px; display: flex; flex-direction: column; gap: 8px;' }, [
                         // 上传行
@@ -2400,12 +2469,10 @@ function formatRetentionSeconds(seconds, language) {
                         E('tr', {}, [
                             E('th', {}, getTranslation('设备信息', language)),
                             E('th', {}, [
-                                E('span', { 'style': 'color: #3b82f6; margin-right: 4px;' }, '📶'),
-                                getTranslation('局域网流量', language)
+                                getTranslation('LAN 流量', language)
                             ]),
                             E('th', {}, [
-                                E('span', { 'style': 'color: #22c55e; margin-right: 4px;' }, '🌐'),
-                                getTranslation('跨网络流量', language)
+                                getTranslation('WAN 流量', language)
                             ]),
                             E('th', {}, getTranslation('限速设置', language)),
                             E('th', {}, getTranslation('操作', language))
@@ -2483,7 +2550,7 @@ function formatRetentionSeconds(seconds, language) {
                             ])
                         ]),
 
-                        // 局域网流量
+                        // LAN 流量
                         E('td', {}, [
                             E('div', { 'class': 'traffic-info' }, [
                                 E('div', { 'class': 'traffic-row' }, [
@@ -2499,7 +2566,7 @@ function formatRetentionSeconds(seconds, language) {
                             ])
                         ]),
 
-                        // 跨网络流量
+                        // WAN 流量
                         E('td', {}, [
                             E('div', { 'class': 'traffic-info' }, [
                                 E('div', { 'class': 'traffic-row' }, [
