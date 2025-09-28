@@ -7,9 +7,19 @@
 
 const translations = {
 	'zh-cn': {
-		'Bandix 流量监控设置': 'Bandix 流量监控设置',
+		'基本设置': '基本设置',
+		'流量监控设置': '流量监控设置',
+		'连接监控设置': '连接监控设置',
+		'Bandix 基本配置': 'Bandix 基本配置',
+		'配置 Bandix 服务的基本参数': '配置 Bandix 服务的基本参数',
+		'Bandix 流量监控配置': 'Bandix 流量监控配置',
+		'配置流量监控相关参数': '配置流量监控相关参数',
+		'Bandix 连接监控配置': 'Bandix 连接监控配置',
+		'配置连接监控相关参数': '配置连接监控相关参数',
 		'启用': '启用',
 		'启用 Bandix 流量监控服务': '启用 Bandix 流量监控服务',
+		'启用流量监控': '启用流量监控',
+		'启用连接监控': '启用连接监控',
 		'界面语言': '界面语言',
 		'选择 Bandix 流量监控的显示语言': '选择 Bandix 流量监控的显示语言',
 		'简体中文': '简体中文',
@@ -41,9 +51,19 @@ const translations = {
 		'30 分钟': '30 分钟'
 	},
 	'zh-tw': {
-		'Bandix 流量监控设置': 'Bandix 流量監控設置',
+		'基本设置': '基本設置',
+		'流量监控设置': '流量監控設置',
+		'连接监控设置': '連接監控設置',
+		'Bandix 基本配置': 'Bandix 基本配置',
+		'配置 Bandix 服务的基本参数': '配置 Bandix 服務的基本參數',
+		'Bandix 流量监控配置': 'Bandix 流量監控配置',
+		'配置流量监控相关参数': '配置流量監控相關參數',
+		'Bandix 连接监控配置': 'Bandix 連接監控配置',
+		'配置连接监控相关参数': '配置連接監控相關參數',
 		'启用': '啟用',
 		'启用 Bandix 流量监控服务': '啟用 Bandix 流量監控服務',
+		'启用流量监控': '啟用流量監控',
+		'启用连接监控': '啟用連接監控',
 		'界面语言': '界面語言',
 		'选择 Bandix 流量监控的显示语言': '選擇 Bandix 流量監控的顯示語言',
 		'简体中文': '簡體中文',
@@ -75,9 +95,19 @@ const translations = {
 		'30 分钟': '30 分鐘'
 	},
 	'en': {
-		'Bandix 流量监控设置': 'Bandix Traffic Monitor Settings',
+		'基本设置': 'Basic Settings',
+		'流量监控设置': 'Traffic Monitor Settings',
+		'连接监控设置': 'Connection Monitor Settings',
+		'Bandix 基本配置': 'Bandix Basic Configuration',
+		'配置 Bandix 服务的基本参数': 'Configure basic parameters for Bandix service',
+		'Bandix 流量监控配置': 'Bandix Traffic Monitor Configuration',
+		'配置流量监控相关参数': 'Configure traffic monitoring related parameters',
+		'Bandix 连接监控配置': 'Bandix Connection Monitor Configuration',
+		'配置连接监控相关参数': 'Configure connection monitoring related parameters',
 		'启用': 'Enable',
 		'启用 Bandix 流量监控服务': 'Enable Bandix Traffic Monitor Service',
+		'启用流量监控': 'Enable Traffic Monitoring',
+		'启用连接监控': 'Enable Connection Monitoring',
 		'界面语言': 'Interface Language',
 		'选择 Bandix 流量监控的显示语言': 'Select the display language for Bandix Traffic Monitor',
 		'简体中文': 'Simplified Chinese',
@@ -109,9 +139,19 @@ const translations = {
 		'30 分钟': '30 minutes'
 	},
 	'fr': {
-		'Bandix 流量监控设置': 'Paramètres de Surveillance du Trafic Bandix',
+		'基本设置': 'Paramètres de Base',
+		'流量监控设置': 'Paramètres de Surveillance du Trafic',
+		'连接监控设置': 'Paramètres de Surveillance des Connexions',
+		'Bandix 基本配置': 'Configuration de Base Bandix',
+		'配置 Bandix 服务的基本参数': 'Configurer les paramètres de base du service Bandix',
+		'Bandix 流量监控配置': 'Configuration de Surveillance du Trafic Bandix',
+		'配置流量监控相关参数': 'Configurer les paramètres liés à la surveillance du trafic',
+		'Bandix 连接监控配置': 'Configuration de Surveillance des Connexions Bandix',
+		'配置连接监控相关参数': 'Configurer les paramètres liés à la surveillance des connexions',
 		'启用': 'Activer',
 		'启用 Bandix 流量监控服务': 'Activer le Service de Surveillance du Trafic Bandix',
+		'启用流量监控': 'Activer la Surveillance du Trafic',
+		'启用连接监控': 'Activer la Surveillance des Connexions',
 		'界面语言': 'Langue de l\'Interface',
 		'选择 Bandix 流量监控的显示语言': 'Sélectionner la langue d\'affichage pour le Moniteur de Trafic Bandix',
 		'简体中文': 'Chinois Simplifié',
@@ -143,9 +183,19 @@ const translations = {
 		'30 分钟': '30 minutes'
 	},
 	'ja': {
-		'Bandix 流量监控设置': 'Bandix トラフィックモニター設定',
+		'基本设置': '基本設定',
+		'流量监控设置': 'トラフィック監視設定',
+		'连接监控设置': '接続監視設定',
+		'Bandix 基本配置': 'Bandix 基本設定',
+		'配置 Bandix 服务的基本参数': 'Bandix サービスの基本パラメータを設定',
+		'Bandix 流量监控配置': 'Bandix トラフィック監視設定',
+		'配置流量监控相关参数': 'トラフィック監視関連パラメータを設定',
+		'Bandix 连接监控配置': 'Bandix 接続監視設定',
+		'配置连接监控相关参数': '接続監視関連パラメータを設定',
 		'启用': '有効',
 		'启用 Bandix 流量监控服务': 'Bandix トラフィックモニターサービスを有効にする',
+		'启用流量监控': 'トラフィック監視を有効にする',
+		'启用连接监控': '接続監視を有効にする',
 		'界面语言': 'インターフェース言語',
 		'选择 Bandix 流量监控的显示语言': 'Bandix トラフィックモニターの表示言語を選択',
 		'简体中文': '簡体字中国語',
@@ -177,9 +227,19 @@ const translations = {
 		'30 分钟': '30 分'
 	},
 	'ru': {
-		'Bandix 流量监控设置': 'Настройки Монитора Трафика Bandix',
+		'基本设置': 'Основные Настройки',
+		'流量监控设置': 'Настройки Мониторинга Трафика',
+		'连接监控设置': 'Настройки Мониторинга Соединений',
+		'Bandix 基本配置': 'Базовая Конфигурация Bandix',
+		'配置 Bandix 服务的基本参数': 'Настроить основные параметры службы Bandix',
+		'Bandix 流量监控配置': 'Конфигурация Мониторинга Трафика Bandix',
+		'配置流量监控相关参数': 'Настроить параметры, связанные с мониторингом трафика',
+		'Bandix 连接监控配置': 'Конфигурация Мониторинга Соединений Bandix',
+		'配置连接监控相关参数': 'Настроить параметры, связанные с мониторингом соединений',
 		'启用': 'Включить',
 		'启用 Bandix 流量监控服务': 'Включить Службу Мониторинга Трафика Bandix',
+		'启用流量监控': 'Включить Мониторинг Трафика',
+		'启用连接监控': 'Включить Мониторинг Соединений',
 		'界面语言': 'Язык Интерфейса',
 		'选择 Bandix 流量监控的显示语言': 'Выберите язык отображения для Монитора Трафика Bandix',
 		'简体中文': 'Упрощенный Китайский',
@@ -417,14 +477,37 @@ return view.extend({
 		// 创建表单
 		m = new form.Map('bandix');
 
-		// Bandix 流量监控设置部分
-		s = m.section(form.NamedSection, 'general', 'general', getTranslation('Bandix 流量监控设置', language));
+		// 1. 基本设置部分 (general)
+		s = m.section(form.NamedSection, 'general', 'general', getTranslation('基本设置', language));
+		s.description = getTranslation('配置 Bandix 服务的基本参数', language);
 		s.addremove = false;
 
-		o = s.option(form.Flag, 'enabled', getTranslation('启用', language),
-			getTranslation('启用 Bandix 流量监控服务', language));
-		o.default = '1';
+		// 添加端口设置选项
+		o = s.option(form.Value, 'port', getTranslation('端口', language),
+			getTranslation('Bandix 服务监听的端口', language));
+		o.default = '8686';
+		o.datatype = 'port';
+		o.placeholder = '8686';
 		o.rmempty = false;
+
+		// 添加网卡选择下拉菜单
+		o = s.option(form.ListValue, 'iface', getTranslation('监控网卡', language),
+			getTranslation('选择要监控的网络接口', language));
+		o.default = 'br-lan';
+		o.rmempty = false;
+
+		// 添加常用的物理接口作为备选
+		var commonInterfaces = ['br-lan', 'eth0', 'eth1', 'wlan0', 'wlan1'];
+		commonInterfaces.forEach(function (iface) {
+			o.value(iface, iface);
+		});
+
+		// 添加从配置获取的物理接口
+		physicalInterfaces.forEach(function (iface) {
+			if (commonInterfaces.indexOf(iface) === -1) {
+				o.value(iface, iface);
+			}
+		});
 
 		// 添加语言选择选项
 		o = s.option(form.ListValue, 'language', getTranslation('界面语言', language),
@@ -439,41 +522,6 @@ return view.extend({
 		o.default = 'auto';
 		o.rmempty = false;
 
-		// 添加端口设置选项
-		o = s.option(form.Value, 'port', getTranslation('端口', language),
-			getTranslation('Bandix 服务监听的端口', language));
-		o.default = '8686';
-		o.datatype = 'port';
-		o.placeholder = '8686';
-		o.rmempty = false;
-
-		// 添加网卡选择下拉菜单
-		o = s.option(form.ListValue, 'interface', getTranslation('监控网卡', language),
-			getTranslation('选择要监控的网络接口', language));
-		o.default = 'br-lan';
-		o.rmempty = false;
-
-		// 添加常用的物理接口作为备选
-		var commonInterfaces = [];
-		commonInterfaces.forEach(function (iface) {
-			o.value(iface, iface);
-		});
-
-		// 添加从配置获取的物理接口
-		physicalInterfaces.forEach(function (iface) {
-			if (commonInterfaces.indexOf(iface) === -1) {
-				o.value(iface, iface);
-			}
-		});
-
-		// 添加网速单位选择选项
-		o = s.option(form.ListValue, 'speed_unit', getTranslation('网速单位', language),
-			getTranslation('选择网速显示的单位格式', language));
-		o.value('bytes', getTranslation('字节单位 (B/s, KB/s, MB/s)', language));
-		o.value('bits', getTranslation('比特单位 (bps, Kbps, Mbps)', language));
-		o.default = 'bytes';
-		o.rmempty = false;
-
 		// 添加主题选择选项
 		o = s.option(form.ListValue, 'theme', getTranslation('界面主题', language),
 			getTranslation('选择 Bandix 流量监控的显示主题', language));
@@ -483,8 +531,47 @@ return view.extend({
 		o.default = 'auto';
 		o.rmempty = false;
 
+		// 添加数据目录设置
+		o = s.option(form.Value, 'data_dir', '数据目录', 'Bandix 数据存储目录');
+		o.default = '/usr/share/bandix';
+		o.placeholder = '/usr/share/bandix';
+		o.rmempty = false;
+
+		// 添加意见反馈信息
+		o = s.option(form.DummyValue, 'feedback_info', getTranslation('意见反馈', language));
+		o.href = 'https://github.com/timsaya';
+		o.cfgvalue = function() {
+			return 'https://github.com/timsaya';
+		};
+
+		// 2. 流量监控设置部分 (traffic)
+		s = m.section(form.NamedSection, 'traffic', 'traffic', getTranslation('流量监控设置', language));
+		s.description = getTranslation('配置流量监控相关参数', language);
+		s.addremove = false;
+
+		o = s.option(form.Flag, 'enabled', getTranslation('启用流量监控', language),
+			getTranslation('启用 Bandix 流量监控服务', language));
+		o.default = '0';
+		o.rmempty = false;
+
+		// 添加网速单位选择选项
+		o = s.option(form.ListValue, 'speed_unit', getTranslation('网速单位', language),
+			getTranslation('选择网速显示的单位格式', language));
+		o.value('bytes', getTranslation('字节单位 (B/s, KB/s, MB/s)', language));
+		o.value('bits', getTranslation('比特单位 (bps, Kbps, Mbps)', language));
+		o.default = 'bytes';
+		o.rmempty = false;
+
+		// 添加离线超时时间（秒）
+		o = s.option(form.Value, 'offline_timeout', getTranslation('离线超时时间', language),
+			getTranslation('设置设备离线判断的超时时间（秒）', language));
+		o.datatype = 'uinteger';
+		o.placeholder = '600';
+		o.default = '600';
+		o.rmempty = true;
+
 		// 添加持久化循环周期（秒）
-		o = s.option(form.ListValue, 'retention_seconds', getTranslation('持久化循环周期', language),
+		o = s.option(form.ListValue, 'traffic_retention_seconds', getTranslation('持久化循环周期', language),
 			getTranslation('设置数据持久化循环周期', language));
 		o.value('60', getTranslation('1 分钟', language));
 		o.value('300', getTranslation('5 分钟', language));
@@ -496,20 +583,15 @@ return view.extend({
 		o.default = '600';
 		o.rmempty = false;
 
-		// 添加离线超时时间（秒）
-		o = s.option(form.Value, 'offline_timeout', getTranslation('离线超时时间', language),
-		getTranslation('设置设备离线判断的超时时间（秒）', language));
-		o.datatype = 'uinteger';
-		o.placeholder = '600';
-		o.default = '600';
-		o.rmempty = true; // 留空则不写入 UCI，由后端决定默认值
+		// 3. 连接监控设置部分 (connections)
+		s = m.section(form.NamedSection, 'connections', 'connections', getTranslation('连接监控设置', language));
+		s.description = getTranslation('配置连接监控相关参数', language);
+		s.addremove = false;
 
-		// 添加意见反馈信息
-		o = s.option(form.DummyValue, 'feedback_info', getTranslation('意见反馈', language));
-		o.href = 'https://github.com/timsaya';
-		o.cfgvalue = function() {
-			return 'https://github.com/timsaya';
-		};
+		o = s.option(form.Flag, 'enabled', getTranslation('启用连接监控', language),
+			'启用 Bandix 连接监控功能');
+		o.default = '0';
+		o.rmempty = false;
 
 		return m.render();
 	}

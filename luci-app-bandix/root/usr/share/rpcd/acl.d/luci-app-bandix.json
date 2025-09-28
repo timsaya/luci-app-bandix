@@ -6,7 +6,8 @@
 				"luci.bandix": [
 					"getStatus",
 					"getMetrics",
-					"setRateLimit"
+					"setRateLimit",
+					"getConnection"
 				]
 			},
 			"uci": [
@@ -18,7 +19,8 @@
 				"luci.bandix": [
 					"setRateLimit",
 					"getStatus",
-					"getMetrics"
+					"getMetrics",
+					"getConnection"
 				]
 			},
 			"uci": [

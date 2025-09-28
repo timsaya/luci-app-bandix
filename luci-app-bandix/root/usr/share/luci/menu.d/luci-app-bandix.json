@@ -19,6 +19,14 @@
 			"path": "bandix/index"
 		}
 	},
+	"admin/network/bandix/connection": {
+		"title": "Connections",
+		"order": 15,
+		"action": {
+			"type": "view",
+			"path": "bandix/connection"
+		}
+	},
 	"admin/network/bandix/settings": {
 		"title": "Settings",
 		"order": 20,
