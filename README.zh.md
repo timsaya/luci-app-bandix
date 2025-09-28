@@ -15,6 +15,8 @@ LuCI Bandix 基于 LuCI 框架开发，为 OpenWrt 路由器提供网络流量�
 
 ![LuCI Bandix Screenshot](docs/images/index-2.png)
 
+![LuCI Bandix Screenshot](docs/images/connection-1.png)
+
 ![LuCI Bandix Screenshot](docs/images/settings.png)
 
 
@@ -34,6 +36,7 @@ LuCI Bandix 基于 LuCI 框架开发，为 OpenWrt 路由器提供网络流量�
 - 自动获取 DHCP/DNS 中主机名 (静态地址分配)
 - 基于 Rust eBPF 高性能实现
 - 支持 LAN/WAN 网速监控
+- 支持设备 TCP/UDP 连接数监控
 - 支持 WAN 网速限制
 - 支持数据持久化存储
 - 提供网络历史趋势图与多维度统计
@@ -58,6 +61,7 @@ luci-app-bandix 需要以下依赖包：
 | 0.2.x               | 0.2.x                   |
 | 0.3.x               | 0.3.x                   |
 | 0.4.x               | 0.4.x                   |
+| 0.5.x               | 0.5.x                   |
 
 请确保安装匹配的版本以确保兼容性和正常功能。
 
@@ -89,7 +93,7 @@ luci-app-bandix 需要以下依赖包：
 
 ## 已知问题
 
-当持久化循环周期设置过大，比如 1小时、10 小时等，在某些设备上会导致 rpcd 服务崩溃，以至于无法通过 Web 访问路由器的管理界面，会提示密码错误等，不清楚为什么会这样提示。
+当持久化循环周期设置过大，比如 1小时、10 小时等，在某些设备上会导致 rpcd 服务崩溃，以至于无法通过 Web 访问路由器的管理界面，会提示密码错误等。
 
 **解决办法**: 通过 ssh 进入终端，重新安装 bandix, 并执行 `service rpcd restart`，同时设置小一点的持久化循环周期（比如10分钟）。
 

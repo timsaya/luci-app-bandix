@@ -16,6 +16,8 @@ LuCI Bandix is developed based on the LuCI framework, offering network traffic m
 
 ![LuCI Bandix Screenshot](docs/images/index-2.png)
 
+![LuCI Bandix Screenshot](docs/images/connection-1.png)
+
 ![LuCI Bandix Screenshot](docs/images/settings.png)
 
 
@@ -34,6 +36,7 @@ LuCI Bandix is developed based on the LuCI framework, offering network traffic m
 - Automatically obtain the host name from DHCP/DNS (Static Leases)
 - High-performance implementation based on Rust eBPF
 - Support for LAN/WAN speed monitoring
+- Support device TCP/UDP connection number monitoring
 - Support for WAN speed limitation
 - Persistent data storage
 - Historical traffic trends and charts
@@ -58,6 +61,7 @@ The following table shows the version dependency relationship between luci-app-b
 | 0.2.x                  | 0.2.x                          |
 | 0.3.x                  | 0.3.x                          |
 | 0.4.x                  | 0.4.x                          |
+| 0.5.x                  | 0.5.x                          |
 
 Please ensure you install matching versions to ensure compatibility and proper functionality.
 
@@ -88,7 +92,7 @@ Please ensure you install matching versions to ensure compatibility and proper f
 
 ## Known Issues
 
-When the persistence cycle is set too large (e.g., 1 hour, 10 hours, etc.), the rpcd service may crash on some devices, making it impossible to access the router's management interface via web. The system may display password error messages, though the exact reason for this prompt is unclear.
+When the persistence cycle is set too large (e.g., 1 hour, 10 hours, etc.), the rpcd service may crash on some devices, making it impossible to access the router's management interface via web. The system may display password error messages.
 
 **Solution**: Access the terminal via SSH, reinstall bandix, and execute `service rpcd restart`. Also, set a smaller persistence cycle (e.g., 10 minutes).
 

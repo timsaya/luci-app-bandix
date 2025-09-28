@@ -149,30 +149,30 @@ function isDarkMode() {
             return false;
         }
     }
-    
+
     var mediaUrlBase = uci.get('luci', 'main', 'mediaurlbase');
     if (mediaUrlBase && mediaUrlBase.toLowerCase().includes('dark')) {
         return true;
     }
-    
+
     if (mediaUrlBase && mediaUrlBase.toLowerCase().includes('argon')) {
         var argonMode = uci.get('argon', '@global[0]', 'mode');
         if (argonMode && argonMode.toLowerCase().includes('dark')) {
             return true;
         }
     }
-    
+
     return false;
 }
 
 // 格式化时间戳
 function formatTimestamp(timestamp) {
     if (!timestamp) return getTranslation('从未上线', getSystemLanguage());
-    
+
     var now = Math.floor(Date.now() / 1000);
     var diff = now - timestamp;
     var language = getSystemLanguage();
-    
+
     if (diff < 60) {
         return getTranslation('刚刚', language);
     } else if (diff < 3600) {
@@ -213,7 +213,7 @@ return view.extend({
         return Promise.all([
             uci.load('bandix'),
             uci.load('luci'),
-            uci.load('argon').catch(function() {
+            uci.load('argon').catch(function () {
                 return null;
             })
         ]);
@@ -268,8 +268,8 @@ return view.extend({
                 background-color: ${darkMode ? '#451a03' : '#fef3c7'};
                 border: 1px solid ${darkMode ? '#92400e' : '#f59e0b'};
                 border-radius: 8px;
-                padding: 16px;
-                margin-bottom: 24px;
+                padding: 8px;
+                margin-bottom: 12px;
                 display: flex;
                 align-items: center;
                 gap: 8px;
@@ -542,15 +542,15 @@ return view.extend({
                 E('span', { 'class': 'bandix-alert-icon' }, '⚠'),
                 E('div', {}, [
                     E('strong', {}, getTranslation('连接监控未启用', language)),
-                    E('p', { 'style': 'margin: 4px 0 0 0;' }, 
+                    E('p', { 'style': 'margin: 4px 0 0 0;' },
                         getTranslation('请在设置中启用连接监控功能', language))
                 ])
             ]);
             container.appendChild(alertDiv);
-            
+
             var settingsCard = E('div', { 'class': 'bandix-card' }, [
                 E('div', { 'class': 'bandix-card-body', 'style': 'text-align: center;' }, [
-                    E('a', { 
+                    E('a', {
                         'href': '/cgi-bin/luci/admin/network/bandix/settings',
                         'class': 'btn btn-primary'
                     }, getTranslation('前往设置', language))
@@ -593,11 +593,8 @@ return view.extend({
 
         // 添加提示信息
         var infoAlert = E('div', { 'class': 'bandix-alert' }, [
-            E('span', { 'class': 'bandix-alert-icon' }, '⚠'),
-            E('div', {}, [
-                E('p', { 'style': 'margin: 4px 0 0 0;' }, 
-                    getTranslation('只显示局域网设备连接，数据可能和总连接数不一致。', language))
-            ])
+            E('span', { 'class': 'bandix-alert-icon' }, '⚠️'),
+            E('span', {}, getTranslation('只显示局域网设备连接，数据可能和总连接数不一致。', language))
         ]);
         container.appendChild(infoAlert);
 
@@ -605,7 +602,7 @@ return view.extend({
         var deviceCard = E('div', { 'class': 'bandix-card' }, [
             E('div', { 'class': 'bandix-card-body' }, [
                 E('div', { 'id': 'device-table-container' }, [
-                    E('div', { 'class': 'loading-state' }, 
+                    E('div', { 'class': 'loading-state' },
                         getTranslation('正在加载数据...', language))
                 ])
             ])
@@ -615,7 +612,7 @@ return view.extend({
         // 更新全局统计
         function updateGlobalStats(stats) {
             if (!stats) return;
-            
+
             document.getElementById('total-connections').textContent = stats.total_connections || 0;
             document.getElementById('tcp-connections').textContent = stats.tcp_connections || 0;
             document.getElementById('udp-connections').textContent = stats.udp_connections || 0;
@@ -627,10 +624,10 @@ return view.extend({
         // 更新设备表格
         function updateDeviceTable(devices) {
             var container = document.getElementById('device-table-container');
-            
+
             if (!devices || devices.length === 0) {
                 container.innerHTML = '';
-                container.appendChild(E('div', { 'class': 'loading-state' }, 
+                container.appendChild(E('div', { 'class': 'loading-state' },
                     getTranslation('无数据', language)));
                 return;
             }
@@ -645,7 +642,7 @@ return view.extend({
                         E('th', {}, getTranslation('总连接数', language))
                     ])
                 ]),
-                E('tbody', {}, devices.map(function(device) {
+                E('tbody', {}, devices.map(function (device) {
                     return E('tr', {}, [
                         E('td', {}, [
                             E('div', { 'class': 'device-info' }, [
@@ -700,7 +697,7 @@ return view.extend({
                 } else {
                     showError(getTranslation('无法获取数据', language));
                 }
-            }).catch(function(error) {
+            }).catch(function (error) {
                 console.error('Failed to load connection data:', error);
                 showError(getTranslation('无法获取数据', language));
             });
