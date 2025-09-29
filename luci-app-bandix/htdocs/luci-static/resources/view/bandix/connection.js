@@ -42,7 +42,8 @@ const translations = {
         '个月前': '个月前',
         '年前': '年前',
         '最后上线': '最后上线',
-        '只显示局域网设备连接，数据可能和总连接数不一致。': '只显示局域网设备连接，数据可能和总连接数不一致。'
+        '列表只显示局域网设备连接，数据可能和总连接数不一致。': '列表只显示局域网设备连接，数据可能和总连接数不一致。',
+        'TCP 状态详情': 'TCP 状态详情'
     },
     'zh-tw': {
         'Bandix 连接监控': 'Bandix 連接監控',
@@ -80,7 +81,8 @@ const translations = {
         '个月前': '個月前',
         '年前': '年前',
         '最后上线': '最後上線',
-        '只显示局域网设备连接，数据可能和总连接数不一致。': '只顯示局域網設備連接，數據可能和總連接數不一致。'
+        '列表只显示局域网设备连接，数据可能和总连接数不一致。': '列表只顯示局域網設備連接，數據可能和總連接數不一致。',
+        'TCP 状态详情': 'TCP 狀態詳情'
     },
     'en': {
         'Bandix 连接监控': 'Bandix Connection Monitor',
@@ -118,7 +120,125 @@ const translations = {
         '个月前': 'months ago',
         '年前': 'years ago',
         '最后上线': 'Last seen',
-        '只显示局域网设备连接，数据可能和总连接数不一致。': 'Only shows LAN device connections, data may differ from total connections.'
+        '列表只显示局域网设备连接，数据可能和总连接数不一致。': 'List only shows LAN device connections, data may differ from total connections.',
+        'TCP 状态详情': 'TCP Status Details'
+    },
+    'fr': {
+        'Bandix 连接监控': 'Surveillance de Connexion Bandix',
+        '正在加载数据...': 'Chargement des données...',
+        '无法获取数据': 'Impossible de récupérer les données',
+        '连接监控': 'Surveillance des Connexions',
+        '设备连接统计': 'Statistiques de Connexion des Appareils',
+        '全局连接统计': 'Statistiques de Connexion Globales',
+        '设备': 'Appareil',
+        'IP地址': 'Adresse IP',
+        'MAC地址': 'Adresse MAC',
+        '活跃TCP': 'TCP Actif',
+        '活跃UDP': 'UDP Actif',
+        '已关闭TCP': 'TCP Fermé',
+        '总连接数': 'Total des Connexions',
+        '最后更新': 'Dernière Mise à Jour',
+        '总连接数统计': 'Total des Connexions',
+        'TCP连接数': 'Connexions TCP',
+        'UDP连接数': 'Connexions UDP',
+        '已建立TCP': 'TCP Établi',
+        'TIME_WAIT TCP': 'TCP TIME_WAIT',
+        'CLOSE_WAIT TCP': 'TCP CLOSE_WAIT',
+        '设备总数': 'Total des Appareils',
+        '连接监控未启用': 'Surveillance des Connexions Désactivée',
+        '请在设置中启用连接监控功能': 'Veuillez activer la surveillance des connexions dans les paramètres',
+        '前往设置': 'Aller aux Paramètres',
+        '无数据': 'Aucune Donnée',
+        '未知设备': 'Appareil Inconnu',
+        '在线设备': 'Appareils En Ligne',
+        '从未上线': 'Jamais En Ligne',
+        '刚刚': 'À l\'instant',
+        '分钟前': 'il y a minutes',
+        '小时前': 'il y a heures',
+        '天前': 'il y a jours',
+        '个月前': 'il y a mois',
+        '年前': 'il y a années',
+        '最后上线': 'Dernier Vue',
+        '列表只显示局域网设备连接，数据可能和总连接数不一致。': 'La liste ne montre que les connexions des appareils LAN, les données peuvent différer du total des connexions.',
+        'TCP 状态详情': 'Détails du Statut TCP'
+    },
+    'ja': {
+        'Bandix 连接监控': 'Bandix 接続監視',
+        '正在加载数据...': 'データを読み込み中...',
+        '无法获取数据': 'データを取得できません',
+        '连接监控': '接続監視',
+        '设备连接统计': 'デバイス接続統計',
+        '全局连接统计': 'グローバル接続統計',
+        '设备': 'デバイス',
+        'IP地址': 'IPアドレス',
+        'MAC地址': 'MACアドレス',
+        '活跃TCP': 'アクティブTCP',
+        '活跃UDP': 'アクティブUDP',
+        '已关闭TCP': 'クローズドTCP',
+        '总连接数': '総接続数',
+        '最后更新': '最終更新',
+        '总连接数统计': '総接続数',
+        'TCP连接数': 'TCP接続数',
+        'UDP连接数': 'UDP接続数',
+        '已建立TCP': 'TCP確立済',
+        'TIME_WAIT TCP': 'TCP TIME_WAIT',
+        'CLOSE_WAIT TCP': 'TCP CLOSE_WAIT',
+        '设备总数': '総デバイス数',
+        '连接监控未启用': '接続監視が無効',
+        '请在设置中启用连接监控功能': '設定で接続監視機能を有効にしてください',
+        '前往设置': '設定に移動',
+        '无数据': 'データなし',
+        '未知设备': '不明なデバイス',
+        '在线设备': 'オンラインデバイス',
+        '从未上线': '未接続',
+        '刚刚': 'たった今',
+        '分钟前': '分前',
+        '小时前': '時間前',
+        '天前': '日前',
+        '个月前': 'ヶ月前',
+        '年前': '年前',
+        '最后上线': '最後の接続',
+        '列表只显示局域网设备连接，数据可能和总连接数不一致。': 'リストはLANデバイスの接続のみを表示し、データは総接続数と異なる場合があります。',
+        'TCP 状态详情': 'TCP状態詳細'
+    },
+    'ru': {
+        'Bandix 连接监控': 'Мониторинг Соединений Bandix',
+        '正在加载数据...': 'Загрузка данных...',
+        '无法获取数据': 'Не удалось получить данные',
+        '连接监控': 'Мониторинг Соединений',
+        '设备连接统计': 'Статистика Соединений Устройств',
+        '全局连接统计': 'Глобальная Статистика Соединений',
+        '设备': 'Устройство',
+        'IP地址': 'IP-адрес',
+        'MAC地址': 'MAC-адрес',
+        '活跃TCP': 'Активные TCP',
+        '活跃UDP': 'Активные UDP',
+        '已关闭TCP': 'Закрытые TCP',
+        '总连接数': 'Всего Соединений',
+        '最后更新': 'Последнее Обновление',
+        '总连接数统计': 'Всего Соединений',
+        'TCP连接数': 'TCP Соединения',
+        'UDP连接数': 'UDP Соединения',
+        '已建立TCP': 'Установленные TCP',
+        'TIME_WAIT TCP': 'TCP TIME_WAIT',
+        'CLOSE_WAIT TCP': 'TCP CLOSE_WAIT',
+        '设备总数': 'Всего Устройств',
+        '连接监控未启用': 'Мониторинг Соединений Отключен',
+        '请在设置中启用连接监控功能': 'Пожалуйста, включите мониторинг соединений в настройках',
+        '前往设置': 'Перейти к Настройкам',
+        '无数据': 'Нет Данных',
+        '未知设备': 'Неизвестное Устройство',
+        '在线设备': 'Устройства Онлайн',
+        '从未上线': 'Никогда Не Было Онлайн',
+        '刚刚': 'Только что',
+        '分钟前': 'минут назад',
+        '小时前': 'часов назад',
+        '天前': 'дней назад',
+        '个月前': 'месяцев назад',
+        '年前': 'лет назад',
+        '最后上线': 'Последний раз видели',
+        '列表只显示局域网设备连接，数据可能和总连接数不一致。': 'Список показывает только соединения LAN-устройств, данные могут отличаться от общего количества соединений.',
+        'TCP 状态详情': 'Детали Статуса TCP'
     }
 };
 
@@ -560,6 +680,13 @@ return view.extend({
             return container;
         }
 
+        // 添加提示信息
+        var infoAlert = E('div', { 'class': 'bandix-alert' }, [
+            E('span', { 'class': 'bandix-alert-icon' }, '⚠️'),
+            E('span', {}, getTranslation('列表只显示局域网设备连接，数据可能和总连接数不一致。', language))
+        ]);
+        container.appendChild(infoAlert);
+
         // 全局统计卡片
         var statsGrid = E('div', { 'class': 'stats-grid' }, [
             E('div', { 'class': 'stats-card' }, [
@@ -590,13 +717,6 @@ return view.extend({
             ])
         ]);
         container.appendChild(statsGrid);
-
-        // 添加提示信息
-        var infoAlert = E('div', { 'class': 'bandix-alert' }, [
-            E('span', { 'class': 'bandix-alert-icon' }, '⚠️'),
-            E('span', {}, getTranslation('只显示局域网设备连接，数据可能和总连接数不一致。', language))
-        ]);
-        container.appendChild(infoAlert);
 
         // 设备连接统计表格
         var deviceCard = E('div', { 'class': 'bandix-card' }, [
@@ -638,7 +758,7 @@ return view.extend({
                         E('th', {}, getTranslation('设备', language)),
                         E('th', {}, 'TCP'),
                         E('th', {}, 'UDP'),
-                        E('th', {}, 'TCP 状态详情'),
+                        E('th', {}, getTranslation('TCP 状态详情', language)),
                         E('th', {}, getTranslation('总连接数', language))
                     ])
                 ]),
