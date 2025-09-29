@@ -635,6 +635,8 @@ return view.extend({
 		o.value('1200', getTranslation('20 分钟', language));
 		o.value('1500', getTranslation('25 分钟', language));
 		o.value('1800', getTranslation('30 分钟', language));
+		o.value('3600', getTranslation('1 小时', language));
+		o.value('7200', getTranslation('2 小时', language));
 		o.default = '600';
 		o.rmempty = false;
 
