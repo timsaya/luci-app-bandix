@@ -1357,6 +1357,133 @@ return view.extend({
                         E('div', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-top: 4px;' }, getTranslation('提示：输入 0 表示无限制', language))
                     ])
                 ]),
+                E('div', { 'class': 'form-group' }, [
+                    E('label', { 'class': 'form-label' }, getTranslation('限速时间设置', language)),
+                    E('div', { 'style': 'margin-bottom: 12px;' }, [
+                        E('input', { 
+                            'type': 'radio', 
+                            'name': 'time-type', 
+                            'id': 'time-permanent',
+                            'value': 'permanent',
+                            'checked': 'checked'
+                        }),
+                        E('label', { 
+                            'for': 'time-permanent',
+                            'style': 'margin-left: 8px; margin-right: 16px;'
+                        }, getTranslation('永久生效', language)),
+                        
+                        E('input', { 
+                            'type': 'radio', 
+                            'name': 'time-type', 
+                            'id': 'time-daily',
+                            'value': 'daily'
+                        }),
+                        E('label', { 
+                            'for': 'time-daily',
+                            'style': 'margin-left: 8px; margin-right: 16px;'
+                        }, getTranslation('每天重复', language)),
+                        
+                        E('input', { 
+                            'type': 'radio', 
+                            'name': 'time-type', 
+                            'id': 'time-weekdays',
+                            'value': 'weekdays'
+                        }),
+                        E('label', { 
+                            'for': 'time-weekdays',
+                            'style': 'margin-left: 8px; margin-right: 16px;'
+                        }, getTranslation('工作日生效', language)),
+                        
+                        E('input', { 
+                            'type': 'radio', 
+                            'name': 'time-type', 
+                            'id': 'time-weekends',
+                            'value': 'weekends'
+                        }),
+                        E('label', { 
+                            'for': 'time-weekends',
+                            'style': 'margin-left: 8px; margin-right: 16px;'
+                        }, getTranslation('周末生效', language)),
+                        
+                        E('input', { 
+                            'type': 'radio', 
+                            'name': 'time-type', 
+                            'id': 'time-custom',
+                            'value': 'custom'
+                        }),
+                        E('label', { 
+                            'for': 'time-custom',
+                            'style': 'margin-left: 8px;'
+                        }, getTranslation('自定义生效日期', language))
+                    ]),
+                    
+                    E('div', { 
+                        'id': 'time-range-container',
+                        'style': 'display: none; margin-top: 12px;'
+                    }, [
+                        E('div', { 'style': 'display: flex; align-items: center; gap: 12px; margin-bottom: 12px;' }, [
+                            E('label', { 'class': 'form-label', 'style': 'margin: 0; width: 80px;' }, getTranslation('开始时间', language)),
+                            E('input', { 
+                                'type': 'time', 
+                                'class': 'form-input', 
+                                'id': 'start-time',
+                                'style': 'width: 120px;',
+                                'step': '60',
+                                'min': '00:00',
+                                'max': '23:59'
+                            }),
+                            E('label', { 'class': 'form-label', 'style': 'margin: 0; width: 80px;' }, getTranslation('结束时间', language)),
+                            E('input', { 
+                                'type': 'time', 
+                                'class': 'form-input', 
+                                'id': 'end-time',
+                                'style': 'width: 120px;',
+                                'step': '60',
+                                'min': '00:00',
+                                'max': '23:59'
+                            })
+                        ]),
+                        
+                        E('div', { 
+                            'id': 'custom-days-container',
+                            'style': 'display: none;'
+                        }, [
+                            E('div', { 'style': 'margin-bottom: 8px;' }, [
+                                E('span', { 'style': 'font-size: 0.875rem; color: #6b7280;' }, getTranslation('请选择生效日期', language))
+                            ]),
+                            E('div', { 'style': 'display: flex; gap: 12px; flex-wrap: wrap;' }, [
+                                E('label', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
+                                    E('input', { 'type': 'checkbox', 'value': '1', 'class': 'day-checkbox' }),
+                                    E('span', { 'style': 'font-size: 0.875rem;' }, getTranslation('周一', language))
+                                ]),
+                                E('label', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
+                                    E('input', { 'type': 'checkbox', 'value': '2', 'class': 'day-checkbox' }),
+                                    E('span', { 'style': 'font-size: 0.875rem;' }, getTranslation('周二', language))
+                                ]),
+                                E('label', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
+                                    E('input', { 'type': 'checkbox', 'value': '3', 'class': 'day-checkbox' }),
+                                    E('span', { 'style': 'font-size: 0.875rem;' }, getTranslation('周三', language))
+                                ]),
+                                E('label', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
+                                    E('input', { 'type': 'checkbox', 'value': '4', 'class': 'day-checkbox' }),
+                                    E('span', { 'style': 'font-size: 0.875rem;' }, getTranslation('周四', language))
+                                ]),
+                                E('label', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
+                                    E('input', { 'type': 'checkbox', 'value': '5', 'class': 'day-checkbox' }),
+                                    E('span', { 'style': 'font-size: 0.875rem;' }, getTranslation('周五', language))
+                                ]),
+                                E('label', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
+                                    E('input', { 'type': 'checkbox', 'value': '6', 'class': 'day-checkbox' }),
+                                    E('span', { 'style': 'font-size: 0.875rem;' }, getTranslation('周六', language))
+                                ]),
+                                E('label', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
+                                    E('input', { 'type': 'checkbox', 'value': '0', 'class': 'day-checkbox' }),
+                                    E('span', { 'style': 'font-size: 0.875rem;' }, getTranslation('周日', language))
+                                ])
+                            ])
+                        ])
+                    ])
+                ]),
                 E('div', { 'class': 'modal-footer' }, [
                     E('button', { 'class': 'btn btn-secondary', 'id': 'modal-cancel' }, getTranslation('取消', language)),
                     E('button', { 'class': 'btn btn-primary', 'id': 'modal-save' }, getTranslation('保存', language))
@@ -1367,6 +1494,21 @@ return view.extend({
         document.body.appendChild(modal);
 
         // 模态框事件处理
+        function handleKeyDown(e) {
+            if (e.key === 'Escape') {
+                hideRateLimitModal();
+            }
+        }
+
+        // 添加全局键盘事件监听
+        function addKeyListeners() {
+            document.addEventListener('keydown', handleKeyDown);
+        }
+
+        function removeKeyListeners() {
+            document.removeEventListener('keydown', handleKeyDown);
+        }
+
         var currentDevice = null;
         var showRateLimitModal;
 
@@ -1489,8 +1631,66 @@ return view.extend({
             }
             document.getElementById('download-limit-unit').value = downloadUnit;
 
+        // 初始化时间设置
+        var timeRules = getTimeRulesFromStorage(currentDevice.mac);
+        var timeType = timeRules ? timeRules.time_type : 'permanent';
+        document.querySelector('input[name="time-type"][value="' + timeType + '"]').checked = true;
+
+        // 设置时间范围
+        if (timeRules && timeRules.start_time) {
+            document.getElementById('start-time').value = timeRules.start_time;
+        }
+        if (timeRules && timeRules.end_time) {
+            document.getElementById('end-time').value = timeRules.end_time;
+        }
+
+        // 设置自定义日期
+        if (timeRules && timeRules.days_of_week) {
+            var days = timeRules.days_of_week.split(',');
+            document.querySelectorAll('.day-checkbox').forEach(function(checkbox) {
+                checkbox.checked = days.includes(checkbox.value);
+            });
+        }
+
+            // 更新时间设置界面的显示状态
+            updateTimeSettingsDisplay();
+
+            // 定义焦点事件处理函数
+            function handleUploadFocus() {
+                if (this.value === '0') {
+                    this.value = '';
+                }
+            }
+            
+            function handleDownloadFocus() {
+                if (this.value === '0') {
+                    this.value = '';
+                }
+            }
+
+            // 为输入框添加焦点事件处理，当值为0时自动清空
+            var uploadInput = document.getElementById('upload-limit-value');
+            var downloadInput = document.getElementById('download-limit-value');
+            
+            if (uploadInput) {
+                // 先移除可能存在的旧监听器，再添加新的
+                uploadInput.removeEventListener('focus', handleUploadFocus);
+                uploadInput.addEventListener('focus', handleUploadFocus);
+            }
+            
+            if (downloadInput) {
+                // 先移除可能存在的旧监听器，再添加新的
+                downloadInput.removeEventListener('focus', handleDownloadFocus);
+                downloadInput.addEventListener('focus', handleDownloadFocus);
+            }
+
             // 显示模态框并添加动画
             modal.classList.add('show');
+            addKeyListeners();
+
+            /* 关键：DOM 已存在，再挂滚轮减速 */
+            wheelSlowDownForTimeInput(document.getElementById('start-time'));
+            wheelSlowDownForTimeInput(document.getElementById('end-time'));
         }
 
         // 隐藏模态框
@@ -1499,41 +1699,286 @@ return view.extend({
             modal.classList.remove('show');
 
             // 等待动画完成后清理
-            setTimeout(function () {
-                currentDevice = null;
-            }, 300);
+             setTimeout(function () {
+                 // 移除键盘事件监听
+                 removeKeyListeners();
+                 currentDevice = null;
+                // 重置输入框的焦点事件
+                var uploadInput = document.getElementById('upload-limit-value');
+                var downloadInput = document.getElementById('download-limit-value');
+                
+                if (uploadInput) {
+                    uploadInput.removeEventListener('focus', handleUploadFocus);
+                    // 如果值为空，恢复为0
+                    if (uploadInput.value === '') uploadInput.value = '0';
+                }
+                
+                if (downloadInput) {
+                    downloadInput.removeEventListener('focus', handleDownloadFocus);
+                    // 如果值为空，恢复为0
+                    if (downloadInput.value === '') downloadInput.value = '0';
+                }
+             }, 300);
+         }
+
+        // 输入验证函数
+	function validateRateLimitInput() {
+            var uploadInput = document.getElementById('upload-limit-value');
+            var downloadInput = document.getElementById('download-limit-value');
+            var uploadError = document.getElementById('upload-limit-error');
+            var downloadError = document.getElementById('download-limit-error');
+            
+            // 创建错误提示元素（如果不存在）
+            if (!uploadError) {
+                uploadError = E('div', { 'id': 'upload-limit-error', 'style': 'color: #ef4444; font-size: 0.75rem; margin-top: 4px;' });
+                uploadInput.parentNode.parentNode.appendChild(uploadError);
+            }
+            if (!downloadError) {
+                downloadError = E('div', { 'id': 'download-limit-error', 'style': 'color: #ef4444; font-size: 0.75rem; margin-top: 4px;' });
+                downloadInput.parentNode.parentNode.appendChild(downloadError);
+            }
+
+            var isValid = true;
+    
+            // 验证上传限速 - 允许小数
+            var uploadValueStr = uploadInput.value;
+            var uploadValue = parseFloat(uploadValueStr);
+            var isValidNumber = /^-?\d*\.?\d*$/.test(uploadValueStr);
+            var hasMultipleDots = (uploadValueStr.match(/\./g) || []).length > 1;
+            var endsWithDot = uploadValueStr.endsWith('.');
+            
+            if (uploadValueStr === '' || uploadValueStr === '0') {
+                // 空值或0是允许的（表示无限制）
+                uploadInput.style.borderColor = darkMode ? '#252526' : '#d1d5db';
+                uploadInput.style.boxShadow = 'none';
+                uploadError.textContent = '';
+            } else if (!isValidNumber || hasMultipleDots) {
+                // 不是有效的数字格式或有多个小数点
+                uploadInput.style.borderColor = '#ef4444';
+                uploadInput.style.boxShadow = '0 0 0 2px rgba(239, 68, 68, 0.2)';
+                uploadError.textContent = getTranslation('请输入有效的数字', language);
+                isValid = false;
+            } else if (uploadValue < 0) {
+                // 负数不允许
+                uploadInput.style.borderColor = '#ef4444';
+                uploadInput.style.boxShadow = '0 0 0 2px rgba(239, 68, 68, 0.2)';
+                uploadError.textContent = getTranslation('速度值不能为负数', language);
+                isValid = false;
+            } else if (endsWithDot) {
+                // 以小数点结尾，暂时允许但显示提示
+                uploadInput.style.borderColor = '#f59e0b';
+                uploadInput.style.boxShadow = '0 0 0 2px rgba(245, 158, 11, 0.2)';
+                uploadError.textContent = getTranslation('请输入完整的小数', language);
+                // 不完全视为错误，但保存时会处理
+            } else {
+                // 有效的正数（包括小数）
+                uploadInput.style.borderColor = darkMode ? '#252526' : '#d1d5db';
+                uploadInput.style.boxShadow = 'none';
+                uploadError.textContent = '';
+            }
+    
+            // 验证下载限速 - 同样的逻辑，允许小数
+            var downloadValueStr = downloadInput.value;
+            var downloadValue = parseFloat(downloadValueStr);
+            var downloadIsValidNumber = /^-?\d*\.?\d*$/.test(downloadValueStr);
+            var downloadHasMultipleDots = (downloadValueStr.match(/\./g) || []).length > 1;
+            var downloadEndsWithDot = downloadValueStr.endsWith('.');
+            
+            if (downloadValueStr === '' || downloadValueStr === '0') {
+                downloadInput.style.borderColor = darkMode ? '#252526' : '#d1d5db';
+                downloadInput.style.boxShadow = 'none';
+                downloadError.textContent = '';
+            } else if (!downloadIsValidNumber || downloadHasMultipleDots) {
+                downloadInput.style.borderColor = '#ef4444';
+                downloadInput.style.boxShadow = '0 0 0 2px rgba(239, 68, 68, 0.2)';
+                downloadError.textContent = getTranslation('请输入有效的数字', language);
+                isValid = false;
+            } else if (downloadValue < 0) {
+                downloadInput.style.borderColor = '#ef4444';
+                downloadInput.style.boxShadow = '0 0 0 2px rgba(239, 68, 68, 0.2)';
+                downloadError.textContent = getTranslation('速度值不能为负数', language);
+                isValid = false;
+            } else if (downloadEndsWithDot) {
+                // 以小数点结尾，暂时允许但显示提示
+                downloadInput.style.borderColor = '#f59e0b';
+                downloadInput.style.boxShadow = '0 0 0 2px rgba(245, 158, 11, 0.2)';
+                downloadError.textContent = getTranslation('请输入完整的小数', language);
+            } else {
+                downloadInput.style.borderColor = darkMode ? '#252526' : '#d1d5db';
+                downloadInput.style.boxShadow = 'none';
+                downloadError.textContent = '';
+            }
+            
+            return isValid;
+	}
+
+        // 时间设置验证
+        var timeType = document.querySelector('input[name="time-type"]:checked').value;
+        var startTime = document.getElementById('start-time').value;
+        var endTime = document.getElementById('end-time').value;
+
+        if (timeType !== 'permanent') {
+            // 验证时间格式
+            if (!startTime || !endTime) {
+                ui.addNotification(null, E('p', {}, getTranslation('请设置开始时间和结束时间', language)), 'error');
+                return;
+            }
+            
+            // 验证结束时间晚于开始时间
+            if (startTime >= endTime) {
+                ui.addNotification(null, E('p', {}, getTranslation('结束时间必须晚于开始时间', language)), 'error');
+                return;
+            }
+            
+            // 如果是自定义日期，验证至少选择一天
+            if (timeType === 'custom') {
+                var selectedDays = Array.from(document.querySelectorAll('.day-checkbox:checked'));
+                if (selectedDays.length === 0) {
+                    ui.addNotification(null, E('p', {}, getTranslation('请选择生效日期', language)), 'error');
+                    return;
+                }
+            }
         }
+
+	// 实时输入验证
+	function initInputValidation() {
+            var uploadInput = document.getElementById('upload-limit-value');
+            var downloadInput = document.getElementById('download-limit-value');
+    
+                    if (uploadInput) {
+                        uploadInput.addEventListener('input', validateRateLimitInput);
+                    }
+                    if (downloadInput) {
+                        downloadInput.addEventListener('input', validateRateLimitInput);
+                    }
+	}
 
         // 保存限速设置
         function saveRateLimit() {
+            // 先验证时间设置
+            var timeValidation = validateTimeSettings();
+            if (!timeValidation.valid) {
+                ui.addNotification(null, E('p', {}, timeValidation.message), 'error');
+                updateTimeInputsValidation();
+                return;
+            }
+            // 获取限速值
+            var uploadValueStr = document.getElementById('upload-limit-value').value;
+            var downloadValueStr = document.getElementById('download-limit-value').value;
+            var uploadValue = parseFloat(uploadValueStr.endsWith('.') ? uploadValueStr + '0' : uploadValueStr) || 0;
+            var downloadValue = parseFloat(downloadValueStr.endsWith('.') ? downloadValueStr + '0' : downloadValueStr) || 0;
+            
+            // 获取时间类型
+            var timeType = document.querySelector('input[name="time-type"]:checked').value;
+            
+            // 检查：如果设置了非永久时间规则，必须同时设置有效的限速值和时间范围
+            if (timeType !== 'permanent') {
+                // 检查限速值是否有效（至少有一个大于0）
+                var hasValidRateLimit = (uploadValue > 0 || downloadValue > 0);
+                
+                // 检查时间范围是否完整设置
+                var startTime = document.getElementById('start-time').value;
+                var endTime = document.getElementById('end-time').value;
+                
+                var hasValidTimeRange = (startTime && endTime);
+                
+                // 检查自定义日期
+                var hasValidCustomDays = true;
+                if (timeType === 'custom' && hasValidTimeRange) {
+                    var selectedDays = Array.from(document.querySelectorAll('.day-checkbox:checked'));
+                    hasValidCustomDays = (selectedDays.length > 0);
+                }
+                
+                // 如果非永久生效但没有设置有效的限速值和时间范围，自动回退到永久生效
+                if (!hasValidRateLimit || !hasValidTimeRange || !hasValidCustomDays) {
+                    // 显示提示信息
+                    if (!hasValidRateLimit && !hasValidTimeRange) {
+                        ui.addNotification(null, E('p', {}, getTranslation('未设置限速值和时间范围，已自动恢复为永久生效', language)), 'info');
+                    } else if (!hasValidRateLimit) {
+                        ui.addNotification(null, E('p', {}, getTranslation('未设置有效的限速值，已自动恢复为永久生效', language)), 'info');
+                    } else if (!hasValidTimeRange) {
+                        ui.addNotification(null, E('p', {}, getTranslation('未设置完整的时间范围，已自动恢复为永久生效', language)), 'info');
+                    } else if (!hasValidCustomDays) {
+                        ui.addNotification(null, E('p', {}, getTranslation('未选择生效日期，已自动恢复为永久生效', language)), 'info');
+                    }
+                    
+                    // 强制设置为永久生效
+                    timeType = 'permanent';
+                    document.querySelector('input[name="time-type"][value="permanent"]').checked = true;
+                    updateTimeSettingsDisplay();
+                    
+                    // 清除时间规则存储
+                    removeTimeRulesFromStorage(currentDevice.mac);
+                    
+                    // 如果限速值都是0，也清除限速存储
+                    if (uploadValue === 0 && downloadValue === 0) {
+                        removeRateLimitsFromStorage(currentDevice.mac);
+                    }
+                    
+                    // 如果限速值都是0，直接关闭模态框
+                    if (uploadValue === 0 && downloadValue === 0) {
+                        hideRateLimitModal();
+                        return;
+                    }
+                }
+            }
+
             if (!currentDevice) return;
 
+            // 输入验证
+            if (!validateRateLimitInput()) {
+                ui.addNotification(null, E('p', {}, getTranslation('请输入有效的速度值', language)), 'error');
+		return;
+		}
             var saveButton = document.getElementById('modal-save');
+            if (saveButton.classList.contains('btn-loading')) {
+		return;
+		}
             var originalText = saveButton.textContent;
 
             // 显示加载状态
             saveButton.innerHTML = '<span class="loading-spinner"></span>' + getTranslation('保存中...', language);
             saveButton.classList.add('btn-loading');
 
+            // 重新获取时间设置（可能已经被修改）
+            timeType = document.querySelector('input[name="time-type"]:checked').value;
+            var startTime = document.getElementById('start-time').value;
+            var endTime = document.getElementById('end-time').value;
+
+            var timeRules = {
+                time_type: timeType,
+                start_time: startTime,
+                end_time: endTime,
+                days_of_week: timeType === 'custom' ? Array.from(document.querySelectorAll('.day-checkbox:checked')).map(cb => cb.value).join(',') : ''
+            };
+
             var uploadLimit = 0;
             var downloadLimit = 0;
-            var speedUnit = uci.get('bandix', 'general', 'speed_unit') || 'bytes';
 
             // 获取上传限速值
-            var uploadValue = parseInt(document.getElementById('upload-limit-value').value) || 0;
             var uploadUnit = parseInt(document.getElementById('upload-limit-unit').value);
             if (uploadValue > 0) {
                 // 选择器的值已经是正确的字节倍数，直接计算即可
-                uploadLimit = uploadValue * uploadUnit;
+                uploadLimit = Math.round(uploadValue * uploadUnit);
             }
 
             // 获取下载限速值
-            var downloadValue = parseInt(document.getElementById('download-limit-value').value) || 0;
             var downloadUnit = parseInt(document.getElementById('download-limit-unit').value);
             if (downloadValue > 0) {
                 // 选择器的值已经是正确的字节倍数，直接计算即可
-                downloadLimit = downloadValue * downloadUnit;
+                downloadLimit = Math.round(downloadValue * downloadUnit);
             }
+
+            // 只有当有限速值或时间规则不是永久生效时，才保存时间规则
+            if (uploadLimit > 0 || downloadLimit > 0 || timeType !== 'permanent') {
+                saveTimeRulesToStorage(currentDevice.mac, timeRules);
+            } else {
+                // 如果没有限速值且是永久生效，清除时间规则
+                removeTimeRulesFromStorage(currentDevice.mac);
+            }
+
+            // 保存限速值到本地存储
+            saveRateLimitsToStorage(currentDevice.mac, uploadLimit, downloadLimit);
 
             // console.log("mac", currentDevice.mac)
             // console.log("uploadLimit", uploadLimit)
@@ -1565,16 +2010,243 @@ return view.extend({
             });
         }
 
+        // 添加删除时间规则的函数
+        function removeTimeRulesFromStorage(mac) {
+            var allRules = JSON.parse(localStorage.getItem('bandix_time_rules') || '{}');
+            delete allRules[mac];
+            localStorage.setItem('bandix_time_rules', JSON.stringify(allRules));
+        }
+
+        // 添加删除限速值的函数
+        function removeRateLimitsFromStorage(mac) {
+            var allLimits = JSON.parse(localStorage.getItem('bandix_rate_limits') || '{}');
+            delete allLimits[mac];
+            localStorage.setItem('bandix_rate_limits', JSON.stringify(allLimits));
+        }
+
+        // 添加时间规则存储和检查的相关函数
+        function saveTimeRulesToStorage(mac, timeRules) {
+            var allRules = JSON.parse(localStorage.getItem('bandix_time_rules') || '{}');
+            allRules[mac] = timeRules;
+            localStorage.setItem('bandix_time_rules', JSON.stringify(allRules));
+        }
+
+        // 添加保存限速值的函数
+        function saveRateLimitsToStorage(mac, uploadLimit, downloadLimit) {
+            var allLimits = JSON.parse(localStorage.getItem('bandix_rate_limits') || '{}');
+            allLimits[mac] = {
+                upload: uploadLimit,
+                download: downloadLimit,
+                timestamp: Date.now()
+            };
+            localStorage.setItem('bandix_rate_limits', JSON.stringify(allLimits));
+        }
+
+        function getTimeRulesFromStorage(mac) {
+            var allRules = JSON.parse(localStorage.getItem('bandix_time_rules') || '{}');
+            var rules = allRules[mac];
+            if (!rules) {
+                return null;
+            }
+            // 检查该设备是否有限速值，如果限速值都是0，则时间规则无效，返回null
+            var limits = getSavedRateLimitsFromStorage(mac);
+            if (limits && limits.upload === 0 && limits.download === 0) {
+                return null;
+            }
+            return rules;
+        }
+
+        function getAllTimeRules() {
+            return JSON.parse(localStorage.getItem('bandix_time_rules') || '{}');
+        }
+
+        function getSavedRateLimitsFromStorage(mac) {
+            var allLimits = JSON.parse(localStorage.getItem('bandix_rate_limits') || '{}');
+            return allLimits[mac] || null;
+        }
+
+        function isWithinTimeRules(timeRules) {
+            if (!timeRules || timeRules.time_type === 'permanent') {
+                return true;
+            }
+            
+            var now = new Date();
+            var currentTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+            var currentDay = now.getDay(); // 0=周日, 1=周一, ..., 6=周六
+            
+            // 检查时间范围
+            if (currentTime < timeRules.start_time || currentTime >= timeRules.end_time) {
+                return false;
+            }
+            
+            // 检查日期
+            switch (timeRules.time_type) {
+                case 'daily':
+                    return true;
+                case 'weekdays':
+                    return currentDay >= 1 && currentDay <= 5; // 周一到周五
+                case 'weekends':
+                    return currentDay === 0 || currentDay === 6; // 周六和周日
+                case 'custom':
+                    var allowedDays = timeRules.days_of_week.split(',').map(Number);
+                    return allowedDays.includes(currentDay);
+                default:
+                    return true;
+            }
+        }
+
+        // 验证时间设置
+        function validateTimeSettings() {
+            var timeType = document.querySelector('input[name="time-type"]:checked').value;
+            if (timeType === 'permanent') {
+                return { valid: true };
+            }
+
+            // 对于非永久生效的类型，必须设置时间范围
+            if (timeType !== 'permanent' && timeType !== '') {
+                return { valid: true }; // 时间范围在下面单独验证
+            }
+
+            var startTime = document.getElementById('start-time').value;
+            var endTime = document.getElementById('end-time').value;
+
+            if (!startTime && !endTime) {
+                return { valid: true };
+            }
+
+            // 验证时间范围的完整性
+            if ((startTime && !endTime) || (!startTime && endTime)) {
+                return { valid: false, message: getTranslation('请设置完整的时间范围', language) };
+            }
+            
+            // 验证时间格式
+            var timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+            if (startTime && !timeRegex.test(startTime)) {
+                return { valid: false, message: getTranslation('时间格式错误', language) };
+            }
+            if (endTime && !timeRegex.test(endTime)) {
+                return { valid: false, message: getTranslation('时间格式错误', language) };
+            }
+            
+            if (startTime && endTime && startTime >= endTime) {
+                return { valid: false, message: getTranslation('结束时间必须晚于开始时间', language) };
+            }
+            return { valid: true };
+        }
+
+        // 更新时间设置显示状态的函数
+        function updateTimeSettingsDisplay() {
+            var timeType = document.querySelector('input[name="time-type"]:checked').value;
+            var timeContainer = document.getElementById('time-range-container');
+            var customDaysContainer = document.getElementById('custom-days-container');
+            
+            if (timeType === 'permanent') {
+                timeContainer.style.display = 'none';
+            } else {
+                timeContainer.style.display = 'block';
+                
+                if (timeType === 'custom') {
+                    customDaysContainer.style.display = 'block';
+                } else {
+                    customDaysContainer.style.display = 'none';
+                }
+            }
+        }
+
+        // 更新时间输入框的验证状态
+        function updateTimeInputsValidation() {
+            var timeType = document.querySelector('input[name="time-type"]:checked').value;
+            var startTimeInput = document.getElementById('start-time');
+            var endTimeInput = document.getElementById('end-time');
+
+            startTimeInput.style.borderColor = darkMode ? '#252526' : '#d1d5db';
+            endTimeInput.style.borderColor = darkMode ? '#252526' : '#d1d5db';
+            
+            if (timeType === 'permanent') {
+                return;
+            }
+            
+            var startTime = startTimeInput.value;
+            var endTime = endTimeInput.value;
+            
+            // 如果两个都为空，则不显示错误
+            if (!startTime && !endTime) {
+            } else if ((startTime && !endTime) || (!startTime && endTime)) {
+                // 只有一个为空，显示错误
+                startTimeInput.style.borderColor = '#ef4444';
+                endTimeInput.style.borderColor = '#ef4444';
+            } else if (startTime && endTime && startTime >= endTime) {
+                startTimeInput.style.borderColor = '#ef4444';
+                endTimeInput.style.borderColor = '#ef4444';
+            }
+        }
+
+        // 为时间类型单选按钮添加事件监听
+        document.querySelectorAll('input[name="time-type"]').forEach(function(radio) {
+            radio.addEventListener('change', updateTimeSettingsDisplay);
+        });
+
+        // 为时间输入框添加实时验证
+        document.getElementById('start-time').addEventListener('change', updateTimeInputsValidation);
+        document.getElementById('end-time').addEventListener('change', updateTimeInputsValidation);
+        document.getElementById('start-time').addEventListener('input', updateTimeInputsValidation);
+        document.getElementById('end-time').addEventListener('input', updateTimeInputsValidation);
+
+        // 为自定义日期复选框添加验证更新
+        document.querySelectorAll('.day-checkbox').forEach(function(checkbox) {
+            checkbox.addEventListener('change', updateTimeInputsValidation);
+        });
+
         // 绑定模态框事件
         document.getElementById('modal-cancel').addEventListener('click', hideRateLimitModal);
         document.getElementById('modal-save').addEventListener('click', saveRateLimit);
 
-        // 点击模态框背景关闭
-        document.getElementById('rate-limit-modal').addEventListener('click', function (e) {
-            if (e.target === this) {
-                hideRateLimitModal();
-            }
-        });
+         // 点击模态框背景关闭（带确认）
+         document.getElementById('rate-limit-modal').addEventListener('click', function (e) {
+             if (e.target === this) {
+                 // 获取当前时间设置
+                 var timeType = document.querySelector('input[name="time-type"]:checked').value;
+                 // 检查是否有未保存的更改
+                 var uploadValue = parseFloat(document.getElementById('upload-limit-value').value) || 0;
+                 var downloadValue = parseFloat(document.getElementById('download-limit-value').value) || 0;
+                 var timeType = document.querySelector('input[name="time-type"]:checked').value;
+                 var startTime = document.getElementById('start-time').value;
+                 var endTime = document.getElementById('end-time').value;
+                 var originalUpload = currentDevice ? (currentDevice.wide_tx_rate_limit || 0) : 0;
+                 var originalDownload = currentDevice ? (currentDevice.wide_rx_rate_limit || 0) : 0;
+        
+                 // 计算当前设置的限速值
+                 var uploadUnit = parseInt(document.getElementById('upload-limit-unit').value);
+                 var downloadUnit = parseInt(document.getElementById('download-limit-unit').value);
+                 var currentUploadLimit = Math.round(uploadValue * uploadUnit);
+                 var currentDownloadLimit = downloadValue * downloadUnit;
+
+                 // 检查时间设置是否有更改
+                 var originalTimeRules = getTimeRulesFromStorage(currentDevice.mac);
+                 var currentTimeRules = {
+                     time_type: timeType,
+                     start_time: startTime,
+                     end_time: endTime,
+                     days_of_week: timeType === 'custom' ? Array.from(document.querySelectorAll('.day-checkbox:checked')).map(cb => cb.value).join(',') : ''
+                 };
+
+                 // 如果有更改，显示确认对话框
+                 if (currentUploadLimit !== originalUpload || currentDownloadLimit !== originalDownload) {
+                     if (confirm(getTranslation('有未保存的更改，确定要取消吗？', language))) {
+                         hideRateLimitModal();
+                     }
+                 } else if (JSON.stringify(originalTimeRules) !== JSON.stringify(currentTimeRules)) {
+                     // 时间设置有更改
+                     if (confirm(getTranslation('有未保存的更改，确定要取消吗？', language))) {
+                     hideRateLimitModal();
+                     }
+                 } else {
+                     hideRateLimitModal();
+                 }
+             }
+         });
+
+	setTimeout(initInputValidation, 100);
 
         // 历史趋势：状态与工具
         var latestDevices = [];
@@ -2376,6 +3048,58 @@ function formatRetentionSeconds(seconds, language) {
                 var onlineCount = stats.devices.filter(d => isDeviceOnline(d)).length;
                 deviceCountDiv.textContent = getTranslation('在线设备', language) + ': ' + onlineCount + ' / ' + stats.devices.length;
 
+                // 获取所有时间规则
+                var timeRules = getAllTimeRules();
+
+                // 对每个设备应用时间规则
+                stats.devices.forEach(function(device) {
+                    var deviceTimeRules = timeRules[device.mac];
+                    if (deviceTimeRules) {
+                        var currentTime = isWithinTimeRules(deviceTimeRules);
+                        
+                        // 获取保存的限速值
+                        var savedLimits = getSavedRateLimitsFromStorage(device.mac);
+                        var savedUploadLimit = savedLimits ? savedLimits.upload : 0;
+                        var savedDownloadLimit = savedLimits ? savedLimits.download : 0;
+                        
+                        // 只有当保存的限速值不为0时，才应用时间规则
+                        if (savedUploadLimit > 0 || savedDownloadLimit > 0) {
+                            if (!currentTime) {
+                                // 如果当前时间不在限速时段内，且设备当前有限速，则取消限速
+                                if (device.wide_tx_rate_limit !== 0 || device.wide_rx_rate_limit !== 0) {
+                                    callSetRateLimit(device.mac, 0, 0).catch(function(error) {
+                                        console.error('Failed to remove rate limit for device:', device.mac, error);
+                                    });
+                                }
+                            } else {
+                                // 如果当前时间在限速时段内，且当前限速值与保存值不同，则应用保存的限速值
+                                if ((device.wide_tx_rate_limit !== savedUploadLimit || 
+                                     device.wide_rx_rate_limit !== savedDownloadLimit)) {
+                                    callSetRateLimit(device.mac, savedUploadLimit, savedDownloadLimit)
+                                        .catch(function(error) {
+                                            console.error('Failed to apply rate limit for device:', device.mac, error);
+                                        });
+                                } else if (device.wide_tx_rate_limit === 0 && device.wide_rx_rate_limit === 0) {
+                                    // 如果当前没有限速但保存有限速值，也应用限速
+                                    callSetRateLimit(device.mac, savedUploadLimit, savedDownloadLimit)
+                                        .catch(function(error) {
+                                            console.error('Failed to apply rate limit for device:', device.mac, error);
+                                        });
+                                }
+                            }
+                        } else {
+                            // 如果保存的限速值为0，确保设备没有限速
+                            if (device.wide_tx_rate_limit !== 0 || device.wide_rx_rate_limit !== 0) {
+                                // 取消限速
+                                callSetRateLimit(device.mac, savedUploadLimit, savedDownloadLimit)
+                                    .catch(function(error) {
+                                        console.error('Failed to apply rate limit for device:', device.mac, error);
+                                    });
+                            }
+                        }
+                    }
+                });
+
                 // 计算统计数据（包含所有设备）
                 var totalLanUp = stats.devices.reduce((sum, d) => sum + (d.local_tx_bytes || 0), 0);
                 var totalLanDown = stats.devices.reduce((sum, d) => sum + (d.local_rx_bytes || 0), 0);
@@ -2589,6 +3313,26 @@ function formatRetentionSeconds(seconds, language) {
                                     E('span', { 'class': 'traffic-icon download', 'style': 'font-size: 0.75rem;' }, '↓'),
                                     E('span', { 'style': 'font-size: 0.875rem;' }, formatByterate(device.wide_rx_rate_limit || 0, speedUnit))
                                 ]),
+                                // 添加时间规则状态提示
+                                (function() {
+                                    var deviceTimeRules = timeRules[device.mac];
+                                    var savedLimits = getSavedRateLimitsFromStorage(device.mac);
+                                    var savedUploadLimit = savedLimits ? savedLimits.upload : 0;
+                                    var savedDownloadLimit = savedLimits ? savedLimits.download : 0;
+                                    var hasRateLimit = (savedUploadLimit > 0) || (savedDownloadLimit > 0);
+                                    if (deviceTimeRules && hasRateLimit) {
+                                        var isActive = isWithinTimeRules(deviceTimeRules);
+                                        return E('div', {
+                                            'style': 'font-size: 0.75rem; color: ' + (isActive ? '#10b981' : '#6b7280') + '; margin-top: 4px;'
+                                        }, isActive ? '✓ 限速生效中' : '⏸️ ' + getTranslation('当前时间不在限速时段内', language));
+                                   } else if (hasRateLimit) {
+                                       // 对于没有时间规则但有限速值的情况，默认永久生效
+                                       return E('div', { 
+                                           'style': 'font-size: 0.75rem; color: #10b981; margin-top: 4px;'
+                                       }, '✓ 限速生效中');
+                                    }
+                                    return E('div', {});
+                                })()
                             ])
                         ]),
 
@@ -2620,6 +3364,28 @@ function formatRetentionSeconds(seconds, language) {
                 } catch (e) {}
             });
         }, 1);
+
+        /* --------  鼠标滚轮减速补丁  -------- */
+        function wheelSlowDownForTimeInput(sel) {
+            if (!sel) return;
+            sel.addEventListener('wheel', function (e) {
+                /* 只在没按辅助键时干预 */
+                if (e.ctrlKey || e.shiftKey || e.altKey) return;
+                e.preventDefault();
+                var dir = Math.sign(e.deltaY);
+                /* step 是 60 s（1 min），我们每次只让值变化 1 min */
+                var step = 60;
+                var pieces = (this.value || '00:00').split(':').map(Number);
+                var oldSec = pieces[0] * 3600 + pieces[1] * 60;
+                var newSec = oldSec + dir * step;
+                if (newSec < 0) newSec = 86400 + newSec;
+                if (newSec >= 86400) newSec = newSec % 86400;
+                var h = Math.floor(newSec / 3600);
+                var m = Math.floor((newSec % 3600) / 60);
+                this.value = ('0' + h).slice(-2) + ':' + ('0' + m).slice(-2);
+                this.dispatchEvent(new Event('change', { bubbles: true }));
+            }, { passive: false });
+        }
 
         return view;
     }
