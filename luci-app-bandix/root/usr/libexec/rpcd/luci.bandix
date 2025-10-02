@@ -199,12 +199,12 @@ get_device_status() {
 		json_get_var wide_tx_rate_limit wide_tx_rate_limit
 		json_get_var last_online_ts last_online_ts
 		
-		# 从DHCP租约文件中查找对应的主机名
-		local dhcp_hostname=$(get_dhcp_hostname "$mac")
-		
-		# 如果找到DHCP租约中的主机名，则替换API返回的主机名
-		if [ -n "$dhcp_hostname" ]; then
-			hostname="$dhcp_hostname"
+		# 只有当接口中的hostname为空时，才从DHCP租约文件中查找对应的主机名
+		if [ -z "$hostname" ]; then
+			local dhcp_hostname=$(get_dhcp_hostname "$mac")
+			if [ -n "$dhcp_hostname" ]; then
+				hostname="$dhcp_hostname"
+			fi
 		fi
 		
 		# 添加逗号分隔符（除了第一个设备）
@@ -362,6 +362,69 @@ set_device_rate_limit() {
 	rm -f "$BANDIX_TMP_DIR/luci.bandix.response" 2>/dev/null
 }
 
+# 设置设备主机名绑定
+set_device_hostname() {
+	local mac="$1"
+	local hostname="$2"
+
+	# logger "luci.bandix: set_device_hostname 参数: mac=$mac hostname=$hostname"
+	
+	# 验证参数
+	if [ -z "$mac" ]; then
+		make_error "MAC address is required"
+		return
+	fi
+	
+	# hostname可以为空，表示删除绑定
+	if [ -z "$hostname" ]; then
+		hostname=""
+	fi
+	
+	# 转义特殊字符
+	local mac_escaped=$(escape_json_string "$mac")
+	local hostname_escaped=$(escape_json_string "$hostname")
+	
+	# 构建请求数据
+	local request_data="{
+		\"mac\": \"$mac\",
+		\"hostname\": \"$hostname\"
+	}"
+	
+	# 记录请求数据（用于调试）
+	# logger "luci.bandix: hostname request_data=$request_data"
+	
+	# 发送请求到bandix API
+	local bindings_api="$BANDIX_API_BASE/api/traffic/bindings"
+	local response=$(curl -s -X POST -H "Content-Type: application/json" -d "$request_data" "$bindings_api" 2>/dev/null)
+	
+	# 确保临时目录存在
+	ensure_tmp_dir
+	
+	# 把响应写入文件（用于调试）
+	echo "$response" > "$BANDIX_TMP_DIR/luci.bandix.hostname.response"
+	# logger "luci.bandix: hostname API response=$response"
+	
+	if [ $? -eq 0 ] && [ -n "$response" ]; then
+		# 检查API响应是否包含success状态
+		if echo "$response" | grep -q '"status":\s*"success"'; then
+			make_success "Hostname binding set successfully"
+		else
+			# API返回了响应但不是success状态
+			json_init
+			json_add_boolean "success" 0
+			json_add_string "error" "API returned error response"
+			json_add_string "response" "$response"
+			json_dump
+			json_cleanup
+		fi
+	else
+		make_error "Failed to set hostname binding"
+	fi
+	
+	# 删除调试文件（可选，用于清理）
+	rm -f "$BANDIX_TMP_DIR/luci.bandix.hostname.response" 2>/dev/null
+}
+
 # 获取连接监控数据
 get_connection_devices() {
 	# 检查连接监控是否启用
@@ -411,6 +474,7 @@ get_connection_devices() {
 				while [ $i -lt $device_count ]; do
 					local mac=$(echo "$response" | jsonfilter -e "$.data.devices[$i].mac_address" 2>/dev/null)
 					local ip=$(echo "$response" | jsonfilter -e "$.data.devices[$i].ip_address" 2>/dev/null)
+					local hostname=$(echo "$response" | jsonfilter -e "$.data.devices[$i].hostname" 2>/dev/null)
 					local tcp_connections=$(echo "$response" | jsonfilter -e "$.data.devices[$i].tcp_connections" 2>/dev/null || echo "0")
 					local udp_connections=$(echo "$response" | jsonfilter -e "$.data.devices[$i].udp_connections" 2>/dev/null || echo "0")
 					local established_tcp=$(echo "$response" | jsonfilter -e "$.data.devices[$i].established_tcp" 2>/dev/null || echo "0")
@@ -419,11 +483,16 @@ get_connection_devices() {
 					local total_connections=$(echo "$response" | jsonfilter -e "$.data.devices[$i].total_connections" 2>/dev/null || echo "0")
 					local device_last_updated=$(echo "$response" | jsonfilter -e "$.data.devices[$i].last_updated" 2>/dev/null || echo "0")
 					
+					# 只有当接口中的hostname为空时，才从DHCP租约文件中查找对应的主机名
+					if [ -z "$hostname" ]; then
+						hostname=$(get_dhcp_hostname "$mac")
+					fi
+					
 					if [ -n "$mac" ] || [ -n "$ip" ]; then
 						json_add_object
 						json_add_string "mac_address" "$mac"
 						json_add_string "ip_address" "$ip"
-						json_add_string "hostname" "$(get_dhcp_hostname "$mac")"
+						json_add_string "hostname" "$hostname"
 						json_add_int "tcp_connections" "$tcp_connections"
 						json_add_int "udp_connections" "$udp_connections"
 						json_add_int "established_tcp" "$established_tcp"
@@ -468,6 +537,11 @@ case "$1" in
 		json_add_string "mac"
 		json_add_int "wide_rx_rate_limit"
 		json_add_int "wide_tx_rate_limit"
+		json_close_object
+		
+		json_add_object "setHostname"
+		json_add_string "mac"
+		json_add_string "hostname"
 		json_close_object
 		
 		json_add_object "getConnection"
@@ -536,6 +610,40 @@ case "$1" in
 					fi
 				else
 					# logger "luci.bandix: setRateLimit 没有接收到输入"
+					make_error "No input received"
+				fi
+				;;
+			setHostname)
+				# logger "luci.bandix: setHostname called"
+				
+				# 从 stdin 读取 JSON 参数
+				read input
+				# logger "luci.bandix: received input: $input"
+				
+				if [ -n "$input" ]; then
+					# 尝试解析数组格式的 JSON 参数 (LuCI RPC 通常使用数组格式)
+					# 参数格式: ["mac", "hostname"]
+					mac=$(echo "$input" | jsonfilter -e '$[0]' 2>/dev/null)
+					hostname=$(echo "$input" | jsonfilter -e '$[1]' 2>/dev/null)
+					
+					# 如果数组格式解析失败，尝试对象格式
+					if [ -z "$mac" ]; then
+						mac=$(echo "$input" | jsonfilter -e '$.mac' 2>/dev/null)
+						hostname=$(echo "$input" | jsonfilter -e '$.hostname' 2>/dev/null)
+					fi
+					
+					# logger "luci.bandix: parsed - mac=$mac hostname=$hostname"
+					
+					# 验证参数（hostname可以为空）
+					if [ -n "$mac" ]; then
+						# 调用主机名设置函数
+						set_device_hostname "$mac" "$hostname"
+					else
+						# logger "luci.bandix: setHostname MAC参数缺失"
+						make_error "Missing MAC address parameter"
+					fi
+				else
+					# logger "luci.bandix: setHostname 没有接收到输入"
 					make_error "No input received"
 				fi
 				;;

@@ -32,6 +32,7 @@ const translations = {
         '在线设备': '在线设备',
         '仅限WAN 流量': '仅限WAN 流量',
         '设置': '设置',
+        '设备设置': '设备设置',
         '限速设置': '限速设置',
         '取消限速': '取消限速',
         '保存': '保存',
@@ -40,6 +41,11 @@ const translations = {
         '设备': '设备',
         '上传限速': '上传限速',
         '下载限速': '下载限速',
+        '主机名': '主机名',
+        '设置主机名': '设置主机名',
+        '请输入主机名': '请输入主机名',
+        '主机名设置成功': '主机名设置成功',
+        '主机名设置失败': '主机名设置失败',
         '无限制': '无限制',
         '设置成功': '设置成功',
         '设置失败': '设置失败',
@@ -116,6 +122,7 @@ const translations = {
         '在线设备': '線上設備',
         '仅限WAN 流量': '僅限跨網路',
         '设置': '設定',
+        '设备设置': '設備設定',
         '限速设置': '限速設定',
         '取消限速': '取消限速',
         '保存': '儲存',
@@ -124,6 +131,11 @@ const translations = {
         '设备': '設備',
         '上传限速': '上傳限速',
         '下载限速': '下載限速',
+        '主机名': '主機名',
+        '设置主机名': '設定主機名',
+        '请输入主机名': '請輸入主機名',
+        '主机名设置成功': '主機名設定成功',
+        '主机名设置失败': '主機名設定失敗',
         '无限制': '無限制',
         '设置成功': '設定成功',
         '设置失败': '設定失敗',
@@ -200,6 +212,7 @@ const translations = {
         '在线设备': 'Online Devices',
         '仅限WAN 流量': 'WAN Only',
         '设置': 'Settings',
+        '设备设置': 'Device Settings',
         '限速设置': 'Rate Limit Settings',
         '取消限速': 'Remove Rate Limit',
         '保存': 'Save',
@@ -208,6 +221,11 @@ const translations = {
         '设备': 'Device',
         '上传限速': 'Upload Limit',
         '下载限速': 'Download Limit',
+        '主机名': 'Hostname',
+        '设置主机名': 'Set Hostname',
+        '请输入主机名': 'Please enter hostname',
+        '主机名设置成功': 'Hostname set successfully',
+        '主机名设置失败': 'Failed to set hostname',
         '无限制': 'Unlimited',
         '设置成功': 'Settings saved successfully',
         '设置失败': 'Failed to save settings',
@@ -284,6 +302,7 @@ const translations = {
         '在线设备': 'Appareils en ligne',
         '仅限WAN 流量': 'WAN uniquement',
         '设置': 'Paramètres',
+        '设备设置': 'Paramètres de l\'appareil',
         '限速设置': 'Paramètres de limitation',
         '取消限速': 'Supprimer la limitation',
         '保存': 'Enregistrer',
@@ -368,6 +387,7 @@ const translations = {
         '在线设备': 'オンラインデバイス',
         '仅限WAN 流量': 'WAN のみ',
         '设置': '設定',
+        '设备设置': 'デバイス設定',
         '限速设置': '速度制限設定',
         '取消限速': '速度制限を削除',
         '保存': '保存',
@@ -452,6 +472,7 @@ const translations = {
         '在线设备': 'Онлайн устройства',
         '仅限WAN 流量': 'Только WAN',
         '设置': 'Настройки',
+        '设备设置': 'Настройки устройства',
         '限速设置': 'Настройки ограничения',
         '取消限速': 'Удалить ограничение',
         '保存': 'Сохранить',
@@ -644,6 +665,13 @@ var callSetRateLimit = rpc.declare({
     object: 'luci.bandix',
     method: 'setRateLimit',
     params: ['mac', 'wide_tx_rate_limit', 'wide_rx_rate_limit'],
+    expect: { success: true }
+});
+
+var callSetHostname = rpc.declare({
+    object: 'luci.bandix',
+    method: 'setHostname',
+    params: ['mac', 'hostname'],
     expect: { success: true }
 });
 
@@ -1336,10 +1364,15 @@ return view.extend({
         var modal = E('div', { 'class': 'modal-overlay', 'id': 'rate-limit-modal' }, [
             E('div', { 'class': 'modal' }, [
                 E('div', { 'class': 'modal-header' }, [
-                    E('h3', { 'class': 'modal-title' }, getTranslation('设置限速', language))
+                    E('h3', { 'class': 'modal-title' }, getTranslation('设备设置', language))
                 ]),
                 E('div', { 'class': 'modal-body' }, [
                     E('div', { 'class': 'device-summary', 'id': 'modal-device-summary' }),
+                    E('div', { 'class': 'form-group' }, [
+                        E('label', { 'class': 'form-label' }, getTranslation('主机名', language)),
+                        E('input', { 'type': 'text', 'class': 'form-input', 'id': 'device-hostname-input', 'placeholder': getTranslation('请输入主机名', language) }),
+                        E('div', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-top: 4px;' }, getTranslation('设置主机名', language))
+                    ]),
                     E('div', { 'class': 'form-group' }, [
                         E('label', { 'class': 'form-label' }, getTranslation('上传限速', language)),
                         E('div', { 'style': 'display: flex; gap: 8px;' }, [
@@ -1410,6 +1443,9 @@ return view.extend({
                 E('div', { 'class': 'device-summary-name' }, device.hostname || device.ip),
                 E('div', { 'class': 'device-summary-details' }, device.ip + ' (' + device.mac + ')')
             ]).innerHTML;
+
+            // 设置当前hostname值
+            document.getElementById('device-hostname-input').value = device.hostname || '';
 
             // 设置当前限速值
             var uploadLimit = device.wide_tx_rate_limit || 0;
@@ -1519,6 +1555,9 @@ return view.extend({
             var downloadLimit = 0;
             var speedUnit = uci.get('bandix', 'general', 'speed_unit') || 'bytes';
 
+            // 获取hostname值
+            var newHostname = document.getElementById('device-hostname-input').value.trim();
+
             // 获取上传限速值
             var uploadValue = parseInt(document.getElementById('upload-limit-value').value) || 0;
             var uploadUnit = parseInt(document.getElementById('upload-limit-unit').value);
@@ -1538,24 +1577,58 @@ return view.extend({
             // console.log("mac", currentDevice.mac)
             // console.log("uploadLimit", uploadLimit)
             // console.log("downloadLimit", downloadLimit)
+            // console.log("newHostname", newHostname)
 
-            // 调用API设置限速
-            callSetRateLimit(
-                currentDevice.mac,
-                uploadLimit,
-                downloadLimit
-            ).then(function (result) {
+            // 创建Promise数组来并行处理hostname和限速设置
+            var promises = [];
+
+            // 如果hostname有变化，添加hostname设置Promise
+            if (newHostname !== (currentDevice.hostname || '')) {
+                promises.push(
+                    callSetHostname(currentDevice.mac, newHostname).catch(function(error) {
+                        return { hostnameError: error };
+                    })
+                );
+            }
+
+            // 添加限速设置Promise
+            promises.push(
+                callSetRateLimit(currentDevice.mac, uploadLimit, downloadLimit).catch(function(error) {
+                    return { rateLimitError: error };
+                })
+            );
+
+            // 并行执行所有设置
+            Promise.all(promises).then(function (results) {
                 // 恢复按钮状态
                 saveButton.innerHTML = originalText;
                 saveButton.classList.remove('btn-loading');
-                // console.log("result", result)
 
-                if (result === true) {
-                    // ui.addNotification(null, E('p', {}, getTranslation('设置成功', language)), 'info');
-                    hideRateLimitModal();
+                var hasError = false;
+                var errorMessages = [];
+
+                // 检查结果
+                results.forEach(function(result, index) {
+                    if (result && result.hostnameError) {
+                        hasError = true;
+                        errorMessages.push(getTranslation('主机名设置失败', language));
+                    } else if (result && result.rateLimitError) {
+                        hasError = true;
+                        errorMessages.push(getTranslation('设置失败', language));
+                    } else if (result !== true && result !== undefined) {
+                        // 检查是否有其他错误
+                        if (result && result.error) {
+                            hasError = true;
+                            errorMessages.push(result.error);
+                        }
+                    }
+                });
+
+                if (hasError) {
+                    ui.addNotification(null, E('p', {}, errorMessages.join(', ')), 'error');
                 } else {
-                    var errorMsg = result && result.error ? result.error : getTranslation('设置失败', language);
-                    ui.addNotification(null, E('p', {}, errorMsg), 'error');
+                    // 所有设置都成功
+                    hideRateLimitModal();
                 }
             }).catch(function (error) {
                 // 恢复按钮状态

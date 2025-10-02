@@ -7,7 +7,8 @@
 					"getStatus",
 					"getMetrics",
 					"setRateLimit",
-					"getConnection"
+					"getConnection",
+					"setHostname"
 				]
 			},
 			"uci": [
@@ -20,7 +21,8 @@
 					"setRateLimit",
 					"getStatus",
 					"getMetrics",
-					"getConnection"
+					"getConnection",
+					"setHostname"
 				]
 			},
 			"uci": [

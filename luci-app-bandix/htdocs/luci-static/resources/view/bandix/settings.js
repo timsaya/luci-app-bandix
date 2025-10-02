@@ -385,6 +385,18 @@ return view.extend({
 		var m, s, o;
 		var networkConfig = uci.sections('network', 'device');
 		var physicalInterfaces = [];
+		
+		// 确保UCI section存在，否则表单不会显示
+		if (!uci.get('bandix', 'general')) {
+			uci.add('bandix', 'general', 'general');
+		}
+		if (!uci.get('bandix', 'traffic')) {
+			uci.add('bandix', 'traffic', 'traffic');
+		}
+		if (!uci.get('bandix', 'connections')) {
+			uci.add('bandix', 'connections', 'connections');
+		}
+		
 		var language = uci.get('bandix', 'general', 'language');
 		if (!language || language === 'auto') {
 			language = getSystemLanguage();
