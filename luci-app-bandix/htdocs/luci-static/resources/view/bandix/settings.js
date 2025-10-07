@@ -585,11 +585,12 @@ return view.extend({
 		o.default = 'auto';
 		o.rmempty = false;
 
-		// 添加数据目录设置
-		o = s.option(form.Value, 'data_dir', getTranslation('数据目录', language), getTranslation('Bandix 数据存储目录', language));
+		// 添加数据目录设置（只读）
+		o = s.option(form.DummyValue, 'data_dir', getTranslation('数据目录', language));
 		o.default = '/usr/share/bandix';
-		o.placeholder = '/usr/share/bandix';
-		o.rmempty = false;
+		o.cfgvalue = function(section_id) {
+			return uci.get('bandix', section_id, 'data_dir') || '/usr/share/bandix';
+		};
 
 		// 添加意见反馈信息
 		o = s.option(form.DummyValue, 'feedback_info', getTranslation('意见反馈', language));
