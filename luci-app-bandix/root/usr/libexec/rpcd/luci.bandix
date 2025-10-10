@@ -10,7 +10,6 @@ readonly BANDIX_DEVICES_API="$BANDIX_API_BASE/api/traffic/devices"
 readonly BANDIX_LIMITS_API="$BANDIX_API_BASE/api/traffic/limits"
 readonly BANDIX_METRICS_API="$BANDIX_API_BASE/api/traffic/metrics"
 readonly BANDIX_CONNECTION_API="$BANDIX_API_BASE/api/connection/devices"
-readonly DHCP_LEASES_FILE="/tmp/dhcp.leases"
 
 # 通用函数：创建简单的JSON响应
 make_value() {
@@ -45,180 +44,21 @@ escape_json_string() {
 
 # 获取设备状态
 get_device_status() {
-	# 预先一次性读取 DHCP 租约文件到内存，避免在循环中重复读取
-	local dhcp_leases_content=""
-	if [ -f "$DHCP_LEASES_FILE" ]; then
-		dhcp_leases_content=$(cat "$DHCP_LEASES_FILE")
-	fi
-
 	local api_result=$(curl -s --connect-timeout 2 --max-time 5 "$BANDIX_DEVICES_API" 2>/dev/null)
 	
 	# 检查API调用是否成功
 	if [ $? -ne 0 ] || [ -z "$api_result" ]; then
-		json_init
-		json_add_object "status"
-		json_add_boolean "success" 0
-		json_add_string "error" "Failed to connect to bandix service"
-		json_close_object
-		json_add_array "devices"
-		json_close_array
-		json_dump
-		json_cleanup
+		echo '{"devices":[]}'
 		return
 	fi
 	
-	# 从原始API结果加载JSON
-	if ! json_load "$api_result"; then
-		json_init
-		json_add_object "status"
-		json_add_boolean "success" 0
-		json_add_string "error" "Invalid JSON response from bandix service"
-		json_close_object
-		json_add_array "devices"
-		json_close_array
-		json_dump
-		json_cleanup
-		return
+	# 提取 data 部分并返回
+	local data_part=$(echo "$api_result" | jsonfilter -e '$.data' 2>/dev/null)
+	if [ -n "$data_part" ]; then
+		echo "$data_part"
+	else
+		echo '{"devices":[]}'
 	fi
-	
-	# 检查API状态
-	local api_status
-	json_get_var api_status status
-	if [ "$api_status" != "success" ]; then
-		json_init
-		json_add_object "status"
-		json_add_boolean "success" 0
-		json_add_string "error" "API returned failure status"
-		json_close_object
-		json_add_array "devices"
-		json_close_array
-		json_dump
-		json_cleanup
-		return
-	fi
-
-	# 提取data对象
-	if ! json_select "data"; then
-		json_init
-		json_add_object "status"
-		json_add_boolean "success" 0
-		json_add_string "error" "No data field in API response"
-		json_close_object
-		json_add_array "devices"
-		json_close_array
-		json_dump
-		json_cleanup
-		return
-	fi
-
-	# 提取设备数组
-	if ! json_select "devices"; then
-		json_init
-		json_add_object "status"
-		json_add_boolean "success" 0
-		json_add_string "error" "No devices field in data"
-		json_close_object
-		json_add_array "devices"
-		json_close_array
-		json_dump
-		json_cleanup
-		return
-	fi
-	
-	json_get_keys device_indexes
-	
-	# 开始构建新的JSON
-	echo '{'
-	echo '  "devices": ['
-	
-	# 标记是否是第一个设备
-	local first_device=1
-	
-	# 检查是否有设备数据
-	if [ -z "$device_indexes" ]; then
-		# 没有设备数据，返回空数组
-		echo
-		echo '  ]'
-		echo '}'
-		return
-	fi
-	
-	# 遍历每个设备
-	for idx in $device_indexes; do
-		json_select "$idx"
-		
-		# 获取设备信息
-		json_get_var mac mac
-		json_get_var ip ip
-		json_get_var hostname hostname
-		json_get_var total_rx_bytes total_rx_bytes
-		json_get_var total_tx_bytes total_tx_bytes
-		json_get_var total_rx_rate total_rx_rate
-		json_get_var total_tx_rate total_tx_rate
-		json_get_var local_rx_bytes local_rx_bytes
-		json_get_var local_tx_bytes local_tx_bytes
-		json_get_var local_rx_rate local_rx_rate
-		json_get_var local_tx_rate local_tx_rate
-		json_get_var wide_rx_bytes wide_rx_bytes
-		json_get_var wide_tx_bytes wide_tx_bytes
-		json_get_var wide_rx_rate wide_rx_rate
-		json_get_var wide_tx_rate wide_tx_rate
-		json_get_var wide_rx_rate_limit wide_rx_rate_limit
-		json_get_var wide_tx_rate_limit wide_tx_rate_limit
-		json_get_var last_online_ts last_online_ts
-		
-		# 只有当接口中的hostname为空时，才从缓存的DHCP数据中查找对应的主机名
-		if [ -z "$hostname" ] && [ -n "$dhcp_leases_content" ]; then
-			local mac_lower=$(echo "$mac" | tr 'A-Z' 'a-z')
-			# 从缓存中查找匹配的MAC地址，提取hostname字段
-			local dhcp_hostname=$(echo "$dhcp_leases_content" | grep -i "$mac" | awk '{if ($4 != "*") print $4}' | head -1)
-			if [ -n "$dhcp_hostname" ]; then
-				hostname="$dhcp_hostname"
-			fi
-		fi
-		
-		# 添加逗号分隔符（除了第一个设备）
-		if [ "$first_device" -eq 1 ]; then
-			first_device=0
-		else
-			echo ','
-		fi
-		
-		# 转义hostname中的特殊字符
-		local hostname_escaped=$(escape_json_string "$hostname")
-		
-		# 输出设备信息到JSON
-		cat <<EOF
-		{
-			"mac": "$mac",
-			"ip": "$ip",
-			"hostname": "$hostname_escaped",
-			"total_rx_bytes": ${total_rx_bytes:-0},
-			"total_tx_bytes": ${total_tx_bytes:-0},
-			"total_rx_rate": ${total_rx_rate:-0},
-			"total_tx_rate": ${total_tx_rate:-0},
-			"local_rx_bytes": ${local_rx_bytes:-0},
-			"local_tx_bytes": ${local_tx_bytes:-0},
-			"local_rx_rate": ${local_rx_rate:-0},
-			"local_tx_rate": ${local_tx_rate:-0},
-			"wide_rx_bytes": ${wide_rx_bytes:-0},
-			"wide_tx_bytes": ${wide_tx_bytes:-0},
-			"wide_rx_rate": ${wide_rx_rate:-0},
-			"wide_tx_rate": ${wide_tx_rate:-0},
-			"wide_rx_rate_limit": ${wide_rx_rate_limit:-0},
-			"wide_tx_rate_limit": ${wide_tx_rate_limit:-0},
-			"last_online_ts": ${last_online_ts:-0}
-		}
-EOF
-		
-		# 返回到设备数组
-		json_select ..
-	done
-	
-	# 完成JSON结构
-	echo
-	echo '  ]'
-	echo '}'
 }
 
 # 获取历史指标（可选MAC）
@@ -242,18 +82,6 @@ get_metrics() {
         echo '{"retention_seconds":600,"mac":"","metrics":[]}'
         return
     fi
-
-    local response_size=${#api_result}
-    # logger "luci.bandix.metrics: response size: $response_size bytes, processing new API format"
-    
-    # 检查响应格式并使用 jsonfilter 提取状态
-    local api_status=$(echo "$api_result" | jsonfilter -e '$.status' 2>/dev/null)
-    if [ "$api_status" != "success" ]; then
-        # logger "luci.bandix.metrics: API status is not success: '$api_status'"
-        echo '{"retention_seconds":600,"mac":"","metrics":[]}'
-        return
-    fi
-    # logger "luci.bandix.metrics: confirmed API success status"
     
     # 使用 jsonfilter 提取 data 部分（根据文档，这是处理大JSON的推荐方式）
     local data_part=$(echo "$api_result" | jsonfilter -e '$.data' 2>/dev/null)
@@ -382,106 +210,17 @@ get_connection_devices() {
 		return
 	fi
 	
-	# 预先一次性读取 DHCP 租约文件到内存，避免在循环中重复读取
-	local dhcp_leases_content=""
-	if [ -f "$DHCP_LEASES_FILE" ]; then
-		dhcp_leases_content=$(cat "$DHCP_LEASES_FILE")
-	fi
-	
 	# 从 Bandix API 获取连接数据
 	local response=$(curl -s --connect-timeout 2 --max-time 5 -X GET "$BANDIX_CONNECTION_API" 2>/dev/null)
 	
-	if [ $? -eq 0 ] && [ -n "$response" ]; then
-		# 检查响应状态
-		local status=$(echo "$response" | jsonfilter -e '$.status' 2>/dev/null)
-		if [ "$status" = "success" ]; then
-			# 获取设备数据并添加主机名信息
-			local devices_data=$(echo "$response" | jsonfilter -e '$.data.devices')
-			local global_stats=$(echo "$response" | jsonfilter -e '$.data.global_stats')
-			local total_devices=$(echo "$response" | jsonfilter -e '$.data.total_devices')
-			local last_updated=$(echo "$response" | jsonfilter -e '$.data.last_updated')
-			
-			# 构建增强的响应数据
-			json_init
-			json_add_string "status" "success"
-			json_add_object "data"
-			
-			# 添加全局统计
-			if [ -n "$global_stats" ]; then
-				json_add_object "global_stats"
-				json_add_int "total_connections" $(echo "$response" | jsonfilter -e '$.data.global_stats.total_connections' 2>/dev/null || echo "0")
-				json_add_int "tcp_connections" $(echo "$response" | jsonfilter -e '$.data.global_stats.tcp_connections' 2>/dev/null || echo "0")
-				json_add_int "udp_connections" $(echo "$response" | jsonfilter -e '$.data.global_stats.udp_connections' 2>/dev/null || echo "0")
-				json_add_int "established_tcp" $(echo "$response" | jsonfilter -e '$.data.global_stats.established_tcp' 2>/dev/null || echo "0")
-				json_add_int "time_wait_tcp" $(echo "$response" | jsonfilter -e '$.data.global_stats.time_wait_tcp' 2>/dev/null || echo "0")
-				json_add_int "close_wait_tcp" $(echo "$response" | jsonfilter -e '$.data.global_stats.close_wait_tcp' 2>/dev/null || echo "0")
-				json_add_int "last_updated" $(echo "$response" | jsonfilter -e '$.data.global_stats.last_updated' 2>/dev/null || echo "0")
-				json_close_object
-			fi
-			
-			# 添加设备数据
-			json_add_array "devices"
-			if [ -n "$devices_data" ]; then
-				# 解析设备数组 - 一次性提取所有设备的 JSON 字符串，避免重复解析
-				local device_count=$(echo "$response" | jsonfilter -e '$.data.devices[*]' | wc -l)
-				local i=0
-				while [ $i -lt $device_count ]; do
-					# 一次性提取当前设备的所有数据，减少 jsonfilter 调用次数
-					local device_json=$(echo "$response" | jsonfilter -e "$.data.devices[$i]" 2>/dev/null)
-					
-					# 从提取的设备 JSON 中解析各个字段
-					local mac=$(echo "$device_json" | jsonfilter -e '$.mac_address' 2>/dev/null)
-					local ip=$(echo "$device_json" | jsonfilter -e '$.ip_address' 2>/dev/null)
-					local hostname=$(echo "$device_json" | jsonfilter -e '$.hostname' 2>/dev/null)
-					local tcp_connections=$(echo "$device_json" | jsonfilter -e '$.tcp_connections' 2>/dev/null || echo "0")
-					local udp_connections=$(echo "$device_json" | jsonfilter -e '$.udp_connections' 2>/dev/null || echo "0")
-					local established_tcp=$(echo "$device_json" | jsonfilter -e '$.established_tcp' 2>/dev/null || echo "0")
-					local time_wait_tcp=$(echo "$device_json" | jsonfilter -e '$.time_wait_tcp' 2>/dev/null || echo "0")
-					local close_wait_tcp=$(echo "$device_json" | jsonfilter -e '$.close_wait_tcp' 2>/dev/null || echo "0")
-					local total_connections=$(echo "$device_json" | jsonfilter -e '$.total_connections' 2>/dev/null || echo "0")
-					local device_last_updated=$(echo "$device_json" | jsonfilter -e '$.last_updated' 2>/dev/null || echo "0")
-					
-					# 只有当接口中的hostname为空时，才从缓存的DHCP数据中查找对应的主机名
-					if [ -z "$hostname" ] && [ -n "$dhcp_leases_content" ] && [ -n "$mac" ]; then
-						local dhcp_hostname=$(echo "$dhcp_leases_content" | grep -i "$mac" | awk '{if ($4 != "*") print $4}' | head -1)
-						if [ -n "$dhcp_hostname" ]; then
-							hostname="$dhcp_hostname"
-						fi
-					fi
-					
-					if [ -n "$mac" ] || [ -n "$ip" ]; then
-						json_add_object
-						json_add_string "mac_address" "$mac"
-						json_add_string "ip_address" "$ip"
-						json_add_string "hostname" "$hostname"
-						json_add_int "tcp_connections" "$tcp_connections"
-						json_add_int "udp_connections" "$udp_connections"
-						json_add_int "established_tcp" "$established_tcp"
-						json_add_int "time_wait_tcp" "$time_wait_tcp"
-						json_add_int "close_wait_tcp" "$close_wait_tcp"
-						json_add_int "total_connections" "$total_connections"
-						json_add_int "last_updated" "$device_last_updated"
-						json_close_object
-					fi
-					
-					i=$((i + 1))
-				done
-			fi
-			json_close_array
-			
-			json_add_int "total_devices" "${total_devices:-0}"
-			json_add_int "last_updated" "${last_updated:-0}"
-			json_close_object
-			json_add_string "message" ""
-			json_dump
-			json_cleanup
-		else
-			local error_msg=$(echo "$response" | jsonfilter -e '$.message' 2>/dev/null)
-			make_error "${error_msg:-Failed to get connection data}"
-		fi
-	else
+	# 检查API调用是否成功
+	if [ $? -ne 0 ] || [ -z "$response" ]; then
 		make_error "Failed to connect to Bandix service"
+		return
 	fi
+	
+	# 直接返回API结果
+	echo "$response"
 }
 
 case "$1" in
