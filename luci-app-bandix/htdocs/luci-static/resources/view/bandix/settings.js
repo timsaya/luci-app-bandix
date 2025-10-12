@@ -544,24 +544,15 @@ return view.extend({
 		o.placeholder = '8686';
 		o.rmempty = false;
 
-		// 添加网卡选择下拉菜单
-		o = s.option(form.ListValue, 'iface', getTranslation('监控网卡', language),
-			getTranslation('选择要监控的网络接口', language));
-		o.default = 'br-lan';
-		o.rmempty = false;
+	// 添加网卡选择下拉菜单
+	o = s.option(form.ListValue, 'iface', getTranslation('监控网卡', language),
+		getTranslation('选择要监控的网络接口', language));
+	o.rmempty = false;
 
-		// 添加常用的物理接口作为备选
-		var commonInterfaces = ['br-lan', 'eth0', 'eth1', 'wlan0', 'wlan1'];
-		commonInterfaces.forEach(function (iface) {
-			o.value(iface, iface);
-		});
-
-		// 添加从配置获取的物理接口
-		physicalInterfaces.forEach(function (iface) {
-			if (commonInterfaces.indexOf(iface) === -1) {
-				o.value(iface, iface);
-			}
-		});
+	// 添加从配置获取的物理接口
+	physicalInterfaces.forEach(function (iface) {
+		o.value(iface, iface);
+	});
 
 		// 添加语言选择选项
 		o = s.option(form.ListValue, 'language', getTranslation('界面语言', language),
