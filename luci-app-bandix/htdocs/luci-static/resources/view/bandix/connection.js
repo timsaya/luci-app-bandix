@@ -261,6 +261,7 @@ function getSystemLanguage() {
 
 // 检查是否为暗黑模式
 function isDarkMode() {
+    // 首先检查用户设置的主题
     var userTheme = uci.get('bandix', 'general', 'theme');
     if (userTheme) {
         if (userTheme === 'dark') {
@@ -268,18 +269,37 @@ function isDarkMode() {
         } else if (userTheme === 'light') {
             return false;
         }
+        // 如果是 'auto'，继续检查系统主题
     }
 
+    // 获取 LuCI 主题设置
     var mediaUrlBase = uci.get('luci', 'main', 'mediaurlbase');
     if (mediaUrlBase && mediaUrlBase.toLowerCase().includes('dark')) {
         return true;
     }
 
+    // 如果是 argon 主题，检查 argon 配置
     if (mediaUrlBase && mediaUrlBase.toLowerCase().includes('argon')) {
         var argonMode = uci.get('argon', '@global[0]', 'mode');
-        if (argonMode && argonMode.toLowerCase().includes('dark')) {
-            return true;
+        if (argonMode) {
+            if (argonMode.toLowerCase() === 'dark') {
+                return true;
+            } else if (argonMode.toLowerCase() === 'light') {
+                return false;
+            }
+            // 如果是 'normal' 或 'auto'，使用浏览器检测系统颜色偏好
+            if (argonMode.toLowerCase() === 'normal' || argonMode.toLowerCase() === 'auto') {
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    return true;
+                }
+                return false;
+            }
         }
+    }
+
+    // 默认情况下也使用浏览器检测系统颜色偏好
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return true;
     }
 
     return false;

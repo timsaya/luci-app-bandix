@@ -579,9 +579,25 @@ function isDarkMode() {
     // 如果是 argon 主题，检查 argon 配置
     if (mediaUrlBase && mediaUrlBase.toLowerCase().includes('argon')) {
         var argonMode = uci.get('argon', '@global[0]', 'mode');
-        if (argonMode && argonMode.toLowerCase().includes('dark')) {
-            return true;
+        if (argonMode) {
+            if (argonMode.toLowerCase() === 'dark') {
+                return true;
+            } else if (argonMode.toLowerCase() === 'light') {
+                return false;
+            }
+            // 如果是 'normal' 或 'auto'，使用浏览器检测系统颜色偏好
+            if (argonMode.toLowerCase() === 'normal' || argonMode.toLowerCase() === 'auto') {
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    return true;
+                }
+                return false;
+            }
         }
+    }
+    
+    // 默认情况下也使用浏览器检测系统颜色偏好
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return true;
     }
     
     return false;
