@@ -1371,7 +1371,18 @@ return view.extend({
             // 主要内容卡片
             E('div', { 'class': 'bandix-card' }, [
                 E('div', { 'id': 'traffic-status' }, [
-                    E('div', { 'class': 'loading' }, getTranslation('正在加载数据...', language))
+                    E('table', { 'class': 'bandix-table' }, [
+                        E('thead', {}, [
+                            E('tr', {}, [
+                                E('th', {}, getTranslation('设备信息', language)),
+                                E('th', {}, getTranslation('LAN 流量', language)),
+                                E('th', {}, getTranslation('WAN 流量', language)),
+                                E('th', {}, getTranslation('限速设置', language)),
+                                E('th', {}, getTranslation('操作', language))
+                            ])
+                        ]),
+                        E('tbody', {})
+                    ])
                 ])
             ])
         ]);
@@ -2443,8 +2454,8 @@ function formatRetentionSeconds(seconds, language) {
 
 
 
-        // 轮询获取数据
-        poll.add(function () {
+        // 定义更新设备数据的函数
+        function updateDeviceData() {
             return callStatus().then(function (result) {
                 var trafficDiv = document.getElementById('traffic-status');
                 var deviceCountDiv = document.getElementById('device-count');
@@ -2708,7 +2719,13 @@ function formatRetentionSeconds(seconds, language) {
                     updateDeviceOptions(latestDevices);
                 } catch (e) {}
             });
-        }, 1);
+        }
+
+        // 轮询获取数据
+        poll.add(updateDeviceData, 1);
+
+        // 立即执行一次，不等待轮询
+        updateDeviceData();
 
         return view;
     }

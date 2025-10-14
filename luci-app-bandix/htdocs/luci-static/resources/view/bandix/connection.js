@@ -740,8 +740,18 @@ return view.extend({
         var deviceCard = E('div', { 'class': 'bandix-card' }, [
             E('div', { 'class': 'bandix-card-body' }, [
                 E('div', { 'id': 'device-table-container' }, [
-                    E('div', { 'class': 'loading-state' },
-                        getTranslation('正在加载数据...', language))
+                    E('table', { 'class': 'bandix-table' }, [
+                        E('thead', {}, [
+                            E('tr', {}, [
+                                E('th', {}, getTranslation('设备', language)),
+                                E('th', {}, 'TCP'),
+                                E('th', {}, 'UDP'),
+                                E('th', {}, getTranslation('TCP 状态详情', language)),
+                                E('th', {}, getTranslation('总连接数', language))
+                            ])
+                        ]),
+                        E('tbody', {})
+                    ])
                 ])
             ])
         ]);
@@ -826,8 +836,8 @@ return view.extend({
             container.appendChild(E('div', { 'class': 'error-state' }, message));
         }
 
-        // 轮询获取数据
-        poll.add(function () {
+        // 定义更新连接数据的函数
+        function updateConnectionData() {
             return callGetConnection().then(function (result) {
                 if (result && result.status === 'success' && result.data) {
                     updateGlobalStats(result.data.global_stats);
@@ -839,7 +849,13 @@ return view.extend({
                 console.error('Failed to load connection data:', error);
                 showError(getTranslation('无法获取数据', language));
             });
-        }, 1);
+        }
+
+        // 轮询获取数据
+        poll.add(updateConnectionData, 1);
+
+        // 立即执行一次，不等待轮询
+        updateConnectionData();
 
         return container;
     }
