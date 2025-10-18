@@ -1435,7 +1435,7 @@ return view.extend({
             currentDevice = device;
             var modal = document.getElementById('rate-limit-modal');
             var deviceSummary = document.getElementById('modal-device-summary');
-            var speedUnit = uci.get('bandix', 'general', 'speed_unit') || 'bytes';
+            var speedUnit = uci.get('bandix', 'traffic', 'speed_unit') || 'bytes';
 
             // 动态填充单位选择器
             var uploadUnitSelect = document.getElementById('upload-limit-unit');
@@ -1580,7 +1580,7 @@ return view.extend({
 
             var uploadLimit = 0;
             var downloadLimit = 0;
-            var speedUnit = uci.get('bandix', 'general', 'speed_unit') || 'bytes';
+            var speedUnit = uci.get('bandix', 'traffic', 'speed_unit') || 'bytes';
 
             // 获取hostname值
             var newHostname = document.getElementById('device-hostname-input').value.trim();
@@ -1811,7 +1811,7 @@ return view.extend({
                 downSeries = downSeries.slice(startIdx, endIdx);
             }
 
-            var speedUnit = uci.get('bandix', 'general', 'speed_unit') || 'bytes';
+            var speedUnit = uci.get('bandix', 'traffic', 'speed_unit') || 'bytes';
             var maxVal = 0;
             for (var i = 0; i < upSeries.length; i++) maxVal = Math.max(maxVal, upSeries[i] || 0);
             for (var j = 0; j < downSeries.length; j++) maxVal = Math.max(maxVal, downSeries[j] || 0);
@@ -1985,7 +1985,7 @@ return view.extend({
 			var zh = (language === 'zh-cn' || language === 'zh-tw');
 			var typeSel = (typeof document !== 'undefined' ? document.getElementById('history-type-select') : null);
 			var selType = (typeSel && typeSel.value) ? typeSel.value : 'total';
-			var speedUnit = uci.get('bandix', 'general', 'speed_unit') || 'bytes';
+			var speedUnit = uci.get('bandix', 'traffic', 'speed_unit') || 'bytes';
 
 			function row(label, val) {
 				lines.push('<div class="ht-row"><span class="ht-key">' + label + '</span><span class="ht-val">' + val + '</span></div>');
@@ -2092,7 +2092,7 @@ function isDeviceOnline(device) {
     var timeDiff = currentTime - lastOnlineTime;
     
     // 从UCI配置获取离线超时时间（秒），默认10分钟
-    var offlineTimeoutSeconds = uci.get('bandix', 'general', 'offline_timeout') || 600;
+    var offlineTimeoutSeconds = uci.get('bandix', 'traffic', 'offline_timeout') || 600;
     var offlineThreshold = offlineTimeoutSeconds * 1000; // 转换为毫秒
     
     return timeDiff <= offlineThreshold;
@@ -2464,7 +2464,7 @@ function formatRetentionSeconds(seconds, language) {
                 if (!language || language === 'auto') {
                     language = getSystemLanguage();
                 }
-                var speedUnit = uci.get('bandix', 'general', 'speed_unit') || 'bytes';
+                var speedUnit = uci.get('bandix', 'traffic', 'speed_unit') || 'bytes';
 
                 var stats = result;
                 if (!stats || !stats.devices) {
