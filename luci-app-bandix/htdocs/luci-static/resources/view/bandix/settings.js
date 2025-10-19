@@ -40,8 +40,8 @@ const translations = {
 		'意见反馈': '意见反馈',
 		'离线超时时间': '离线超时时间',
 		'设置设备离线判断的超时时间（秒）': '设置设备离线判断的超时时间（秒）。超过此时间未活动的设备将被标记为离线',
-		'持久化循环周期': '持久化循环周期',
-		'设置数据持久化循环周期': '10分钟下，1个设备固定占用约60KB，修改会清空已有数据。\n由于ubus单次通信限制，无法设置更大的值。',
+		'历史流量周期': '历史流量周期',
+		'设置历史流量数据周期': '10分钟下，1个设备固定占用约60KB，修改会清空已有数据。\n由于ubus单次通信限制，无法设置更大的值。',
 		'数据 flush 间隔': '数据 flush 间隔',
 		'设置数据 flush 间隔': '设置数据写入磁盘的时间间隔',
 		'1 分钟': '1 分钟',
@@ -55,7 +55,9 @@ const translations = {
 		'2 小时': '2 小时',
 		'数据目录': '数据目录',
 		'Bandix 数据存储目录': 'Bandix 数据存储目录',
-		'启用 Bandix 连接监控功能': '启用 Bandix 连接监控功能'
+		'启用 Bandix 连接监控功能': '启用 Bandix 连接监控功能',
+		'持久化历史数据': '持久化历史数据',
+		'启用数据持久化功能': '启用数据持久化功能，只有启用此选项后才会持久化到磁盘'
 	},
 	'zh-tw': {
 		'基本设置': '基本設置',
@@ -91,8 +93,8 @@ const translations = {
 		'意见反馈': '意見反饋',
 		'离线超时时间': '離線超時時間',
 		'设置设备离线判断的超时时间（秒）': '設定設備離線判斷的超時時間（秒）。超過此時間未活動的設備將被標記為離線',
-		'持久化循环周期': '持久化循環週期',
-		'设置数据持久化循环周期': '10分鐘下，1個設備固定占用約60KB，修改會清空已有資料。\n由於ubus單次通信限制，無法設置更大的值。',
+		'历史流量周期': '歷史流量週期',
+		'设置历史流量数据周期': '10分鐘下，1個設備固定占用約60KB，修改會清空已有資料。\n由於ubus單次通信限制，無法設置更大的值。',
 		'数据 flush 间隔': '資料flush間隔',
 		'设置数据 flush 间隔': '設定資料寫入磁碟的時間間隔',
 		'1 分钟': '1 分鐘',
@@ -106,7 +108,9 @@ const translations = {
 		'2 小时': '2 小時',
 		'数据目录': '數據目錄',
 		'Bandix 数据存储目录': 'Bandix 數據存儲目錄',
-		'启用 Bandix 连接监控功能': '啟用 Bandix 連接監控功能'
+		'启用 Bandix 连接监控功能': '啟用 Bandix 連接監控功能',
+		'持久化历史数据': '持久化歷史數據',
+		'启用数据持久化功能': '啟用數據持久化功能，只有啟用此選項後才會持久化到磁碟'
 	},
 	'en': {
 		'基本设置': 'Basic Settings',
@@ -142,8 +146,8 @@ const translations = {
 		'意见反馈': 'Feedback',
 		'离线超时时间': 'Offline Timeout',
 		'设置设备离线判断的超时时间（秒）': 'Set the timeout for device offline detection (seconds). Devices inactive for longer than this time will be marked as offline',
-		'持久化循环周期': 'Persistence Interval',
-		'设置数据持久化循环周期': 'With 10-minute interval, 1 device uses a fixed size of about 60 KB, changing will clear existing data.\nDue to ubus single communication limit, larger values cannot be set.',
+		'历史流量周期': 'Traffic History Period',
+		'设置历史流量数据周期': 'With 10-minute interval, 1 device uses a fixed size of about 60 KB, changing will clear existing data.\nDue to ubus single communication limit, larger values cannot be set.',
 		'数据 flush 间隔': 'Data Flush Interval',
 		'设置数据 flush 间隔': 'Set the interval for flushing data to disk',
 		'1 分钟': '1 minute',
@@ -157,7 +161,9 @@ const translations = {
 		'2 小时': '2 hours',
 		'数据目录': 'Data Directory',
 		'Bandix 数据存储目录': 'Bandix data storage directory',
-		'启用 Bandix 连接监控功能': 'Enable Bandix connection monitoring'
+		'启用 Bandix 连接监控功能': 'Enable Bandix connection monitoring',
+		'持久化历史数据': 'Persist History Data',
+		'启用数据持久化功能': 'Enable data persistence functionality, data will only be persisted to disk when this option is enabled'
 	},
 	'fr': {
 		'基本设置': 'Paramètres de Base',
@@ -193,8 +199,8 @@ const translations = {
 		'意见反馈': 'Commentaires',
 		'离线超时时间': 'Délai d\'expiration hors ligne',
 		'设置设备离线判断的超时时间（秒）': 'Définir le délai d\'expiration pour la détection hors ligne des appareils (secondes). Les appareils inactifs plus longtemps que cette durée seront marqués comme hors ligne',
-		'持久化循环周期': 'Intervalle de persistance',
-		'设置数据持久化循环周期': "Avec un intervalle de 10 minutes, 1 appareil occupe environ 60 Ko (taille fixe), la modification effacera les données existantes.\nEn raison de la limite de communication unique d'ubus, des valeurs plus importantes ne peuvent pas être définies.",
+		'历史流量周期': 'Période d\'Historique du Trafic',
+		'设置历史流量数据周期': "Avec un intervalle de 10 minutes, 1 appareil occupe environ 60 Ko (taille fixe), la modification effacera les données existantes.\nEn raison de la limite de communication unique d'ubus, des valeurs plus importantes ne peuvent pas être définies.",
 		'数据 flush 间隔': 'Intervalle de flush',
 		'设置数据 flush 间隔': 'Définir l\'intervalle pour effectuer le flush des données sur le disque',
 		'1 分钟': '1 minute',
@@ -208,7 +214,9 @@ const translations = {
 		'2 小时': '2 heures',
 		'数据目录': 'Répertoire de Données',
 		'Bandix 数据存储目录': 'Répertoire de stockage de données Bandix',
-		'启用 Bandix 连接监控功能': 'Activer la surveillance des connexions Bandix'
+		'启用 Bandix 连接监控功能': 'Activer la surveillance des connexions Bandix',
+		'持久化历史数据': 'Persister les Données Historiques',
+		'启用数据持久化功能': 'Activer la fonctionnalité de persistance des données, les données ne seront persistées sur le disque que lorsque cette option est activée'
 	},
 	'ja': {
 		'基本设置': '基本設定',
@@ -244,8 +252,8 @@ const translations = {
 		'意见反馈': 'フィードバック',
 		'离线超时时间': 'オフラインタイムアウト',
 		'设置设备离线判断的超时时间（秒）': 'デバイスのオフライン検出のタイムアウト時間（秒）を設定。この時間を超えて非アクティブなデバイスはオフラインとしてマークされます',
-		'持久化循环周期': '永続化ループ間隔',
-		'设置数据持久化循环周期': '10分間隔では、1台のデバイスで固定サイズとして約60KBを使用し、変更すると既存データがクリアされます。\nubusの単一通信制限により、より大きな値を設定することはできません。',
+		'历史流量周期': 'トラフィック履歴期間',
+		'设置历史流量数据周期': '10分間隔では、1台のデバイスで固定サイズとして約60KBを使用し、変更すると既存データがクリアされます。\nubusの単一通信制限により、より大きな値を設定することはできません。',
 		'数据 flush 间隔': 'データflush間隔',
 		'设置数据 flush 间隔': 'データをディスクにflushする間隔を設定',
 		'1 分钟': '1 分',
@@ -259,7 +267,9 @@ const translations = {
 		'2 小时': '2 時間',
 		'数据目录': 'データディレクトリ',
 		'Bandix 数据存储目录': 'Bandix データ保存ディレクトリ',
-		'启用 Bandix 连接监控功能': 'Bandix 接続監視機能を有効にする'
+		'启用 Bandix 连接监控功能': 'Bandix 接続監視機能を有効にする',
+		'持久化历史数据': '履歴データの永続化',
+		'启用数据持久化功能': 'データ永続化機能を有効にする。このオプションが有効な場合のみ、データがディスクに永続化されます'
 	},
 	'ru': {
 		'基本设置': 'Основные Настройки',
@@ -295,8 +305,8 @@ const translations = {
 		'意见反馈': 'Обратная связь',
 		'离线超时时间': 'Таймаут отключения',
 		'设置设备离线判断的超时时间（秒）': 'Установить таймаут для обнаружения отключения устройств (секунды). Устройства, неактивные дольше этого времени, будут помечены как отключенные',
-		'持久化循环周期': 'Интервал персистенции',
-		'设置数据持久化循环周期': 'При интервале 10 минут одно устройство занимает около 60 КБ (фиксированный размер), изменение очистит существующие данные.\nИз-за ограничения единичной связи ubus нельзя установить большие значения.',
+		'历史流量周期': 'Период Истории Трафика',
+		'设置历史流量数据周期': 'При интервале 10 минут одно устройство занимает около 60 КБ (фиксированный размер), изменение очистит существующие данные.\nИз-за ограничения единичной связи ubus нельзя установить большие значения.',
 		'数据 flush 间隔': 'Интервал flush данных',
 		'设置数据 flush 间隔': 'Установить интервал flush данных на диск',
 		'1 分钟': '1 минута',
@@ -310,7 +320,9 @@ const translations = {
 		'2 小时': '2 часа',
 		'数据目录': 'Каталог Данных',
 		'Bandix 数据存储目录': 'Каталог хранения данных Bandix',
-		'启用 Bandix 连接监控功能': 'Включить мониторинг соединений Bandix'
+		'启用 Bandix 连接监控功能': 'Включить мониторинг соединений Bandix',
+		'持久化历史数据': 'Персистентность Исторических Данных',
+		'启用数据持久化功能': 'Включить функциональность персистентности данных, данные будут сохраняться на диск только при включении этой опции'
 	}
 };
 
@@ -616,17 +628,10 @@ return view.extend({
 		o.default = '600';
 		o.rmempty = true;
 
-		// 添加持久化循环周期（秒）
-		o = s.option(form.ListValue, 'traffic_retention_seconds', getTranslation('持久化循环周期', language),
-			getTranslation('设置数据持久化循环周期', language));
-		o.value('60', getTranslation('1 分钟', language));
-		o.value('300', getTranslation('5 分钟', language));
-		o.value('600', getTranslation('10 分钟', language));
-		o.value('900', getTranslation('15 分钟', language));
-		o.value('1200', getTranslation('20 分钟', language));
-		o.value('1500', getTranslation('25 分钟', language));
-		o.value('1800', getTranslation('30 分钟', language));
-		o.default = '600';
+		// 添加持久化历史数据选项
+		o = s.option(form.Flag, 'traffic_persist_history', getTranslation('持久化历史数据', language),
+			getTranslation('启用数据持久化功能', language));
+		o.default = '0';
 		o.rmempty = false;
 
 		// 添加数据 flush 间隔（秒）
@@ -643,6 +648,23 @@ return view.extend({
 		o.value('7200', getTranslation('2 小时', language));
 		o.default = '600';
 		o.rmempty = false;
+		o.depends('traffic_persist_history', '1');
+
+
+		// 添加历史流量周期（秒）
+		o = s.option(form.ListValue, 'traffic_retention_seconds', getTranslation('历史流量周期', language),
+			getTranslation('设置历史流量数据周期', language));
+		o.value('60', getTranslation('1 分钟', language));
+		o.value('300', getTranslation('5 分钟', language));
+		o.value('600', getTranslation('10 分钟', language));
+		o.value('900', getTranslation('15 分钟', language));
+		o.value('1200', getTranslation('20 分钟', language));
+		o.value('1500', getTranslation('25 分钟', language));
+		o.value('1800', getTranslation('30 分钟', language));
+		o.default = '600';
+		o.rmempty = false;
+
+
 
 		// 3. 连接监控设置部分 (connections)
 		s = m.section(form.NamedSection, 'connections', 'connections', getTranslation('连接监控设置', language));
