@@ -40,6 +40,7 @@ LuCI Bandix is developed based on the LuCI framework, offering network traffic m
 - Support for LAN/WAN speed monitoring
 - Support device TCP/UDP connection number monitoring
 - Support for WAN speed limitation
+- Support IPv4/IPv6
 - Persistent data storage
 - Historical traffic trends and charts
 
@@ -64,6 +65,7 @@ The following table shows the version dependency relationship between luci-app-b
 | 0.3.x                  | 0.3.x                          |
 | 0.4.x                  | 0.4.x                          |
 | 0.5.x                  | 0.5.x                          |
+| 0.6.x                  | 0.6.x                          |
 
 Please ensure you install matching versions to ensure compatibility and proper functionality.
 
