@@ -671,6 +671,24 @@ function parseSpeed(speedStr) {
     return 0;
 }
 
+// 过滤 LAN IPv6 地址（排除本地链路地址）
+function filterLanIPv6(ipv6Addresses) {
+    if (!ipv6Addresses || !Array.isArray(ipv6Addresses)) return [];
+    
+    const lanPrefixes = [
+        'fd',     // ULA
+        'fc'      // ULA
+    ];
+    
+    const lanAddresses = ipv6Addresses.filter(addr => {
+        const lowerAddr = addr.toLowerCase();
+        return lanPrefixes.some(prefix => lowerAddr.startsWith(prefix));
+    });
+    
+    // 最多返回 2 个 LAN IPv6 地址
+    return lanAddresses.slice(0, 2);
+}
+
 var callStatus = rpc.declare({
     object: 'luci.bandix',
     method: 'getStatus',
@@ -820,27 +838,27 @@ return view.extend({
             
             .bandix-table th:nth-child(1),
             .bandix-table td:nth-child(1) {
-                width: 20%;
+                width: 25%;
             }
             
             .bandix-table th:nth-child(2),
             .bandix-table td:nth-child(2) {
-                width: 20%;
+                width: 22%;
             }
             
             .bandix-table th:nth-child(3),
             .bandix-table td:nth-child(3) {
-                width: 20%;
+                width: 22%;
             }
             
             .bandix-table th:nth-child(4),
             .bandix-table td:nth-child(4) {
-                width: 20%;
+                width: 22%;
             }
             
             .bandix-table th:nth-child(5),
             .bandix-table td:nth-child(5) {
-                width: 20%;
+                width: 9%;
             }
 
 			/* 类型联动的高亮与弱化 */
@@ -880,6 +898,12 @@ return view.extend({
             .device-ip {
                 color: ${darkMode ? '#94a3b8' : '#6b7280'};
                 font-size: 0.875rem;
+            }
+            
+            .device-ipv6 {
+                color: ${darkMode ? '#94a3b8' : '#6b7280'};
+                font-size: 0.75rem;
+                font-family: monospace;
             }
             
             .device-mac {
@@ -2026,7 +2050,12 @@ return view.extend({
 				if (macVal && Array.isArray(latestDevices)) {
 					var dev = latestDevices.find(function(d){ return d.mac === macVal; });
 					if (dev) {
-						var devLabel = (dev.hostname || '-') + (dev.ip ? ' (' + dev.ip + ')' : '') + (dev.mac ? ' [' + dev.mac + ']' : '');
+						var ipv6Info = '';
+						var lanIPv6 = filterLanIPv6(dev.ipv6_addresses);
+						if (lanIPv6.length > 0) {
+							ipv6Info = ' | IPv6: ' + lanIPv6.join(', ');
+						}
+						var devLabel = (dev.hostname || '-') + (dev.ip ? ' (' + dev.ip + ')' : '') + (dev.mac ? ' [' + dev.mac + ']' : '') + ipv6Info;
 						lines.push('<div class="ht-device">' + getTranslation('设备', language) + ': ' + devLabel + '</div>');
 					}
 				}
@@ -2638,6 +2667,17 @@ function formatRetentionSeconds(seconds, language) {
                                     device.hostname || '-'
                                 ]),
                                 E('div', { 'class': 'device-ip' }, device.ip),
+                                (function() {
+                                    var lanIPv6 = filterLanIPv6(device.ipv6_addresses);
+                                    if (lanIPv6.length > 0) {
+                                        var allIPv6 = device.ipv6_addresses ? device.ipv6_addresses.join(', ') : '';
+                                        return E('div', { 
+                                            'class': 'device-ipv6',
+                                            'title': allIPv6
+                                        }, lanIPv6.join(', '));
+                                    }
+                                    return E('div', { 'class': 'device-ipv6' }, '-');
+                                })(),
                                 E('div', { 'class': 'device-mac' }, device.mac),
                                 E('div', { 'class': 'device-last-online' }, [
                                     E('span', { 'style': 'color: #6b7280; font-size: 0.75rem;' }, getTranslation('最后上线', language) + ': '),
