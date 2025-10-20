@@ -2642,6 +2642,12 @@ function formatRetentionSeconds(seconds, language) {
 					return (a.mac || '').localeCompare(b.mac || '');
 				});
 
+				// 检查是否有任何设备有 IPv6 地址
+				var hasAnyIPv6 = filteredDevices.some(function(device) {
+					var lanIPv6 = filterLanIPv6(device.ipv6_addresses);
+					return lanIPv6.length > 0;
+				});
+
 				// 填充数据
 				filteredDevices.forEach(function (device) {
                     var isOnline = isDeviceOnline(device);
@@ -2656,34 +2662,44 @@ function formatRetentionSeconds(seconds, language) {
                         showRateLimitModal(device);
                     });
 
+					// 构建设备信息元素
+					var deviceInfoElements = [
+						E('div', { 'class': 'device-name' }, [
+							E('span', {
+								'class': 'device-status ' + (isOnline ? 'online' : 'offline')
+							}),
+							device.hostname || '-'
+						]),
+						E('div', { 'class': 'device-ip' }, device.ip)
+					];
+
+					// 只有当有设备有 IPv6 时才添加 IPv6 行
+					if (hasAnyIPv6) {
+						var lanIPv6 = filterLanIPv6(device.ipv6_addresses);
+						if (lanIPv6.length > 0) {
+							var allIPv6 = device.ipv6_addresses ? device.ipv6_addresses.join(', ') : '';
+							deviceInfoElements.push(E('div', { 
+								'class': 'device-ipv6',
+								'title': allIPv6
+							}, lanIPv6.join(', ')));
+						} else {
+							deviceInfoElements.push(E('div', { 'class': 'device-ipv6' }, '-'));
+						}
+					}
+
+					// 添加 MAC 和最后上线信息
+					deviceInfoElements.push(
+						E('div', { 'class': 'device-mac' }, device.mac),
+						E('div', { 'class': 'device-last-online' }, [
+							E('span', { 'style': 'color: #6b7280; font-size: 0.75rem;' }, getTranslation('最后上线', language) + ': '),
+							E('span', { 'style': 'color: #9ca3af; font-size: 0.75rem;' }, formatLastOnlineTime(device.last_online_ts, language))
+						])
+					);
+
                     var row = E('tr', {}, [
                         // 设备信息
                         E('td', {}, [
-                            E('div', { 'class': 'device-info' }, [
-                                E('div', { 'class': 'device-name' }, [
-                                    E('span', {
-                                        'class': 'device-status ' + (isOnline ? 'online' : 'offline')
-                                    }),
-                                    device.hostname || '-'
-                                ]),
-                                E('div', { 'class': 'device-ip' }, device.ip),
-                                (function() {
-                                    var lanIPv6 = filterLanIPv6(device.ipv6_addresses);
-                                    if (lanIPv6.length > 0) {
-                                        var allIPv6 = device.ipv6_addresses ? device.ipv6_addresses.join(', ') : '';
-                                        return E('div', { 
-                                            'class': 'device-ipv6',
-                                            'title': allIPv6
-                                        }, lanIPv6.join(', '));
-                                    }
-                                    return E('div', { 'class': 'device-ipv6' }, '-');
-                                })(),
-                                E('div', { 'class': 'device-mac' }, device.mac),
-                                E('div', { 'class': 'device-last-online' }, [
-                                    E('span', { 'style': 'color: #6b7280; font-size: 0.75rem;' }, getTranslation('最后上线', language) + ': '),
-                                    E('span', { 'style': 'color: #9ca3af; font-size: 0.75rem;' }, formatLastOnlineTime(device.last_online_ts, language))
-                                ])
-                            ])
+                            E('div', { 'class': 'device-info' }, deviceInfoElements)
                         ]),
 
                         // LAN 流量
