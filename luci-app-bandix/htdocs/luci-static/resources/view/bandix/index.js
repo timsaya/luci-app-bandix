@@ -96,7 +96,14 @@ const translations = {
         '个月前': '个月前',
         '年前': '年前',
         '最后上线': '最后上线',
-        '缩放': '缩放'
+        '缩放': '缩放',
+        '排序方式': '排序方式',
+        '在线状态': '在线状态',
+        '总流量': '总流量',
+        '升序': '升序',
+        '降序': '降序',
+        '按速度排序': '按速度排序',
+        '按用量排序': '按用量排序'
     },
     'zh-tw': {
         'Bandix 流量监控': 'Bandix 流量監控',
@@ -186,7 +193,14 @@ const translations = {
         '个月前': '個月前',
         '年前': '年前',
         '最后上线': '最後上線',
-        '缩放': '縮放'
+        '缩放': '縮放',
+        '排序方式': '排序方式',
+        '在线状态': '線上狀態',
+        '总流量': '總流量',
+        '升序': '升序',
+        '降序': '降序',
+        '按速度排序': '按速度排序',
+        '按用量排序': '按用量排序'
     },
     'en': {
         'Bandix 流量监控': 'Bandix Traffic Monitor',
@@ -276,7 +290,14 @@ const translations = {
         '个月前': 'months ago',
         '年前': 'years ago',
         '最后上线': 'Last Online',
-        '缩放': 'Zoom'
+        '缩放': 'Zoom',
+        '排序方式': 'Sort By',
+        '在线状态': 'Online Status',
+        '总流量': 'Total Traffic',
+        '升序': 'Ascending',
+        '降序': 'Descending',
+        '按速度排序': 'Sort by Speed',
+        '按用量排序': 'Sort by Traffic'
     },
     'fr': {
         'Bandix 流量监控': 'Moniteur de Trafic Bandix',
@@ -361,7 +382,14 @@ const translations = {
         '个月前': 'mois',
         '年前': 'an',
         '最后上线': 'Dernière connexion',
-        '缩放': 'Zoom'
+        '缩放': 'Zoom',
+        '排序方式': 'Trier par',
+        '在线状态': 'Statut en ligne',
+        '总流量': 'Trafic total',
+        '升序': 'Croissant',
+        '降序': 'Décroissant',
+        '按速度排序': 'Trier par vitesse',
+        '按用量排序': 'Trier par volume'
     },
     'ja': {
         'Bandix 流量监控': 'Bandix トラフィックモニター',
@@ -446,7 +474,14 @@ const translations = {
         '个月前': 'ヶ月前',
         '年前': '年前',
         '最后上线': '最終オンライン',
-        '缩放': 'ズーム'
+        '缩放': 'ズーム',
+        '排序方式': '並び順',
+        '在线状态': 'オンライン状態',
+        '总流量': '総トラフィック',
+        '升序': '昇順',
+        '降序': '降順',
+        '按速度排序': '速度順',
+        '按用量排序': '使用量順'
     },
     'ru': {
         'Bandix 流量监控': 'Монитор Трафика Bandix',
@@ -531,7 +566,14 @@ const translations = {
         '个月前': 'мес назад',
         '年前': 'лет назад',
         '最后上线': 'Последний онлайн',
-        '缩放': 'Масштаб'
+        '缩放': 'Масштаб',
+        '排序方式': 'Сортировка',
+        '在线状态': 'Статус онлайн',
+        '总流量': 'Общий трафик',
+        '升序': 'По возрастанию',
+        '降序': 'По убыванию',
+        '按速度排序': 'По скорости',
+        '按用量排序': 'По объёму'
     }
 };
 
@@ -825,6 +867,76 @@ return view.extend({
                 color: ${darkMode ? '#e2e8f0' : '#374151'};
                 border: none;
                 font-size: 0.875rem;
+                cursor: pointer;
+                user-select: none;
+                position: relative;
+                transition: background-color 0.2s ease;
+            }
+            
+            .bandix-table th:hover {
+                background-color: ${darkMode ? '#3a3a3a' : '#f3f4f6'};
+            }
+            
+            .bandix-table th.sortable::after {
+                content: '⇅';
+                margin-left: 6px;
+                opacity: 0.3;
+                font-size: 0.75rem;
+            }
+            
+            .bandix-table th.sortable.active::after {
+                opacity: 1;
+                color: #3b82f6;
+            }
+            
+            .bandix-table th.sortable.asc::after {
+                content: '↑';
+            }
+            
+            .bandix-table th.sortable.desc::after {
+                content: '↓';
+            }
+            
+            .th-split-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
+            }
+            
+            .th-split-section {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                cursor: pointer;
+                padding: 2px 6px;
+                border-radius: 4px;
+                transition: background-color 0.2s ease;
+            }
+            
+            .th-split-section:hover {
+                background-color: ${darkMode ? '#3a3a3a' : '#e5e7eb'};
+            }
+            
+            .th-split-section.active {
+                background-color: ${darkMode ? '#3a3a3a' : '#e5e7eb'};
+            }
+            
+            .th-split-icon {
+                font-size: 0.7rem;
+                opacity: 0.5;
+            }
+            
+            .th-split-section.active .th-split-icon {
+                opacity: 1;
+                color: #3b82f6;
+            }
+            
+            .th-split-divider {
+                width: 1px;
+                height: 16px;
+                background-color: ${darkMode ? '#3a3a3a' : '#d1d5db'};
+                opacity: 0.5;
             }
             
             .bandix-table td {
@@ -1704,6 +1816,10 @@ return view.extend({
         var latestDevices = [];
         var lastHistoryData = null; // 最近一次拉取的原始 metrics 数据
         var isHistoryLoading = false; // 防止轮询重入
+        
+        // 排序状态管理
+        var currentSortBy = localStorage.getItem('bandix_sort_by') || 'online'; // 默认按在线状态排序
+        var currentSortOrder = localStorage.getItem('bandix_sort_order') === 'true'; // false = 降序, true = 升序
     // 当鼠标悬停在历史图表上时，置为 true，轮询将暂停刷新（实现"鼠标在趋势图上时不自动滚动"）
     var historyHover = false;
     // 鼠标悬停时的索引（独立于 canvas.__bandixChart，避免重绘覆盖问题）
@@ -2102,7 +2218,177 @@ return view.extend({
 			return lines.join('');
         }
 
-        // 判断设备是否在线（基于 last_online_ts）
+        // 排序逻辑函数
+function sortDevices(devices, sortBy, ascending) {
+    if (!devices || !Array.isArray(devices)) return devices;
+    
+    var sortedDevices = devices.slice();
+    
+    switch (sortBy) {
+        case 'online':
+            sortedDevices.sort(function(a, b) {
+                var aOnline = isDeviceOnline(a);
+                var bOnline = isDeviceOnline(b);
+                if (aOnline === bOnline) return 0;
+                return ascending ? (aOnline ? -1 : 1) : (aOnline ? 1 : -1);
+            });
+            break;
+            
+        case 'ip':
+            sortedDevices.sort(function(a, b) {
+                var aIp = a.ip || '';
+                var bIp = b.ip || '';
+                
+                // 将IP地址转换为数字进行比较
+                var aIpParts = aIp.split('.').map(function(part) { return parseInt(part) || 0; });
+                var bIpParts = bIp.split('.').map(function(part) { return parseInt(part) || 0; });
+                
+                // 逐段比较IP地址
+                for (var i = 0; i < 4; i++) {
+                    var aPart = aIpParts[i] || 0;
+                    var bPart = bIpParts[i] || 0;
+                    if (aPart !== bPart) {
+                        return ascending ? (aPart - bPart) : (bPart - aPart);
+                    }
+                }
+                return 0;
+            });
+            break;
+            
+        case 'hostname':
+            sortedDevices.sort(function(a, b) {
+                // 先按在线状态排序
+                var aOnline = isDeviceOnline(a);
+                var bOnline = isDeviceOnline(b);
+                
+                if (aOnline !== bOnline) {
+                    return aOnline ? -1 : 1; // 在线设备始终在前
+                }
+                
+                // 在线状态相同时，按IP地址排序
+                var aIp = a.ip || '';
+                var bIp = b.ip || '';
+                var aIpParts = aIp.split('.').map(function(part) { return parseInt(part) || 0; });
+                var bIpParts = bIp.split('.').map(function(part) { return parseInt(part) || 0; });
+                
+                for (var i = 0; i < 4; i++) {
+                    var aPart = aIpParts[i] || 0;
+                    var bPart = bIpParts[i] || 0;
+                    if (aPart !== bPart) {
+                        return ascending ? (aPart - bPart) : (bPart - aPart);
+                    }
+                }
+                
+                // IP相同时，按MAC地址排序
+                return (a.mac || '').localeCompare(b.mac || '');
+            });
+            break;
+            
+        case 'mac':
+            sortedDevices.sort(function(a, b) {
+                var aMac = (a.mac || '').toLowerCase();
+                var bMac = (b.mac || '').toLowerCase();
+                if (aMac === bMac) return 0;
+                return ascending ? aMac.localeCompare(bMac) : bMac.localeCompare(aMac);
+            });
+            break;
+            
+        case 'upload_speed':
+            sortedDevices.sort(function(a, b) {
+                var aSpeed = (a.wide_tx_rate || 0) + (a.local_tx_rate || 0);
+                var bSpeed = (b.wide_tx_rate || 0) + (b.local_tx_rate || 0);
+                return ascending ? (aSpeed - bSpeed) : (bSpeed - aSpeed);
+            });
+            break;
+            
+        case 'download_speed':
+            sortedDevices.sort(function(a, b) {
+                var aSpeed = (a.wide_rx_rate || 0) + (a.local_rx_rate || 0);
+                var bSpeed = (b.wide_rx_rate || 0) + (b.local_rx_rate || 0);
+                return ascending ? (aSpeed - bSpeed) : (bSpeed - aSpeed);
+            });
+            break;
+            
+        case 'lan_speed':
+            sortedDevices.sort(function(a, b) {
+                var aSpeed = (a.local_tx_rate || 0) + (a.local_rx_rate || 0);
+                var bSpeed = (b.local_tx_rate || 0) + (b.local_rx_rate || 0);
+                return ascending ? (aSpeed - bSpeed) : (bSpeed - aSpeed);
+            });
+            break;
+            
+        case 'wan_speed':
+            sortedDevices.sort(function(a, b) {
+                var aSpeed = (a.wide_tx_rate || 0) + (a.wide_rx_rate || 0);
+                var bSpeed = (b.wide_tx_rate || 0) + (b.wide_rx_rate || 0);
+                return ascending ? (aSpeed - bSpeed) : (bSpeed - aSpeed);
+            });
+            break;
+            
+        case 'total_traffic':
+            sortedDevices.sort(function(a, b) {
+                var aTotal = (a.wide_tx_bytes || 0) + (a.wide_rx_bytes || 0) + (a.local_tx_bytes || 0) + (a.local_rx_bytes || 0);
+                var bTotal = (b.wide_tx_bytes || 0) + (b.wide_rx_bytes || 0) + (b.local_tx_bytes || 0) + (b.local_rx_bytes || 0);
+                return ascending ? (aTotal - bTotal) : (bTotal - aTotal);
+            });
+            break;
+            
+        case 'last_online':
+            sortedDevices.sort(function(a, b) {
+                var aTime = a.last_online_ts || 0;
+                var bTime = b.last_online_ts || 0;
+                return ascending ? (aTime - bTime) : (bTime - aTime);
+            });
+            break;
+            
+        case 'lan_traffic':
+            sortedDevices.sort(function(a, b) {
+                var aTraffic = (a.local_tx_bytes || 0) + (a.local_rx_bytes || 0);
+                var bTraffic = (b.local_tx_bytes || 0) + (b.local_rx_bytes || 0);
+                return ascending ? (aTraffic - bTraffic) : (bTraffic - aTraffic);
+            });
+            break;
+            
+        case 'wan_traffic':
+            sortedDevices.sort(function(a, b) {
+                var aTraffic = (a.wide_tx_bytes || 0) + (a.wide_rx_bytes || 0);
+                var bTraffic = (b.wide_tx_bytes || 0) + (b.wide_rx_bytes || 0);
+                return ascending ? (aTraffic - bTraffic) : (bTraffic - aTraffic);
+            });
+            break;
+            
+        default:
+            // 默认按在线状态和IP地址排序
+            sortedDevices.sort(function(a, b) {
+                var aOnline = isDeviceOnline(a);
+                var bOnline = isDeviceOnline(b);
+                
+                if (aOnline !== bOnline) {
+                    return aOnline ? -1 : 1;
+                }
+                
+                // 在线状态相同时，按IP地址排序
+                var aIp = a.ip || '';
+                var bIp = b.ip || '';
+                var aIpParts = aIp.split('.').map(function(part) { return parseInt(part) || 0; });
+                var bIpParts = bIp.split('.').map(function(part) { return parseInt(part) || 0; });
+                
+                for (var i = 0; i < 4; i++) {
+                    var aPart = aIpParts[i] || 0;
+                    var bPart = bIpParts[i] || 0;
+                    if (aPart !== bPart) {
+                        return aPart - bPart;
+                    }
+                }
+                
+                return (a.mac || '').localeCompare(b.mac || '');
+            });
+    }
+    
+    return sortedDevices;
+}
+
+// 判断设备是否在线（基于 last_online_ts）
 function isDeviceOnline(device) {
     // 如果没有 last_online_ts 字段，使用原有的 online 字段
     if (typeof device.last_online_ts === 'undefined') {
@@ -2588,17 +2874,124 @@ function formatRetentionSeconds(seconds, language) {
                     ])
                 ]));
 
+                // 创建表头点击处理函数
+                function createSortableHeader(text, sortKey) {
+                    var th = E('th', { 
+                        'class': 'sortable' + (currentSortBy === sortKey ? ' active ' + (currentSortOrder ? 'asc' : 'desc') : ''),
+                        'data-sort': sortKey
+                    }, text);
+                    
+                    th.addEventListener('click', function() {
+                        var newSortBy = this.getAttribute('data-sort');
+                        if (currentSortBy === newSortBy) {
+                            // 同一列，切换升降序
+                            currentSortOrder = !currentSortOrder;
+                        } else {
+                            // 不同列，默认降序（对于速度和流量，降序更有意义）
+                            currentSortBy = newSortBy;
+                            if (newSortBy === 'hostname' || newSortBy === 'ip' || newSortBy === 'mac') {
+                                currentSortOrder = true; // 文本类默认升序
+                            } else {
+                                currentSortOrder = false; // 数值类默认降序
+                            }
+                        }
+                        
+                        // 保存状态
+                        localStorage.setItem('bandix_sort_by', currentSortBy);
+                        localStorage.setItem('bandix_sort_order', currentSortOrder.toString());
+                        
+                        // 触发重新渲染
+                        if (window.__bandixRenderTable) {
+                            window.__bandixRenderTable();
+                        }
+                    });
+                    
+                    return th;
+                }
+                
+                // 创建分栏表头（速度 | 用量）
+                function createSplitHeader(text, speedKey, trafficKey) {
+                    var th = E('th', {});
+                    
+                    var header = E('div', { 'class': 'th-split-header' }, [
+                        E('span', {}, text)
+                    ]);
+                    
+                    var controls = E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' });
+                    
+                    // 速度排序按钮
+                    var speedBtn = E('div', {
+                        'class': 'th-split-section' + (currentSortBy === speedKey ? ' active' : ''),
+                        'data-sort': speedKey,
+                        'title': getTranslation('按速度排序', language)
+                    }, [
+                        E('span', { 'class': 'th-split-icon' }, '⚡'),
+                        E('span', { 'style': 'font-size: 0.75rem;' }, currentSortBy === speedKey ? (currentSortOrder ? '↑' : '↓') : '')
+                    ]);
+                    
+                    // 分隔线
+                    var divider = E('div', { 'class': 'th-split-divider' });
+                    
+                    // 用量排序按钮
+                    var trafficBtn = E('div', {
+                        'class': 'th-split-section' + (currentSortBy === trafficKey ? ' active' : ''),
+                        'data-sort': trafficKey,
+                        'title': getTranslation('按用量排序', language)
+                    }, [
+                        E('span', { 'class': 'th-split-icon' }, '∑'),
+                        E('span', { 'style': 'font-size: 0.75rem;' }, currentSortBy === trafficKey ? (currentSortOrder ? '↑' : '↓') : '')
+                    ]);
+                    
+                    controls.appendChild(speedBtn);
+                    controls.appendChild(divider);
+                    controls.appendChild(trafficBtn);
+                    header.appendChild(controls);
+                    th.appendChild(header);
+                    
+                    // 速度按钮点击事件
+                    speedBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        var newSortBy = this.getAttribute('data-sort');
+                        if (currentSortBy === newSortBy) {
+                            currentSortOrder = !currentSortOrder;
+                        } else {
+                            currentSortBy = newSortBy;
+                            currentSortOrder = false; // 速度默认降序
+                        }
+                        localStorage.setItem('bandix_sort_by', currentSortBy);
+                        localStorage.setItem('bandix_sort_order', currentSortOrder.toString());
+                        if (window.__bandixRenderTable) {
+                            window.__bandixRenderTable();
+                        }
+                    });
+                    
+                    // 用量按钮点击事件
+                    trafficBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        var newSortBy = this.getAttribute('data-sort');
+                        if (currentSortBy === newSortBy) {
+                            currentSortOrder = !currentSortOrder;
+                        } else {
+                            currentSortBy = newSortBy;
+                            currentSortOrder = false; // 用量默认降序
+                        }
+                        localStorage.setItem('bandix_sort_by', currentSortBy);
+                        localStorage.setItem('bandix_sort_order', currentSortOrder.toString());
+                        if (window.__bandixRenderTable) {
+                            window.__bandixRenderTable();
+                        }
+                    });
+                    
+                    return th;
+                }
+
                 // 创建表格
                 var table = E('table', { 'class': 'bandix-table' }, [
                     E('thead', {}, [
                         E('tr', {}, [
-                            E('th', {}, getTranslation('设备信息', language)),
-                            E('th', {}, [
-                                getTranslation('LAN 流量', language)
-                            ]),
-                            E('th', {}, [
-                                getTranslation('WAN 流量', language)
-                            ]),
+                            createSortableHeader(getTranslation('设备信息', language), 'hostname'),
+                            createSplitHeader(getTranslation('LAN 流量', language), 'lan_speed', 'lan_traffic'),
+                            createSplitHeader(getTranslation('WAN 流量', language), 'wan_speed', 'wan_traffic'),
                             E('th', {}, getTranslation('限速设置', language)),
                             E('th', {}, getTranslation('操作', language))
                         ])
@@ -2612,35 +3005,8 @@ function formatRetentionSeconds(seconds, language) {
 				var selectedMac = (typeof document !== 'undefined' ? (document.getElementById('history-device-select')?.value || '') : '');
 				var filteredDevices = (!selectedMac) ? stats.devices : stats.devices.filter(function(d){ return (d.mac === selectedMac); });
 
-				// 排序：在线设备在前，离线设备在后，然后按IP地址从小到大排序
-				filteredDevices.sort(function(a, b) {
-					var aOnline = isDeviceOnline(a);
-					var bOnline = isDeviceOnline(b);
-					
-					// 首先按在线状态排序：在线设备在前
-					if (aOnline && !bOnline) return -1;
-					if (!aOnline && bOnline) return 1;
-					
-					// 在线状态相同时，按IP地址排序
-					var aIp = a.ip || '';
-					var bIp = b.ip || '';
-					
-					// 将IP地址转换为数字进行比较
-					var aIpParts = aIp.split('.').map(function(part) { return parseInt(part) || 0; });
-					var bIpParts = bIp.split('.').map(function(part) { return parseInt(part) || 0; });
-					
-					// 逐段比较IP地址
-					for (var i = 0; i < 4; i++) {
-						var aPart = aIpParts[i] || 0;
-						var bPart = bIpParts[i] || 0;
-						if (aPart !== bPart) {
-							return aPart - bPart;
-						}
-					}
-					
-					// IP地址相同时，按MAC地址排序
-					return (a.mac || '').localeCompare(b.mac || '');
-				});
+				// 应用排序
+				filteredDevices = sortDevices(filteredDevices, currentSortBy, currentSortOrder);
 
 				// 检查是否有任何设备有 IPv6 地址
 				var hasAnyIPv6 = filteredDevices.some(function(device) {
@@ -2762,11 +3128,8 @@ function formatRetentionSeconds(seconds, language) {
 				trafficDiv.appendChild(table);
 				// 暴露一个立即重绘表格的函数，供筛选变化时调用
 				try { window.__bandixRenderTable = function(){
-					var evt = new Event('resize'); // 触发重绘逻辑较重，这里直接复用渲染块
-					// 简单方式：再次触发轮询渲染函数体
-					// 此处不重复请求，依赖最近一次 callStatus 的 stats 缓存
-					trafficDiv.innerHTML = '';
-					trafficDiv.appendChild(table);
+					// 重新触发完整的数据更新和渲染
+					updateDeviceData();
 				}; } catch (e) {}
 
                 // 更新历史趋势中的设备下拉
