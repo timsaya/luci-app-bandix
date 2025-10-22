@@ -66,6 +66,7 @@ The following table shows the version dependency relationship between luci-app-b
 | 0.4.x                  | 0.4.x                          |
 | 0.5.x                  | 0.5.x                          |
 | 0.6.x                  | 0.6.x                          |
+| 0.7.x                  | 0.7.x                          |
 
 Please ensure you install matching versions to ensure compatibility and proper functionality.
 
