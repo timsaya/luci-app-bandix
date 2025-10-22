@@ -6,6 +6,8 @@
 				"luci.bandix": [
 					"getStatus",
 					"getMetrics",
+					"getMetricsDay",
+					"getMetricsWeek",
 					"setRateLimit",
 					"getConnection",
 					"setHostname"
@@ -21,6 +23,8 @@
 					"setRateLimit",
 					"getStatus",
 					"getMetrics",
+					"getMetricsDay",
+					"getMetricsWeek",
 					"getConnection",
 					"setHostname"
 				]
