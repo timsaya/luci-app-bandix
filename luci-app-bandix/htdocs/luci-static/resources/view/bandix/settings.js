@@ -57,7 +57,15 @@ const translations = {
 		'Bandix 数据存储目录': 'Bandix 数据存储目录',
 		'启用 Bandix 连接监控功能': '启用 Bandix 连接监控功能',
 		'持久化历史数据': '持久化历史数据',
-		'启用数据持久化功能': '启用数据持久化功能，只有启用此选项后才会持久化到磁盘'
+		'启用数据持久化功能': '启用数据持久化功能，只有启用此选项后才会持久化到磁盘',
+		'实时流量持久化': '实时流量持久化',
+		'启用实时流量数据持久化': '启用实时流量数据的持久化存储',
+		'最近24小时流量持久化': '最近24小时流量持久化',
+		'启用最近24小时流量数据持久化': '启用最近24小时流量数据的持久化存储（固定1分钟采样间隔）',
+		'最近7天流量持久化': '最近7天流量持久化',
+		'启用最近7天流量数据持久化': '启用最近7天流量数据的持久化存储（固定5分钟采样间隔）',
+		'实时流量周期': '实时流量周期',
+		'设置实时流量数据的采集周期': '设置实时流量数据的采集周期，影响数据精度和存储空间'
 	},
 	'zh-tw': {
 		'基本设置': '基本設置',
@@ -110,7 +118,15 @@ const translations = {
 		'Bandix 数据存储目录': 'Bandix 數據存儲目錄',
 		'启用 Bandix 连接监控功能': '啟用 Bandix 連接監控功能',
 		'持久化历史数据': '持久化歷史數據',
-		'启用数据持久化功能': '啟用數據持久化功能，只有啟用此選項後才會持久化到磁碟'
+		'启用数据持久化功能': '啟用數據持久化功能，只有啟用此選項後才會持久化到磁碟',
+		'实时流量持久化': '實時流量持久化',
+		'启用实时流量数据持久化': '啟用實時流量數據的持久化存儲',
+		'最近24小时流量持久化': '最近24小時流量持久化',
+		'启用最近24小时流量数据持久化': '啟用最近24小時流量數據的持久化存儲（固定1分鐘採樣間隔）',
+		'最近7天流量持久化': '最近7天流量持久化',
+		'启用最近7天流量数据持久化': '啟用最近7天流量數據的持久化存儲（固定5分鐘採樣間隔）',
+		'实时流量周期': '實時流量週期',
+		'设置实时流量数据的采集周期': '設定實時流量數據的採集週期，影響數據精度和存儲空間'
 	},
 	'en': {
 		'基本设置': 'Basic Settings',
@@ -163,7 +179,15 @@ const translations = {
 		'Bandix 数据存储目录': 'Bandix data storage directory',
 		'启用 Bandix 连接监控功能': 'Enable Bandix connection monitoring',
 		'持久化历史数据': 'Persist History Data',
-		'启用数据持久化功能': 'Enable data persistence functionality, data will only be persisted to disk when this option is enabled'
+		'启用数据持久化功能': 'Enable data persistence functionality, data will only be persisted to disk when this option is enabled',
+		'实时流量持久化': 'Real-time Traffic Persistence',
+		'启用实时流量数据持久化': 'Enable real-time traffic data persistence',
+		'最近24小时流量持久化': 'Last 24 Hours Traffic Persistence',
+		'启用最近24小时流量数据持久化': 'Enable last 24 hours traffic data persistence (fixed 1-minute sampling interval)',
+		'最近7天流量持久化': 'Last 7 Days Traffic Persistence',
+		'启用最近7天流量数据持久化': 'Enable last 7 days traffic data persistence (fixed 5-minute sampling interval)',
+		'实时流量周期': 'Real-time Traffic Cycle',
+		'设置实时流量数据的采集周期': 'Set the collection cycle for real-time traffic data, affects data accuracy and storage space'
 	},
 	'fr': {
 		'基本设置': 'Paramètres de Base',
@@ -216,7 +240,15 @@ const translations = {
 		'Bandix 数据存储目录': 'Répertoire de stockage de données Bandix',
 		'启用 Bandix 连接监控功能': 'Activer la surveillance des connexions Bandix',
 		'持久化历史数据': 'Persister les Données Historiques',
-		'启用数据持久化功能': 'Activer la fonctionnalité de persistance des données, les données ne seront persistées sur le disque que lorsque cette option est activée'
+		'启用数据持久化功能': 'Activer la fonctionnalité de persistance des données, les données ne seront persistées sur le disque que lorsque cette option est activée',
+		'实时流量持久化': 'Persistance du Trafic en Temps Réel',
+		'启用实时流量数据持久化': 'Activer la persistance des données de trafic en temps réel',
+		'最近24小时流量持久化': 'Persistance du Trafic des 24 Dernières Heures',
+		'启用最近24小时流量数据持久化': 'Activer la persistance des données de trafic des 24 dernières heures (intervalle d\'échantillonnage fixe de 1 minute)',
+		'最近7天流量持久化': 'Persistance du Trafic des 7 Derniers Jours',
+		'启用最近7天流量数据持久化': 'Activer la persistance des données de trafic des 7 derniers jours (intervalle d\'échantillonnage fixe de 5 minutes)',
+		'实时流量周期': 'Cycle du Trafic en Temps Réel',
+		'设置实时流量数据的采集周期': 'Définir le cycle de collecte des données de trafic en temps réel, affecte la précision des données et l\'espace de stockage'
 	},
 	'ja': {
 		'基本设置': '基本設定',
@@ -269,7 +301,15 @@ const translations = {
 		'Bandix 数据存储目录': 'Bandix データ保存ディレクトリ',
 		'启用 Bandix 连接监控功能': 'Bandix 接続監視機能を有効にする',
 		'持久化历史数据': '履歴データの永続化',
-		'启用数据持久化功能': 'データ永続化機能を有効にする。このオプションが有効な場合のみ、データがディスクに永続化されます'
+		'启用数据持久化功能': 'データ永続化機能を有効にする。このオプションが有効な場合のみ、データがディスクに永続化されます',
+		'实时流量持久化': 'リアルタイムトラフィック永続化',
+		'启用实时流量数据持久化': 'リアルタイムトラフィックデータの永続化を有効にする',
+		'最近24小时流量持久化': '過去24時間トラフィック永続化',
+		'启用最近24小时流量数据持久化': '過去24時間トラフィックデータの永続化を有効にする（固定1分サンプリング間隔）',
+		'最近7天流量持久化': '過去7日間トラフィック永続化',
+		'启用最近7天流量数据持久化': '過去7日間トラフィックデータの永続化を有効にする（固定5分サンプリング間隔）',
+		'实时流量周期': 'リアルタイムトラフィック周期',
+		'设置实时流量数据的采集周期': 'リアルタイムトラフィックデータの収集周期を設定、データ精度とストレージ容量に影響'
 	},
 	'ru': {
 		'基本设置': 'Основные Настройки',
@@ -322,7 +362,15 @@ const translations = {
 		'Bandix 数据存储目录': 'Каталог хранения данных Bandix',
 		'启用 Bandix 连接监控功能': 'Включить мониторинг соединений Bandix',
 		'持久化历史数据': 'Персистентность Исторических Данных',
-		'启用数据持久化功能': 'Включить функциональность персистентности данных, данные будут сохраняться на диск только при включении этой опции'
+		'启用数据持久化功能': 'Включить функциональность персистентности данных, данные будут сохраняться на диск только при включении этой опции',
+		'实时流量持久化': 'Персистентность Трафика в Реальном Времени',
+		'启用实时流量数据持久化': 'Включить персистентность данных трафика в реальном времени',
+		'最近24小时流量持久化': 'Персистентность Трафика за Последние 24 Часа',
+		'启用最近24小时流量数据持久化': 'Включить персистентность данных трафика за последние 24 часа (фиксированный интервал выборки 1 минута)',
+		'最近7天流量持久化': 'Персистентность Трафика за Последние 7 Дней',
+		'启用最近7天流量数据持久化': 'Включить персистентность данных трафика за последние 7 дней (фиксированный интервал выборки 5 минут)',
+		'实时流量周期': 'Цикл Трафика в Реальном Времени',
+		'设置实时流量数据的采集周期': 'Установить цикл сбора данных трафика в реальном времени, влияет на точность данных и пространство хранения'
 	}
 };
 
@@ -628,11 +676,37 @@ return view.extend({
 		o.default = '600';
 		o.rmempty = true;
 
-		// 添加持久化历史数据选项
-		o = s.option(form.Flag, 'traffic_persist_history', getTranslation('持久化历史数据', language),
-			getTranslation('启用数据持久化功能', language));
+		// 添加主环持久化选项（实时流量）
+		o = s.option(form.Flag, 'traffic_persist_main_ring', getTranslation('实时流量持久化', language),
+			getTranslation('启用实时流量数据持久化', language));
 		o.default = '0';
 		o.rmempty = false;
+
+		// 添加实时流量周期设置
+		o = s.option(form.ListValue, 'traffic_main_ring_retention_seconds', getTranslation('实时流量周期', language),
+		getTranslation('设置实时流量数据的采集周期', language));
+		o.value('60', getTranslation('1 分钟', language));
+		o.value('300', getTranslation('5 分钟', language));
+		o.value('600', getTranslation('10 分钟', language));
+		o.value('1200', getTranslation('20 分钟', language));
+		o.value('1800', getTranslation('30 分钟', language));
+		o.default = '600';
+		o.rmempty = false;
+		o.depends('traffic_persist_main_ring', '1');
+
+
+		// 添加日环持久化选项（最近24小时）
+		o = s.option(form.Flag, 'traffic_persist_day_ring', getTranslation('最近24小时流量持久化', language),
+			getTranslation('启用最近24小时流量数据持久化', language));
+		o.default = '0';
+		o.rmempty = false;
+
+		// 添加周环持久化选项（最近7天）
+		o = s.option(form.Flag, 'traffic_persist_week_ring', getTranslation('最近7天流量持久化', language),
+			getTranslation('启用最近7天流量数据持久化', language));
+		o.default = '0';
+		o.rmempty = false;
+
 
 		// 添加数据 flush 间隔（秒）
 		o = s.option(form.ListValue, 'traffic_flush_interval_seconds', getTranslation('数据 flush 间隔', language),
@@ -648,22 +722,10 @@ return view.extend({
 		o.value('7200', getTranslation('2 小时', language));
 		o.default = '600';
 		o.rmempty = false;
-		o.depends('traffic_persist_history', '1');
-
-
-		// 添加历史流量周期（秒）
-		o = s.option(form.ListValue, 'traffic_retention_seconds', getTranslation('历史流量周期', language),
-			getTranslation('设置历史流量数据周期', language));
-		o.value('60', getTranslation('1 分钟', language));
-		o.value('300', getTranslation('5 分钟', language));
-		o.value('600', getTranslation('10 分钟', language));
-		o.value('900', getTranslation('15 分钟', language));
-		o.value('1200', getTranslation('20 分钟', language));
-		o.value('1500', getTranslation('25 分钟', language));
-		o.value('1800', getTranslation('30 分钟', language));
-		o.default = '600';
-		o.rmempty = false;
-
+		// 当任何持久化选项启用时显示 flush 间隔设置
+		o.depends('traffic_persist_main_ring', '1');
+		o.depends('traffic_persist_day_ring', '1');
+		o.depends('traffic_persist_week_ring', '1');
 
 
 		// 3. 连接监控设置部分 (connections)
