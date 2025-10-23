@@ -329,6 +329,8 @@ const translations = {
         '实时': 'Real-time',
         '最近1天': 'Last 24 Hours',
         '最近7天': 'Last 7 Days',
+        '最近1月': 'Last 30 Days',
+        '最近1年': 'Last 12 Months',
         '峰值速率': 'Peak Rate',
         'WAN 上传峰值': 'WAN Upload Peak',
         'WAN 下载峰值': 'WAN Download Peak'
@@ -431,6 +433,8 @@ const translations = {
         '实时': 'Temps réel',
         '最近1天': 'Dernières 24h',
         '最近7天': 'Derniers 7 jours',
+        '最近1月': 'Dernier mois',
+        '最近1年': 'Dernière année',
         '峰值速率': 'Débit de pointe',
         'WAN 上传峰值': 'Pic téléversement WAN',
         'WAN 下载峰值': 'Pic téléchargement WAN'
@@ -533,6 +537,8 @@ const translations = {
         '实时': 'リアルタイム',
         '最近1天': '過去24時間',
         '最近7天': '過去7日間',
+        '最近1月': '過去30日間',
+        '最近1年': '過去12ヶ月間',
         '峰值速率': 'ピーク速度',
         'WAN 上传峰值': 'WANアップロードピーク',
         'WAN 下载峰值': 'WANダウンロードピーク'
@@ -635,6 +641,8 @@ const translations = {
         '实时': 'В реальном времени',
         '最近1天': 'За 24 часа',
         '最近7天': 'За 7 дней',
+        '最近1月': 'За 30 дней',
+        '最近1年': 'За 12 месяцев',
         '峰值速率': 'Пиковая скорость',
         'WAN 上传峰值': 'Пик отправки WAN',
         'WAN 下载峰值': 'Пик загрузки WAN'
