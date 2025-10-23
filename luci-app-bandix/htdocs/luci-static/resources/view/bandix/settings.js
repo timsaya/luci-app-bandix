@@ -64,6 +64,10 @@ const translations = {
 		'启用最近24小时流量数据持久化': '启用最近24小时流量数据的持久化存储（固定1分钟采样间隔）',
 		'最近7天流量持久化': '最近7天流量持久化',
 		'启用最近7天流量数据持久化': '启用最近7天流量数据的持久化存储（固定5分钟采样间隔）',
+		'最近一月流量持久化': '最近一月流量持久化',
+		'启用最近一月流量数据持久化': '启用最近一月流量数据的持久化存储（固定15分钟采样间隔）',
+		'最近一年流量持久化': '最近一年流量持久化',
+		'启用最近一年流量数据持久化': '启用最近一年流量数据的持久化存储（固定30分钟采样间隔）',
 		'实时流量周期': '实时流量周期',
 		'设置实时流量数据的采集周期': '设置实时流量数据的采集周期，影响数据精度和存储空间'
 	},
@@ -125,6 +129,10 @@ const translations = {
 		'启用最近24小时流量数据持久化': '啟用最近24小時流量數據的持久化存儲（固定1分鐘採樣間隔）',
 		'最近7天流量持久化': '最近7天流量持久化',
 		'启用最近7天流量数据持久化': '啟用最近7天流量數據的持久化存儲（固定5分鐘採樣間隔）',
+		'最近一月流量持久化': '最近一月流量持久化',
+		'启用最近一月流量数据持久化': '啟用最近一月流量數據的持久化存儲（固定15分鐘採樣間隔）',
+		'最近一年流量持久化': '最近一年流量持久化',
+		'启用最近一年流量数据持久化': '啟用最近一年流量數據的持久化存儲（固定30分鐘採樣間隔）',
 		'实时流量周期': '實時流量週期',
 		'设置实时流量数据的采集周期': '設定實時流量數據的採集週期，影響數據精度和存儲空間'
 	},
@@ -186,6 +194,10 @@ const translations = {
 		'启用最近24小时流量数据持久化': 'Enable last 24 hours traffic data persistence (fixed 1-minute sampling interval)',
 		'最近7天流量持久化': 'Last 7 Days Traffic Persistence',
 		'启用最近7天流量数据持久化': 'Enable last 7 days traffic data persistence (fixed 5-minute sampling interval)',
+		'最近一月流量持久化': 'Last 30 Days Traffic Persistence',
+		'启用最近一月流量数据持久化': 'Enable last 30 days traffic data persistence (fixed 15-minute sampling interval)',
+		'最近一年流量持久化': 'Last 365 Days Traffic Persistence',
+		'启用最近一年流量数据持久化': 'Enable last 365 days traffic data persistence (fixed 30-minute sampling interval)',
 		'实时流量周期': 'Real-time Traffic Cycle',
 		'设置实时流量数据的采集周期': 'Set the collection cycle for real-time traffic data, affects data accuracy and storage space'
 	},
@@ -247,6 +259,10 @@ const translations = {
 		'启用最近24小时流量数据持久化': 'Activer la persistance des données de trafic des 24 dernières heures (intervalle d\'échantillonnage fixe de 1 minute)',
 		'最近7天流量持久化': 'Persistance du Trafic des 7 Derniers Jours',
 		'启用最近7天流量数据持久化': 'Activer la persistance des données de trafic des 7 derniers jours (intervalle d\'échantillonnage fixe de 5 minutes)',
+		'最近一月流量持久化': 'Persistance du Trafic des 30 Derniers Jours',
+		'启用最近一月流量数据持久化': 'Activer la persistance des données de trafic des 30 derniers jours (intervalle d\'échantillonnage fixe de 15 minutes)',
+		'最近一年流量持久化': 'Persistance du Trafic des 365 Derniers Jours',
+		'启用最近一年流量数据持久化': 'Activer la persistance des données de trafic des 365 derniers jours (intervalle d\'échantillonnage fixe de 30 minutes)',
 		'实时流量周期': 'Cycle du Trafic en Temps Réel',
 		'设置实时流量数据的采集周期': 'Définir le cycle de collecte des données de trafic en temps réel, affecte la précision des données et l\'espace de stockage'
 	},
@@ -308,6 +324,10 @@ const translations = {
 		'启用最近24小时流量数据持久化': '過去24時間トラフィックデータの永続化を有効にする（固定1分サンプリング間隔）',
 		'最近7天流量持久化': '過去7日間トラフィック永続化',
 		'启用最近7天流量数据持久化': '過去7日間トラフィックデータの永続化を有効にする（固定5分サンプリング間隔）',
+		'最近一月流量持久化': '過去30日間トラフィック永続化',
+		'启用最近一月流量数据持久化': '過去30日間トラフィックデータの永続化を有効にする（固定15分サンプリング間隔）',
+		'最近一年流量持久化': '過去365日間トラフィック永続化',
+		'启用最近一年流量数据持久化': '過去365日間トラフィックデータの永続化を有効にする（固定30分サンプリング間隔）',
 		'实时流量周期': 'リアルタイムトラフィック周期',
 		'设置实时流量数据的采集周期': 'リアルタイムトラフィックデータの収集周期を設定、データ精度とストレージ容量に影響'
 	},
@@ -369,6 +389,10 @@ const translations = {
 		'启用最近24小时流量数据持久化': 'Включить персистентность данных трафика за последние 24 часа (фиксированный интервал выборки 1 минута)',
 		'最近7天流量持久化': 'Персистентность Трафика за Последние 7 Дней',
 		'启用最近7天流量数据持久化': 'Включить персистентность данных трафика за последние 7 дней (фиксированный интервал выборки 5 минут)',
+		'最近一月流量持久化': 'Персистентность Трафика за Последние 30 Дней',
+		'启用最近一月流量数据持久化': 'Включить персистентность данных трафика за последние 30 дней (фиксированный интервал выборки 15 минут)',
+		'最近一年流量持久化': 'Персистентность Трафика за Последние 365 Дней',
+		'启用最近一年流量数据持久化': 'Включить персистентность данных трафика за последние 365 дней (фиксированный интервал выборки 30 минут)',
 		'实时流量周期': 'Цикл Трафика в Реальном Времени',
 		'设置实时流量数据的采集周期': 'Установить цикл сбора данных трафика в реальном времени, влияет на точность данных и пространство хранения'
 	}
@@ -692,7 +716,6 @@ return view.extend({
 		o.value('1800', getTranslation('30 分钟', language));
 		o.default = '600';
 		o.rmempty = false;
-		o.depends('traffic_persist_main_ring', '1');
 
 
 		// 添加日环持久化选项（最近24小时）
@@ -704,6 +727,18 @@ return view.extend({
 		// 添加周环持久化选项（最近7天）
 		o = s.option(form.Flag, 'traffic_persist_week_ring', getTranslation('最近7天流量持久化', language),
 			getTranslation('启用最近7天流量数据持久化', language));
+		o.default = '0';
+		o.rmempty = false;
+
+		// 添加月环持久化选项（最近30天）
+		o = s.option(form.Flag, 'traffic_persist_month_ring', getTranslation('最近一月流量持久化', language),
+			getTranslation('启用最近一月流量数据持久化', language));
+		o.default = '0';
+		o.rmempty = false;
+
+		// 添加年环持久化选项（最近365天）
+		o = s.option(form.Flag, 'traffic_persist_year_ring', getTranslation('最近一年流量持久化', language),
+			getTranslation('启用最近一年流量数据持久化', language));
 		o.default = '0';
 		o.rmempty = false;
 
@@ -726,6 +761,8 @@ return view.extend({
 		o.depends('traffic_persist_main_ring', '1');
 		o.depends('traffic_persist_day_ring', '1');
 		o.depends('traffic_persist_week_ring', '1');
+		o.depends('traffic_persist_month_ring', '1');
+		o.depends('traffic_persist_year_ring', '1');
 
 
 		// 3. 连接监控设置部分 (connections)

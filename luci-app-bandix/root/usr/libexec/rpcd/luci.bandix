@@ -11,6 +11,8 @@ readonly BANDIX_LIMITS_API="$BANDIX_API_BASE/api/traffic/limits"
 readonly BANDIX_METRICS_API="$BANDIX_API_BASE/api/traffic/metrics"
 readonly BANDIX_METRICS_DAY_API="$BANDIX_API_BASE/api/traffic/metrics/day"
 readonly BANDIX_METRICS_WEEK_API="$BANDIX_API_BASE/api/traffic/metrics/week"
+readonly BANDIX_METRICS_MONTH_API="$BANDIX_API_BASE/api/traffic/metrics/month"
+readonly BANDIX_METRICS_YEAR_API="$BANDIX_API_BASE/api/traffic/metrics/year"
 readonly BANDIX_CONNECTION_API="$BANDIX_API_BASE/api/connection/devices"
 
 # 通用函数：创建简单的JSON响应
@@ -168,6 +170,76 @@ get_metrics_week() {
     fi
 }
 
+# 获取月指标（可选MAC）
+get_metrics_month() {
+    local mac="$1"
+    local url="$BANDIX_METRICS_MONTH_API"
+    if [ -n "$mac" ]; then
+        # 转义MAC
+        local mac_escaped=$(echo "$mac" | sed 's/\//\\\//g')
+        url="$url?mac=$mac_escaped"
+    fi
+
+    # logger "luci.bandix.metrics.month: entering mac=$mac url=$url"
+    local api_result=$(curl -s --connect-timeout 1 --max-time 3 "$url" 2>/dev/null)
+    local curl_exit_code=$?
+    # logger "luci.bandix.metrics.month: curl finished with exit code: $curl_exit_code"
+    
+    if [ $curl_exit_code -ne 0 ] || [ -z "$api_result" ]; then
+        # logger "luci.bandix.metrics.month: curl failed or empty response, returning empty metrics"
+        # 返回空结果（月指标格式）
+        echo '{"retention_seconds":2592000,"tier":"month","mac":"","metrics":[]}'
+        return
+    fi
+    
+    # 使用 jsonfilter 提取 data 部分
+    local data_part=$(echo "$api_result" | jsonfilter -e '$.data' 2>/dev/null)
+    if [ -n "$data_part" ]; then
+        local data_size=${#data_part}
+        # logger "luci.bandix.metrics.month: extracted data part using jsonfilter, size: $data_size bytes"
+        echo "$data_part"
+        return
+    else
+        # logger "luci.bandix.metrics.month: jsonfilter failed to extract data part"
+        echo '{"retention_seconds":2592000,"tier":"month","mac":"","metrics":[]}'
+    fi
+}
+
+# 获取年指标（可选MAC）
+get_metrics_year() {
+    local mac="$1"
+    local url="$BANDIX_METRICS_YEAR_API"
+    if [ -n "$mac" ]; then
+        # 转义MAC
+        local mac_escaped=$(echo "$mac" | sed 's/\//\\\//g')
+        url="$url?mac=$mac_escaped"
+    fi
+
+    # logger "luci.bandix.metrics.year: entering mac=$mac url=$url"
+    local api_result=$(curl -s --connect-timeout 1 --max-time 3 "$url" 2>/dev/null)
+    local curl_exit_code=$?
+    # logger "luci.bandix.metrics.year: curl finished with exit code: $curl_exit_code"
+    
+    if [ $curl_exit_code -ne 0 ] || [ -z "$api_result" ]; then
+        # logger "luci.bandix.metrics.year: curl failed or empty response, returning empty metrics"
+        # 返回空结果（年指标格式）
+        echo '{"retention_seconds":31536000,"tier":"year","mac":"","metrics":[]}'
+        return
+    fi
+    
+    # 使用 jsonfilter 提取 data 部分
+    local data_part=$(echo "$api_result" | jsonfilter -e '$.data' 2>/dev/null)
+    if [ -n "$data_part" ]; then
+        local data_size=${#data_part}
+        # logger "luci.bandix.metrics.year: extracted data part using jsonfilter, size: $data_size bytes"
+        echo "$data_part"
+        return
+    else
+        # logger "luci.bandix.metrics.year: jsonfilter failed to extract data part"
+        echo '{"retention_seconds":31536000,"tier":"year","mac":"","metrics":[]}'
+    fi
+}
+
 # 设置设备限速
 set_device_rate_limit() {
 	local mac="$1"
@@ -313,6 +385,14 @@ case "$1" in
 		json_add_string "mac"
 		json_close_object
 		
+		json_add_object "getMetricsMonth"
+		json_add_string "mac"
+		json_close_object
+		
+		json_add_object "getMetricsYear"
+		json_add_string "mac"
+		json_close_object
+		
 		json_add_object "setRateLimit"
 		json_add_string "mac"
 		json_add_int "wide_rx_rate_limit"
@@ -398,6 +478,48 @@ case "$1" in
 					# logger "luci.bandix: received argv mac: $mac"
 				fi
 				get_metrics_week "$mac"
+				;;
+			getMetricsMonth)
+				# logger "luci.bandix: getMetricsMonth called"
+				# 读取参数：优先 STDIN（带超时，避免阻塞），其次位置参数（$3）
+				mac=""
+				input=""
+				# 尝试读取一行 STDIN，1 秒超时以避免在无输入场景下阻塞
+				if read -t 1 -r input; then
+					:
+				fi
+				if [ -n "$input" ]; then
+					# logger "luci.bandix: received input: $input"
+					# 支持数组或对象两种风格
+					mac="$(echo "$input" | jsonfilter -e '$[0]' 2>/dev/null)"
+					[ -z "$mac" ] && mac="$(echo "$input" | jsonfilter -e '$.mac' 2>/dev/null)"
+				else
+					# 某些环境不会通过 STDIN 传参，改为读取位置参数
+					[ -n "$3" ] && mac="$3"
+					# logger "luci.bandix: received argv mac: $mac"
+				fi
+				get_metrics_month "$mac"
+				;;
+			getMetricsYear)
+				# logger "luci.bandix: getMetricsYear called"
+				# 读取参数：优先 STDIN（带超时，避免阻塞），其次位置参数（$3）
+				mac=""
+				input=""
+				# 尝试读取一行 STDIN，1 秒超时以避免在无输入场景下阻塞
+				if read -t 1 -r input; then
+					:
+				fi
+				if [ -n "$input" ]; then
+					# logger "luci.bandix: received input: $input"
+					# 支持数组或对象两种风格
+					mac="$(echo "$input" | jsonfilter -e '$[0]' 2>/dev/null)"
+					[ -z "$mac" ] && mac="$(echo "$input" | jsonfilter -e '$.mac' 2>/dev/null)"
+				else
+					# 某些环境不会通过 STDIN 传参，改为读取位置参数
+					[ -n "$3" ] && mac="$3"
+					# logger "luci.bandix: received argv mac: $mac"
+				fi
+				get_metrics_year "$mac"
 				;;
 			setRateLimit)
 				# logger "luci.bandix: setRateLimit called"

@@ -8,6 +8,8 @@
 					"getMetrics",
 					"getMetricsDay",
 					"getMetricsWeek",
+					"getMetricsMonth",
+					"getMetricsYear",
 					"setRateLimit",
 					"getConnection",
 					"setHostname"
@@ -25,6 +27,8 @@
 					"getMetrics",
 					"getMetricsDay",
 					"getMetricsWeek",
+					"getMetricsMonth",
+					"getMetricsYear",
 					"getConnection",
 					"setHostname"
 				]
