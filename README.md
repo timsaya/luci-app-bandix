@@ -25,7 +25,7 @@ LuCI Bandix is developed based on the LuCI framework, offering network traffic m
 
 ## System Requirements
 
-- **OpenWrt Version**: Recommended OpenWrt 24.10 and above
+- **OpenWrt Version**: Recommended OpenWrt 24.10 and above, or Linux kernel 6.x and above
 - **Package Format Support**: Supports APK and IPK package formats
 
 
@@ -49,8 +49,7 @@ LuCI Bandix is developed based on the LuCI framework, offering network traffic m
 
 luci-app-bandix requires the following dependency packages:
 
-- **curl**: HTTP client library for network requests
-- **luci-lib-jsonc**: JSON parsing library for data processing
+`curl` , `luci-lib-jsonc` , `jsonfilter` , `jshn`
 
 These dependencies will be automatically installed when installing luci-app-bandix, but some firmware may require manual installation of these dependency packages.
 
