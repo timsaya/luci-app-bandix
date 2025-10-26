@@ -803,6 +803,14 @@ function filterLanIPv6(ipv6Addresses) {
     return lanAddresses.slice(0, 2);
 }
 
+var callGetDhcpHostnames = rpc.declare({
+    object: 'luci.bandix',
+    method: 'getDhcpHostnames',
+    expect: {}
+});
+
+var dhcpHostnameMap = {};
+
 var callStatus = rpc.declare({
     object: 'luci.bandix',
     method: 'getStatus',
@@ -3167,6 +3175,24 @@ return view.extend({
             return refreshHistory();
         }, 1);
 
+        // 从DHCP租约获取主机名映射
+        function loadDhcpHostnames() {
+            return callGetDhcpHostnames().then(function(result) {
+                if (result && result.hostnames) {
+                    dhcpHostnameMap = result.hostnames;
+                    console.log("Loaded DHCP hostnames:", dhcpHostnameMap);
+                }
+                return result;
+            }).catch(function(error) {
+                console.error("Failed to load DHCP hostnames:", error);
+                return {};
+            });
+        }
+
+        // 根据MAC地址获取主机名
+        function getHostnameByMac(mac) {
+            return dhcpHostnameMap[mac] || dhcpHostnameMap[mac.toLowerCase()] || null;
+        }
 
 
         // 定义更新设备数据的函数
@@ -3544,6 +3570,9 @@ return view.extend({
 
         // 轮询获取数据
         poll.add(updateDeviceData, 1);
+
+        // 加载DHCP主机名（只在页面加载时获取一次）
+        loadDhcpHostnames();
 
         // 立即执行一次，不等待轮询
         updateDeviceData();
