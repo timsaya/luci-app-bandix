@@ -16,6 +16,14 @@ readonly BANDIX_METRICS_YEAR_API="$BANDIX_API_BASE/api/traffic/metrics/year"
 readonly BANDIX_CONNECTION_API="$BANDIX_API_BASE/api/connection/devices"
 
 # 通用函数：创建简单的JSON响应
+get_dhcp_hostnames() {
+	json_init; json_add_object "hostnames"
+	[ -f /tmp/dhcp.leases ] && while read _ m _ h _; do
+		[ "$h" ] && [ "$h" != "*" ] && json_add_string "$m" "$h"
+	done < /tmp/dhcp.leases
+	json_close_object; json_dump
+}
+
 make_value() {
 	json_init
 	json_add_string "$1" "$2"
@@ -403,10 +411,13 @@ case "$1" in
 		json_add_string "mac"
 		json_add_string "hostname"
 		json_close_object
-		
+
 		json_add_object "getConnection"
 		json_close_object
-		
+
+		json_add_object "getDhcpHostnames"
+		json_close_object
+
 		json_dump
 		json_cleanup
 		;;
@@ -594,6 +605,9 @@ case "$1" in
 			getConnection)
 				# logger "luci.bandix: getConnection called"
 				get_connection_devices
+				;;
+			getDhcpHostnames)
+			get_dhcp_hostnames
 				;;
 		esac
 		;;
