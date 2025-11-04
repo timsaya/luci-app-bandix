@@ -921,7 +921,7 @@ return view.extend({
             
             .bandix-table th {
                 background-color: ${darkMode ? '#333333' : '#f9fafb'};
-                padding: 10px 12px;
+                padding: 6px 12px;
                 text-align: left;
                 font-weight: 600;
                 color: ${darkMode ? '#e2e8f0' : '#374151'};
@@ -1000,7 +1000,7 @@ return view.extend({
             }
             
             .bandix-table td {
-                padding: 10px 12px;
+                padding: 6px 12px;
                 border: none;
                 vertical-align: middle;
                 word-wrap: break-word;
