@@ -371,7 +371,7 @@ return view.extend({
         var style = E('style', {}, `
             .bandix-connection-container {
                 margin: 0;
-                padding: 24px;
+                padding: 8px;
                 background-color: ${darkMode ? '#1E1E1E' : '#f8fafc'};
                 min-height: calc(100vh - 100px);
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;

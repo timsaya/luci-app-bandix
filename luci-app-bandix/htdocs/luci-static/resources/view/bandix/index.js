@@ -25,6 +25,7 @@ const translations = {
         '界面语言': '界面语言',
         '选择 Bandix 流量监控的显示语言': '选择 Bandix 流量监控的显示语言',
         '设备信息': '设备信息',
+        '设备列表': '设备列表',
         'LAN 流量': 'LAN 流量',
         'WAN 流量': 'WAN 流量',
         '限速设置': '限速设置',
@@ -103,7 +104,9 @@ const translations = {
         '升序': '升序',
         '降序': '降序',
         '按速度排序': '按速度排序',
-        '按用量排序': '按用量排序'
+        '按用量排序': '按用量排序',
+        '简易模式': '简易模式',
+        '详细模式': '详细模式'
     },
     'zh-tw': {
         'Bandix 流量监控': 'Bandix 流量監控',
@@ -122,6 +125,7 @@ const translations = {
         '界面语言': '介面語言',
         '选择 Bandix 流量监控的显示语言': '選擇 Bandix 流量監控的顯示語言',
         '设备信息': '設備資訊',
+        '设备列表': '設備列表',
         'LAN 流量': '局域網流量',
         'WAN 流量': '跨網路流量',
         '限速设置': '限速設定',
@@ -200,7 +204,9 @@ const translations = {
         '升序': '升序',
         '降序': '降序',
         '按速度排序': '按速度排序',
-        '按用量排序': '按用量排序'
+        '按用量排序': '按用量排序',
+        '简易模式': '簡易模式',
+        '详细模式': '詳細模式'
     },
     'en': {
         'Bandix 流量监控': 'Bandix Traffic Monitor',
@@ -219,6 +225,7 @@ const translations = {
         '界面语言': 'Interface Language',
         '选择 Bandix 流量监控的显示语言': 'Select the display language for Bandix Traffic Monitor',
         '设备信息': 'Device Info',
+        '设备列表': 'Device List',
         'LAN 流量': 'LAN Traffic',
         'WAN 流量': 'WAN Traffic',
         '限速设置': 'Rate Limit',
@@ -297,7 +304,9 @@ const translations = {
         '升序': 'Ascending',
         '降序': 'Descending',
         '按速度排序': 'Sort by Speed',
-        '按用量排序': 'Sort by Traffic'
+        '按用量排序': 'Sort by Traffic',
+        '简易模式': 'Simple Mode',
+        '详细模式': 'Detailed Mode'
     },
     'fr': {
         'Bandix 流量监控': 'Moniteur de Trafic Bandix',
@@ -316,6 +325,7 @@ const translations = {
         '界面语言': 'Langue de l\'interface',
         '选择 Bandix 流量监控的显示语言': 'Sélectionner la langue d\'affichage pour le Moniteur de Trafic Bandix',
         '设备信息': 'Informations sur l\'appareil',
+        '设备列表': 'Liste des appareils',
         'LAN 流量': 'Trafic LAN',
         'WAN 流量': 'Trafic WAN',
         '限速设置': 'Limitation de débit',
@@ -389,7 +399,9 @@ const translations = {
         '升序': 'Croissant',
         '降序': 'Décroissant',
         '按速度排序': 'Trier par vitesse',
-        '按用量排序': 'Trier par volume'
+        '按用量排序': 'Trier par volume',
+        '简易模式': 'Mode simple',
+        '详细模式': 'Mode détaillé'
     },
     'ja': {
         'Bandix 流量监控': 'Bandix トラフィックモニター',
@@ -408,6 +420,7 @@ const translations = {
         '界面语言': 'インターフェース言語',
         '选择 Bandix 流量监控的显示语言': 'Bandix トラフィックモニターの表示言語を選択',
         '设备信息': 'デバイス情報',
+        '设备列表': 'デバイスリスト',
         'LAN 流量': 'LAN トラフィック',
         'WAN 流量': 'WAN トラフィック',
         '限速设置': '速度制限',
@@ -481,7 +494,9 @@ const translations = {
         '升序': '昇順',
         '降序': '降順',
         '按速度排序': '速度順',
-        '按用量排序': '使用量順'
+        '按用量排序': '使用量順',
+        '简易模式': 'シンプルモード',
+        '详细模式': '詳細モード'
     },
     'ru': {
         'Bandix 流量监控': 'Монитор Трафика Bandix',
@@ -500,6 +515,7 @@ const translations = {
         '界面语言': 'Язык интерфейса',
         '选择 Bandix 流量监控的显示语言': 'Выберите язык отображения для Монитора Трафика Bandix',
         '设备信息': 'Информация об устройстве',
+        '设备列表': 'Список устройств',
         'LAN 流量': 'Трафик LAN',
         'WAN 流量': 'Трафик WAN',
         '限速设置': 'Ограничение скорости',
@@ -573,7 +589,9 @@ const translations = {
         '升序': 'По возрастанию',
         '降序': 'По убыванию',
         '按速度排序': 'По скорости',
-        '按用量排序': 'По объёму'
+        '按用量排序': 'По объёму',
+        '简易模式': 'Простой режим',
+        '详细模式': 'Подробный режим'
     }
 };
 
@@ -781,7 +799,7 @@ return view.extend({
         // 添加现代化样式，支持暗黑模式
         var style = E('style', {}, `
             .bandix-container {
-                padding: 24px;
+                padding: 8px;
                 background-color: ${darkMode ? '#1E1E1E' : '#f8fafc'};
                 min-height: 100vh;
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -800,6 +818,48 @@ return view.extend({
                 font-weight: 700;
                 color: ${darkMode ? '#f1f5f9' : '#1f2937'};
                 margin: 0;
+            }
+            
+            .bandix-header-right {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            
+            .device-mode-group {
+                display: inline-flex;
+                border-radius: 4px;
+                overflow: hidden;
+                border: 1px solid ${darkMode ? '#252526' : '#d1d5db'};
+            }
+            
+            .device-mode-btn {
+                background-color: ${darkMode ? '#333333' : '#ffffff'};
+                border: none;
+                border-right: 1px solid ${darkMode ? '#252526' : '#d1d5db'};
+                padding: 0 8px;
+                font-size: 0.75rem;
+                line-height: 1.4;
+                color: ${darkMode ? '#94a3b8' : '#6b7280'};
+                cursor: pointer;
+                user-select: none;
+                transition: all 0.15s ease;
+                white-space: nowrap;
+                height: 20px;
+            }
+            
+            .device-mode-btn:last-child {
+                border-right: none;
+            }
+            
+            .device-mode-btn:hover:not(.active) {
+                background-color: ${darkMode ? '#3a3a3a' : '#f9fafb'};
+                color: ${darkMode ? '#e2e8f0' : '#374151'};
+            }
+            
+            .device-mode-btn.active {
+                background-color: #3b82f6;
+                color: white;
             }
             
             .bandix-badge {
@@ -833,7 +893,7 @@ return view.extend({
                 border-radius: 12px;
                 box-shadow: 0 1px 3px 0 rgba(0, 0, 0, ${darkMode ? '0.3' : '0.1'});
                 overflow: hidden;
-                margin-bottom: 24px;
+                margin-bottom: 8px;
                 border: 1px solid ${darkMode ? '#252526' : '#3333331c'};
             }
             
@@ -861,7 +921,7 @@ return view.extend({
             
             .bandix-table th {
                 background-color: ${darkMode ? '#333333' : '#f9fafb'};
-                padding: 16px 20px;
+                padding: 10px 12px;
                 text-align: left;
                 font-weight: 600;
                 color: ${darkMode ? '#e2e8f0' : '#374151'};
@@ -940,7 +1000,7 @@ return view.extend({
             }
             
             .bandix-table td {
-                padding: 16px 20px;
+                padding: 10px 12px;
                 border: none;
                 vertical-align: middle;
                 word-wrap: break-word;
@@ -981,7 +1041,7 @@ return view.extend({
             .device-info {
                 display: flex;
                 flex-direction: column;
-                gap: 4px;
+                gap: 2px;
             }
             
             .device-name {
@@ -1026,7 +1086,7 @@ return view.extend({
             .traffic-info {
                 display: flex;
                 flex-direction: column;
-                gap: 8px;
+                gap: 4px;
             }
             
             .traffic-row {
@@ -1107,7 +1167,7 @@ return view.extend({
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
                 gap: 20px;
-                margin-bottom: 24px;
+                margin-bottom: 8px;
             }
             
             .stats-card {
@@ -1506,6 +1566,21 @@ return view.extend({
 
             // 主要内容卡片
             E('div', { 'class': 'bandix-card' }, [
+                E('div', { 'class': 'bandix-card-header history-header' }, [
+                    E('div', { 'class': 'bandix-card-title' }, [
+                        getTranslation('设备列表', language)
+                    ]),
+                    E('div', { 'class': 'device-mode-group' }, [
+                        E('button', { 
+                            'class': 'device-mode-btn' + (localStorage.getItem('bandix_device_mode') !== 'detailed' ? ' active' : ''),
+                            'data-mode': 'simple'
+                        }, getTranslation('简易模式', language)),
+                        E('button', { 
+                            'class': 'device-mode-btn' + (localStorage.getItem('bandix_device_mode') === 'detailed' ? ' active' : ''),
+                            'data-mode': 'detailed'
+                        }, getTranslation('详细模式', language))
+                    ])
+                ]),
                 E('div', { 'id': 'traffic-status' }, [
                     E('table', { 'class': 'bandix-table' }, [
                         E('thead', {}, [
@@ -1522,6 +1597,32 @@ return view.extend({
                 ])
             ])
         ]);
+
+        // 设备信息模式切换
+        var deviceModeButtons = view.querySelectorAll('.device-mode-btn');
+        
+        deviceModeButtons.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var newMode = this.getAttribute('data-mode');
+                
+                // 如果已经是当前模式，不做任何操作
+                if (this.classList.contains('active')) {
+                    return;
+                }
+                
+                // 保存到 localStorage
+                localStorage.setItem('bandix_device_mode', newMode);
+                
+                // 更新按钮状态
+                deviceModeButtons.forEach(function(b) {
+                    b.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // 刷新设备列表以应用新的显示模式
+                updateDeviceData();
+            });
+        });
 
         // 创建限速设置模态框
         var modal = E('div', { 'class': 'modal-overlay', 'id': 'rate-limit-modal' }, [
@@ -3028,6 +3129,10 @@ function formatRetentionSeconds(seconds, language) {
                         showRateLimitModal(device);
                     });
 
+					// 获取当前显示模式
+					var deviceMode = localStorage.getItem('bandix_device_mode') || 'simple';
+					var isDetailedMode = deviceMode === 'detailed';
+
 					// 构建设备信息元素
 					var deviceInfoElements = [
 						E('div', { 'class': 'device-name' }, [
@@ -3039,28 +3144,31 @@ function formatRetentionSeconds(seconds, language) {
 						E('div', { 'class': 'device-ip' }, device.ip)
 					];
 
-					// 只有当有设备有 IPv6 时才添加 IPv6 行
-					if (hasAnyIPv6) {
-						var lanIPv6 = filterLanIPv6(device.ipv6_addresses);
-						if (lanIPv6.length > 0) {
-							var allIPv6 = device.ipv6_addresses ? device.ipv6_addresses.join(', ') : '';
-							deviceInfoElements.push(E('div', { 
-								'class': 'device-ipv6',
-								'title': allIPv6
-							}, lanIPv6.join(', ')));
-						} else {
-							deviceInfoElements.push(E('div', { 'class': 'device-ipv6' }, '-'));
+					// 详细模式下显示更多信息
+					if (isDetailedMode) {
+						// 只有当有设备有 IPv6 时才添加 IPv6 行
+						if (hasAnyIPv6) {
+							var lanIPv6 = filterLanIPv6(device.ipv6_addresses);
+							if (lanIPv6.length > 0) {
+								var allIPv6 = device.ipv6_addresses ? device.ipv6_addresses.join(', ') : '';
+								deviceInfoElements.push(E('div', { 
+									'class': 'device-ipv6',
+									'title': allIPv6
+								}, lanIPv6.join(', ')));
+							} else {
+								deviceInfoElements.push(E('div', { 'class': 'device-ipv6' }, '-'));
+							}
 						}
-					}
 
-					// 添加 MAC 和最后上线信息
-					deviceInfoElements.push(
-						E('div', { 'class': 'device-mac' }, device.mac),
-						E('div', { 'class': 'device-last-online' }, [
-							E('span', { 'style': 'color: #6b7280; font-size: 0.75rem;' }, getTranslation('最后上线', language) + ': '),
-							E('span', { 'style': 'color: #9ca3af; font-size: 0.75rem;' }, formatLastOnlineTime(device.last_online_ts, language))
-						])
-					);
+						// 添加 MAC 和最后上线信息
+						deviceInfoElements.push(
+							E('div', { 'class': 'device-mac' }, device.mac),
+							E('div', { 'class': 'device-last-online' }, [
+								E('span', { 'style': 'color: #6b7280; font-size: 0.75rem;' }, getTranslation('最后上线', language) + ': '),
+								E('span', { 'style': 'color: #9ca3af; font-size: 0.75rem;' }, formatLastOnlineTime(device.last_online_ts, language))
+							])
+						);
+					}
 
                     var row = E('tr', {}, [
                         // 设备信息
