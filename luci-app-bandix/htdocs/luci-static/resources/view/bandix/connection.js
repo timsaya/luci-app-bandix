@@ -371,10 +371,10 @@ return view.extend({
         var style = E('style', {}, `
             .bandix-connection-container {
                 margin: 0;
-                padding: 8px;
-                background-color: ${darkMode ? '#1E1E1E' : '#f8fafc'};
+                padding: 16px;
+                background-color: ${darkMode ? '#1a1a1a' : '#f8fafc'};
                 min-height: calc(100vh - 100px);
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
                 color: ${darkMode ? '#e2e8f0' : '#1f2937'};
                 border-radius: 8px;
             }
@@ -383,54 +383,65 @@ return view.extend({
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                margin-bottom: 12px;
+                margin-bottom: 20px;
             }
             
             .bandix-title {
                 font-size: 1.5rem;
-                font-weight: 700;
+                font-weight: 600;
                 color: ${darkMode ? '#f1f5f9' : '#1f2937'};
                 margin: 0;
             }
             
             .bandix-badge {
-                background-color: ${darkMode ? '#333333' : '#f3f4f6'};
-                border: 1px solid ${darkMode ? '#252526' : '#d1d5db'};
-                border-radius: 6px;
-                padding: 4px 12px;
+                background-color: ${darkMode ? '#2a2a2a' : '#f8fafc'};
+                border: 1px solid ${darkMode ? '#444444' : '#cbd5e1'};
+                border-radius: 4px;
+                padding: 4px 10px;
                 font-size: 0.875rem;
-                color: ${darkMode ? '#e2e8f0' : '#374151'};
+                color: ${darkMode ? '#d0d0d0' : '#475569'};
             }
             
             .bandix-alert {
-                background-color: ${darkMode ? '#451a03' : '#fef3c7'};
-                border: 1px solid ${darkMode ? '#92400e' : '#f59e0b'};
-                border-radius: 8px;
-                padding: 8px;
-                margin-bottom: 12px;
+                background-color: ${darkMode ? '#2a2a2a' : '#eff6ff'};
+                border-left: 3px solid ${darkMode ? '#3b82f6' : '#2563eb'};
+                border-radius: 4px;
+                padding: 10px 12px;
+                margin-bottom: 16px;
                 display: flex;
                 align-items: center;
-                gap: 8px;
-                color: ${darkMode ? '#fbbf24' : '#92400e'};
+                gap: 10px;
+                color: ${darkMode ? '#d0d0d0' : '#1e293b'};
+                font-size: 0.875rem;
             }
             
             .bandix-alert-icon {
-                color: ${darkMode ? '#fbbf24' : '#f59e0b'};
-                font-size: 1rem;
+                color: ${darkMode ? '#60a5fa' : '#2563eb'};
+                font-size: 0.875rem;
+                font-weight: 700;
+                width: 18px;
+                height: 18px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 2px solid currentColor;
+                border-radius: 50%;
+                flex-shrink: 0;
             }
             
             .bandix-card {
-                background-color: ${darkMode ? '#252526' : 'white'};
-                border-radius: 12px;
-                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, ${darkMode ? '0.3' : '0.1'});
+                background-color: ${darkMode ? '#2a2a2a' : 'white'};
+                border-radius: 8px;
+                border: 1px solid ${darkMode ? '#444444' : '#e2e8f0'};
+                box-shadow: 0 2px 8px rgba(0, 0, 0, ${darkMode ? '0.3' : '0.08'});
                 margin-bottom: 24px;
                 overflow: hidden;
             }
             
             .bandix-card-header {
-                padding: 20px 24px 16px;
-                border-bottom: 1px solid ${darkMode ? '#252526' : '#e5e7eb'};
-                background-color: ${darkMode ? '#333333' : '#fafafa'};
+                padding: 16px;
+                border-bottom: 1px solid ${darkMode ? '#444444' : '#e2e8f0'};
+                background-color: ${darkMode ? '#2a2a2a' : '#f8fafc'};
             }
             
             .bandix-card-title {
@@ -444,21 +455,22 @@ return view.extend({
             }
             
             .bandix-card-body {
-                padding: 24px;
+                padding: 0;
             }
             
             .stats-grid {
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
-                gap: 20px;
-                margin-bottom: 32px;
+                gap: 16px;
+                margin-bottom: 24px;
             }
             
             .stats-card {
-                background-color: ${darkMode ? '#252526' : 'white'};
-                border-radius: 12px;
+                background-color: ${darkMode ? '#2a2a2a' : 'white'};
+                border-radius: 8px;
                 padding: 20px;
-                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, ${darkMode ? '0.3' : '0.1'});
+                border: 1px solid ${darkMode ? '#444444' : '#e2e8f0'};
+                box-shadow: 0 2px 8px rgba(0, 0, 0, ${darkMode ? '0.3' : '0.08'});
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -467,9 +479,11 @@ return view.extend({
             
             .stats-card-title {
                 font-size: 0.875rem;
-                font-weight: 500;
-                color: ${darkMode ? '#9ca3af' : '#6b7280'};
+                font-weight: 600;
+                color: ${darkMode ? '#94a3b8' : '#64748b'};
                 margin: 0 0 12px 0;
+                text-transform: uppercase;
+                letter-spacing: 0.025em;
             }
             
             .stats-card-main-value {
@@ -513,11 +527,11 @@ return view.extend({
             }
             
             .bandix-table th {
-                background-color: ${darkMode ? '#333333' : '#f9fafb'};
-                padding: 16px 20px;
+                background-color: ${darkMode ? '#2a2a2a' : '#f8fafc'};
+                padding: 12px 16px;
                 text-align: left;
                 font-weight: 600;
-                color: ${darkMode ? '#e2e8f0' : '#374151'};
+                color: ${darkMode ? '#d0d0d0' : '#475569'};
                 border: none;
                 font-size: 0.875rem;
                 white-space: nowrap;
@@ -530,12 +544,12 @@ return view.extend({
             .bandix-table th:nth-child(5) { width: 15%; }
             
             .bandix-table td {
-                padding: 16px 20px;
-                border-bottom: 1px solid ${darkMode ? '#252526' : '#f1f5f9'};
+                padding: 12px 16px;
+                border-bottom: 1px solid ${darkMode ? '#333333' : '#f1f5f9'};
                 vertical-align: middle;
                 word-break: break-word;
                 overflow-wrap: break-word;
-                color: ${darkMode ? '#cbd5e1' : 'inherit'};
+                color: ${darkMode ? '#d0d0d0' : '#334155'};
             }
             
             
@@ -644,13 +658,13 @@ return view.extend({
                 align-items: center;
                 gap: 8px;
                 padding: 8px 16px;
-                border-radius: 6px;
+                border-radius: 4px;
                 font-size: 0.875rem;
                 font-weight: 500;
                 text-decoration: none;
                 border: none;
                 cursor: pointer;
-                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all 0.15s ease;
             }
             
             .btn-primary {
@@ -660,8 +674,6 @@ return view.extend({
             
             .btn-primary:hover {
                 background-color: #2563eb;
-                transform: translateY(-1px);
-                box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
             }
         `);
         document.head.appendChild(style);
@@ -677,7 +689,7 @@ return view.extend({
         // 检查连接监控是否启用
         if (!connectionEnabled) {
             var alertDiv = E('div', { 'class': 'bandix-alert' }, [
-                E('span', { 'class': 'bandix-alert-icon' }, '⚠'),
+                E('span', { 'class': 'bandix-alert-icon' }, '!'),
                 E('div', {}, [
                     E('strong', {}, getTranslation('连接监控未启用', language)),
                     E('p', { 'style': 'margin: 4px 0 0 0;' },
@@ -700,7 +712,7 @@ return view.extend({
 
         // 添加提示信息
         var infoAlert = E('div', { 'class': 'bandix-alert' }, [
-            E('span', { 'class': 'bandix-alert-icon' }, '⚠️'),
+            E('span', { 'class': 'bandix-alert-icon' }, '!'),
             E('span', {}, getTranslation('列表只显示局域网设备连接，数据可能和总连接数不一致。', language))
         ]);
         container.appendChild(infoAlert);

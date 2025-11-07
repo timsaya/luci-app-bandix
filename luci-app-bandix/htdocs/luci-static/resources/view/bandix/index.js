@@ -799,10 +799,10 @@ return view.extend({
         // 添加现代化样式，支持暗黑模式
         var style = E('style', {}, `
             .bandix-container {
-                padding: 8px;
-                background-color: ${darkMode ? '#1E1E1E' : '#f8fafc'};
+                padding: 16px;
+                background-color: ${darkMode ? '#1a1a1a' : '#f8fafc'};
                 min-height: 100vh;
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
                 color: ${darkMode ? '#e2e8f0' : '#1f2937'};
             }
             
@@ -810,12 +810,12 @@ return view.extend({
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                margin-bottom: 12px;
+                margin-bottom: 20px;
             }
             
             .bandix-title {
                 font-size: 1.5rem;
-                font-weight: 700;
+                font-weight: 600;
                 color: ${darkMode ? '#f1f5f9' : '#1f2937'};
                 margin: 0;
             }
@@ -830,22 +830,22 @@ return view.extend({
                 display: inline-flex;
                 border-radius: 4px;
                 overflow: hidden;
-                border: 1px solid ${darkMode ? '#252526' : '#d1d5db'};
+                border: 1px solid ${darkMode ? '#444444' : '#cbd5e1'};
             }
             
             .device-mode-btn {
-                background-color: ${darkMode ? '#333333' : '#ffffff'};
+                background-color: ${darkMode ? '#2a2a2a' : '#ffffff'};
                 border: none;
-                border-right: 1px solid ${darkMode ? '#252526' : '#d1d5db'};
-                padding: 0 8px;
-                font-size: 0.75rem;
-                line-height: 1.4;
-                color: ${darkMode ? '#94a3b8' : '#6b7280'};
+                border-right: 1px solid ${darkMode ? '#444444' : '#cbd5e1'};
+                padding: 0 12px;
+                font-size: 0.8125rem;
+                line-height: 1.8;
+                color: ${darkMode ? '#a0a0a0' : '#64748b'};
                 cursor: pointer;
                 user-select: none;
                 transition: all 0.15s ease;
                 white-space: nowrap;
-                height: 20px;
+                height: 28px;
             }
             
             .device-mode-btn:last-child {
@@ -853,8 +853,8 @@ return view.extend({
             }
             
             .device-mode-btn:hover:not(.active) {
-                background-color: ${darkMode ? '#3a3a3a' : '#f9fafb'};
-                color: ${darkMode ? '#e2e8f0' : '#374151'};
+                background-color: ${darkMode ? '#3a3a3a' : '#f1f5f9'};
+                color: ${darkMode ? '#d0d0d0' : '#475569'};
             }
             
             .device-mode-btn.active {
@@ -863,48 +863,58 @@ return view.extend({
             }
             
             .bandix-badge {
-                background-color: ${darkMode ? '#333333' : '#f3f4f6'};
-                border: 1px solid ${darkMode ? '#252526' : '#d1d5db'};
-                border-radius: 6px;
-                padding: 4px 12px;
+                background-color: ${darkMode ? '#2a2a2a' : '#f8fafc'};
+                border: 1px solid ${darkMode ? '#444444' : '#cbd5e1'};
+                border-radius: 4px;
+                padding: 4px 10px;
                 font-size: 0.875rem;
-                color: ${darkMode ? '#e2e8f0' : '#374151'};
+                color: ${darkMode ? '#d0d0d0' : '#475569'};
             }
             
             .bandix-alert {
-                background-color: ${darkMode ? '#451a03' : '#fef3c7'};
-                border: 1px solid ${darkMode ? '#92400e' : '#f59e0b'};
-                border-radius: 8px;
-                padding: 8px;
-                margin-bottom: 12px;
+                background-color: ${darkMode ? '#2a2a2a' : '#eff6ff'};
+                border-left: 3px solid ${darkMode ? '#3b82f6' : '#2563eb'};
+                border-radius: 4px;
+                padding: 10px 12px;
+                margin-bottom: 16px;
                 display: flex;
                 align-items: center;
-                gap: 8px;
-                color: ${darkMode ? '#fbbf24' : '#92400e'};
+                gap: 10px;
+                color: ${darkMode ? '#d0d0d0' : '#1e293b'};
+                font-size: 0.875rem;
             }
             
             .bandix-alert-icon {
-                color: ${darkMode ? '#fbbf24' : '#f59e0b'};
-                font-size: 1rem;
+                color: ${darkMode ? '#60a5fa' : '#2563eb'};
+                font-size: 0.875rem;
+                font-weight: 700;
+                width: 18px;
+                height: 18px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 2px solid currentColor;
+                border-radius: 50%;
+                flex-shrink: 0;
             }
             
             .bandix-card {
-                background-color: ${darkMode ? '#252526' : 'white'};
-                border-radius: 12px;
-                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, ${darkMode ? '0.3' : '0.1'});
+                background-color: ${darkMode ? '#2a2a2a' : 'white'};
+                border-radius: 8px;
+                border: 1px solid ${darkMode ? '#444444' : '#e2e8f0'};
                 overflow: hidden;
-                margin-bottom: 8px;
-                border: 1px solid ${darkMode ? '#252526' : '#3333331c'};
+                margin-bottom: 16px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, ${darkMode ? '0.3' : '0.08'});
             }
             
             .bandix-card-header {
-                padding: 20px 12px;
-                border-bottom: 1px solid ${darkMode ? '#252526' : '#e5e7eb'};
-                background-color: ${darkMode ? '#333333' : '#fafafa'};
+                padding: 16px;
+                border-bottom: 1px solid ${darkMode ? '#444444' : '#e2e8f0'};
+                background-color: ${darkMode ? '#2a2a2a' : '#f8fafc'};
             }
             
             .bandix-card-title {
-                font-size: 1.25rem;
+                font-size: 1.125rem;
                 font-weight: 600;
                 color: ${darkMode ? '#f1f5f9' : '#1f2937'};
                 margin: 0;
@@ -920,21 +930,21 @@ return view.extend({
             }
             
             .bandix-table th {
-                background-color: ${darkMode ? '#333333' : '#f9fafb'};
-                padding: 6px 12px;
+                background-color: ${darkMode ? '#2a2a2a' : '#f8fafc'};
+                padding: 10px 16px;
                 text-align: left;
                 font-weight: 600;
-                color: ${darkMode ? '#e2e8f0' : '#374151'};
+                color: ${darkMode ? '#d0d0d0' : '#475569'};
                 border: none;
                 font-size: 0.875rem;
                 cursor: pointer;
                 user-select: none;
                 position: relative;
-                transition: background-color 0.2s ease;
+                transition: background-color 0.15s ease;
             }
             
             .bandix-table th:hover {
-                background-color: ${darkMode ? '#3a3a3a' : '#f3f4f6'};
+                background-color: ${darkMode ? '#3a3a3a' : '#f1f5f9'};
             }
             
             .bandix-table th.sortable::after {
@@ -1000,12 +1010,17 @@ return view.extend({
             }
             
             .bandix-table td {
-                padding: 6px 12px;
+                padding: 12px 16px;
                 border: none;
                 vertical-align: middle;
                 word-wrap: break-word;
                 overflow-wrap: break-word;
-                color: ${darkMode ? '#cbd5e1' : 'inherit'};
+                color: ${darkMode ? '#d0d0d0' : '#334155'};
+                border-bottom: 1px solid ${darkMode ? '#333333' : '#f1f5f9'};
+            }
+            
+            .bandix-table tr:last-child td {
+                border-bottom: none;
             }
             
             .bandix-table th:nth-child(1),
@@ -1130,23 +1145,30 @@ return view.extend({
             }
             
             .limit-badge {
-                background-color: ${darkMode ? '#333333' : '#f3f4f6'};
-                color: ${darkMode ? '#94a3b8' : '#6b7280'};
-                padding: 2px 8px;
-                border-radius: 4px;
+                background-color: ${darkMode ? '#1a1a1a' : '#f8fafc'};
+                color: ${darkMode ? '#a0a0a0' : '#64748b'};
+                padding: 3px 8px;
+                border-radius: 3px;
                 font-size: 0.75rem;
                 text-align: center;
                 margin-top: 4px;
+                border: 1px solid ${darkMode ? '#444444' : '#e2e8f0'};
             }
             
             .action-button {
-                background-color: ${darkMode ? '#333333' : '#f3f4f6'};
-                border: 1px solid ${darkMode ? '#252526' : '#d1d5db'};
-                border-radius: 6px;
-                padding: 8px 12px;
+                background-color: ${darkMode ? '#2a2a2a' : '#f8fafc'};
+                border: 1px solid ${darkMode ? '#444444' : '#cbd5e1'};
+                border-radius: 4px;
+                padding: 6px 12px;
                 cursor: pointer;
                 font-size: 0.875rem;
-                color: ${darkMode ? '#e2e8f0' : 'inherit'};
+                color: ${darkMode ? '#d0d0d0' : '#475569'};
+                transition: all 0.15s ease;
+            }
+            
+            .action-button:hover {
+                background-color: ${darkMode ? '#3a3a3a' : '#e2e8f0'};
+                border-color: ${darkMode ? '#555555' : '#94a3b8'};
             }
             
             
@@ -1166,37 +1188,43 @@ return view.extend({
             .stats-grid {
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                gap: 20px;
-                margin-bottom: 8px;
+                gap: 16px;
+                margin-bottom: 16px;
             }
             
             .stats-card {
-                background-color: ${darkMode ? '#252526' : 'white'};
-                border-radius: 12px;
-                padding: 24px;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, ${darkMode ? '0.3' : '0.1'}), 0 2px 4px -1px rgba(0, 0, 0, ${darkMode ? '0.2' : '0.06'});
-                border: 1px solid ${darkMode ? '#252526' : 'transparent'};
+                background-color: ${darkMode ? '#2a2a2a' : 'white'};
+                border-radius: 8px;
+                padding: 20px;
+                border: 1px solid ${darkMode ? '#444444' : '#e2e8f0'};
                 position: relative;
                 overflow: hidden;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, ${darkMode ? '0.3' : '0.08'});
             }
             
             .stats-card-header {
                 display: flex;
                 justify-content: space-between;
-                align-items: flex-start;
-                margin-bottom: 20px;
+                align-items: center;
+                margin-bottom: 16px;
             }
             
             .stats-card-title {
                 font-size: 0.875rem;
-                font-weight: 500;
-                color: ${darkMode ? '#9ca3af' : '#6b7280'};
+                font-weight: 600;
+                color: ${darkMode ? '#94a3b8' : '#64748b'};
                 margin: 0;
+                text-transform: uppercase;
+                letter-spacing: 0.025em;
             }
             
             .stats-card-icon {
-                font-size: 1.5rem;
-                opacity: 0.8;
+                font-size: 0.875rem;
+                font-weight: 600;
+                padding: 4px 8px;
+                border-radius: 4px;
+                background-color: currentColor;
+                opacity: 0.1;
             }
             
             .stats-card-main-value {
@@ -1276,28 +1304,25 @@ return view.extend({
             }
             
             .modal {
-                background-color: ${darkMode ? '#252526' : 'white'};
-                border-radius: 12px;
-                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, ${darkMode ? '0.4' : '0.1'});
+                background-color: ${darkMode ? '#2a2a2a' : 'white'};
+                border-radius: 8px;
+                border: 1px solid ${darkMode ? '#444444' : '#e2e8f0'};
                 max-width: 500px;
                 width: 90%;
                 max-height: 90vh;
                 overflow-y: auto;
-                transform: scale(0.9) translateY(20px);
                 opacity: 0;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                border: 1px solid ${darkMode ? '#252526' : 'transparent'};
+                transition: opacity 0.2s ease;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, ${darkMode ? '0.5' : '0.15'});
             }
             
             .modal-overlay.show .modal {
-                transform: scale(1) translateY(0);
                 opacity: 1;
             }
             
             .modal-header {
-                padding: 24px 24px 0 24px;
-                border-bottom: 1px solid ${darkMode ? '#252526' : '#e5e7eb'};
-                padding-bottom: 16px;
+                padding: 20px;
+                border-bottom: 1px solid ${darkMode ? '#444444' : '#e2e8f0'};
             }
             
             .modal-title {
@@ -1308,13 +1333,13 @@ return view.extend({
             }
             
             .modal-body {
-                padding: 10px;
+                padding: 20px;
             }
             
             .modal-footer {
-                padding: 16px 24px 24px 24px;
+                padding: 16px 20px 20px 20px;
                 display: flex;
-                gap: 12px;
+                gap: 10px;
                 justify-content: flex-end;
             }
             
@@ -1332,51 +1357,46 @@ return view.extend({
             
             .form-input {
                 width: 100%;
-                border: 1px solid ${darkMode ? '#252526' : '#d1d5db'};
-                border-radius: 6px;
+                border: 1px solid ${darkMode ? '#444444' : '#cbd5e1'};
+                border-radius: 4px;
+                padding: 8px 12px;
                 font-size: 0.875rem;
-                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: border-color 0.15s ease;
                 box-sizing: border-box;
-                transform: translateY(0);
-                background-color: ${darkMode ? '#333333' : 'white'};
-                color: ${darkMode ? '#e2e8f0' : 'inherit'};
+                background-color: ${darkMode ? '#2a2a2a' : 'white'};
+                color: ${darkMode ? '#e2e8f0' : '#1f2937'};
             }
             
             .form-input:focus {
                 outline: none;
                 border-color: #3b82f6;
-                box-shadow: 0 0 0 3px rgba(59, 130, 246, ${darkMode ? '0.2' : '0.1'});
-                transform: translateY(-1px);
             }
             
             .form-select {
                 width: 100%;
-                border: 1px solid ${darkMode ? '#252526' : '#d1d5db'};
-                border-radius: 6px;
+                border: 1px solid ${darkMode ? '#444444' : '#cbd5e1'};
+                border-radius: 4px;
+                padding: 8px 12px;
                 font-size: 0.875rem;
-                background-color: ${darkMode ? '#333333' : 'white'};
-                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                background-color: ${darkMode ? '#2a2a2a' : 'white'};
+                transition: border-color 0.15s ease;
                 box-sizing: border-box;
-                transform: translateY(0);
-                color: ${darkMode ? '#e2e8f0' : 'inherit'};
+                color: ${darkMode ? '#e2e8f0' : '#1f2937'};
             }
             
             .form-select:focus {
                 outline: none;
                 border-color: #3b82f6;
-                box-shadow: 0 0 0 3px rgba(59, 130, 246, ${darkMode ? '0.2' : '0.1'});
-                transform: translateY(-1px);
             }
             
             .btn {
-                padding: 10px 20px;
-                border-radius: 6px;
+                padding: 8px 16px;
+                border-radius: 4px;
                 font-size: 0.875rem;
                 font-weight: 500;
                 cursor: pointer;
-                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all 0.15s ease;
                 border: none;
-                transform: translateY(0);
             }
             
             .btn-primary {
@@ -1386,26 +1406,22 @@ return view.extend({
             
             .btn-primary:hover {
                 background-color: #2563eb;
-                transform: translateY(-1px);
-                box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
             }
             
             .btn-secondary {
-                background-color: ${darkMode ? '#374151' : '#f3f4f6'};
-                color: ${darkMode ? '#e2e8f0' : '#374151'};
-                border: 1px solid ${darkMode ? '#252526' : '#d1d5db'};
+                background-color: ${darkMode ? '#3a3a3a' : '#f1f5f9'};
+                color: ${darkMode ? '#d0d0d0' : '#475569'};
+                border: 1px solid ${darkMode ? '#555555' : '#cbd5e1'};
             }
             
             .btn-secondary:hover {
-                background-color: ${darkMode ? '#252526' : '#e5e7eb'};
-                transform: translateY(-1px);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, ${darkMode ? '0.3' : '0.1'});
+                background-color: ${darkMode ? '#4a4a4a' : '#e2e8f0'};
             }
             
             .device-summary {
-                background-color: ${darkMode ? '#333333' : '#f9fafb'};
-                border: 1px solid ${darkMode ? '#252526' : '#e5e7eb'};
-                border-radius: 6px;
+                background-color: ${darkMode ? '#1a1a1a' : '#f8fafc'};
+                border: 1px solid ${darkMode ? '#444444' : '#e2e8f0'};
+                border-radius: 4px;
                 padding: 12px;
                 margin-bottom: 16px;
             }
@@ -1451,11 +1467,11 @@ return view.extend({
             .history-controls {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 8px;
+                gap: 12px;
                 align-items: center;
-                padding: 8px 12px; /* 更窄的内边距 */
-                border-bottom: 1px solid ${darkMode ? '#252526' : '#f1f5f9'}; /* 更轻的分割线 */
-                background-color: ${darkMode ? '#333333' : '#fafafa'};
+                padding: 12px 16px;
+                border-bottom: 1px solid ${darkMode ? '#444444' : '#e2e8f0'};
+                background-color: ${darkMode ? '#2a2a2a' : '#f8fafc'};
             }
             .history-controls .form-select,
             .history-controls .form-input {
@@ -1463,7 +1479,7 @@ return view.extend({
                 min-width: 160px;
             }
             .history-card-body {
-                padding: 8px 12px 12px 12px; /* 更紧凑 */
+                padding: 16px;
                 position: relative;
             }
             .history-legend {
@@ -1482,16 +1498,16 @@ return view.extend({
                 display: none;
 				width: 320px;
 				box-sizing: border-box;
-                background-color: ${darkMode ? 'rgba(37, 37, 38, 0.95)' : 'rgba(255, 255, 255, 0.98)'};
+                background-color: ${darkMode ? '#2a2a2a' : 'white'};
                 color: ${darkMode ? '#e2e8f0' : '#1f2937'};
-                border: 1px solid ${darkMode ? '#3a3a3a' : '#e5e7eb'};
-                border-radius: 8px;
-                box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2), 0 4px 6px -4px rgba(0,0,0,0.2);
-                padding: 10px 12px;
+                border: 1px solid ${darkMode ? '#444444' : '#e2e8f0'};
+                border-radius: 6px;
+                box-shadow: 0 6px 20px rgba(0,0,0,${darkMode ? '0.4' : '0.15'});
+                padding: 12px;
                 z-index: 10;
                 pointer-events: none;
-                font-size: 12px;
-                line-height: 1.4;
+                font-size: 0.8125rem;
+                line-height: 1.5;
                 white-space: nowrap;
             }
             .history-tooltip .ht-title { font-weight: 700; margin-bottom: 6px; }
@@ -1520,7 +1536,7 @@ return view.extend({
 
             // 警告提示
             E('div', { 'class': 'bandix-alert' }, [
-                E('span', { 'class': 'bandix-alert-icon' }, '⚠️'),
+                E('span', { 'class': 'bandix-alert-icon' }, '!'),
                 E('span', {}, getTranslation('限速功能仅对 WAN 流量生效。', language))
             ]),
 
@@ -2912,8 +2928,7 @@ function formatRetentionSeconds(seconds, language) {
                 // LAN 流量卡片
                 statsGrid.appendChild(E('div', { 'class': 'stats-card' }, [
                     E('div', { 'class': 'stats-card-header' }, [
-                        E('div', { 'class': 'stats-card-title' }, getTranslation('LAN 流量', language)),
-                        E('div', { 'class': 'stats-card-icon', 'style': 'color: #3b82f6;' }, '🖥️')
+                        E('div', { 'class': 'stats-card-title' }, getTranslation('LAN 流量', language))
                     ]),
                     E('div', { 'style': 'margin-top: 12px; display: flex; flex-direction: column; gap: 8px;' }, [
                         // 上传行
@@ -2934,8 +2949,7 @@ function formatRetentionSeconds(seconds, language) {
                 // WAN 流量卡片
                 statsGrid.appendChild(E('div', { 'class': 'stats-card' }, [
                     E('div', { 'class': 'stats-card-header' }, [
-                        E('div', { 'class': 'stats-card-title' }, getTranslation('WAN 流量', language)),
-                        E('div', { 'class': 'stats-card-icon', 'style': 'color: #22c55e;' }, '🌐')
+                        E('div', { 'class': 'stats-card-title' }, getTranslation('WAN 流量', language))
                     ]),
                     E('div', { 'style': 'margin-top: 12px; display: flex; flex-direction: column; gap: 8px;' }, [
                         // 上传行
@@ -2956,8 +2970,7 @@ function formatRetentionSeconds(seconds, language) {
                 // 总流量卡片
                 statsGrid.appendChild(E('div', { 'class': 'stats-card' }, [
                     E('div', { 'class': 'stats-card-header' }, [
-                        E('div', { 'class': 'stats-card-title' }, getTranslation('总流量', language)),
-                        E('div', { 'class': 'stats-card-icon', 'style': 'color: ' + (darkMode ? '#f1f5f9' : '#1f2937') + ';' }, '⚡')
+                        E('div', { 'class': 'stats-card-title' }, getTranslation('总流量', language))
                     ]),
                     E('div', { 'style': 'margin-top: 12px; display: flex; flex-direction: column; gap: 8px;' }, [
                         // 上传行
@@ -3122,7 +3135,7 @@ function formatRetentionSeconds(seconds, language) {
                     var actionButton = E('button', {
                         'class': 'action-button',
                         'title': getTranslation('设置', language)
-                    }, '⚙️');
+                    }, getTranslation('设置', language));
 
                     // 绑定点击事件
                     actionButton.addEventListener('click', function () {
