@@ -8,7 +8,9 @@
 					"getMetrics",
 					"setRateLimit",
 					"getConnection",
-					"setHostname"
+					"setHostname",
+					"getDnsQueries",
+					"getDnsStats"
 				]
 			},
 			"uci": [
@@ -22,7 +24,9 @@
 					"getStatus",
 					"getMetrics",
 					"getConnection",
-					"setHostname"
+					"setHostname",
+					"getDnsQueries",
+					"getDnsStats"
 				]
 			},
 			"uci": [

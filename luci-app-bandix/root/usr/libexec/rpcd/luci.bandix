@@ -10,6 +10,8 @@ readonly BANDIX_DEVICES_API="$BANDIX_API_BASE/api/traffic/devices"
 readonly BANDIX_LIMITS_API="$BANDIX_API_BASE/api/traffic/limits"
 readonly BANDIX_METRICS_API="$BANDIX_API_BASE/api/traffic/metrics"
 readonly BANDIX_CONNECTION_API="$BANDIX_API_BASE/api/connection/devices"
+readonly BANDIX_DNS_QUERIES_API="$BANDIX_API_BASE/api/dns/queries"
+readonly BANDIX_DNS_STATS_API="$BANDIX_API_BASE/api/dns/stats"
 
 # 通用函数：创建简单的JSON响应
 make_value() {
@@ -223,6 +225,72 @@ get_connection_devices() {
 	echo "$response"
 }
 
+# 获取 DNS 查询记录
+get_dns_queries() {
+	# 检查 DNS 监控是否启用
+	local dns_enabled=$(uci get bandix.dns.enabled 2>/dev/null)
+	if [ "$dns_enabled" != "1" ]; then
+		make_error "DNS monitoring is not enabled"
+		return
+	fi
+	
+	# 构建查询参数
+	local query_params=""
+	local domain="$1"
+	local device="$2"
+	local is_query="$3"
+	local dns_server="$4"
+	local page="$5"
+	local page_size="$6"
+	
+	[ -n "$domain" ] && query_params="${query_params}domain=$(printf '%s' "$domain" | sed 's/ /%20/g')&"
+	[ -n "$device" ] && query_params="${query_params}device=$(printf '%s' "$device" | sed 's/ /%20/g')&"
+	[ -n "$is_query" ] && query_params="${query_params}is_query=$is_query&"
+	[ -n "$dns_server" ] && query_params="${query_params}dns_server=$(printf '%s' "$dns_server" | sed 's/ /%20/g')&"
+	[ -n "$page" ] && query_params="${query_params}page=$page&"
+	[ -n "$page_size" ] && query_params="${query_params}page_size=$page_size&"
+	
+	# 移除末尾的 &
+	query_params=$(echo "$query_params" | sed 's/&$//')
+	
+	local url="$BANDIX_DNS_QUERIES_API"
+	[ -n "$query_params" ] && url="${url}?${query_params}"
+	
+	# 从 Bandix API 获取 DNS 查询数据
+	local response=$(curl -s --connect-timeout 2 --max-time 10 -X GET "$url" 2>/dev/null)
+	
+	# 检查API调用是否成功
+	if [ $? -ne 0 ] || [ -z "$response" ]; then
+		make_error "Failed to connect to Bandix service"
+		return
+	fi
+	
+	# 直接返回API结果
+	echo "$response"
+}
+
+# 获取 DNS 统计信息
+get_dns_stats() {
+	# 检查 DNS 监控是否启用
+	local dns_enabled=$(uci get bandix.dns.enabled 2>/dev/null)
+	if [ "$dns_enabled" != "1" ]; then
+		make_error "DNS monitoring is not enabled"
+		return
+	fi
+	
+	# 从 Bandix API 获取 DNS 统计数据
+	local response=$(curl -s --connect-timeout 2 --max-time 10 -X GET "$BANDIX_DNS_STATS_API" 2>/dev/null)
+	
+	# 检查API调用是否成功
+	if [ $? -ne 0 ] || [ -z "$response" ]; then
+		make_error "Failed to connect to Bandix service"
+		return
+	fi
+	
+	# 直接返回API结果
+	echo "$response"
+}
+
 case "$1" in
 	list)
 		json_init
@@ -245,6 +313,18 @@ case "$1" in
 		json_close_object
 		
 		json_add_object "getConnection"
+		json_close_object
+		
+		json_add_object "getDnsQueries"
+		json_add_string "domain"
+		json_add_string "device"
+		json_add_string "is_query"
+		json_add_string "dns_server"
+		json_add_int "page"
+		json_add_int "page_size"
+		json_close_object
+		
+		json_add_object "getDnsStats"
 		json_close_object
 		
 		json_dump
@@ -350,6 +430,40 @@ case "$1" in
 			getConnection)
 				# logger "luci.bandix: getConnection called"
 				get_connection_devices
+				;;
+			getDnsQueries)
+				# logger "luci.bandix: getDnsQueries called"
+				# 从 stdin 读取 JSON 参数
+				read input
+				
+				if [ -n "$input" ]; then
+					# 解析参数
+					domain=$(echo "$input" | jsonfilter -e '$[0]' 2>/dev/null)
+					[ -z "$domain" ] && domain=$(echo "$input" | jsonfilter -e '$.domain' 2>/dev/null)
+					
+					device=$(echo "$input" | jsonfilter -e '$[1]' 2>/dev/null)
+					[ -z "$device" ] && device=$(echo "$input" | jsonfilter -e '$.device' 2>/dev/null)
+					
+					is_query=$(echo "$input" | jsonfilter -e '$[2]' 2>/dev/null)
+					[ -z "$is_query" ] && is_query=$(echo "$input" | jsonfilter -e '$.is_query' 2>/dev/null)
+					
+					dns_server=$(echo "$input" | jsonfilter -e '$[3]' 2>/dev/null)
+					[ -z "$dns_server" ] && dns_server=$(echo "$input" | jsonfilter -e '$.dns_server' 2>/dev/null)
+					
+					page=$(echo "$input" | jsonfilter -e '$[4]' 2>/dev/null)
+					[ -z "$page" ] && page=$(echo "$input" | jsonfilter -e '$.page' 2>/dev/null)
+					
+					page_size=$(echo "$input" | jsonfilter -e '$[5]' 2>/dev/null)
+					[ -z "$page_size" ] && page_size=$(echo "$input" | jsonfilter -e '$.page_size' 2>/dev/null)
+					
+					get_dns_queries "$domain" "$device" "$is_query" "$dns_server" "$page" "$page_size"
+				else
+					get_dns_queries "" "" "" "" "" ""
+				fi
+				;;
+			getDnsStats)
+				# logger "luci.bandix: getDnsStats called"
+				get_dns_stats
 				;;
 		esac
 		;;

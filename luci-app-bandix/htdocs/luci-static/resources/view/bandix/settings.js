@@ -10,12 +10,15 @@ const translations = {
 		'基本设置': '基本设置',
 		'流量监控设置': '流量监控设置',
 		'连接监控设置': '连接监控设置',
+		'DNS监控设置': 'DNS监控设置',
 		'Bandix 基本配置': 'Bandix 基本配置',
 		'配置 Bandix 服务的基本参数': '配置 Bandix 服务的基本参数',
 		'Bandix 流量监控配置': 'Bandix 流量监控配置',
 		'配置流量监控相关参数': '配置流量监控相关参数',
 		'Bandix 连接监控配置': 'Bandix 连接监控配置',
 		'配置连接监控相关参数': '配置连接监控相关参数',
+		'Bandix DNS监控配置': 'Bandix DNS监控配置',
+		'配置DNS监控相关参数': '配置DNS监控相关参数',
 		'启用': '启用',
 		'启用 Bandix 流量监控服务': '启用 Bandix 流量监控服务',
 		'启用流量监控': '启用流量监控',
@@ -56,6 +59,9 @@ const translations = {
 		'数据目录': '数据目录',
 		'Bandix 数据存储目录': 'Bandix 数据存储目录',
 		'启用 Bandix 连接监控功能': '启用 Bandix 连接监控功能',
+		'启用 Bandix DNS监控功能': '启用 Bandix DNS监控功能',
+		'DNS最大记录数': 'DNS最大记录数',
+		'设置DNS查询记录的最大保存数量': '设置DNS查询记录的最大保存数量，超过此数量将删除最旧的记录',
 		'持久化历史数据': '持久化历史数据',
 		'启用数据持久化功能': '启用数据持久化功能，只有启用此选项后才会持久化到磁盘'
 	},
@@ -63,12 +69,15 @@ const translations = {
 		'基本设置': '基本設置',
 		'流量监控设置': '流量監控設置',
 		'连接监控设置': '連接監控設置',
+		'DNS监控设置': 'DNS監控設置',
 		'Bandix 基本配置': 'Bandix 基本配置',
 		'配置 Bandix 服务的基本参数': '配置 Bandix 服務的基本參數',
 		'Bandix 流量监控配置': 'Bandix 流量監控配置',
 		'配置流量监控相关参数': '配置流量監控相關參數',
 		'Bandix 连接监控配置': 'Bandix 連接監控配置',
 		'配置连接监控相关参数': '配置連接監控相關參數',
+		'Bandix DNS监控配置': 'Bandix DNS監控配置',
+		'配置DNS监控相关参数': '配置DNS監控相關參數',
 		'启用': '啟用',
 		'启用 Bandix 流量监控服务': '啟用 Bandix 流量監控服務',
 		'启用流量监控': '啟用流量監控',
@@ -109,6 +118,9 @@ const translations = {
 		'数据目录': '數據目錄',
 		'Bandix 数据存储目录': 'Bandix 數據存儲目錄',
 		'启用 Bandix 连接监控功能': '啟用 Bandix 連接監控功能',
+		'启用 Bandix DNS监控功能': '啟用 Bandix DNS監控功能',
+		'DNS最大记录数': 'DNS最大記錄數',
+		'设置DNS查询记录的最大保存数量': '設定DNS查詢記錄的最大保存數量，超過此數量將刪除最舊的記錄',
 		'持久化历史数据': '持久化歷史數據',
 		'启用数据持久化功能': '啟用數據持久化功能，只有啟用此選項後才會持久化到磁碟'
 	},
@@ -116,16 +128,20 @@ const translations = {
 		'基本设置': 'Basic Settings',
 		'流量监控设置': 'Traffic Monitor Settings',
 		'连接监控设置': 'Connection Monitor Settings',
+		'DNS监控设置': 'DNS Monitor Settings',
 		'Bandix 基本配置': 'Bandix Basic Configuration',
 		'配置 Bandix 服务的基本参数': 'Configure basic parameters for Bandix service',
 		'Bandix 流量监控配置': 'Bandix Traffic Monitor Configuration',
 		'配置流量监控相关参数': 'Configure traffic monitoring related parameters',
 		'Bandix 连接监控配置': 'Bandix Connection Monitor Configuration',
 		'配置连接监控相关参数': 'Configure connection monitoring related parameters',
+		'Bandix DNS监控配置': 'Bandix DNS Monitor Configuration',
+		'配置DNS监控相关参数': 'Configure DNS monitoring related parameters',
 		'启用': 'Enable',
 		'启用 Bandix 流量监控服务': 'Enable Bandix Traffic Monitor Service',
 		'启用流量监控': 'Enable Traffic Monitoring',
 		'启用连接监控': 'Enable Connection Monitoring',
+		'启用DNS监控': 'Enable DNS Monitoring',
 		'界面语言': 'Interface Language',
 		'选择 Bandix 流量监控的显示语言': 'Select the display language for Bandix Traffic Monitor',
 		'简体中文': 'Simplified Chinese',
@@ -162,6 +178,9 @@ const translations = {
 		'数据目录': 'Data Directory',
 		'Bandix 数据存储目录': 'Bandix data storage directory',
 		'启用 Bandix 连接监控功能': 'Enable Bandix connection monitoring',
+		'启用 Bandix DNS监控功能': 'Enable Bandix DNS monitoring',
+		'DNS最大记录数': 'DNS Max Records',
+		'设置DNS查询记录的最大保存数量': 'Set the maximum number of DNS query records to keep. Older records will be deleted when this limit is exceeded',
 		'持久化历史数据': 'Persist History Data',
 		'启用数据持久化功能': 'Enable data persistence functionality, data will only be persisted to disk when this option is enabled'
 	},
@@ -169,16 +188,20 @@ const translations = {
 		'基本设置': 'Paramètres de Base',
 		'流量监控设置': 'Paramètres de Surveillance du Trafic',
 		'连接监控设置': 'Paramètres de Surveillance des Connexions',
+		'DNS监控设置': 'Paramètres de Surveillance DNS',
 		'Bandix 基本配置': 'Configuration de Base Bandix',
 		'配置 Bandix 服务的基本参数': 'Configurer les paramètres de base du service Bandix',
 		'Bandix 流量监控配置': 'Configuration de Surveillance du Trafic Bandix',
 		'配置流量监控相关参数': 'Configurer les paramètres liés à la surveillance du trafic',
 		'Bandix 连接监控配置': 'Configuration de Surveillance des Connexions Bandix',
 		'配置连接监控相关参数': 'Configurer les paramètres liés à la surveillance des connexions',
+		'Bandix DNS监控配置': 'Configuration de Surveillance DNS Bandix',
+		'配置DNS监控相关参数': 'Configurer les paramètres liés à la surveillance DNS',
 		'启用': 'Activer',
 		'启用 Bandix 流量监控服务': 'Activer le Service de Surveillance du Trafic Bandix',
 		'启用流量监控': 'Activer la Surveillance du Trafic',
 		'启用连接监控': 'Activer la Surveillance des Connexions',
+		'启用DNS监控': 'Activer la Surveillance DNS',
 		'界面语言': 'Langue de l\'Interface',
 		'选择 Bandix 流量监控的显示语言': 'Sélectionner la langue d\'affichage pour le Moniteur de Trafic Bandix',
 		'简体中文': 'Chinois Simplifié',
@@ -215,6 +238,9 @@ const translations = {
 		'数据目录': 'Répertoire de Données',
 		'Bandix 数据存储目录': 'Répertoire de stockage de données Bandix',
 		'启用 Bandix 连接监控功能': 'Activer la surveillance des connexions Bandix',
+		'启用 Bandix DNS监控功能': 'Activer la surveillance DNS Bandix',
+		'DNS最大记录数': 'Nombre Maximum d\'Enregistrements DNS',
+		'设置DNS查询记录的最大保存数量': 'Définir le nombre maximum d\'enregistrements de requêtes DNS à conserver. Les enregistrements plus anciens seront supprimés lorsque cette limite est dépassée',
 		'持久化历史数据': 'Persister les Données Historiques',
 		'启用数据持久化功能': 'Activer la fonctionnalité de persistance des données, les données ne seront persistées sur le disque que lorsque cette option est activée'
 	},
@@ -222,16 +248,20 @@ const translations = {
 		'基本设置': '基本設定',
 		'流量监控设置': 'トラフィック監視設定',
 		'连接监控设置': '接続監視設定',
+		'DNS监控设置': 'DNS監視設定',
 		'Bandix 基本配置': 'Bandix 基本設定',
 		'配置 Bandix 服务的基本参数': 'Bandix サービスの基本パラメータを設定',
 		'Bandix 流量监控配置': 'Bandix トラフィック監視設定',
 		'配置流量监控相关参数': 'トラフィック監視関連パラメータを設定',
 		'Bandix 连接监控配置': 'Bandix 接続監視設定',
 		'配置连接监控相关参数': '接続監視関連パラメータを設定',
+		'Bandix DNS监控配置': 'Bandix DNS監視設定',
+		'配置DNS监控相关参数': 'DNS監視関連パラメータを設定',
 		'启用': '有効',
 		'启用 Bandix 流量监控服务': 'Bandix トラフィックモニターサービスを有効にする',
 		'启用流量监控': 'トラフィック監視を有効にする',
 		'启用连接监控': '接続監視を有効にする',
+		'启用DNS监控': 'DNS監視を有効にする',
 		'界面语言': 'インターフェース言語',
 		'选择 Bandix 流量监控的显示语言': 'Bandix トラフィックモニターの表示言語を選択',
 		'简体中文': '簡体字中国語',
@@ -268,6 +298,9 @@ const translations = {
 		'数据目录': 'データディレクトリ',
 		'Bandix 数据存储目录': 'Bandix データ保存ディレクトリ',
 		'启用 Bandix 连接监控功能': 'Bandix 接続監視機能を有効にする',
+		'启用 Bandix DNS监控功能': 'Bandix DNS監視機能を有効にする',
+		'DNS最大记录数': 'DNS最大記録数',
+		'设置DNS查询记录的最大保存数量': 'DNSクエリ記録の最大保存数を設定。この数を超えると、最も古い記録が削除されます',
 		'持久化历史数据': '履歴データの永続化',
 		'启用数据持久化功能': 'データ永続化機能を有効にする。このオプションが有効な場合のみ、データがディスクに永続化されます'
 	},
@@ -275,16 +308,20 @@ const translations = {
 		'基本设置': 'Основные Настройки',
 		'流量监控设置': 'Настройки Мониторинга Трафика',
 		'连接监控设置': 'Настройки Мониторинга Соединений',
+		'DNS监控设置': 'Настройки Мониторинга DNS',
 		'Bandix 基本配置': 'Базовая Конфигурация Bandix',
 		'配置 Bandix 服务的基本参数': 'Настроить основные параметры службы Bandix',
 		'Bandix 流量监控配置': 'Конфигурация Мониторинга Трафика Bandix',
 		'配置流量监控相关参数': 'Настроить параметры, связанные с мониторингом трафика',
 		'Bandix 连接监控配置': 'Конфигурация Мониторинга Соединений Bandix',
 		'配置连接监控相关参数': 'Настроить параметры, связанные с мониторингом соединений',
+		'Bandix DNS监控配置': 'Конфигурация Мониторинга DNS Bandix',
+		'配置DNS监控相关参数': 'Настроить параметры, связанные с мониторингом DNS',
 		'启用': 'Включить',
 		'启用 Bandix 流量监控服务': 'Включить Службу Мониторинга Трафика Bandix',
 		'启用流量监控': 'Включить Мониторинг Трафика',
 		'启用连接监控': 'Включить Мониторинг Соединений',
+		'启用DNS监控': 'Включить Мониторинг DNS',
 		'界面语言': 'Язык Интерфейса',
 		'选择 Bandix 流量监控的显示语言': 'Выберите язык отображения для Монитора Трафика Bandix',
 		'简体中文': 'Упрощенный Китайский',
@@ -321,6 +358,9 @@ const translations = {
 		'数据目录': 'Каталог Данных',
 		'Bandix 数据存储目录': 'Каталог хранения данных Bandix',
 		'启用 Bandix 连接监控功能': 'Включить мониторинг соединений Bandix',
+		'启用 Bandix DNS监控功能': 'Включить мониторинг DNS Bandix',
+		'DNS最大记录数': 'Максимальное Количество Записей DNS',
+		'设置DNS查询记录的最大保存数量': 'Установить максимальное количество записей DNS-запросов для хранения. Более старые записи будут удалены при превышении этого лимита',
 		'持久化历史数据': 'Персистентность Исторических Данных',
 		'启用数据持久化功能': 'Включить функциональность персистентности данных, данные будут сохраняться на диск только при включении этой опции'
 	}
@@ -407,6 +447,9 @@ return view.extend({
 		}
 		if (!uci.get('bandix', 'connections')) {
 			uci.add('bandix', 'connections', 'connections');
+		}
+		if (!uci.get('bandix', 'dns')) {
+			uci.add('bandix', 'dns', 'dns');
 		}
 		
 		var language = uci.get('bandix', 'general', 'language');
@@ -674,6 +717,24 @@ return view.extend({
 		o = s.option(form.Flag, 'enabled', getTranslation('启用连接监控', language),
 			getTranslation('启用 Bandix 连接监控功能', language));
 		o.default = '0';
+		o.rmempty = false;
+
+		// 4. DNS监控设置部分 (dns)
+		s = m.section(form.NamedSection, 'dns', 'dns', getTranslation('DNS监控设置', language));
+		s.description = getTranslation('配置DNS监控相关参数', language);
+		s.addremove = false;
+
+		o = s.option(form.Flag, 'enabled', getTranslation('启用DNS监控', language),
+			getTranslation('启用 Bandix DNS监控功能', language));
+		o.default = '0';
+		o.rmempty = false;
+
+		// 添加DNS最大记录数选项
+		o = s.option(form.Value, 'dns_max_records', getTranslation('DNS最大记录数', language),
+			getTranslation('设置DNS查询记录的最大保存数量', language));
+		o.datatype = 'uinteger';
+		o.placeholder = '10000';
+		o.default = '10000';
 		o.rmempty = false;
 
 		return m.render();

@@ -27,9 +27,17 @@
 			"path": "bandix/connection"
 		}
 	},
+	"admin/network/bandix/dns": {
+		"title": "DNS",
+		"order": 20,
+		"action": {
+			"type": "view",
+			"path": "bandix/dns"
+		}
+	},
 	"admin/network/bandix/settings": {
 		"title": "Settings",
-		"order": 20,
+		"order": 25,
 		"action": {
 			"type": "view",
 			"path": "bandix/settings"
