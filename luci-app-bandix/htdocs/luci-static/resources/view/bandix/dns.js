@@ -1252,7 +1252,7 @@ return view.extend({
             var loadingDiv = container.querySelector('.loading-overlay');
             if (hasContent) {
                 if (!loadingDiv) {
-                    var overlayBg = darkMode ? 'rgba(15, 23, 42, 0.9)' : 'rgba(255, 255, 255, 0.9)';
+                    var overlayBg = darkMode ? 'rgba(42, 42, 42, 0.9)' : 'rgba(255, 255, 255, 0.9)';
                     loadingDiv = E('div', { 
                         'class': 'loading-overlay',
                         'style': 'position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: ' + overlayBg + '; display: flex; align-items: center; justify-content: center; z-index: 10; color: ' + (darkMode ? '#e2e8f0' : '#1f2937') + ';'
