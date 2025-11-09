@@ -17,7 +17,7 @@ LuCI Bandix 基于 LuCI 框架开发，为 OpenWrt 路由器提供网络流量�
 
 ![LuCI Bandix Screenshot](docs/images/index-2.png)
 
-![LuCI Bandix Screenshot](docs/images/connection-1.png)
+![LuCI Bandix Screenshot](docs/images/dns-1.png)
 
 ![LuCI Bandix Screenshot](docs/images/settings.png)
 
@@ -43,6 +43,7 @@ LuCI Bandix 基于 LuCI 框架开发，为 OpenWrt 路由器提供网络流量�
 - 支持 IPv4/IPv6
 - 支持数据持久化存储
 - 提供网络历史趋势图与多维度统计
+- 支持 DNS 查询监控与统计分析
 
 
 ## 第三方依赖
@@ -66,6 +67,9 @@ luci-app-bandix 需要以下依赖包：
 | 0.4.x               | 0.4.x                   |
 | 0.5.x               | 0.5.x                   |
 | 0.6.x               | 0.6.x                   |
+| 0.7.x               | 0.7.x                   |
+| 0.8.x               | 0.8.x                   |
+
 
 请确保安装匹配的版本以确保兼容性和正常功能。
 

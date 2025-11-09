@@ -18,7 +18,7 @@ LuCI Bandix is developed based on the LuCI framework, offering network traffic m
 
 ![LuCI Bandix Screenshot](docs/images/index-2.png)
 
-![LuCI Bandix Screenshot](docs/images/connection-1.png)
+![LuCI Bandix Screenshot](docs/images/dns-1.png)
 
 ![LuCI Bandix Screenshot](docs/images/settings.png)
 
@@ -43,6 +43,7 @@ LuCI Bandix is developed based on the LuCI framework, offering network traffic m
 - Support IPv4/IPv6
 - Persistent data storage
 - Historical traffic trends and charts
+- Support DNS query monitoring and statistical analysis
 
 
 ## Third-party Dependencies
@@ -66,6 +67,9 @@ The following table shows the version dependency relationship between luci-app-b
 | 0.4.x                  | 0.4.x                          |
 | 0.5.x                  | 0.5.x                          |
 | 0.6.x                  | 0.6.x                          |
+| 0.7.x                  | 0.7.x                          |
+| 0.8.x                  | 0.8.x                          |
+
 
 Please ensure you install matching versions to ensure compatibility and proper functionality.
 
