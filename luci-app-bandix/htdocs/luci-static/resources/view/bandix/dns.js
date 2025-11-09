@@ -48,6 +48,7 @@ const translations = {
         '下一页': '下一页',
         '第': '第',
         '页，共': '页，共',
+        '共': '共',
         '条记录': '条记录',
         '每页显示': '每页显示',
         '条': '条',
@@ -121,6 +122,7 @@ const translations = {
         '下一页': '下一頁',
         '第': '第',
         '页，共': '頁，共',
+        '共': '共',
         '条记录': '條記錄',
         '每页显示': '每頁顯示',
         '条': '條',
@@ -194,6 +196,7 @@ const translations = {
         '下一页': 'Next',
         '第': 'Page',
         '页，共': 'of',
+        '共': 'Total',
         '条记录': 'records',
         '每页显示': 'Per Page',
         '条': '',
@@ -267,6 +270,7 @@ const translations = {
         '下一页': 'Suivant',
         '第': 'Page',
         '页，共': 'sur',
+        '共': 'Total',
         '条记录': 'enregistrements',
         '每页显示': 'Par Page',
         '条': '',
@@ -340,6 +344,7 @@ const translations = {
         '下一页': '次へ',
         '第': 'ページ',
         '页，共': '/',
+        '共': '合計',
         '条记录': '件の記録',
         '每页显示': 'ページあたり',
         '条': '',
@@ -413,6 +418,7 @@ const translations = {
         '下一页': 'Следующая',
         '第': 'Страница',
         '页，共': 'из',
+        '共': 'Всего',
         '条记录': 'записей',
         '每页显示': 'На Странице',
         '条': '',
@@ -1373,7 +1379,7 @@ return view.extend({
 
                 var pagination = E('div', { 'class': 'pagination' }, [
                     E('div', { 'class': 'pagination-info' },
-                        getTranslation('第', language) + ' ' + currentPage + ' ' + getTranslation('页，共', language) + ' ' + totalPages + '，共 ' + total + ' ' + getTranslation('条记录', language)
+                        getTranslation('第', language) + ' ' + currentPage + ' ' + getTranslation('页，共', language) + ' ' + totalPages + '，' + getTranslation('共', language) + ' ' + total + ' ' + getTranslation('条记录', language)
                     ),
                     E('div', { 'class': 'pagination-controls' }, [
                         E('select', {
