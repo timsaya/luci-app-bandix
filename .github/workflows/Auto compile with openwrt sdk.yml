@@ -42,8 +42,7 @@ jobs:
 
           if [ -z "$remote_latest_version" ] || [ "$remote_latest_version" = "null" ]; then
             echo "Failed to fetch remote tags"
-            has_update=true
-            echo "has_update: ${has_update}" >> $GITHUB_OUTPUT
+            echo "has_update=true" >> $GITHUB_OUTPUT
             exit 0
           fi
           echo "Remote latest: $remote_latest_version"
