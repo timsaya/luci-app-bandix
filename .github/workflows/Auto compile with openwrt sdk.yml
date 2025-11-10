@@ -32,13 +32,13 @@ jobs:
       - name: Check version
         id: check_version
         env:
-          url_tags: https://api.github.com/repos/${{ env.luci-app-bandix }}/tags
+          url_tags: https://api.github.com/repos/${{ env.luci-app-bandix }}/releases/latest
         run: |
           cd luci-app-bandix
           latest_version=$(awk -F ':=' '/^PKG_VERSION:=|^PKG_RELEASE:=/ {print $2}' Makefile | sed ':a;N;s/\$(PKG_VERSION)-//;s/\n$//;s/\n/-/;ba')
           echo "latest_version=${latest_version}" >> $GITHUB_OUTPUT
 
-          remote_latest_version=$(wget -qO- -t1 -T2 ${{env.url_tags}} | jq -r '.[0].name')
+          remote_latest_version=$(wget -qO- -t1 -T2 ${{env.url_tags}} | jq -r '.tag_name')
 
           if [ -z "$remote_latest_version" ] || [ "$remote_latest_version" = "null" ]; then
             echo "Failed to fetch remote tags"
@@ -46,9 +46,9 @@ jobs:
             echo "has_update: ${has_update}" >> $GITHUB_OUTPUT
             exit 0
           fi
-          echo "Remote latest: $remote_latest"
+          echo "Remote latest: $remote_latest_version"
 
-          if [ "$latest_version" = "$remote_latest" ]; then
+          if [ "$latest_version" = "$remote_latest_version" ]; then
             echo "has_update=false" >> $GITHUB_OUTPUT
           else
             echo "has_update=true" >> $GITHUB_OUTPUT
