@@ -46,9 +46,9 @@ jobs:
             echo "has_update: ${has_update}" >> $GITHUB_OUTPUT
             exit 0
           fi
-          echo "Remote latest: $remote_latest"
+          echo "Remote latest: $remote_latest_version"
 
-          if [ "$latest_version" = "$remote_latest" ]; then
+          if [ "$latest_version" = "$remote_latest_version" ]; then
             echo "has_update=false" >> $GITHUB_OUTPUT
           else
             echo "has_update=true" >> $GITHUB_OUTPUT
