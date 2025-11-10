@@ -39,7 +39,6 @@ jobs:
           echo "latest_version=${latest_version}" >> $GITHUB_OUTPUT
 
           remote_latest_version=$(wget -qO- -t1 -T2 ${{env.url_tags}} | jq -r '.tag_name')
-          remote_latest_version=$(wget -qO- -t1 -T2 ${{env.url_tags}} | jq -r '.[0].name')
 
           if [ -z "$remote_latest_version" ] || [ "$remote_latest_version" = "null" ]; then
             echo "Failed to fetch remote tags"
