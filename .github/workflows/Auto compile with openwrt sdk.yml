@@ -77,7 +77,7 @@ jobs:
 
 
   job_build:
-    name: Build luci-app-bandix
+    name: Build luci-app-bandix [${{ matrix.version }}]
     needs: job_check
     if: needs.job_check.outputs.has_update == 'true'
     runs-on: ubuntu-latest
