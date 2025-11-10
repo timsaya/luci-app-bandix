@@ -1,0 +1,182 @@
+#
+# Copyright (c) 2022-2025 SMALLPROGRAM <https://github.com/smallprogram>
+# Description: Auto compile
+#
+name: "Auto compile with openwrt sdk"
+on:
+  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      ssh:
+        description: 'SSH connection to Actions'
+        required: false
+        default: 'false'
+env:
+  TZ: Asia/Shanghai
+  luci-app-bandix: ${{ github.repository }}
+
+jobs:
+  job_check:
+    name: Check Version
+    runs-on: ubuntu-latest
+    outputs:
+      luci-app-bandix_version: ${{ steps.check_version.outputs.latest_version }}
+      has_update: ${{ steps.check_version.outputs.has_update }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref_name }}
+
+      - name: Check version
+        id: check_version
+        env:
+          url_tags: https://api.github.com/repos/${{ env.luci-app-bandix }}/tags
+        run: |
+          cd luci-app-bandix
+          latest_version=$(awk -F ':=' '/^PKG_VERSION:=|^PKG_RELEASE:=/ {print $2}' Makefile | sed ':a;N;s/\$(PKG_VERSION)-//;s/\n$//;s/\n/-/;ba')
+          echo "latest_version=${latest_version}" >> $GITHUB_OUTPUT
+
+          remote_latest_version=$(wget -qO- -t1 -T2 ${{env.url_tags}} | jq -r '.[0].name')
+
+          if [ -z "$remote_latest_version" ] || [ "$remote_latest_version" = "null" ]; then
+            echo "Failed to fetch remote tags"
+            has_update=true
+            echo "has_update: ${has_update}" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          echo "Remote latest: $remote_latest"
+
+          if [ "$latest_version" = "$remote_latest" ]; then
+            echo "has_update=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_update=true" >> $GITHUB_OUTPUT
+          fi
+
+
+      - name: Prepare release
+        if: steps.check_version.outputs.has_update == 'true'
+        run: |
+          echo "## :mega:Update content" >> release.txt
+          echo "![](https://img.shields.io/github/downloads/${{ env.luci-app-bandix }}/${{steps.check_version.outputs.latest_version}}/total?style=flat-square)" >> release.txt
+          echo "### luci-app-bandix info" >> release.txt
+          echo "**:minidisc: luci-app-bandix version: ${{steps.check_version.outputs.latest_version}}**" >> release.txt
+          touch release.txt
+
+      - name: Generate new tag & release
+        if: steps.check_version.outputs.has_update == 'true'
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{steps.check_version.outputs.latest_version}}
+          target_commitish: ${{ github.ref_name }}
+          prerelease: ${{steps.check_version.outputs.prerelease}}
+          body_path: release.txt
+
+
+  job_build:
+    name: Build luci-app-bandix [${{ matrix.version }}]
+    needs: job_check
+    if: needs.job_check.outputs.has_update == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - version: ipk
+            sdk_url: https://downloads.openwrt.org/releases/24.10.1/targets/x86/64/openwrt-sdk-24.10.1-x86-64_gcc-13.3.0_musl.Linux-x86_64.tar.zst
+          - version: apk
+            sdk_url: https://downloads.openwrt.org/snapshots/targets/x86/64/openwrt-sdk-x86-64_gcc-14.3.0_musl.Linux-x86_64.tar.zst
+    steps:
+      - name: Install packages
+        run: |
+          sudo -E rm -rf /usr/share/dotnet /etc/mysql /etc/php /usr/local/lib/android
+          echo "Install packages"
+          sudo -E apt-get -qq update
+          sudo -E apt-get -qq install ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential \
+            bzip2 ccache clang cmake cpio curl device-tree-compiler ecj fastjar flex gawk gettext gcc-multilib \
+            g++-multilib git gnutls-dev gperf haveged help2man intltool lib32gcc-s1 libc6-dev-i386 libelf-dev \
+            libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses-dev libpython3-dev \
+            libreadline-dev libssl-dev libtool libyaml-dev libz-dev lld llvm lrzsz mkisofs msmtp nano \
+            ninja-build p7zip p7zip-full patch pkgconf python3 python3-pip python3-ply python3-docutils \
+            python3-pyelftools qemu-utils re2c rsync scons squashfs-tools subversion swig texinfo uglifyjs \
+            upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd
+          sudo -E apt-get -qq autoremove --purge
+          sudo -E apt-get -qq clean
+
+      - name: Initialization environment
+        if: steps.cache-sdk.outputs.cache-hit != 'true'
+        run: |
+          wget ${{ matrix.sdk_url }}
+          file_name=$(echo ${{ matrix.sdk_url }} | awk -F/ '{print $NF}')
+          mkdir sdk
+          if [[ $file_name == *.tar.xz ]]; then
+            tar -xJf $file_name -C ./sdk --strip-components=1
+          elif [[ $file_name == *.tar.zst ]]; then
+            tar --zstd -x -f $file_name -C ./sdk --strip-components=1
+          else
+            echo "Unsupported file format: $file_name"
+            exit 1
+          fi
+          cd sdk
+
+          rm -rf ./package/custom_packages
+          mkdir -p ./package/custom_packages
+          git clone https://github.com/timsaya/luci-app-bandix.git ./package/custom_packages/luci-app-bandix
+
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+
+          #--------------------------------------begin_patches------------------------------------------
+          echo "Start applying the patch"
+
+          rm -rf temp_resp
+          git clone -b master --single-branch https://github.com/openwrt/packages.git temp_resp
+          echo "update golang version"
+          rm -rf feeds/packages/lang/golang
+          cp -r temp_resp/lang/golang feeds/packages/lang
+          echo "update rust version"
+          rm -rf feeds/packages/lang/rust
+          cp -r temp_resp/lang/rust feeds/packages/lang
+          rm -rf temp_resp
+          
+          echo "update patch-kernel.sh"
+          git clone -b main --single-branch https://github.com/openwrt/openwrt.git temp_resp
+          cp -f temp_resp/scripts/patch-kernel.sh scripts/
+          rm -rf temp_resp
+
+          echo "Patch application completed"
+          #--------------------------------------end_patches--------------------------------------------
+
+      - name: Compile
+        id: compile
+        run: |
+          cd sdk
+          echo "CONFIG_ALL_NONSHARED=n" > .config
+          echo "CONFIG_ALL_KMODS=n" >> .config
+          echo "CONFIG_ALL=n" >> .config
+          echo "CONFIG_AUTOREMOVE=n" >> .config
+          echo "CONFIG_LUCI_LANG_zh_Hans=y" >> .config
+          echo "CONFIG_PACKAGE_luci-app-bandix=m" >> .config
+          
+
+
+          make defconfig
+          make package/custom_packages/luci-app-bandix/luci-app-bandix/compile -j$(nproc) V=s
+          mkdir upload
+          mv bin/packages/*/base/luci-app-bandix* upload/
+          mv bin/packages/*/base/luci-i18n-bandix* upload/
+          cd upload
+          echo "status=success" >> $GITHUB_OUTPUT
+          echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+
+      - name: Upload to release
+        uses: softprops/action-gh-release@v2
+        if: steps.compile.outputs.status == 'success'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{needs.job_check.outputs.luci-app-bandix_version}}
+          files: ${{ env.FIRMWARE }}/*
