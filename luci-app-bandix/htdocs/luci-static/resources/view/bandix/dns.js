@@ -570,11 +570,11 @@ function formatDnsServer(query) {
 function formatResponseResult(query) {
     if (!query) return { display: [], full: [] };
     
-    // 显示响应IP（response_ips），它是一个字符串数组
-    if (query.response_ips && Array.isArray(query.response_ips) && query.response_ips.length > 0) {
+    // 显示响应记录（response_records），它是一个字符串数组
+    if (query.response_records && Array.isArray(query.response_records) && query.response_records.length > 0) {
         var maxDisplay = 5; // 最多显示5条
-        var displayRecords = query.response_ips.slice(0, maxDisplay);
-        var fullRecords = query.response_ips;
+        var displayRecords = query.response_records.slice(0, maxDisplay);
+        var fullRecords = query.response_records;
         
         return {
             display: displayRecords,
@@ -1113,20 +1113,25 @@ return view.extend({
                             ]),
                             E('div', { 'class': 'stats-card' }, [
                                 E('div', { 'class': 'stats-card-title' }, getTranslation('响应时间', language)),
-                                E('div', { 'class': 'stats-card-value', 'id': 'stat-avg-response-time', 'style': 'margin-bottom: 12px;' }, [
-                                    E('span', {}, (stats.avg_response_time_ms || 0).toFixed(1)),
+                                E('div', { 'class': 'stats-card-value', 'id': 'stat-latest-response-time', 'style': 'margin-bottom: 12px;' }, [
+                                    E('span', {}, (stats.latest_response_time_ms || 0).toFixed(1)),
                                     E('span', { 'class': 'stats-card-unit' }, ' ' + getTranslation('毫秒', language))
                                 ]),
                                 E('div', { 'class': 'stats-card-details', 'id': 'stat-response-time-details' }, [
                                     E('div', { 'class': 'stats-detail-row' }, [
+                                        E('span', { 'class': 'stats-detail-label' }, getTranslation('平均响应时间', language) + ':'),
+                                        E('span', { 'class': 'stats-detail-value', 'id': 'stat-avg-response-time' }, 
+                                            (stats.avg_response_time_ms || 0).toFixed(1) + ' ' + getTranslation('毫秒', language))
+                                    ]),
+                                    E('div', { 'class': 'stats-detail-row' }, [
                                         E('span', { 'class': 'stats-detail-label' }, getTranslation('最快响应时间', language) + ':'),
                                         E('span', { 'class': 'stats-detail-value', 'id': 'stat-min-response-time' }, 
-                                            (stats.min_response_time_ms || 0) + ' ' + getTranslation('毫秒', language))
+                                            (stats.min_response_time_ms || 0).toFixed(1) + ' ' + getTranslation('毫秒', language))
                                     ]),
                                     E('div', { 'class': 'stats-detail-row' }, [
                                         E('span', { 'class': 'stats-detail-label' }, getTranslation('最慢响应时间', language) + ':'),
                                         E('span', { 'class': 'stats-detail-value', 'id': 'stat-max-response-time' }, 
-                                            (stats.max_response_time_ms || 0) + ' ' + getTranslation('毫秒', language))
+                                            (stats.max_response_time_ms || 0).toFixed(1) + ' ' + getTranslation('毫秒', language))
                                     ])
                                 ])
                             ]),
@@ -1157,19 +1162,24 @@ return view.extend({
                     totalQueriesEl.textContent = stats.total_queries || 0;
                 }
 
+                var latestResponseTimeEl = document.getElementById('stat-latest-response-time');
+                if (latestResponseTimeEl && latestResponseTimeEl.firstChild) {
+                    latestResponseTimeEl.firstChild.textContent = (stats.latest_response_time_ms || 0).toFixed(1);
+                }
+
                 var avgResponseTimeEl = document.getElementById('stat-avg-response-time');
-                if (avgResponseTimeEl && avgResponseTimeEl.firstChild) {
-                    avgResponseTimeEl.firstChild.textContent = (stats.avg_response_time_ms || 0).toFixed(1);
+                if (avgResponseTimeEl) {
+                    avgResponseTimeEl.textContent = (stats.avg_response_time_ms || 0).toFixed(1) + ' ' + getTranslation('毫秒', language);
                 }
 
                 var minResponseTimeEl = document.getElementById('stat-min-response-time');
                 if (minResponseTimeEl) {
-                    minResponseTimeEl.textContent = (stats.min_response_time_ms || 0) + ' ' + getTranslation('毫秒', language);
+                    minResponseTimeEl.textContent = (stats.min_response_time_ms || 0).toFixed(1) + ' ' + getTranslation('毫秒', language);
                 }
 
                 var maxResponseTimeEl = document.getElementById('stat-max-response-time');
                 if (maxResponseTimeEl) {
-                    maxResponseTimeEl.textContent = (stats.max_response_time_ms || 0) + ' ' + getTranslation('毫秒', language);
+                    maxResponseTimeEl.textContent = (stats.max_response_time_ms || 0).toFixed(1) + ' ' + getTranslation('毫秒', language);
                 }
 
                 var successRateEl = document.getElementById('stat-success-rate');

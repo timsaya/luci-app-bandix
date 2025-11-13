@@ -41,6 +41,8 @@ const translations = {
 		'明亮模式': '明亮模式',
 		'暗黑模式': '暗黑模式',
 		'意见反馈': '意见反馈',
+		'日志级别': '日志级别',
+		'设置 Bandix 服务的日志级别': '设置 Bandix 服务的日志级别',
 		'离线超时时间': '离线超时时间',
 		'设置设备离线判断的超时时间（秒）': '设置设备离线判断的超时时间（秒）。超过此时间未活动的设备将被标记为离线',
 		'历史流量周期': '历史流量周期',
@@ -100,6 +102,8 @@ const translations = {
 		'明亮模式': '明亮模式',
 		'暗黑模式': '暗黑模式',
 		'意见反馈': '意見反饋',
+		'日志级别': '日誌級別',
+		'设置 Bandix 服务的日志级别': '設置 Bandix 服務的日誌級別',
 		'离线超时时间': '離線超時時間',
 		'设置设备离线判断的超时时间（秒）': '設定設備離線判斷的超時時間（秒）。超過此時間未活動的設備將被標記為離線',
 		'历史流量周期': '歷史流量週期',
@@ -160,6 +164,8 @@ const translations = {
 		'明亮模式': 'Light Mode',
 		'暗黑模式': 'Dark Mode',
 		'意见反馈': 'Feedback',
+		'日志级别': 'Log Level',
+		'设置 Bandix 服务的日志级别': 'Set the log level for Bandix service',
 		'离线超时时间': 'Offline Timeout',
 		'设置设备离线判断的超时时间（秒）': 'Set the timeout for device offline detection (seconds). Devices inactive for longer than this time will be marked as offline',
 		'历史流量周期': 'Traffic History Period',
@@ -220,6 +226,8 @@ const translations = {
 		'明亮模式': 'Mode Clair',
 		'暗黑模式': 'Mode Sombre',
 		'意见反馈': 'Commentaires',
+		'日志级别': 'Niveau de Journal',
+		'设置 Bandix 服务的日志级别': 'Définir le niveau de journal pour le service Bandix',
 		'离线超时时间': 'Délai d\'expiration hors ligne',
 		'设置设备离线判断的超时时间（秒）': 'Définir le délai d\'expiration pour la détection hors ligne des appareils (secondes). Les appareils inactifs plus longtemps que cette durée seront marqués comme hors ligne',
 		'历史流量周期': 'Période d\'Historique du Trafic',
@@ -280,6 +288,8 @@ const translations = {
 		'明亮模式': 'ライトモード',
 		'暗黑模式': 'ダークモード',
 		'意见反馈': 'フィードバック',
+		'日志级别': 'ログレベル',
+		'设置 Bandix 服务的日志级别': 'Bandix サービスのログレベルを設定',
 		'离线超时时间': 'オフラインタイムアウト',
 		'设置设备离线判断的超时时间（秒）': 'デバイスのオフライン検出のタイムアウト時間（秒）を設定。この時間を超えて非アクティブなデバイスはオフラインとしてマークされます',
 		'历史流量周期': 'トラフィック履歴期間',
@@ -340,6 +350,8 @@ const translations = {
 		'明亮模式': 'Светлый Режим',
 		'暗黑模式': 'Темный Режим',
 		'意见反馈': 'Обратная связь',
+		'日志级别': 'Уровень Журналирования',
+		'设置 Bandix 服务的日志级别': 'Установить уровень журналирования для службы Bandix',
 		'离线超时时间': 'Таймаут отключения',
 		'设置设备离线判断的超时时间（秒）': 'Установить таймаут для обнаружения отключения устройств (секунды). Устройства, неактивные дольше этого времени, будут помечены как отключенные',
 		'历史流量周期': 'Период Истории Трафика',
@@ -591,13 +603,14 @@ return view.extend({
 		s.description = getTranslation('配置 Bandix 服务的基本参数', language);
 		s.addremove = false;
 
-		// 添加端口设置选项
-		o = s.option(form.Value, 'port', getTranslation('端口', language),
-			getTranslation('Bandix 服务监听的端口', language));
-		o.default = '8686';
-		o.datatype = 'port';
-		o.placeholder = '8686';
-		o.rmempty = false;
+	// 添加端口设置选项
+	o = s.option(form.Value, 'port', getTranslation('端口', language),
+		getTranslation('Bandix 服务监听的端口', language));
+	o.default = '8686';
+	o.datatype = 'port';
+	o.placeholder = '8686';
+	o.rmempty = false;
+
 
 	// 添加网卡选择下拉菜单
 	o = s.option(form.ListValue, 'iface', getTranslation('监控网卡', language),
@@ -629,6 +642,18 @@ return view.extend({
 		o.value('light', getTranslation('明亮模式', language));
 		o.value('dark', getTranslation('暗黑模式', language));
 		o.default = 'auto';
+		o.rmempty = false;
+
+
+				// 添加日志级别选择选项
+		o = s.option(form.ListValue, 'log_level', getTranslation('日志级别', language),
+		getTranslation('设置 Bandix 服务的日志级别', language));
+		o.value('trace', 'Trace');
+		o.value('debug', 'Debug');
+		o.value('info', 'Info');
+		o.value('warn', 'Warn');
+		o.value('error', 'Error');
+		o.default = 'info';
 		o.rmempty = false;
 
 		// 添加数据目录设置（只读）
