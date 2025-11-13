@@ -35,7 +35,7 @@ jobs:
           url_tags: https://api.github.com/repos/${{ env.luci-app-bandix }}/releases/latest
         run: |
           cd luci-app-bandix
-          latest_version=$(awk -F ':=' '/^PKG_VERSION:=|^PKG_RELEASE:=/ {print $2}' Makefile | sed ':a;N;s/\$(PKG_VERSION)-//;s/\n$//;s/\n/-/;ba')
+          latest_version=$(awk -F ':=' '/^PKG_VERSION:=/ {print $2}' Makefile | tr -d ' \n')
           echo "latest_version=${latest_version}" >> $GITHUB_OUTPUT
 
           remote_latest_version=$(wget -qO- -t1 -T2 ${{env.url_tags}} | jq -r '.tag_name')
@@ -46,8 +46,11 @@ jobs:
             exit 0
           fi
           echo "Remote latest: $remote_latest_version"
+          
+          # 去掉远程版本的 v 前缀进行比较
+          remote_version_without_v=${remote_latest_version#v}
 
-          if [ "$latest_version" = "$remote_latest_version" ]; then
+          if [ "$latest_version" = "$remote_version_without_v" ]; then
             echo "has_update=false" >> $GITHUB_OUTPUT
           else
             echo "has_update=true" >> $GITHUB_OUTPUT
@@ -57,10 +60,7 @@ jobs:
       - name: Prepare release
         if: steps.check_version.outputs.has_update == 'true'
         run: |
-          echo "## :mega:Update content" >> release.txt
-          echo "![](https://img.shields.io/github/downloads/${{ env.luci-app-bandix }}/${{steps.check_version.outputs.latest_version}}/total?style=flat-square)" >> release.txt
-          echo "### luci-app-bandix info" >> release.txt
-          echo "**:minidisc: luci-app-bandix version: ${{steps.check_version.outputs.latest_version}}**" >> release.txt
+          echo "![](https://img.shields.io/github/downloads/${{ env.luci-app-bandix }}/v${{steps.check_version.outputs.latest_version}}/total?style=flat-square)" >> release.txt
           touch release.txt
 
       - name: Generate new tag & release
@@ -69,7 +69,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{steps.check_version.outputs.latest_version}}
+          tag_name: v${{steps.check_version.outputs.latest_version}}
           target_commitish: ${{ github.ref_name }}
           prerelease: ${{steps.check_version.outputs.prerelease}}
           body_path: release.txt
@@ -168,6 +168,17 @@ jobs:
           mv bin/packages/*/base/luci-app-bandix* upload/
           mv bin/packages/*/base/luci-i18n-bandix* upload/
           cd upload
+          
+          # 重命名不包含 all 的文件，在扩展名前添加 _all
+          for file in *; do
+            if [[ -f "$file" ]] && [[ ! "$file" =~ _all\. ]]; then
+              filename="${file%.*}"
+              extension="${file##*.}"
+              mv "$file" "${filename}_all.${extension}"
+              echo "Renamed: $file -> ${filename}_all.${extension}"
+            fi
+          done
+          
           echo "status=success" >> $GITHUB_OUTPUT
           echo "FIRMWARE=$PWD" >> $GITHUB_ENV
 
@@ -177,5 +188,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{needs.job_check.outputs.luci-app-bandix_version}}
+          tag_name: v${{needs.job_check.outputs.luci-app-bandix_version}}
           files: ${{ env.FIRMWARE }}/*
