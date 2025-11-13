@@ -89,6 +89,15 @@ jobs:
           - version: apk
             sdk_url: https://downloads.openwrt.org/snapshots/targets/x86/64/openwrt-sdk-x86-64_gcc-14.3.0_musl.Linux-x86_64.tar.zst
     steps:
+      - name: Cache APT packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            /var/cache/apt/archives
+          key: apt-cache-${{ runner.os }}-${{ hashFiles('.github/workflows/Auto compile with openwrt sdk.yml') }}
+          restore-keys: |
+            apt-cache-${{ runner.os }}-
+
       - name: Install packages
         run: |
           sudo -E rm -rf /usr/share/dotnet /etc/mysql /etc/php /usr/local/lib/android
@@ -103,7 +112,15 @@ jobs:
             python3-pyelftools qemu-utils re2c rsync scons squashfs-tools subversion swig texinfo uglifyjs \
             upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd
           sudo -E apt-get -qq autoremove --purge
-          sudo -E apt-get -qq clean
+
+      - name: Cache OpenWrt SDK
+        id: cache-sdk
+        uses: actions/cache@v4
+        with:
+          path: sdk
+          key: openwrt-sdk-${{ matrix.version }}-${{ hashFiles('.github/workflows/Auto compile with openwrt sdk.yml') }}
+          restore-keys: |
+            openwrt-sdk-${{ matrix.version }}-
 
       - name: Initialization environment
         if: steps.cache-sdk.outputs.cache-hit != 'true'
@@ -148,6 +165,12 @@ jobs:
 
           echo "Patch application completed"
           #--------------------------------------end_patches--------------------------------------------
+
+      - name: Update source code
+        run: |
+          cd sdk/package/custom_packages
+          rm -rf luci-app-bandix
+          git clone https://github.com/timsaya/luci-app-bandix.git luci-app-bandix
 
       - name: Compile
         id: compile
