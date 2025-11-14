@@ -3,6 +3,7 @@
 [English](README.md) | 简体中文
 
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
+![Downloads](https://gh-down-badges.linkof.link/timsaya/luci-app-bandix)
 
 
 LuCI Bandix 是一个用于 OpenWrt 的网络流量监控应用，通过 LuCI Web 界面提供直观的流量数据展示和分析功能。
@@ -22,14 +23,6 @@ LuCI Bandix 基于 LuCI 框架开发，为 OpenWrt 路由器提供网络流量�
 ![LuCI Bandix Screenshot](docs/images/settings.png)
 
 
-## 系统要求
-
-- **OpenWrt 版本**: 建议使用 OpenWrt 24.10 及以上版本
-- **包格式支持**: 支持 APK 和 IPK 包格式
-
-
-
-
 ## 功能特点
 
 - 网络流量实时监控
@@ -46,12 +39,21 @@ LuCI Bandix 基于 LuCI 框架开发，为 OpenWrt 路由器提供网络流量�
 - 支持 DNS 查询监控与统计分析
 
 
+## 系统要求
+
+- **Linux 内核**: Linux 6.x 及以上版本
+- **OpenWrt 版本**: 建议使用 OpenWrt 24.10 及以上版本
+
+
+
 ## 第三方依赖
 
 luci-app-bandix 需要以下依赖包：
 
 - **curl**: HTTP 客户端库，用于网络请求
 - **luci-lib-jsonc**: JSON 解析库，用于数据处理
+- **jsonfilter**: JSON 查询工具，用于过滤和提取数据
+- **jshn**: JSON Shell 库，用于 Shell 脚本的 JSON 操作
 
 这些依赖会在安装 luci-app-bandix 时自动安装，但某些固件可能需要手动安装这些依赖包。
 
@@ -99,20 +101,6 @@ luci-app-bandix 需要以下依赖包：
 
 
 
-## 已知问题
-
-当持久化循环周期设置过大，比如 1小时、10 小时等，在某些设备上会导致 rpcd 服务崩溃，以至于无法通过 Web 访问路由器的管理界面，会提示密码错误等。
-
-**解决办法**: 通过 ssh 进入终端，重新安装 bandix, 并执行 `service rpcd restart`，同时设置小一点的持久化循环周期（比如10分钟）。
-
-## 维护者
-
-- [timsaya](https://github.com/timsaya)
-
 ## 许可证
 
 本项目采用 [Apache 2.0 许可证](LICENSE)。
-
-## 贡献
-
-欢迎提交问题报告和改进建议！请通过 GitHub Issues 或 Pull Requests 参与贡献。

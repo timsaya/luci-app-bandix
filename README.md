@@ -3,6 +3,7 @@
 English | [简体中文](README.zh.md)
 
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
+![Downloads](https://gh-down-badges.linkof.link/timsaya/luci-app-bandix)
 
 
 LuCI Bandix is a network traffic monitoring application for OpenWrt, providing intuitive traffic data visualization and analysis through the LuCI web interface.
@@ -23,13 +24,6 @@ LuCI Bandix is developed based on the LuCI framework, offering network traffic m
 ![LuCI Bandix Screenshot](docs/images/settings.png)
 
 
-## System Requirements
-
-- **OpenWrt Version**: Recommended OpenWrt 24.10 and above
-- **Package Format Support**: Supports APK and IPK package formats
-
-
-
 ## Features
 
 - Real-time network traffic monitoring
@@ -46,12 +40,21 @@ LuCI Bandix is developed based on the LuCI framework, offering network traffic m
 - Support DNS query monitoring and statistical analysis
 
 
+## System Requirements
+
+- **Linux Kernel**: Linux 6.x and above
+- **OpenWrt Version**: Recommended OpenWrt 24.10 and above
+
+
+
 ## Third-party Dependencies
 
 luci-app-bandix requires the following dependency packages:
 
 - **curl**: HTTP client library for network requests
 - **luci-lib-jsonc**: JSON parsing library for data processing
+- **jsonfilter**: JSON query tool for filtering and extracting data
+- **jshn**: JSON shell library for shell script JSON operations
 
 These dependencies will be automatically installed when installing luci-app-bandix, but some firmware may require manual installation of these dependency packages.
 
@@ -98,20 +101,6 @@ Please ensure you install matching versions to ensure compatibility and proper f
 
 
 
-## Known Issues
-
-When the persistence cycle is set too large (e.g., 1 hour, 10 hours, etc.), the rpcd service may crash on some devices, making it impossible to access the router's management interface via web. The system may display password error messages.
-
-**Solution**: Access the terminal via SSH, reinstall bandix, and execute `service rpcd restart`. Also, set a smaller persistence cycle (e.g., 10 minutes).
-
-## Maintainer
-
-- [timsaya](https://github.com/timsaya)
-
 ## License
 
 This project is licensed under the [Apache 2.0 License](LICENSE).
-
-## Contributing
-
-Issue reports and improvement suggestions are welcome! Please participate through GitHub Issues or Pull Requests.
