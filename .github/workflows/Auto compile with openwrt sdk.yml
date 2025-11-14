@@ -142,6 +142,13 @@ jobs:
           mkdir -p ./package/custom_packages
           git clone https://github.com/timsaya/luci-app-bandix.git ./package/custom_packages/luci-app-bandix
 
+          # Update feeds to github source
+          sed -i \
+              -e 's|git\.openwrt\.org/feed|github.com/openwrt|g' \
+              -e 's|git\.openwrt\.org/project|github.com/openwrt|g' \
+              -e 's|git\.openwrt\.org/openwrt|github.com/openwrt|g' \
+              "feeds.conf.default"
+
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
