@@ -259,51 +259,7 @@ function getSystemLanguage() {
     return 'en';
 }
 
-// 检查是否为暗黑模式
-function isDarkMode() {
-    // 首先检查用户设置的主题
-    var userTheme = uci.get('bandix', 'general', 'theme');
-    if (userTheme) {
-        if (userTheme === 'dark') {
-            return true;
-        } else if (userTheme === 'light') {
-            return false;
-        }
-        // 如果是 'auto'，继续检查系统主题
-    }
-
-    // 获取 LuCI 主题设置
-    var mediaUrlBase = uci.get('luci', 'main', 'mediaurlbase');
-    if (mediaUrlBase && mediaUrlBase.toLowerCase().includes('dark')) {
-        return true;
-    }
-
-    // 如果是 argon 主题，检查 argon 配置
-    if (mediaUrlBase && mediaUrlBase.toLowerCase().includes('argon')) {
-        var argonMode = uci.get('argon', '@global[0]', 'mode');
-        if (argonMode) {
-            if (argonMode.toLowerCase() === 'dark') {
-                return true;
-            } else if (argonMode.toLowerCase() === 'light') {
-                return false;
-            }
-            // 如果是 'normal' 或 'auto'，使用浏览器检测系统颜色偏好
-            if (argonMode.toLowerCase() === 'normal' || argonMode.toLowerCase() === 'auto') {
-                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    return true;
-                }
-                return false;
-            }
-        }
-    }
-
-    // 默认情况下也使用浏览器检测系统颜色偏好
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        return true;
-    }
-
-    return false;
-}
+// 暗色模式检测已改为使用 CSS 媒体查询 @media (prefers-color-scheme: dark)
 
 // 格式化时间戳
 function formatTimestamp(timestamp) {
@@ -364,59 +320,42 @@ return view.extend({
         if (!language || language === 'auto') {
             language = getSystemLanguage();
         }
-        var darkMode = isDarkMode();
         var connectionEnabled = uci.get('bandix', 'connections', 'enabled') === '1';
 
         // 创建样式
         var style = E('style', {}, `
             .bandix-connection-container {
-                margin: 0;
-                padding: 16px;
-                background-color: ${darkMode ? '#1a1a1a' : '#f8fafc'};
-                min-height: calc(100vh - 100px);
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-                color: ${darkMode ? '#e2e8f0' : '#1f2937'};
-                border-radius: 8px;
             }
             
             .bandix-header {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                margin-bottom: 20px;
             }
             
             .bandix-title {
                 font-size: 1.5rem;
                 font-weight: 600;
-                color: ${darkMode ? '#f1f5f9' : '#1f2937'};
                 margin: 0;
             }
             
             .bandix-badge {
-                background-color: ${darkMode ? '#2a2a2a' : '#f8fafc'};
-                border: 1px solid ${darkMode ? '#444444' : '#cbd5e1'};
                 border-radius: 4px;
                 padding: 4px 10px;
                 font-size: 0.875rem;
-                color: ${darkMode ? '#d0d0d0' : '#475569'};
             }
             
             .bandix-alert {
-                background-color: ${darkMode ? '#2a2a2a' : '#eff6ff'};
-                border-left: 3px solid ${darkMode ? '#3b82f6' : '#2563eb'};
                 border-radius: 4px;
                 padding: 10px 12px;
-                margin-bottom: 16px;
                 display: flex;
                 align-items: center;
                 gap: 10px;
-                color: ${darkMode ? '#d0d0d0' : '#1e293b'};
                 font-size: 0.875rem;
             }
             
             .bandix-alert-icon {
-                color: ${darkMode ? '#60a5fa' : '#2563eb'};
                 font-size: 0.875rem;
                 font-weight: 700;
                 width: 18px;
@@ -424,72 +363,62 @@ return view.extend({
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                border: 2px solid currentColor;
                 border-radius: 50%;
                 flex-shrink: 0;
-            }
-            
-            .bandix-card {
-                background-color: ${darkMode ? '#2a2a2a' : 'white'};
-                border-radius: 8px;
-                border: 1px solid ${darkMode ? '#444444' : '#e2e8f0'};
-                box-shadow: 0 2px 8px rgba(0, 0, 0, ${darkMode ? '0.3' : '0.08'});
-                margin-bottom: 24px;
-                overflow: hidden;
-            }
-            
-            .bandix-card-header {
-                padding: 16px;
-                border-bottom: 1px solid ${darkMode ? '#444444' : '#e2e8f0'};
-                background-color: ${darkMode ? '#2a2a2a' : '#f8fafc'};
-            }
-            
-            .bandix-card-title {
-                font-size: 1.125rem;
-                font-weight: 600;
-                color: ${darkMode ? '#f1f5f9' : '#1f2937'};
-                margin: 0;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-            
-            .bandix-card-body {
-                padding: 0;
             }
             
             .stats-grid {
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
                 gap: 16px;
-                margin-bottom: 24px;
+                margin-top: 0;
             }
             
-            .stats-card {
-                background-color: ${darkMode ? '#2a2a2a' : 'white'};
-                border-radius: 8px;
-                padding: 20px;
-                border: 1px solid ${darkMode ? '#444444' : '#e2e8f0'};
-                box-shadow: 0 2px 8px rgba(0, 0, 0, ${darkMode ? '0.3' : '0.08'});
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
+            
+            .bandix-connection-container > .cbi-section:first-of-type {
+                margin-top: 0;
+            }
+            
+            .bandix-connection-container > .cbi-section:last-of-type {
+                margin-bottom: 0;
             }
             
             .stats-card-title {
                 font-size: 0.875rem;
                 font-weight: 600;
-                color: ${darkMode ? '#94a3b8' : '#64748b'};
+                opacity: 0.7;
                 margin: 0 0 12px 0;
                 text-transform: uppercase;
                 letter-spacing: 0.025em;
             }
             
+            .stats-grid .cbi-section {
+                padding: 16px;
+                border: 1px solid rgba(0, 0, 0, 0.1);
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+            }
+            
+            .stats-grid .cbi-section:hover {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+                transform: translateY(-2px);
+            }
+            
+            @media (prefers-color-scheme: dark) {
+                .stats-grid .cbi-section {
+                    border-color: rgba(255, 255, 255, 0.15);
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+                }
+                
+                .stats-grid .cbi-section:hover {
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+                }
+            }
+            
             .stats-card-main-value {
                 font-size: 2.25rem;
                 font-weight: 700;
-                color: ${darkMode ? '#f1f5f9' : '#1f2937'};
                 margin: 0 0 8px 0;
                 line-height: 1;
             }
@@ -510,28 +439,23 @@ return view.extend({
             }
             
             .stats-detail-label {
-                color: ${darkMode ? '#9ca3af' : '#6b7280'};
+                opacity: 0.7;
                 font-weight: 500;
             }
             
             .stats-detail-value {
                 font-weight: 600;
-                color: ${darkMode ? '#e2e8f0' : '#374151'};
             }
             
             .bandix-table {
                 width: 100%;
-                border-collapse: collapse;
-                background-color: transparent;
                 table-layout: fixed;
             }
             
             .bandix-table th {
-                background-color: ${darkMode ? '#2a2a2a' : '#f8fafc'};
                 padding: 12px 16px;
                 text-align: left;
                 font-weight: 600;
-                color: ${darkMode ? '#d0d0d0' : '#475569'};
                 border: none;
                 font-size: 0.875rem;
                 white-space: nowrap;
@@ -545,11 +469,9 @@ return view.extend({
             
             .bandix-table td {
                 padding: 12px 16px;
-                border-bottom: 1px solid ${darkMode ? '#333333' : '#f1f5f9'};
                 vertical-align: middle;
                 word-break: break-word;
                 overflow-wrap: break-word;
-                color: ${darkMode ? '#d0d0d0' : '#334155'};
             }
             
             
@@ -581,7 +503,6 @@ return view.extend({
             
             .device-name {
                 font-weight: 600;
-                color: ${darkMode ? '#f1f5f9' : '#1f2937'};
                 display: flex;
                 align-items: center;
                 gap: 8px;
@@ -589,12 +510,12 @@ return view.extend({
             }
             
             .device-ip {
-                color: ${darkMode ? '#94a3b8' : '#6b7280'};
+                opacity: 0.7;
                 font-size: 0.875rem;
             }
             
             .device-mac {
-                color: ${darkMode ? '#64748b' : '#9ca3af'};
+                opacity: 0.6;
                 font-size: 0.75rem;
             }
             
@@ -637,43 +558,18 @@ return view.extend({
             
             .tcp-status-value {
                 font-weight: 600;
-                color: ${darkMode ? '#e2e8f0' : '#374151'};
             }
             
             .loading-state {
                 text-align: center;
                 padding: 40px;
-                color: ${darkMode ? '#94a3b8' : '#6b7280'};
+                opacity: 0.7;
                 font-style: italic;
             }
             
             .error-state {
                 text-align: center;
                 padding: 40px;
-                color: ${darkMode ? '#f87171' : '#ef4444'};
-            }
-            
-            .btn {
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                padding: 8px 16px;
-                border-radius: 4px;
-                font-size: 0.875rem;
-                font-weight: 500;
-                text-decoration: none;
-                border: none;
-                cursor: pointer;
-                transition: all 0.15s ease;
-            }
-            
-            .btn-primary {
-                background-color: #3b82f6;
-                color: white;
-            }
-            
-            .btn-primary:hover {
-                background-color: #2563eb;
             }
         `);
         document.head.appendChild(style);
@@ -689,7 +585,6 @@ return view.extend({
         // 检查连接监控是否启用
         if (!connectionEnabled) {
             var alertDiv = E('div', { 'class': 'bandix-alert' }, [
-                E('span', { 'class': 'bandix-alert-icon' }, '!'),
                 E('div', {}, [
                     E('strong', {}, getTranslation('连接监控未启用', language)),
                     E('p', { 'style': 'margin: 4px 0 0 0;' },
@@ -698,11 +593,11 @@ return view.extend({
             ]);
             container.appendChild(alertDiv);
 
-            var settingsCard = E('div', { 'class': 'bandix-card' }, [
-                E('div', { 'class': 'bandix-card-body', 'style': 'text-align: center;' }, [
+            var settingsCard = E('div', { 'class': 'cbi-section' }, [
+                E('div', { 'style': 'text-align: center; padding: 16px;' }, [
                     E('a', {
                         'href': '/cgi-bin/luci/admin/network/bandix/settings',
-                        'class': 'btn btn-primary'
+                        'class': 'cbi-button cbi-button-positive'
                     }, getTranslation('前往设置', language))
                 ])
             ]);
@@ -712,18 +607,17 @@ return view.extend({
 
         // 添加提示信息
         var infoAlert = E('div', { 'class': 'bandix-alert' }, [
-            E('span', { 'class': 'bandix-alert-icon' }, '!'),
             E('span', {}, getTranslation('列表只显示局域网设备连接，数据可能和总连接数不一致。', language))
         ]);
         container.appendChild(infoAlert);
 
         // 全局统计卡片
         var statsGrid = E('div', { 'class': 'stats-grid' }, [
-            E('div', { 'class': 'stats-card' }, [
+            E('div', { 'class': 'cbi-section' }, [
                 E('div', { 'class': 'stats-card-title' }, getTranslation('总连接数统计', language)),
                 E('div', { 'class': 'stats-card-main-value', 'id': 'total-connections' }, '-')
             ]),
-            E('div', { 'class': 'stats-card' }, [
+            E('div', { 'class': 'cbi-section' }, [
                 E('div', { 'class': 'stats-card-title' }, getTranslation('TCP连接数', language)),
                 E('div', { 'class': 'stats-card-main-value', 'id': 'tcp-connections' }, '-'),
                 E('div', { 'class': 'stats-card-details' }, [
@@ -741,7 +635,7 @@ return view.extend({
                     ])
                 ])
             ]),
-            E('div', { 'class': 'stats-card' }, [
+            E('div', { 'class': 'cbi-section' }, [
                 E('div', { 'class': 'stats-card-title' }, getTranslation('UDP连接数', language)),
                 E('div', { 'class': 'stats-card-main-value', 'id': 'udp-connections' }, '-')
             ])
@@ -749,8 +643,9 @@ return view.extend({
         container.appendChild(statsGrid);
 
         // 设备连接统计表格
-        var deviceCard = E('div', { 'class': 'bandix-card' }, [
-            E('div', { 'class': 'bandix-card-body' }, [
+        var deviceCard = E('div', { 'class': 'cbi-section' }, [
+            E('h3', {}, getTranslation('设备连接统计', language)),
+            E('div', {}, [
                 E('div', { 'id': 'device-table-container' }, [
                     E('table', { 'class': 'bandix-table' }, [
                         E('thead', {}, [
@@ -868,6 +763,61 @@ return view.extend({
 
         // 立即执行一次，不等待轮询
         updateConnectionData();
+
+        // 自动适应主题背景色和文字颜色的函数
+        function applyThemeColors() {
+            try {
+                var mainElement = document.querySelector('.main') || document.body;
+                var computedStyle = window.getComputedStyle(mainElement);
+                var bgColor = computedStyle.backgroundColor;
+                
+                // 如果父元素有背景色，应用到容器和卡片
+                if (bgColor && bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent') {
+                    var containerEl = document.querySelector('.bandix-connection-container');
+                    if (containerEl) {
+                        containerEl.style.backgroundColor = bgColor;
+                    }
+                    
+                    // 应用到表格表头
+                    var tableHeaders = document.querySelectorAll('.bandix-table th');
+                    tableHeaders.forEach(function(th) {
+                        th.style.backgroundColor = bgColor;
+                    });
+                }
+                
+                // 检测文字颜色并应用
+                var textColor = computedStyle.color;
+                if (textColor && textColor !== 'rgba(0, 0, 0, 0)') {
+                    var containerEl = document.querySelector('.bandix-connection-container');
+                    if (containerEl) {
+                        containerEl.style.color = textColor;
+                    }
+                }
+            } catch (e) {
+                // 如果检测失败，使用默认值
+                console.log('Theme adaptation:', e);
+            }
+        }
+        
+        // 初始应用主题颜色
+        setTimeout(applyThemeColors, 100);
+        
+        // 监听 DOM 变化，自动应用到新创建的元素
+        if (typeof MutationObserver !== 'undefined') {
+            var observer = new MutationObserver(function(mutations) {
+                applyThemeColors();
+            });
+            
+            setTimeout(function() {
+                var container = document.querySelector('.bandix-connection-container');
+                if (container) {
+                    observer.observe(container, {
+                        childList: true,
+                        subtree: true
+                    });
+                }
+            }, 200);
+        }
 
         return container;
     }

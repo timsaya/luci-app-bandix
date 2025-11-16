@@ -403,34 +403,7 @@ function getSystemLanguage() {
 	return 'en';
 }
 
-function isDarkMode() {
-	// 首先检查用户设置的主题
-	var userTheme = uci.get('bandix', 'general', 'theme');
-	if (userTheme) {
-		if (userTheme === 'dark') {
-			return true;
-		} else if (userTheme === 'light') {
-			return false;
-		}
-		// 如果是 'auto'，继续检查系统主题
-	}
-	
-	// 获取 LuCI 主题设置
-	var mediaUrlBase = uci.get('luci', 'main', 'mediaurlbase');
-	if (mediaUrlBase && mediaUrlBase.toLowerCase().includes('dark')) {
-		return true;
-	}
-	
-	// 如果是 argon 主题，检查 argon 配置
-	if (mediaUrlBase && mediaUrlBase.toLowerCase().includes('argon')) {
-		var argonMode = uci.get('argon', '@global[0]', 'mode');
-		if (argonMode && argonMode.toLowerCase().includes('dark')) {
-			return true;
-		}
-	}
-	
-	return false;
-}
+// 暗色模式检测已改为使用 CSS 媒体查询 @media (prefers-color-scheme: dark)
 
 return view.extend({
 	load: function () {
@@ -467,108 +440,6 @@ return view.extend({
 		var language = uci.get('bandix', 'general', 'language');
 		if (!language || language === 'auto') {
 			language = getSystemLanguage();
-		}
-		var darkMode = isDarkMode();
-
-		// 添加暗黑模式样式支持
-		if (darkMode) {
-			var style = E('style', {}, `
-				body, .main {
-					background-color: #0f172a !important;
-					color: #e2e8f0 !important;
-				}
-				
-				.cbi-section {
-					background-color: #1E1E1E !important;
-					
-					border-radius: 8px !important;
-				}
-				
-				.cbi-section h3 {
-					color: #f1f5f9 !important;
-					background-color: #333333 !important;
-					border-bottom: 1px solid #1E1E1E !important;
-				}
-				
-				.cbi-section-descr {
-					color: #94a3b8 !important;
-				}
-				
-				.cbi-value {
-					border-bottom: 1px solid #1E1E1E !important;
-				}
-				
-				.cbi-value-title {
-					color: #e2e8f0 !important;
-				}
-				
-				.cbi-value-description {
-					color: #94a3b8 !important;
-				}
-				
-				input[type="text"], input[type="number"], select, textarea {
-					background-color: #333333 !important;
-					
-					color: #e2e8f0 !important;
-				}
-				
-				input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
-					border-color: #3b82f6 !important;
-					box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
-				}
-				
-				input[type="checkbox"] {
-					accent-color: #3b82f6 !important;
-				}
-				
-				.cbi-button, .btn {
-					background-color: #333333 !important;
-					
-					color: #e2e8f0 !important;
-				}
-				
-				.cbi-button:hover, .btn:hover {
-					background-color: #1E1E1E !important;
-				}
-				
-				.cbi-button-save {
-					background-color: #3b82f6 !important;
-					border-color: #3b82f6 !important;
-					color: white !important;
-				}
-				
-				.cbi-button-save:hover {
-					background-color: #2563eb !important;
-				}
-				
-				.cbi-section-error {
-					background-color: #7f1d1d !important;
-					border-color: #dc2626 !important;
-					color: #fca5a5 !important;
-				}
-				
-				/* 表格样式 */
-				.table {
-					background-color: #1E1E1E !important;
-					
-				}
-				
-				.table th {
-					background-color: #333333 !important;
-					color: #e2e8f0 !important;
-					border-bottom: 1px solid #1E1E1E !important;
-				}
-				
-				.table td {
-					color: #cbd5e1 !important;
-					border-bottom: 1px solid #1E1E1E !important;
-				}
-				
-				.table tr:hover {
-					background-color: #1E1E1E !important;
-				}
-			`);
-			document.head.appendChild(style);
 		}
 
 		// 从network配置中提取物理接口名称
@@ -634,16 +505,6 @@ return view.extend({
 		o.value('ru', 'Русский');
 		o.default = 'auto';
 		o.rmempty = false;
-
-		// 添加主题选择选项
-		o = s.option(form.ListValue, 'theme', getTranslation('界面主题', language),
-			getTranslation('选择 Bandix 流量监控的显示主题', language));
-		o.value('auto', getTranslation('跟随系统', language));
-		o.value('light', getTranslation('明亮模式', language));
-		o.value('dark', getTranslation('暗黑模式', language));
-		o.default = 'auto';
-		o.rmempty = false;
-
 
 				// 添加日志级别选择选项
 		o = s.option(form.ListValue, 'log_level', getTranslation('日志级别', language),

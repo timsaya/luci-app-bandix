@@ -234,7 +234,7 @@ const translations = {
         '仅限WAN 流量': 'WAN Only',
         '设置': 'Settings',
         '设备设置': 'Device Settings',
-        '限速设置': 'Rate Limit Settings',
+        '限速设置': 'Rate Limits',
         '取消限速': 'Remove Rate Limit',
         '保存': 'Save',
         '取消': 'Cancel',
@@ -618,49 +618,40 @@ function getSystemLanguage() {
     return 'en';
 }
 
-function isDarkMode() {
-    // 首先检查用户设置的主题
-    var userTheme = uci.get('bandix', 'general', 'theme');
-    if (userTheme) {
-        if (userTheme === 'dark') {
-            return true;
-        } else if (userTheme === 'light') {
-            return false;
-        }
-        // 如果是 'auto'，继续检查系统主题
-    }
-    
+// 暗色模式检测已改为使用 CSS 媒体查询 @media (prefers-color-scheme: dark)
+
+// 检测主题类型：返回 'wide'（宽主题，如 Argon）或 'narrow'（窄主题，如 Bootstrap）
+function getThemeType() {
     // 获取 LuCI 主题设置
     var mediaUrlBase = uci.get('luci', 'main', 'mediaurlbase');
-    if (mediaUrlBase && mediaUrlBase.toLowerCase().includes('dark')) {
-        return true;
+    
+    if (!mediaUrlBase) {
+        // 如果无法获取，尝试从 DOM 中检测
+        var linkTags = document.querySelectorAll('link[rel="stylesheet"]');
+        for (var i = 0; i < linkTags.length; i++) {
+            var href = linkTags[i].getAttribute('href') || '';
+            if (href.toLowerCase().includes('argon')) {
+                return 'wide';
+            }
+        }
+        // 默认返回窄主题
+        return 'narrow';
     }
     
-    // 如果是 argon 主题，检查 argon 配置
-    if (mediaUrlBase && mediaUrlBase.toLowerCase().includes('argon')) {
-        var argonMode = uci.get('argon', '@global[0]', 'mode');
-        if (argonMode) {
-            if (argonMode.toLowerCase() === 'dark') {
-                return true;
-            } else if (argonMode.toLowerCase() === 'light') {
-                return false;
-            }
-            // 如果是 'normal' 或 'auto'，使用浏览器检测系统颜色偏好
-            if (argonMode.toLowerCase() === 'normal' || argonMode.toLowerCase() === 'auto') {
-                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    return true;
-                }
-                return false;
-            }
+    var mediaUrlBaseLower = mediaUrlBase.toLowerCase();
+    
+    // 宽主题关键词列表（可以根据需要扩展）
+    var wideThemeKeywords = ['argon', 'material', 'design', 'edge'];
+    
+    // 检查是否是宽主题
+    for (var i = 0; i < wideThemeKeywords.length; i++) {
+        if (mediaUrlBaseLower.includes(wideThemeKeywords[i])) {
+            return 'wide';
         }
     }
     
-    // 默认情况下也使用浏览器检测系统颜色偏好
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        return true;
-    }
-    
-    return false;
+    // 默认是窄主题（Bootstrap 等）
+    return 'narrow';
 }
 
 function formatSize(bytes) {
@@ -794,29 +785,22 @@ return view.extend({
         if (!language || language === 'auto') {
             language = getSystemLanguage();
         }
-        var darkMode = isDarkMode();
 
-        // 添加现代化样式，支持暗黑模式
+        // 添加现代化样式
         var style = E('style', {}, `
             .bandix-container {
-                padding: 16px;
-                background-color: ${darkMode ? '#1a1a1a' : '#f8fafc'};
-                min-height: 100vh;
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-                color: ${darkMode ? '#e2e8f0' : '#1f2937'};
             }
             
             .bandix-header {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                margin-bottom: 20px;
             }
             
             .bandix-title {
                 font-size: 1.5rem;
                 font-weight: 600;
-                color: ${darkMode ? '#f1f5f9' : '#1f2937'};
                 margin: 0;
             }
             
@@ -830,17 +814,13 @@ return view.extend({
                 display: inline-flex;
                 border-radius: 4px;
                 overflow: hidden;
-                border: 1px solid ${darkMode ? '#444444' : '#cbd5e1'};
             }
             
             .device-mode-btn {
-                background-color: ${darkMode ? '#2a2a2a' : '#ffffff'};
                 border: none;
-                border-right: 1px solid ${darkMode ? '#444444' : '#cbd5e1'};
                 padding: 0 12px;
                 font-size: 0.8125rem;
                 line-height: 1.8;
-                color: ${darkMode ? '#a0a0a0' : '#64748b'};
                 cursor: pointer;
                 user-select: none;
                 transition: all 0.15s ease;
@@ -848,13 +828,8 @@ return view.extend({
                 height: 28px;
             }
             
-            .device-mode-btn:last-child {
-                border-right: none;
-            }
-            
             .device-mode-btn:hover:not(.active) {
-                background-color: ${darkMode ? '#3a3a3a' : '#f1f5f9'};
-                color: ${darkMode ? '#d0d0d0' : '#475569'};
+                opacity: 0.7;
             }
             
             .device-mode-btn.active {
@@ -863,29 +838,22 @@ return view.extend({
             }
             
             .bandix-badge {
-                background-color: ${darkMode ? '#2a2a2a' : '#f8fafc'};
-                border: 1px solid ${darkMode ? '#444444' : '#cbd5e1'};
                 border-radius: 4px;
                 padding: 4px 10px;
                 font-size: 0.875rem;
-                color: ${darkMode ? '#d0d0d0' : '#475569'};
             }
             
             .bandix-alert {
-                background-color: ${darkMode ? '#2a2a2a' : '#eff6ff'};
-                border-left: 3px solid ${darkMode ? '#3b82f6' : '#2563eb'};
                 border-radius: 4px;
                 padding: 10px 12px;
-                margin-bottom: 16px;
                 display: flex;
                 align-items: center;
+                justify-content: space-between;
                 gap: 10px;
-                color: ${darkMode ? '#d0d0d0' : '#1e293b'};
                 font-size: 0.875rem;
             }
             
             .bandix-alert-icon {
-                color: ${darkMode ? '#60a5fa' : '#2563eb'};
                 font-size: 0.875rem;
                 font-weight: 700;
                 width: 18px;
@@ -893,48 +861,20 @@ return view.extend({
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                border: 2px solid currentColor;
                 border-radius: 50%;
                 flex-shrink: 0;
             }
             
-            .bandix-card {
-                background-color: ${darkMode ? '#2a2a2a' : 'white'};
-                border-radius: 8px;
-                border: 1px solid ${darkMode ? '#444444' : '#e2e8f0'};
-                overflow: hidden;
-                margin-bottom: 16px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, ${darkMode ? '0.3' : '0.08'});
-            }
-            
-            .bandix-card-header {
-                padding: 16px;
-                border-bottom: 1px solid ${darkMode ? '#444444' : '#e2e8f0'};
-                background-color: ${darkMode ? '#2a2a2a' : '#f8fafc'};
-            }
-            
-            .bandix-card-title {
-                font-size: 1.125rem;
-                font-weight: 600;
-                color: ${darkMode ? '#f1f5f9' : '#1f2937'};
-                margin: 0;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
             
             .bandix-table {
                 width: 100%;
-                border-collapse: collapse;
                 table-layout: fixed;
             }
             
             .bandix-table th {
-                background-color: ${darkMode ? '#2a2a2a' : '#f8fafc'};
                 padding: 10px 16px;
                 text-align: left;
                 font-weight: 600;
-                color: ${darkMode ? '#d0d0d0' : '#475569'};
                 border: none;
                 font-size: 0.875rem;
                 cursor: pointer;
@@ -944,7 +884,7 @@ return view.extend({
             }
             
             .bandix-table th:hover {
-                background-color: ${darkMode ? '#3a3a3a' : '#f1f5f9'};
+                opacity: 0.7;
             }
             
             .bandix-table th.sortable::after {
@@ -985,11 +925,11 @@ return view.extend({
             }
             
             .th-split-section:hover {
-                background-color: ${darkMode ? '#3a3a3a' : '#e5e7eb'};
+                opacity: 0.7;
             }
             
             .th-split-section.active {
-                background-color: ${darkMode ? '#3a3a3a' : '#e5e7eb'};
+                opacity: 0.7;
             }
             
             .th-split-icon {
@@ -1005,7 +945,7 @@ return view.extend({
             .th-split-divider {
                 width: 1px;
                 height: 16px;
-                background-color: ${darkMode ? '#3a3a3a' : '#d1d5db'};
+                background-color: currentColor;
                 opacity: 0.5;
             }
             
@@ -1015,12 +955,6 @@ return view.extend({
                 vertical-align: middle;
                 word-wrap: break-word;
                 overflow-wrap: break-word;
-                color: ${darkMode ? '#d0d0d0' : '#334155'};
-                border-bottom: 1px solid ${darkMode ? '#333333' : '#f1f5f9'};
-            }
-            
-            .bandix-table tr:last-child td {
-                border-bottom: none;
             }
             
             .bandix-table th:nth-child(1),
@@ -1040,7 +974,7 @@ return view.extend({
             
             .bandix-table th:nth-child(4),
             .bandix-table td:nth-child(4) {
-                width: 22%;
+                width: 15%;
             }
             
             .bandix-table th:nth-child(5),
@@ -1061,7 +995,6 @@ return view.extend({
             
             .device-name {
                 font-weight: 600;
-                color: ${darkMode ? '#f1f5f9' : '#1f2937'};
                 display: flex;
                 align-items: center;
                 gap: 8px;
@@ -1083,18 +1016,18 @@ return view.extend({
             }
             
             .device-ip {
-                color: ${darkMode ? '#94a3b8' : '#6b7280'};
+                opacity: 0.7;
                 font-size: 0.875rem;
             }
             
             .device-ipv6 {
-                color: ${darkMode ? '#94a3b8' : '#6b7280'};
+                opacity: 0.7;
                 font-size: 0.75rem;
                 font-family: monospace;
             }
             
             .device-mac {
-                color: ${darkMode ? '#64748b' : '#9ca3af'};
+                opacity: 0.6;
                 font-size: 0.75rem;
             }
             
@@ -1128,13 +1061,9 @@ return view.extend({
                 font-size: 0.875rem;
             }
             
-            .traffic-speed {
-                color: ${darkMode ? '#e2e8f0' : '#374151'};
-            }
-            
             .traffic-total {
                 font-size: 0.75rem;
-                color: #64748b;
+                opacity: 0.6;
                 margin-left: 4px;
             }
             
@@ -1145,61 +1074,36 @@ return view.extend({
             }
             
             .limit-badge {
-                background-color: ${darkMode ? '#1a1a1a' : '#f8fafc'};
-                color: ${darkMode ? '#a0a0a0' : '#64748b'};
                 padding: 3px 8px;
                 border-radius: 3px;
                 font-size: 0.75rem;
                 text-align: center;
                 margin-top: 4px;
-                border: 1px solid ${darkMode ? '#444444' : '#e2e8f0'};
             }
-            
-            .action-button {
-                background-color: ${darkMode ? '#2a2a2a' : '#f8fafc'};
-                border: 1px solid ${darkMode ? '#444444' : '#cbd5e1'};
-                border-radius: 4px;
-                padding: 6px 12px;
-                cursor: pointer;
-                font-size: 0.875rem;
-                color: ${darkMode ? '#d0d0d0' : '#475569'};
-                transition: all 0.15s ease;
-            }
-            
-            .action-button:hover {
-                background-color: ${darkMode ? '#3a3a3a' : '#e2e8f0'};
-                border-color: ${darkMode ? '#555555' : '#94a3b8'};
-            }
-            
             
             .loading {
                 text-align: center;
                 padding: 40px;
-                color: ${darkMode ? '#94a3b8' : '#6b7280'};
+                opacity: 0.7;
                 font-style: italic;
             }
             
             .error {
                 text-align: center;
                 padding: 40px;
-                color: ${darkMode ? '#f87171' : '#ef4444'};
             }
             
             .stats-grid {
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
                 gap: 16px;
-                margin-bottom: 16px;
+                margin-bottom: 0;
+                margin-top: 0;
             }
             
-            .stats-card {
-                background-color: ${darkMode ? '#2a2a2a' : 'white'};
-                border-radius: 8px;
-                padding: 20px;
-                border: 1px solid ${darkMode ? '#444444' : '#e2e8f0'};
-                position: relative;
-                overflow: hidden;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, ${darkMode ? '0.3' : '0.08'});
+            
+            .bandix-container > .cbi-section:last-of-type {
+                margin-bottom: 0;
             }
             
             .stats-card-header {
@@ -1212,10 +1116,34 @@ return view.extend({
             .stats-card-title {
                 font-size: 0.875rem;
                 font-weight: 600;
-                color: ${darkMode ? '#94a3b8' : '#64748b'};
-                margin: 0;
+                opacity: 0.7;
+                margin: 0 0 12px 0;
                 text-transform: uppercase;
                 letter-spacing: 0.025em;
+            }
+            
+            .stats-grid .cbi-section {
+                padding: 16px;
+                border: 1px solid rgba(0, 0, 0, 0.1);
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+            }
+            
+            .stats-grid .cbi-section:hover {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+                transform: translateY(-2px);
+            }
+            
+            @media (prefers-color-scheme: dark) {
+                .stats-grid .cbi-section {
+                    border-color: rgba(255, 255, 255, 0.15);
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+                }
+                
+                .stats-grid .cbi-section:hover {
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+                }
             }
             
             .stats-card-icon {
@@ -1230,14 +1158,13 @@ return view.extend({
             .stats-card-main-value {
                 font-size: 2.25rem;
                 font-weight: 700;
-                color: ${darkMode ? '#f1f5f9' : '#1f2937'};
                 margin: 0 0 8px 0;
                 line-height: 1;
             }
             
             .stats-card-sub-value {
                 font-size: 0.875rem;
-                color: ${darkMode ? '#9ca3af' : '#6b7280'};
+                opacity: 0.7;
                 margin: 0;
             }
             
@@ -1256,7 +1183,7 @@ return view.extend({
             }
             
             .stats-detail-label {
-                color: ${darkMode ? '#9ca3af' : '#6b7280'};
+                opacity: 0.7;
                 font-weight: 500;
             }
             
@@ -1267,7 +1194,6 @@ return view.extend({
             .stats-title {
                 font-size: 0.875rem;
                 font-weight: 600;
-                color: ${darkMode ? '#e2e8f0' : '#374151'};
                 margin-bottom: 8px;
                 display: flex;
                 align-items: center;
@@ -1277,7 +1203,6 @@ return view.extend({
             .stats-value {
                 font-size: 1.25rem;
                 font-weight: 700;
-                color: ${darkMode ? '#f1f5f9' : '#1f2937'};
             }
             
             /* 模态框样式 */
@@ -1304,31 +1229,34 @@ return view.extend({
             }
             
             .modal {
-                background-color: ${darkMode ? '#2a2a2a' : 'white'};
-                border-radius: 8px;
-                border: 1px solid ${darkMode ? '#444444' : '#e2e8f0'};
                 max-width: 500px;
                 width: 90%;
                 max-height: 90vh;
                 overflow-y: auto;
                 opacity: 0;
                 transition: opacity 0.2s ease;
-                box-shadow: 0 10px 40px rgba(0, 0, 0, ${darkMode ? '0.5' : '0.15'});
+                background-color: rgba(255, 255, 255, 0.98);
+                color: #1f2937;
             }
             
             .modal-overlay.show .modal {
                 opacity: 1;
             }
             
+            @media (prefers-color-scheme: dark) {
+                .modal {
+                    background-color: rgba(30, 30, 30, 0.98);
+                    color: #e5e7eb;
+                }
+            }
+            
             .modal-header {
                 padding: 20px;
-                border-bottom: 1px solid ${darkMode ? '#444444' : '#e2e8f0'};
             }
             
             .modal-title {
                 font-size: 1.25rem;
                 font-weight: 600;
-                color: ${darkMode ? '#f1f5f9' : '#1f2937'};
                 margin: 0;
             }
             
@@ -1350,77 +1278,24 @@ return view.extend({
             .form-label {
                 display: block;
                 font-weight: 600;
-                color: ${darkMode ? '#e2e8f0' : '#374151'};
                 margin-bottom: 8px;
                 font-size: 0.875rem;
             }
             
             .form-input {
                 width: 100%;
-                border: 1px solid ${darkMode ? '#444444' : '#cbd5e1'};
                 border-radius: 4px;
                 padding: 8px 12px;
                 font-size: 0.875rem;
                 transition: border-color 0.15s ease;
                 box-sizing: border-box;
-                background-color: ${darkMode ? '#2a2a2a' : 'white'};
-                color: ${darkMode ? '#e2e8f0' : '#1f2937'};
             }
             
             .form-input:focus {
                 outline: none;
-                border-color: #3b82f6;
-            }
-            
-            .form-select {
-                width: 100%;
-                border: 1px solid ${darkMode ? '#444444' : '#cbd5e1'};
-                border-radius: 4px;
-                padding: 8px 12px;
-                font-size: 0.875rem;
-                background-color: ${darkMode ? '#2a2a2a' : 'white'};
-                transition: border-color 0.15s ease;
-                box-sizing: border-box;
-                color: ${darkMode ? '#e2e8f0' : '#1f2937'};
-            }
-            
-            .form-select:focus {
-                outline: none;
-                border-color: #3b82f6;
-            }
-            
-            .btn {
-                padding: 8px 16px;
-                border-radius: 4px;
-                font-size: 0.875rem;
-                font-weight: 500;
-                cursor: pointer;
-                transition: all 0.15s ease;
-                border: none;
-            }
-            
-            .btn-primary {
-                background-color: #3b82f6;
-                color: white;
-            }
-            
-            .btn-primary:hover {
-                background-color: #2563eb;
-            }
-            
-            .btn-secondary {
-                background-color: ${darkMode ? '#3a3a3a' : '#f1f5f9'};
-                color: ${darkMode ? '#d0d0d0' : '#475569'};
-                border: 1px solid ${darkMode ? '#555555' : '#cbd5e1'};
-            }
-            
-            .btn-secondary:hover {
-                background-color: ${darkMode ? '#4a4a4a' : '#e2e8f0'};
             }
             
             .device-summary {
-                background-color: ${darkMode ? '#1a1a1a' : '#f8fafc'};
-                border: 1px solid ${darkMode ? '#444444' : '#e2e8f0'};
                 border-radius: 4px;
                 padding: 12px;
                 margin-bottom: 16px;
@@ -1428,12 +1303,11 @@ return view.extend({
             
             .device-summary-name {
                 font-weight: 600;
-                color: ${darkMode ? '#f1f5f9' : '#1f2937'};
                 margin-bottom: 4px;
             }
             
             .device-summary-details {
-                color: ${darkMode ? '#94a3b8' : '#6b7280'};
+                opacity: 0.7;
                 font-size: 0.875rem;
             }
             
@@ -1442,7 +1316,7 @@ return view.extend({
                 display: inline-block;
                 width: 16px;
                 height: 16px;
-                border: 2px solid #f3f4f6;
+                border: 2px solid transparent;
                 border-radius: 50%;
                 border-top-color: #3b82f6;
                 animation: spin 1s ease-in-out infinite;
@@ -1470,11 +1344,8 @@ return view.extend({
                 gap: 12px;
                 align-items: center;
                 padding: 12px 16px;
-                border-bottom: 1px solid ${darkMode ? '#444444' : '#e2e8f0'};
-                background-color: ${darkMode ? '#2a2a2a' : '#f8fafc'};
             }
-            .history-controls .form-select,
-            .history-controls .form-input {
+            .history-controls .cbi-select {
                 width: auto;
                 min-width: 160px;
             }
@@ -1488,7 +1359,7 @@ return view.extend({
                 align-items: center;
                 gap: 12px;
             }
-            .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.875rem; color: ${darkMode ? '#e2e8f0' : '#374151'}; }
+            .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.875rem; }
             .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
             .legend-up { background-color: #f97316; }
             .legend-down { background-color: #06b6d4; }
@@ -1498,31 +1369,40 @@ return view.extend({
                 display: none;
 				width: 320px;
 				box-sizing: border-box;
-                background-color: ${darkMode ? '#2a2a2a' : 'white'};
-                color: ${darkMode ? '#e2e8f0' : '#1f2937'};
-                border: 1px solid ${darkMode ? '#444444' : '#e2e8f0'};
-                border-radius: 6px;
-                box-shadow: 0 6px 20px rgba(0,0,0,${darkMode ? '0.4' : '0.15'});
                 padding: 12px;
                 z-index: 10;
                 pointer-events: none;
                 font-size: 0.8125rem;
                 line-height: 1.5;
                 white-space: nowrap;
+                background-color: rgba(255, 255, 255, 0.98);
+                border: 1px solid rgba(0, 0, 0, 0.1);
+                border-radius: 6px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                color: #1f2937;
+            }
+            
+            @media (prefers-color-scheme: dark) {
+                .history-tooltip {
+                    background-color: rgba(30, 30, 30, 0.98);
+                    border-color: rgba(255, 255, 255, 0.2);
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+                    color: #e5e7eb;
+                }
             }
             .history-tooltip .ht-title { font-weight: 700; margin-bottom: 6px; }
             .history-tooltip .ht-row { display: flex; justify-content: space-between; gap: 12px; }
-            .history-tooltip .ht-key { color: ${darkMode ? '#94a3b8' : '#6b7280'}; }
-            .history-tooltip .ht-val { color: ${darkMode ? '#e2e8f0' : '#111827'}; }
-			.history-tooltip .ht-device { margin-top: 4px; margin-bottom: 6px; color: ${darkMode ? '#94a3b8' : '#6b7280'}; font-size: 0.75rem; }
+            .history-tooltip .ht-key { opacity: 0.7; }
+            .history-tooltip .ht-val { }
+			.history-tooltip .ht-device { margin-top: 4px; margin-bottom: 6px; opacity: 0.7; font-size: 0.75rem; }
 			/* 强调关键信息的排版 */
 			.history-tooltip .ht-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 2px; margin-bottom: 6px; }
-			.history-tooltip .ht-kpi .ht-k-label { color: ${darkMode ? '#94a3b8' : '#6b7280'}; font-size: 0.75rem; }
+			.history-tooltip .ht-kpi .ht-k-label { opacity: 0.7; font-size: 0.75rem; }
 			.history-tooltip .ht-kpi .ht-k-value { font-size: 1rem; font-weight: 700; }
 			.history-tooltip .ht-kpi.down .ht-k-value { color: #06b6d4; }
 			.history-tooltip .ht-kpi.up .ht-k-value { color: #f97316; }
-			.history-tooltip .ht-divider { height: 1px; background-color: ${darkMode ? '#3a3a3a' : '#e5e7eb'}; margin: 8px 0; }
-			.history-tooltip .ht-section-title { font-weight: 600; font-size: 0.75rem; color: ${darkMode ? '#94a3b8' : '#6b7280'}; margin: 4px 0 6px 0; }
+			.history-tooltip .ht-divider { height: 1px; background-color: currentColor; opacity: 0.3; margin: 8px 0; }
+			.history-tooltip .ht-section-title { font-weight: 600; font-size: 0.75rem; opacity: 0.7; margin: 4px 0 6px 0; }
         `);
 
         document.head.appendChild(style);
@@ -1530,25 +1410,22 @@ return view.extend({
         var view = E('div', { 'class': 'bandix-container' }, [
             // 头部
             E('div', { 'class': 'bandix-header' }, [
-                E('h1', { 'class': 'bandix-title' }, getTranslation('Bandix 流量监控', language)),
-                E('div', { 'class': 'bandix-badge', 'id': 'device-count' }, getTranslation('在线设备', language) + ': 0 / 0')
+                E('h1', { 'class': 'bandix-title' }, getTranslation('Bandix 流量监控', language))
             ]),
 
-            // 警告提示
+            // 警告提示（包含在线设备数）
             E('div', { 'class': 'bandix-alert' }, [
-                E('span', { 'class': 'bandix-alert-icon' }, '!'),
-                E('span', {}, getTranslation('限速功能仅对 WAN 流量生效。', language))
+                E('span', {}, getTranslation('限速功能仅对 WAN 流量生效。', language)),
+                E('div', { 'class': 'bandix-badge', 'id': 'device-count' }, getTranslation('在线设备', language) + ': 0 / 0')
             ]),
 
             // 统计卡片
             E('div', { 'class': 'stats-grid', 'id': 'stats-grid' }),
 
             // 历史趋势卡片（无时间范围筛选）
-            E('div', { 'class': 'bandix-card', 'id': 'history-card' }, [
-                E('div', { 'class': 'bandix-card-header history-header' }, [
-                    E('div', { 'class': 'bandix-card-title' }, [
-                        getTranslation('历史流量趋势', language)
-                    ]),
+            E('div', { 'class': 'cbi-section', 'id': 'history-card' }, [
+                E('h3', { 'class': 'history-header', 'style': 'display: flex; align-items: center; justify-content: space-between;' }, [
+                    E('span', {}, getTranslation('历史流量趋势', language)),
                     E('div', { 'class': 'history-legend' }, [
                         E('div', { 'class': 'legend-item' }, [
                             E('span', { 'class': 'legend-dot legend-up' }),
@@ -1562,11 +1439,11 @@ return view.extend({
                 ]),
                 E('div', { 'class': 'history-controls' }, [
                     E('label', { 'class': 'form-label', 'style': 'margin: 0;' }, getTranslation('选择设备', language)),
-                    E('select', { 'class': 'form-select', 'id': 'history-device-select' }, [
+                    E('select', { 'class': 'cbi-select', 'id': 'history-device-select' }, [
                         E('option', { 'value': '' }, getTranslation('所有设备', language))
                     ]),
                     E('label', { 'class': 'form-label', 'style': 'margin: 0;' }, getTranslation('类型', language)),
-                    E('select', { 'class': 'form-select', 'id': 'history-type-select' }, [
+                    E('select', { 'class': 'cbi-select', 'id': 'history-type-select' }, [
                         E('option', { 'value': 'total' }, getTranslation('总流量', language)),
                         E('option', { 'value': 'lan' }, getTranslation('LAN 流量', language)),
                         E('option', { 'value': 'wan' }, getTranslation('WAN 流量', language))
@@ -1581,11 +1458,9 @@ return view.extend({
             ]),
 
             // 主要内容卡片
-            E('div', { 'class': 'bandix-card' }, [
-                E('div', { 'class': 'bandix-card-header history-header' }, [
-                    E('div', { 'class': 'bandix-card-title' }, [
-                        getTranslation('设备列表', language)
-                    ]),
+            E('div', { 'class': 'cbi-section' }, [
+                E('h3', { 'class': 'history-header', 'style': 'display: flex; align-items: center; justify-content: space-between;' }, [
+                    E('span', {}, getTranslation('设备列表', language)),
                     E('div', { 'class': 'device-mode-group' }, [
                         E('button', { 
                             'class': 'device-mode-btn' + (localStorage.getItem('bandix_device_mode') !== 'detailed' ? ' active' : ''),
@@ -1657,7 +1532,7 @@ return view.extend({
                         E('label', { 'class': 'form-label' }, getTranslation('上传限速', language)),
                         E('div', { 'style': 'display: flex; gap: 8px;' }, [
                             E('input', { 'type': 'number', 'class': 'form-input', 'id': 'upload-limit-value', 'min': '0', 'step': '1', 'placeholder': '0' }),
-                            E('select', { 'class': 'form-select', 'id': 'upload-limit-unit', 'style': 'width: 100px;' })
+                            E('select', { 'class': 'cbi-select', 'id': 'upload-limit-unit', 'style': 'width: 100px;' })
                         ]),
                         E('div', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-top: 4px;' }, getTranslation('提示：输入 0 表示无限制', language))
                     ]),
@@ -1665,14 +1540,14 @@ return view.extend({
                         E('label', { 'class': 'form-label' }, getTranslation('下载限速', language)),
                         E('div', { 'style': 'display: flex; gap: 8px;' }, [
                             E('input', { 'type': 'number', 'class': 'form-input', 'id': 'download-limit-value', 'min': '0', 'step': '1', 'placeholder': '0' }),
-                            E('select', { 'class': 'form-select', 'id': 'download-limit-unit', 'style': 'width: 100px;' })
+                            E('select', { 'class': 'cbi-select', 'id': 'download-limit-unit', 'style': 'width: 100px;' })
                         ]),
                         E('div', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-top: 4px;' }, getTranslation('提示：输入 0 表示无限制', language))
                     ])
                 ]),
                 E('div', { 'class': 'modal-footer' }, [
-                    E('button', { 'class': 'btn btn-secondary', 'id': 'modal-cancel' }, getTranslation('取消', language)),
-                    E('button', { 'class': 'btn btn-primary', 'id': 'modal-save' }, getTranslation('保存', language))
+                    E('button', { 'class': 'cbi-button cbi-button-reset', 'id': 'modal-cancel' }, getTranslation('取消', language)),
+                    E('button', { 'class': 'cbi-button cbi-button-positive', 'id': 'modal-save' }, getTranslation('保存', language))
                 ])
             ])
         ]);
@@ -1805,6 +1680,83 @@ return view.extend({
             }
             document.getElementById('download-limit-unit').value = downloadUnit;
 
+            // 应用 cbi-section 的颜色到模态框
+            try {
+                // 优先从 cbi-section 获取颜色
+                var cbiSection = document.querySelector('.cbi-section');
+                var targetElement = cbiSection || document.querySelector('.main') || document.body;
+                var computedStyle = window.getComputedStyle(targetElement);
+                var bgColor = computedStyle.backgroundColor;
+                var textColor = computedStyle.color;
+                
+                // 获取模态框元素
+                var modalElement = modal.querySelector('.modal');
+                
+                // 确保背景色不透明
+                if (bgColor && bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent') {
+                    var rgbaMatch = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+                    if (rgbaMatch) {
+                        var r = parseInt(rgbaMatch[1]);
+                        var g = parseInt(rgbaMatch[2]);
+                        var b = parseInt(rgbaMatch[3]);
+                        var alpha = rgbaMatch[4] ? parseFloat(rgbaMatch[4]) : 1;
+                        
+                        if (alpha < 0.95) {
+                            modalElement.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
+                        } else {
+                            modalElement.style.backgroundColor = bgColor;
+                        }
+                    } else {
+                        modalElement.style.backgroundColor = bgColor;
+                    }
+                } else {
+                    // 如果无法获取背景色，尝试从其他 cbi-section 获取
+                    var allCbiSections = document.querySelectorAll('.cbi-section');
+                    var foundBgColor = false;
+                    for (var i = 0; i < allCbiSections.length; i++) {
+                        var sectionStyle = window.getComputedStyle(allCbiSections[i]);
+                        var sectionBg = sectionStyle.backgroundColor;
+                        if (sectionBg && sectionBg !== 'rgba(0, 0, 0, 0)' && sectionBg !== 'transparent') {
+                            var rgbaMatch = sectionBg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+                            if (rgbaMatch) {
+                                var r = parseInt(rgbaMatch[1]);
+                                var g = parseInt(rgbaMatch[2]);
+                                var b = parseInt(rgbaMatch[3]);
+                                var alpha = rgbaMatch[4] ? parseFloat(rgbaMatch[4]) : 1;
+                                if (alpha < 0.95) {
+                                    modalElement.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
+                                } else {
+                                    modalElement.style.backgroundColor = sectionBg;
+                                }
+                            } else {
+                                modalElement.style.backgroundColor = sectionBg;
+                            }
+                            foundBgColor = true;
+                            break;
+                        }
+                    }
+                    // 如果无法获取背景色，CSS 会通过媒体查询自动处理暗色模式
+                    if (!foundBgColor) {
+                        // 不设置背景色，让 CSS 媒体查询处理
+                    }
+                }
+                
+                // 应用文字颜色
+                if (textColor && textColor !== 'rgba(0, 0, 0, 0)') {
+                    modalElement.style.color = textColor;
+                } else {
+                    if (cbiSection) {
+                        var sectionTextColor = window.getComputedStyle(cbiSection).color;
+                        if (sectionTextColor && sectionTextColor !== 'rgba(0, 0, 0, 0)') {
+                            modalElement.style.color = sectionTextColor;
+                        }
+                    }
+                }
+            } catch(e) {
+                // 如果出错，CSS 会通过媒体查询自动处理暗色模式
+                // 不设置样式，让 CSS 处理
+            }
+            
             // 显示模态框并添加动画
             modal.classList.add('show');
         }
@@ -2020,6 +1972,13 @@ return view.extend({
             var zoomLevelElement = document.getElementById('history-zoom-level');
             if (!zoomLevelElement) return;
             
+            // 如果是窄主题，隐藏 zoom 显示
+            var themeType = getThemeType();
+            if (themeType === 'narrow') {
+                zoomLevelElement.style.display = 'none';
+                return;
+            }
+            
             if (zoomScale <= 1) {
                 zoomLevelElement.style.display = 'none';
             } else {
@@ -2109,7 +2068,7 @@ return view.extend({
 
             // 网格与Y轴刻度（更细更淡）
             var gridLines = 4;
-            ctx.strokeStyle = (darkMode ? 'rgba(148,163,184,0.06)' : 'rgba(148,163,184,0.08)');
+            ctx.strokeStyle = 'rgba(148,163,184,0.08)';
             ctx.lineWidth = 0.8;
             for (var g = 0; g <= gridLines; g++) {
                 var y = padding.top + (innerH * g / gridLines);
@@ -2118,7 +2077,7 @@ return view.extend({
                 ctx.lineTo(width - padding.right, y);
                 ctx.stroke();
                 var val = Math.round(maxVal * (gridLines - g) / gridLines);
-                ctx.fillStyle = (darkMode ? 'rgba(148,163,184,0.7)' : '#9ca3af');
+                ctx.fillStyle = '#9ca3af';
                 ctx.font = '12px sans-serif';
                 ctx.textAlign = 'right';
                 ctx.textBaseline = 'middle';
@@ -2213,8 +2172,7 @@ return view.extend({
                         hoverIdx = Math.max(0, Math.min(n - 1, hoverIdx));
                         var hoverX = info.padding.left + (n > 1 ? stepX * hoverIdx : innerW / 2);
                         ctx.save();
-                        var hoverColor = (typeof darkMode !== 'undefined' && darkMode) ? 'rgba(148,163,184,0.7)' : 'rgba(156,163,175,0.9)';
-                        ctx.strokeStyle = hoverColor;
+                        ctx.strokeStyle = 'rgba(156,163,175,0.9)';
                         ctx.lineWidth = 1;
                         ctx.setLineDash([6, 4]);
                         ctx.beginPath();
@@ -2730,6 +2688,87 @@ function formatRetentionSeconds(seconds, language) {
                     // 立即重绘以显示垂直虚线
                     try { drawHistoryChart(canvas, canvas.__bandixChart && canvas.__bandixChart.originalLabels ? canvas.__bandixChart.originalLabels : labels, canvas.__bandixChart && canvas.__bandixChart.originalUpSeries ? canvas.__bandixChart.originalUpSeries : upSeries, canvas.__bandixChart && canvas.__bandixChart.originalDownSeries ? canvas.__bandixChart.originalDownSeries : downSeries, zoomScale, zoomOffsetX); } catch(e){}
 					tooltip.innerHTML = buildTooltipHtml(point, language);
+					
+					// 应用主题颜色到 tooltip，使用 cbi-section 的颜色
+					try {
+						// 优先从 cbi-section 获取颜色（历史趋势卡片就是 cbi-section）
+						var cbiSection = document.querySelector('.cbi-section');
+						var targetElement = cbiSection || document.querySelector('.main') || document.body;
+						var computedStyle = window.getComputedStyle(targetElement);
+						var bgColor = computedStyle.backgroundColor;
+						var textColor = computedStyle.color;
+						
+						// 确保背景色不透明
+						if (bgColor && bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent') {
+							// 检查是否是 rgba/rgb 格式，如果是半透明则转换为不透明
+							var rgbaMatch = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+							if (rgbaMatch) {
+								var r = parseInt(rgbaMatch[1]);
+								var g = parseInt(rgbaMatch[2]);
+								var b = parseInt(rgbaMatch[3]);
+								var alpha = rgbaMatch[4] ? parseFloat(rgbaMatch[4]) : 1;
+								
+								// 如果 alpha < 0.95，使用不透明版本
+								if (alpha < 0.95) {
+									tooltip.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
+								} else {
+									tooltip.style.backgroundColor = bgColor;
+								}
+							} else {
+								tooltip.style.backgroundColor = bgColor;
+							}
+						} else {
+							// 如果无法获取背景色，尝试从其他 cbi-section 获取
+							var allCbiSections = document.querySelectorAll('.cbi-section');
+							var foundBgColor = false;
+							for (var i = 0; i < allCbiSections.length; i++) {
+								var sectionStyle = window.getComputedStyle(allCbiSections[i]);
+								var sectionBg = sectionStyle.backgroundColor;
+								if (sectionBg && sectionBg !== 'rgba(0, 0, 0, 0)' && sectionBg !== 'transparent') {
+									var rgbaMatch = sectionBg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+									if (rgbaMatch) {
+										var r = parseInt(rgbaMatch[1]);
+										var g = parseInt(rgbaMatch[2]);
+										var b = parseInt(rgbaMatch[3]);
+										var alpha = rgbaMatch[4] ? parseFloat(rgbaMatch[4]) : 1;
+										if (alpha < 0.95) {
+											tooltip.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
+										} else {
+											tooltip.style.backgroundColor = sectionBg;
+										}
+									} else {
+										tooltip.style.backgroundColor = sectionBg;
+									}
+									foundBgColor = true;
+									break;
+								}
+							}
+							// 如果无法获取背景色，CSS 会通过媒体查询自动处理暗色模式
+							if (!foundBgColor) {
+								// 不设置背景色，让 CSS 媒体查询处理
+							}
+						}
+						
+						if (textColor && textColor !== 'rgba(0, 0, 0, 0)') {
+							tooltip.style.color = textColor;
+						} else {
+							// 如果无法获取文字颜色，从 cbi-section 获取
+							if (cbiSection) {
+								var sectionTextColor = window.getComputedStyle(cbiSection).color;
+								if (sectionTextColor && sectionTextColor !== 'rgba(0, 0, 0, 0)') {
+									tooltip.style.color = sectionTextColor;
+								}
+								// 否则使用 CSS 默认颜色（已通过媒体查询设置）
+							}
+							// 否则使用 CSS 默认颜色（已通过媒体查询设置）
+						}
+						
+						// 边框和阴影由 CSS 媒体查询自动处理
+					} catch(e) {
+						// 如果出错，CSS 会通过媒体查询自动处理暗色模式
+						// 不设置样式，让 CSS 处理
+					}
+					
 					// 先显示以计算尺寸
 					tooltip.style.display = 'block';
 					tooltip.style.left = '-9999px';
@@ -2926,11 +2965,9 @@ function formatRetentionSeconds(seconds, language) {
                 statsGrid.innerHTML = '';
 
                 // LAN 流量卡片
-                statsGrid.appendChild(E('div', { 'class': 'stats-card' }, [
-                    E('div', { 'class': 'stats-card-header' }, [
-                        E('div', { 'class': 'stats-card-title' }, getTranslation('LAN 流量', language))
-                    ]),
-                    E('div', { 'style': 'margin-top: 12px; display: flex; flex-direction: column; gap: 8px;' }, [
+                statsGrid.appendChild(E('div', { 'class': 'cbi-section' }, [
+                    E('div', { 'class': 'stats-card-title' }, getTranslation('LAN 流量', language)),
+                    E('div', { 'style': 'display: flex; flex-direction: column; gap: 8px;' }, [
                         // 上传行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
                             E('span', { 'style': 'color: #f97316; font-size: 0.75rem; font-weight: bold;' }, '↑'),
@@ -2947,11 +2984,9 @@ function formatRetentionSeconds(seconds, language) {
                 ]));
 
                 // WAN 流量卡片
-                statsGrid.appendChild(E('div', { 'class': 'stats-card' }, [
-                    E('div', { 'class': 'stats-card-header' }, [
-                        E('div', { 'class': 'stats-card-title' }, getTranslation('WAN 流量', language))
-                    ]),
-                    E('div', { 'style': 'margin-top: 12px; display: flex; flex-direction: column; gap: 8px;' }, [
+                statsGrid.appendChild(E('div', { 'class': 'cbi-section' }, [
+                    E('div', { 'class': 'stats-card-title' }, getTranslation('WAN 流量', language)),
+                    E('div', { 'style': 'display: flex; flex-direction: column; gap: 8px;' }, [
                         // 上传行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
                             E('span', { 'style': 'color: #f97316; font-size: 0.75rem; font-weight: bold;' }, '↑'),
@@ -2968,11 +3003,9 @@ function formatRetentionSeconds(seconds, language) {
                 ]));
 
                 // 总流量卡片
-                statsGrid.appendChild(E('div', { 'class': 'stats-card' }, [
-                    E('div', { 'class': 'stats-card-header' }, [
-                        E('div', { 'class': 'stats-card-title' }, getTranslation('总流量', language))
-                    ]),
-                    E('div', { 'style': 'margin-top: 12px; display: flex; flex-direction: column; gap: 8px;' }, [
+                statsGrid.appendChild(E('div', { 'class': 'cbi-section' }, [
+                    E('div', { 'class': 'stats-card-title' }, getTranslation('总流量', language)),
+                    E('div', { 'style': 'display: flex; flex-direction: column; gap: 8px;' }, [
                         // 上传行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
                             E('span', { 'style': 'color: #f97316; font-size: 0.75rem; font-weight: bold;' }, '↑'),
@@ -3132,10 +3165,14 @@ function formatRetentionSeconds(seconds, language) {
 				filteredDevices.forEach(function (device) {
                     var isOnline = isDeviceOnline(device);
 
+                    // 根据主题类型决定按钮显示内容
+                    var themeType = getThemeType();
+                    var buttonText = themeType === 'narrow' ? '⚙' : getTranslation('设置', language);
+
                     var actionButton = E('button', {
-                        'class': 'action-button',
+                        'class': 'cbi-button cbi-button-action',
                         'title': getTranslation('设置', language)
-                    }, getTranslation('设置', language));
+                    }, buttonText);
 
                     // 绑定点击事件
                     actionButton.addEventListener('click', function () {
@@ -3266,6 +3303,111 @@ function formatRetentionSeconds(seconds, language) {
 
         // 立即执行一次，不等待轮询
         updateDeviceData();
+
+        // 自动适应主题背景色和文字颜色的函数（仅应用于弹窗和 tooltip）
+        function applyThemeColors() {
+            try {
+                // 优先从 cbi-section 获取颜色
+                var cbiSection = document.querySelector('.cbi-section');
+                var targetElement = cbiSection || document.querySelector('.main') || document.body;
+                var computedStyle = window.getComputedStyle(targetElement);
+                var bgColor = computedStyle.backgroundColor;
+                var textColor = computedStyle.color;
+                
+                // 如果无法获取背景色，尝试从其他 cbi-section 获取
+                if (!bgColor || bgColor === 'rgba(0, 0, 0, 0)' || bgColor === 'transparent') {
+                    var allCbiSections = document.querySelectorAll('.cbi-section');
+                    for (var i = 0; i < allCbiSections.length; i++) {
+                        var sectionStyle = window.getComputedStyle(allCbiSections[i]);
+                        var sectionBg = sectionStyle.backgroundColor;
+                        if (sectionBg && sectionBg !== 'rgba(0, 0, 0, 0)' && sectionBg !== 'transparent') {
+                            bgColor = sectionBg;
+                            textColor = sectionStyle.color;
+                            break;
+                        }
+                    }
+                }
+                
+                // 只应用到模态框和 tooltip，不修改页面其他元素
+                if (bgColor && bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent') {
+                    // 应用到模态框（确保不透明）
+                    var modal = document.querySelector('.modal');
+                    if (modal) {
+                        var rgbaMatch = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+                        if (rgbaMatch) {
+                            var r = parseInt(rgbaMatch[1]);
+                            var g = parseInt(rgbaMatch[2]);
+                            var b = parseInt(rgbaMatch[3]);
+                            var alpha = rgbaMatch[4] ? parseFloat(rgbaMatch[4]) : 1;
+                            if (alpha < 0.95) {
+                                modal.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
+                            } else {
+                                modal.style.backgroundColor = bgColor;
+                            }
+                        } else {
+                            modal.style.backgroundColor = bgColor;
+                        }
+                    }
+                    
+                    // 应用到 tooltip（包括所有 tooltip 实例）
+                    var tooltips = document.querySelectorAll('.history-tooltip');
+                    tooltips.forEach(function(tooltip) {
+                        var rgbaMatch = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+                        if (rgbaMatch) {
+                            var r = parseInt(rgbaMatch[1]);
+                            var g = parseInt(rgbaMatch[2]);
+                            var b = parseInt(rgbaMatch[3]);
+                            var alpha = rgbaMatch[4] ? parseFloat(rgbaMatch[4]) : 1;
+                            if (alpha < 0.95) {
+                                tooltip.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
+                            } else {
+                                tooltip.style.backgroundColor = bgColor;
+                            }
+                        } else {
+                            tooltip.style.backgroundColor = bgColor;
+                        }
+                    });
+                }
+                
+                // 检测文字颜色并应用（仅应用到模态框和 tooltip）
+                if (textColor && textColor !== 'rgba(0, 0, 0, 0)') {
+                    // 应用到模态框的文字颜色
+                    var modal = document.querySelector('.modal');
+                    if (modal) {
+                        modal.style.color = textColor;
+                    }
+                    
+                    // 应用到 tooltip 的文字颜色
+                    var tooltips = document.querySelectorAll('.history-tooltip');
+                    tooltips.forEach(function(tooltip) {
+                        tooltip.style.color = textColor;
+                    });
+                }
+            } catch (e) {
+                // 如果检测失败，使用默认值
+                console.log('Theme adaptation:', e);
+            }
+        }
+        
+        // 初始应用主题颜色
+        setTimeout(applyThemeColors, 100);
+        
+        // 监听 DOM 变化，自动应用到新创建的元素
+        if (typeof MutationObserver !== 'undefined') {
+            var observer = new MutationObserver(function(mutations) {
+                applyThemeColors();
+            });
+            
+            setTimeout(function() {
+                var container = document.querySelector('.bandix-container');
+                if (container) {
+                    observer.observe(container, {
+                        childList: true,
+                        subtree: true
+                    });
+                }
+            }, 200);
+        }
 
         return view;
     }
