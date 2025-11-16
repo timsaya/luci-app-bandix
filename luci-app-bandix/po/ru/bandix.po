@@ -3,79 +3,79 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 
 msgid "Bandix Traffic Monitor"
-msgstr "Bandix 流量监控"
+msgstr "Монитор трафика Bandix"
 
 msgid "Loading data..."
-msgstr "正在加载数据..."
+msgstr "Загрузка данных..."
 
 msgid "Unable to fetch data"
-msgstr "无法获取数据"
+msgstr "Не удалось получить данные"
 
 msgid "Unable to fetch history data"
 msgstr "无法获取历史数据"
 
 msgid "Hostname"
-msgstr "主机名"
+msgstr "Имя хоста"
 
 msgid "IP Address"
-msgstr "IP地址"
+msgstr "IP-адрес"
 
 msgid "MAC Address"
-msgstr "MAC地址"
+msgstr "MAC-адрес"
 
 msgid "Download Speed"
-msgstr "下载速度"
+msgstr "Скорость загрузки"
 
 msgid "Upload Speed"
-msgstr "上传速度"
+msgstr "Скорость выгрузки"
 
 msgid "Total Download"
-msgstr "总下载量"
+msgstr "Всего загружено"
 
 msgid "Total Upload"
-msgstr "总上传量"
+msgstr "Всего выгружено"
 
 msgid "Download Limit"
-msgstr "下载限速"
+msgstr "Ограничение загрузки"
 
 msgid "Upload Limit"
-msgstr "上传限速"
+msgstr "Ограничение выгрузки"
 
 msgid "Interface Language"
-msgstr "界面语言"
+msgstr "Язык интерфейса"
 
 msgid "Select the display language for Bandix Traffic Monitor"
-msgstr "选择 Bandix 流量监控的显示语言"
+msgstr "Выберите язык отображения для монитора трафика Bandix"
 
 msgid "Device Info"
-msgstr "设备信息"
+msgstr "Информация об устройстве"
 
 msgid "Device List"
-msgstr "设备列表"
+msgstr "Список устройств"
 
 msgid "LAN Traffic"
-msgstr "LAN 流量"
+msgstr "Трафик LAN"
 
 msgid "WAN Traffic"
-msgstr "WAN 流量"
+msgstr "Трафик WAN"
 
 msgid "Rate Limit"
-msgstr "限速设置"
+msgstr "Ограничение скорости"
 
 msgid "Actions"
-msgstr "操作"
+msgstr "Действия"
 
 msgid "Online Devices"
-msgstr "在线设备"
+msgstr "Устройства в сети"
 
 msgid "WAN Only"
 msgstr "仅限WAN 流量"
 
 msgid "Settings"
-msgstr "设置"
+msgstr "Настройки"
 
 msgid "Device Settings"
-msgstr "设备设置"
+msgstr "Настройки устройства"
 
 msgid "Rate Limits"
 msgstr "限速设置"
@@ -84,16 +84,16 @@ msgid "Remove Rate Limit"
 msgstr "取消限速"
 
 msgid "Save"
-msgstr "保存"
+msgstr "Сохранить"
 
 msgid "Cancel"
-msgstr "取消"
+msgstr "Отмена"
 
 msgid "Set Rate Limit"
 msgstr "设置限速"
 
 msgid "Device"
-msgstr "设备"
+msgstr "Устройство"
 
 msgid "Set Hostname"
 msgstr "设置主机名"
@@ -108,13 +108,13 @@ msgid "Failed to set hostname"
 msgstr "主机名设置失败"
 
 msgid "Unlimited"
-msgstr "无限制"
+msgstr "Без ограничений"
 
 msgid "Settings saved successfully"
-msgstr "设置成功"
+msgstr "Настройки успешно сохранены"
 
 msgid "Failed to save settings"
-msgstr "设置失败"
+msgstr "Не удалось сохранить настройки"
 
 msgid "Please enter a valid speed value"
 msgstr "请输入有效的速度值"
@@ -123,7 +123,7 @@ msgid "Speed value must be greater than 0"
 msgstr "速度值必须大于0"
 
 msgid "Saving..."
-msgstr "保存中..."
+msgstr "Сохранение..."
 
 msgid "Rate limiting only applies to WAN traffic."
 msgstr "限速功能仅对 WAN 流量生效。"
@@ -132,13 +132,13 @@ msgid "Tip: Enter 0 for unlimited"
 msgstr "提示：输入 0 表示无限制"
 
 msgid "Traffic History"
-msgstr "历史流量趋势"
+msgstr "История трафика"
 
 msgid "Select Device"
-msgstr "选择设备"
+msgstr "Выбрать устройство"
 
 msgid "All Devices"
-msgstr "所有设备"
+msgstr "Все устройства"
 
 msgid "Time Range"
 msgstr "时间范围"
@@ -153,10 +153,10 @@ msgid "Last 2 hours"
 msgstr "最近2小时"
 
 msgid "Type"
-msgstr "类型"
+msgstr "Тип"
 
 msgid "Total"
-msgstr "总流量"
+msgstr "Всего"
 
 msgid "LAN"
 msgstr "LAN 流量"
@@ -165,13 +165,13 @@ msgid "WAN"
 msgstr "WAN 流量"
 
 msgid "Refresh"
-msgstr "刷新"
+msgstr "Обновить"
 
 msgid "Upload Rate"
-msgstr "上传速率"
+msgstr "Скорость выгрузки"
 
 msgid "Download Rate"
-msgstr "下载速率"
+msgstr "Скорость загрузки"
 
 msgid "Last"
 msgstr "最近"
@@ -216,10 +216,10 @@ msgid "WAN Downloaded"
 msgstr "WAN 已下载"
 
 msgid "Total Upload"
-msgstr "总上传速率"
+msgstr "Всего выгружено"
 
 msgid "Total Download"
-msgstr "总下载速率"
+msgstr "Всего загружено"
 
 msgid "LAN Upload"
 msgstr "LAN 上传速率"
@@ -234,28 +234,28 @@ msgid "WAN Download"
 msgstr "WAN 下载速率"
 
 msgid "Never Online"
-msgstr "从未上线"
+msgstr "Никогда не был в сети"
 
 msgid "Just Now"
-msgstr "刚刚"
+msgstr "Только что"
 
 msgid "min ago"
-msgstr "分钟前"
+msgstr "мин назад"
 
 msgid "h ago"
-msgstr "小时前"
+msgstr "ч назад"
 
 msgid "days ago"
-msgstr "天前"
+msgstr "дн назад"
 
 msgid "months ago"
-msgstr "个月前"
+msgstr "мес назад"
 
 msgid "years ago"
-msgstr "年前"
+msgstr "лет назад"
 
 msgid "Last Online"
-msgstr "最后上线"
+msgstr "Последний раз в сети"
 
 msgid "Zoom"
 msgstr "缩放"
@@ -282,19 +282,19 @@ msgid "Sort by Traffic"
 msgstr "按用量排序"
 
 msgid "Simple Mode"
-msgstr "简易模式"
+msgstr "Простой режим"
 
 msgid "Detailed Mode"
-msgstr "详细模式"
+msgstr "Подробный режим"
 
 msgid "Bandix DNS Monitor"
-msgstr "Bandix DNS 监控"
+msgstr "Монитор DNS Bandix"
 
 msgid "DNS Monitor"
-msgstr "DNS 监控"
+msgstr "Монитор DNS"
 
 msgid "DNS Query Records"
-msgstr "DNS 查询记录"
+msgstr "Записи запросов DNS"
 
 msgid "DNS Statistics"
 msgstr "DNS 统计信息"
@@ -312,19 +312,19 @@ msgid "No Data"
 msgstr "无数据"
 
 msgid "Time"
-msgstr "时间"
+msgstr "Время"
 
 msgid "Domain"
-msgstr "域名"
+msgstr "Домен"
 
 msgid "Query Type"
-msgstr "查询类型"
+msgstr "Тип запроса"
 
 msgid "Response Code"
 msgstr "响应码"
 
 msgid "Response Time"
-msgstr "响应时间"
+msgstr "Время отклика"
 
 msgid "Source IP"
 msgstr "源IP"
@@ -339,13 +339,13 @@ msgid "Response Result"
 msgstr "响应结果"
 
 msgid "DNS Server"
-msgstr "DNS服务器"
+msgstr "DNS-сервер"
 
 msgid "Query"
-msgstr "查询"
+msgstr "Запрос"
 
 msgid "Response"
-msgstr "响应"
+msgstr "Ответ"
 
 msgid "Filter"
 msgstr "过滤"
@@ -372,7 +372,7 @@ msgid "Responses Only"
 msgstr "仅响应"
 
 msgid "Search"
-msgstr "搜索"
+msgstr "Поиск"
 
 msgid "Search Domain"
 msgstr "搜索域名"
@@ -387,22 +387,22 @@ msgid "Clear"
 msgstr "清除"
 
 msgid "Previous"
-msgstr "上一页"
+msgstr "Предыдущая"
 
 msgid "Next"
-msgstr "下一页"
+msgstr "Следующая"
 
 msgid "Page"
-msgstr "第"
+msgstr "Страница"
 
 msgid "of"
-msgstr "页，共"
+msgstr "из"
 
 msgid "Total"
-msgstr "全部"
+msgstr "Всего"
 
 msgid "records"
-msgstr "条记录"
+msgstr "записей"
 
 msgid "Per Page"
 msgstr "每页显示"
@@ -411,7 +411,7 @@ msgid ""
 msgstr "条"
 
 msgid "Total Queries"
-msgstr "总查询数"
+msgstr "Всего запросов"
 
 msgid "Total Responses"
 msgstr "总响应数"
@@ -432,22 +432,22 @@ msgid "Max Response Time"
 msgstr "最慢响应时间"
 
 msgid "Success Rate"
-msgstr "成功率"
+msgstr "Процент успеха"
 
 msgid "Success"
-msgstr "成功"
+msgstr "Успешно"
 
 msgid "Failure"
-msgstr "失败"
+msgstr "Ошибка"
 
 msgid "Top Domains"
-msgstr "最常查询域名"
+msgstr "Самые запрашиваемые домены"
 
 msgid "Top Query Types"
 msgstr "最常用查询类型"
 
 msgid "Top Devices"
-msgstr "最活跃设备"
+msgstr "Самые активные устройства"
 
 msgid "Top DNS Servers"
 msgstr "最常用DNS服务器"
@@ -504,10 +504,10 @@ msgid "P99"
 msgstr "P99"
 
 msgid "Bandix Connection Monitor"
-msgstr "Bandix 连接监控"
+msgstr "Монитор соединений Bandix"
 
 msgid "Connection Monitor"
-msgstr "连接监控"
+msgstr "Монитор соединений"
 
 msgid "Device Connection Statistics"
 msgstr "设备连接统计"
@@ -525,16 +525,16 @@ msgid "Closed TCP"
 msgstr "已关闭TCP"
 
 msgid "Total Connections"
-msgstr "总连接数"
+msgstr "Всего соединений"
 
 msgid "Last Updated"
 msgstr "最后更新"
 
 msgid "TCP Connections"
-msgstr "TCP连接数"
+msgstr "Соединения TCP"
 
 msgid "UDP Connections"
-msgstr "UDP连接数"
+msgstr "Соединения UDP"
 
 msgid "Established TCP"
 msgstr "已建立TCP"
@@ -561,16 +561,16 @@ msgid "TCP Status Details"
 msgstr "TCP 状态详情"
 
 msgid "Basic Settings"
-msgstr "基本设置"
+msgstr "Основные настройки"
 
 msgid "Traffic Monitor Settings"
-msgstr "流量监控设置"
+msgstr "Настройки монитора трафика"
 
 msgid "Connection Monitor Settings"
-msgstr "连接监控设置"
+msgstr "Настройки монитора соединений"
 
 msgid "DNS Monitor Settings"
-msgstr "DNS监控设置"
+msgstr "Настройки монитора DNS"
 
 msgid "Bandix Basic Configuration"
 msgstr "Bandix 基本配置"
@@ -597,19 +597,19 @@ msgid "Configure DNS monitoring related parameters"
 msgstr "配置DNS监控相关参数"
 
 msgid "Enable"
-msgstr "启用"
+msgstr "Включить"
 
 msgid "Enable Bandix Traffic Monitor Service"
 msgstr "启用 Bandix 流量监控服务"
 
 msgid "Enable Traffic Monitoring"
-msgstr "启用流量监控"
+msgstr "Включить мониторинг трафика"
 
 msgid "Enable Connection Monitoring"
-msgstr "启用连接监控"
+msgstr "Включить мониторинг соединений"
 
 msgid "Enable DNS Monitoring"
-msgstr "启用DNS监控"
+msgstr "Включить мониторинг DNS"
 
 msgid "Simplified Chinese"
 msgstr "简体中文"
@@ -618,19 +618,19 @@ msgid "Traditional Chinese"
 msgstr "繁体中文"
 
 msgid "Port"
-msgstr "端口"
+msgstr "Порт"
 
 msgid "Port for Bandix service to listen on"
 msgstr "Bandix 服务监听的端口"
 
 msgid "Monitor Interface"
-msgstr "监控网卡"
+msgstr "Интерфейс мониторинга"
 
 msgid "Select the LAN network interface to monitor"
 msgstr "选择要监控的LAN网络接口"
 
 msgid "Speed Units"
-msgstr "网速单位"
+msgstr "Единицы скорости"
 
 msgid "Select the speed display unit format"
 msgstr "选择网速显示的单位格式"
@@ -660,37 +660,37 @@ msgid "Feedback"
 msgstr "意见反馈"
 
 msgid "Log Level"
-msgstr "日志级别"
+msgstr "Уровень журналирования"
 
 msgid "Set the log level for Bandix service"
 msgstr "设置 Bandix 服务的日志级别"
 
 msgid "Offline Timeout"
-msgstr "离线超时时间"
+msgstr "Таймаут офлайн"
 
 msgid "Set the timeout for device offline detection (seconds). Devices inactive for longer than this time will be marked as offline"
 msgstr "设置设备离线判断的超时时间（秒）。超过此时间未活动的设备将被标记为离线"
 
 msgid "Traffic History Period"
-msgstr "历史流量周期"
+msgstr "Период истории трафика"
 
 msgid "10 minutes interval uses about 60 KB per device"
-msgstr "10分钟历史周期，每个设备占用 60KB"
+msgstr "Интервал 10 минут использует около 60 КБ на устройство"
 
 msgid "Data Flush Interval"
-msgstr "数据 flush 间隔"
+msgstr "Интервал сброса данных"
 
 msgid "Set the interval for flushing data to disk"
 msgstr "设置数据写入磁盘的时间间隔"
 
 msgid "1 minute"
-msgstr "1 分钟"
+msgstr "1 минута"
 
 msgid "5 minutes"
-msgstr "5 分钟"
+msgstr "5 минут"
 
 msgid "10 minutes"
-msgstr "10 分钟"
+msgstr "10 минут"
 
 msgid "15 minutes"
 msgstr "15 分钟"
@@ -705,13 +705,13 @@ msgid "30 minutes"
 msgstr "30 分钟"
 
 msgid "1 hour"
-msgstr "1 小时"
+msgstr "1 час"
 
 msgid "2 hours"
-msgstr "2 小时"
+msgstr "2 часа"
 
 msgid "Data Directory"
-msgstr "数据目录"
+msgstr "Каталог данных"
 
 msgid "Bandix data storage directory"
 msgstr "Bandix 数据存储目录"
@@ -723,13 +723,13 @@ msgid "Enable Bandix DNS monitoring"
 msgstr "启用 Bandix DNS监控功能"
 
 msgid "DNS Max Records"
-msgstr "DNS最大记录数"
+msgstr "Максимум записей DNS"
 
 msgid "Set the maximum number of DNS query records to keep. Older records will be deleted when this limit is exceeded"
 msgstr "设置DNS查询记录的最大保存数量，超过此数量将删除最旧的记录"
 
 msgid "Persist History Data"
-msgstr "持久化历史数据"
+msgstr "Сохранять историю данных"
 
 msgid "Enable data persistence functionality, data will only be persisted to disk when this option is enabled"
 msgstr "启用数据持久化功能，只有启用此选项后才会持久化到磁盘"

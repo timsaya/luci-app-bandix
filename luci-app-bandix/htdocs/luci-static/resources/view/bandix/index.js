@@ -4,619 +4,6 @@
 'require uci';
 'require rpc';
 'require poll';
-'use strict';
-
-
-const translations = {
-    'zh-cn': {
-        'Bandix 流量监控': 'Bandix 流量监控',
-        '正在加载数据...': '正在加载数据...',
-        '无法获取数据': '无法获取数据',
-        '无法获取历史数据': '无法获取历史数据',
-        '主机名': '主机名',
-        'IP地址': 'IP地址',
-        'MAC地址': 'MAC地址',
-        '下载速度': '下载速度',
-        '上传速度': '上传速度',
-        '总下载量': '总下载量',
-        '总上传量': '总上传量',
-        '下载限速': '下载限速',
-        '上传限速': '上传限速',
-        '界面语言': '界面语言',
-        '选择 Bandix 流量监控的显示语言': '选择 Bandix 流量监控的显示语言',
-        '设备信息': '设备信息',
-        '设备列表': '设备列表',
-        'LAN 流量': 'LAN 流量',
-        'WAN 流量': 'WAN 流量',
-        '限速设置': '限速设置',
-        '操作': '操作',
-        '在线设备': '在线设备',
-        '仅限WAN 流量': '仅限WAN 流量',
-        '设置': '设置',
-        '设备设置': '设备设置',
-        '限速设置': '限速设置',
-        '取消限速': '取消限速',
-        '保存': '保存',
-        '取消': '取消',
-        '设置限速': '设置限速',
-        '设备': '设备',
-        '上传限速': '上传限速',
-        '下载限速': '下载限速',
-        '主机名': '主机名',
-        '设置主机名': '设置主机名',
-        '请输入主机名': '请输入主机名',
-        '主机名设置成功': '主机名设置成功',
-        '主机名设置失败': '主机名设置失败',
-        '无限制': '无限制',
-        '设置成功': '设置成功',
-        '设置失败': '设置失败',
-        '请输入有效的速度值': '请输入有效的速度值',
-        '速度值必须大于0': '速度值必须大于0',
-        '保存中...': '保存中...',
-        '限速功能仅对 WAN 流量生效。': '限速功能仅对 WAN 流量生效。',
-        '提示：输入 0 表示无限制': '提示：输入 0 表示无限制',
-        '历史流量趋势': '历史流量趋势',
-        '选择设备': '选择设备',
-        '所有设备': '所有设备',
-        '时间范围': '时间范围',
-        '最近5分钟': '最近5分钟',
-        '最近30分钟': '最近30分钟',
-        '最近2小时': '最近2小时',
-        '类型': '类型',
-        '总流量': '总流量',
-        'LAN 流量': 'LAN 流量',
-        'WAN 流量': 'WAN 流量',
-        '刷新': '刷新',
-        '上传速率': '上传速率',
-        '下载速率': '下载速率',
-        '最近': '最近',
-        '秒': '秒',
-        '分钟': '分钟',
-        '小时': '小时',
-        '天': '天',
-        '周': '周',
-        '其他速率': '其他速率',
-        '累计流量': '累计流量',
-        '总上传': '总上传',
-        '总下载': '总下载',
-        'LAN 已上传': 'LAN 已上传',
-        'LAN 已下载': 'LAN 已下载',
-        'WAN 已上传': 'WAN 已上传',
-        'WAN 已下载': 'WAN 已下载',
-        '总上传速率': '总上传速率',
-        '总下载速率': '总下载速率',
-        'LAN 上传速率': 'LAN 上传速率',
-        'LAN 下载速率': 'LAN 下载速率',
-        'WAN 上传速率': 'WAN 上传速率',
-        'WAN 下载速率': 'WAN 下载速率',
-        '从未上线': '从未上线',
-        '刚刚': '刚刚',
-        '分钟前': '分钟前',
-        '小时前': '小时前',
-        '天前': '天前',
-        '个月前': '个月前',
-        '年前': '年前',
-        '最后上线': '最后上线',
-        '缩放': '缩放',
-        '排序方式': '排序方式',
-        '在线状态': '在线状态',
-        '总流量': '总流量',
-        '升序': '升序',
-        '降序': '降序',
-        '按速度排序': '按速度排序',
-        '按用量排序': '按用量排序',
-        '简易模式': '简易模式',
-        '详细模式': '详细模式'
-    },
-    'zh-tw': {
-        'Bandix 流量监控': 'Bandix 流量監控',
-        '正在加载数据...': '正在載入資料...',
-        '无法获取数据': '無法獲取資料',
-        '无法获取历史数据': '無法獲取歷史資料',
-        '主机名': '主機名',
-        'IP地址': 'IP地址',
-        'MAC地址': 'MAC地址',
-        '下载速度': '下載速度',
-        '上传速度': '上傳速度',
-        '总下载量': '總下載量',
-        '总上传量': '總上傳量',
-        '下载限速': '下載限速',
-        '上传限速': '上傳限速',
-        '界面语言': '介面語言',
-        '选择 Bandix 流量监控的显示语言': '選擇 Bandix 流量監控的顯示語言',
-        '设备信息': '設備資訊',
-        '设备列表': '設備列表',
-        'LAN 流量': '局域網流量',
-        'WAN 流量': '跨網路流量',
-        '限速设置': '限速設定',
-        '操作': '操作',
-        '在线设备': '線上設備',
-        '仅限WAN 流量': '僅限跨網路',
-        '设置': '設定',
-        '设备设置': '設備設定',
-        '限速设置': '限速設定',
-        '取消限速': '取消限速',
-        '保存': '儲存',
-        '取消': '取消',
-        '设置限速': '設定限速',
-        '设备': '設備',
-        '上传限速': '上傳限速',
-        '下载限速': '下載限速',
-        '主机名': '主機名',
-        '设置主机名': '設定主機名',
-        '请输入主机名': '請輸入主機名',
-        '主机名设置成功': '主機名設定成功',
-        '主机名设置失败': '主機名設定失敗',
-        '无限制': '無限制',
-        '设置成功': '設定成功',
-        '设置失败': '設定失敗',
-        '请输入有效的速度值': '請輸入有效的速度值',
-        '速度值必须大于0': '速度值必須大於0',
-        '保存中...': '儲存中...',
-        '限速功能仅对 WAN 流量生效。': '限速功能僅對跨網路流量生效。',
-        '提示：输入 0 表示无限制': '提示：輸入 0 表示無限制',
-        '历史流量趋势': '歷史流量趨勢',
-        '选择设备': '選擇設備',
-        '所有设备': '所有設備',
-        '时间范围': '時間範圍',
-        '最近5分钟': '最近5分鐘',
-        '最近30分钟': '最近30分鐘',
-        '最近2小时': '最近2小時',
-        '类型': '類型',
-        '总流量': '總流量',
-        'LAN 流量': '局域網',
-        'WAN 流量': '跨網路',
-        '刷新': '重新整理',
-        '上传速率': '上傳速率',
-        '下载速率': '下載速率',
-        '最近': '最近',
-        '秒': '秒',
-        '分钟': '分鐘',
-        '小时': '小時',
-        '天': '天',
-        '周': '週',
-        '其他速率': '其他速率',
-        '累计流量': '累計流量',
-        '总上传': '總上傳',
-        '总下载': '總下載',
-        'LAN 已上传': 'LAN 已上傳',
-        'LAN 已下载': 'LAN 已下載',
-        'WAN 已上传': 'WAN 已上傳',
-        'WAN 已下载': 'WAN 已下載',
-        '总上传速率': '總上傳速率',
-        '总下载速率': '總下載速率',
-        'LAN 上传速率': '局域上傳速率',
-        'LAN 下载速率': '局域下載速率',
-        'WAN 上传速率': '跨網上傳速率',
-        'WAN 下载速率': '跨網下載速率',
-        '从未上线': '從未上線',
-        '刚刚': '剛剛',
-        '分钟前': '分鐘前',
-        '小时前': '小時前',
-        '天前': '天前',
-        '个月前': '個月前',
-        '年前': '年前',
-        '最后上线': '最後上線',
-        '缩放': '縮放',
-        '排序方式': '排序方式',
-        '在线状态': '線上狀態',
-        '总流量': '總流量',
-        '升序': '升序',
-        '降序': '降序',
-        '按速度排序': '按速度排序',
-        '按用量排序': '按用量排序',
-        '简易模式': '簡易模式',
-        '详细模式': '詳細模式'
-    },
-    'en': {
-        'Bandix 流量监控': 'Bandix Traffic Monitor',
-        '正在加载数据...': 'Loading data...',
-        '无法获取数据': 'Unable to fetch data',
-        '无法获取历史数据': 'Unable to fetch history data',
-        '主机名': 'Hostname',
-        'IP地址': 'IP Address',
-        'MAC地址': 'MAC Address',
-        '下载速度': 'Download Speed',
-        '上传速度': 'Upload Speed',
-        '总下载量': 'Total Download',
-        '总上传量': 'Total Upload',
-        '下载限速': 'Download Limit',
-        '上传限速': 'Upload Limit',
-        '界面语言': 'Interface Language',
-        '选择 Bandix 流量监控的显示语言': 'Select the display language for Bandix Traffic Monitor',
-        '设备信息': 'Device Info',
-        '设备列表': 'Device List',
-        'LAN 流量': 'LAN Traffic',
-        'WAN 流量': 'WAN Traffic',
-        '限速设置': 'Rate Limit',
-        '操作': 'Actions',
-        '在线设备': 'Online Devices',
-        '仅限WAN 流量': 'WAN Only',
-        '设置': 'Settings',
-        '设备设置': 'Device Settings',
-        '限速设置': 'Rate Limits',
-        '取消限速': 'Remove Rate Limit',
-        '保存': 'Save',
-        '取消': 'Cancel',
-        '设置限速': 'Set Rate Limit',
-        '设备': 'Device',
-        '上传限速': 'Upload Limit',
-        '下载限速': 'Download Limit',
-        '主机名': 'Hostname',
-        '设置主机名': 'Set Hostname',
-        '请输入主机名': 'Please enter hostname',
-        '主机名设置成功': 'Hostname set successfully',
-        '主机名设置失败': 'Failed to set hostname',
-        '无限制': 'Unlimited',
-        '设置成功': 'Settings saved successfully',
-        '设置失败': 'Failed to save settings',
-        '请输入有效的速度值': 'Please enter a valid speed value',
-        '速度值必须大于0': 'Speed value must be greater than 0',
-        '保存中...': 'Saving...',
-        '限速功能仅对 WAN 流量生效。': 'Rate limiting only applies to WAN traffic.',
-        '提示：输入 0 表示无限制': 'Tip: Enter 0 for unlimited',
-        '历史流量趋势': 'Traffic History',
-        '选择设备': 'Select Device',
-        '所有设备': 'All Devices',
-        '时间范围': 'Time Range',
-        '最近5分钟': 'Last 5 minutes',
-        '最近30分钟': 'Last 30 minutes',
-        '最近2小时': 'Last 2 hours',
-        '类型': 'Type',
-        '总流量': 'Total',
-        'LAN 流量': 'LAN',
-        'WAN 流量': 'WAN',
-        '刷新': 'Refresh',
-        '上传速率': 'Upload Rate',
-        '下载速率': 'Download Rate',
-        '最近': 'Last',
-        '秒': 'second',
-        '分钟': 'minute',
-        '小时': 'hour',
-        '天': 'day',
-        '周': 'week',
-        '其他速率': 'Other Rates',
-        '累计流量': 'Cumulative',
-        '总上传': 'Total Uploaded',
-        '总下载': 'Total Downloaded',
-        'LAN 已上传': 'LAN Uploaded',
-        'LAN 已下载': 'LAN Downloaded',
-        'WAN 已上传': 'WAN Uploaded',
-        'WAN 已下载': 'WAN Downloaded',
-        '总上传速率': 'Total Upload',
-        '总下载速率': 'Total Download',
-        'LAN 上传速率': 'LAN Upload',
-        'LAN 下载速率': 'LAN Download',
-        'WAN 上传速率': 'WAN Upload',
-        'WAN 下载速率': 'WAN Download',
-        '从未上线': 'Never Online',
-        '刚刚': 'Just Now',
-        '分钟前': 'min ago',
-        '小时前': 'h ago',
-        '天前': 'days ago',
-        '个月前': 'months ago',
-        '年前': 'years ago',
-        '最后上线': 'Last Online',
-        '缩放': 'Zoom',
-        '排序方式': 'Sort By',
-        '在线状态': 'Online Status',
-        '总流量': 'Total Traffic',
-        '升序': 'Ascending',
-        '降序': 'Descending',
-        '按速度排序': 'Sort by Speed',
-        '按用量排序': 'Sort by Traffic',
-        '简易模式': 'Simple Mode',
-        '详细模式': 'Detailed Mode'
-    },
-    'fr': {
-        'Bandix 流量监控': 'Moniteur de Trafic Bandix',
-        '正在加载数据...': 'Chargement des données...',
-        '无法获取数据': 'Impossible de récupérer les données',
-        '无法获取历史数据': 'Impossible de récupérer les données historiques',
-        '主机名': 'Nom d\'hôte',
-        'IP地址': 'Adresse IP',
-        'MAC地址': 'Adresse MAC',
-        '下载速度': 'Vitesse de téléchargement',
-        '上传速度': 'Vitesse de téléversement',
-        '总下载量': 'Téléchargement total',
-        '总上传量': 'Téléversement total',
-        '下载限速': 'Limite de téléchargement',
-        '上传限速': 'Limite de téléversement',
-        '界面语言': 'Langue de l\'interface',
-        '选择 Bandix 流量监控的显示语言': 'Sélectionner la langue d\'affichage pour le Moniteur de Trafic Bandix',
-        '设备信息': 'Informations sur l\'appareil',
-        '设备列表': 'Liste des appareils',
-        'LAN 流量': 'Trafic LAN',
-        'WAN 流量': 'Trafic WAN',
-        '限速设置': 'Limitation de débit',
-        '操作': 'Actions',
-        '在线设备': 'Appareils en ligne',
-        '仅限WAN 流量': 'WAN uniquement',
-        '设置': 'Paramètres',
-        '设备设置': 'Paramètres de l\'appareil',
-        '限速设置': 'Paramètres de limitation',
-        '取消限速': 'Supprimer la limitation',
-        '保存': 'Enregistrer',
-        '取消': 'Annuler',
-        '设置限速': 'Définir la limitation',
-        '设备': 'Appareil',
-        '上传限速': 'Limite de téléversement',
-        '下载限速': 'Limite de téléchargement',
-        '无限制': 'Illimité',
-        '设置成功': 'Paramètres enregistrés avec succès',
-        '设置失败': 'Échec de l\'enregistrement des paramètres',
-        '请输入有效的速度值': 'Veuillez entrer une valeur de vitesse valide',
-        '速度值必须大于0': 'La valeur de vitesse doit être supérieure à 0',
-        '保存中...': 'Enregistrement...',
-        '限速功能仅对 WAN 流量生效。': 'La limitation de débit ne s\'applique qu\'au trafic WAN.',
-        '提示：输入 0 表示无限制': 'Conseil : Entrez 0 pour illimité',
-        '历史流量趋势': 'Historique du trafic',
-        '选择设备': 'Sélectionner l\'appareil',
-        '所有设备': 'Tous les appareils',
-        '时间范围': 'Plage de temps',
-        '最近5分钟': '5 dernières minutes',
-        '最近30分钟': '30 dernières minutes',
-        '最近2小时': '2 dernières heures',
-        '类型': 'Type',
-        '总流量': 'Total',
-        'LAN 流量': 'LAN',
-        'WAN 流量': 'WAN',
-        '刷新': 'Actualiser',
-        '上传速率': 'Débit montant',
-        '下载速率': 'Débit descendant',
-        '最近': 'Dernières',
-        '秒': 'seconde',
-        '分钟': 'minute',
-        '小时': 'heure',
-        '天': 'jour',
-        '周': 'semaine',
-        '其他速率': 'Autres débits',
-        '累计流量': 'Trafic cumulé',
-        '总上传': 'Total téléversé',
-        '总下载': 'Total téléchargé',
-        'LAN 已上传': 'LAN Téléversé',
-        'LAN 已下载': 'LAN Téléchargé',
-        'WAN 已上传': 'WAN Téléversé',
-        'WAN 已下载': 'WAN Téléchargé',
-        '总上传速率': 'Vitesse de téléversement totale',
-        '总下载速率': 'Vitesse de téléchargement totale',
-        'LAN 上传速率': 'Vitesse de téléversement LAN',
-        'LAN 下载速率': 'Vitesse de téléchargement LAN',
-        'WAN 上传速率': 'Vitesse de téléversement WAN',
-        'WAN 下载速率': 'Vitesse de téléchargement WAN',
-        '从未上线': 'Jamais en ligne',
-        '刚刚': 'À l\'instant',
-        '分钟前': 'min',
-        '小时前': 'h',
-        '天前': 'j',
-        '个月前': 'mois',
-        '年前': 'an',
-        '最后上线': 'Dernière connexion',
-        '缩放': 'Zoom',
-        '排序方式': 'Trier par',
-        '在线状态': 'Statut en ligne',
-        '总流量': 'Trafic total',
-        '升序': 'Croissant',
-        '降序': 'Décroissant',
-        '按速度排序': 'Trier par vitesse',
-        '按用量排序': 'Trier par volume',
-        '简易模式': 'Mode simple',
-        '详细模式': 'Mode détaillé'
-    },
-    'ja': {
-        'Bandix 流量监控': 'Bandix トラフィックモニター',
-        '正在加载数据...': 'データを読み込み中...',
-        '无法获取数据': 'データを取得できません',
-        '无法获取历史数据': '履歴データを取得できません',
-        '主机名': 'ホスト名',
-        'IP地址': 'IPアドレス',
-        'MAC地址': 'MACアドレス',
-        '下载速度': 'ダウンロード速度',
-        '上传速度': 'アップロード速度',
-        '总下载量': '総ダウンロード量',
-        '总上传量': '総アップロード量',
-        '下载限速': 'ダウンロード制限',
-        '上传限速': 'アップロード制限',
-        '界面语言': 'インターフェース言語',
-        '选择 Bandix 流量监控的显示语言': 'Bandix トラフィックモニターの表示言語を選択',
-        '设备信息': 'デバイス情報',
-        '设备列表': 'デバイスリスト',
-        'LAN 流量': 'LAN トラフィック',
-        'WAN 流量': 'WAN トラフィック',
-        '限速设置': '速度制限',
-        '操作': '操作',
-        '在线设备': 'オンラインデバイス',
-        '仅限WAN 流量': 'WAN のみ',
-        '设置': '設定',
-        '设备设置': 'デバイス設定',
-        '限速设置': '速度制限設定',
-        '取消限速': '速度制限を削除',
-        '保存': '保存',
-        '取消': 'キャンセル',
-        '设置限速': '速度制限を設定',
-        '设备': 'デバイス',
-        '上传限速': 'アップロード制限',
-        '下载限速': 'ダウンロード制限',
-        '无限制': '無制限',
-        '设置成功': '設定が正常に保存されました',
-        '设置失败': '設定の保存に失敗しました',
-        '请输入有效的速度值': '有効な速度値を入力してください',
-        '速度值必须大于0': '速度値は0より大きい必要があります',
-        '保存中...': '保存中...',
-        '限速功能仅对 WAN 流量生效。': '速度制限はWANトラフィックにのみ適用されます。',
-        '提示：输入 0 表示无限制': 'ヒント：0を入力すると無制限になります',
-        '历史流量趋势': 'トラフィック履歴',
-        '选择设备': 'デバイスを選択',
-        '所有设备': 'すべてのデバイス',
-        '时间范围': '時間範囲',
-        '最近5分钟': '最近5分',
-        '最近30分钟': '最近30分',
-        '最近2小时': '最近2時間',
-        '类型': 'タイプ',
-        '总流量': '合計',
-        'LAN 流量': 'LAN',
-        'WAN 流量': 'WAN',
-        '刷新': '更新',
-        '上传速率': 'アップロードレート',
-        '下载速率': 'ダウンロードレート',
-        '最近': '直近',
-        '秒': '秒',
-        '分钟': '分',
-        '小时': '時間',
-        '天': '日',
-        '周': '週間',
-        '其他速率': 'その他の速度',
-        '累计流量': '累計トラフィック',
-        '总上传': '総アップロード',
-        '总下载': '総ダウンロード',
-        'LAN 已上传': 'LAN アップロード済み',
-        'LAN 已下载': 'LAN ダウンロード済み',
-        'WAN 已上传': 'WAN アップロード済み',
-        'WAN 已下载': 'WAN ダウンロード済み',
-        '总上传速率': '総アップロード速度',
-        '总下载速率': '総ダウンロード速度',
-        'LAN 上传速率': 'LAN アップロード速度',
-        'LAN 下载速率': 'LAN ダウンロード速度',
-        'WAN 上传速率': 'WAN アップロード速度',
-        'WAN 下载速率': 'WAN ダウンロード速度',
-        '从未上线': 'オンライン未経験',
-        '刚刚': '今',
-        '分钟前': '分前',
-        '小时前': '時間前',
-        '天前': '日前',
-        '个月前': 'ヶ月前',
-        '年前': '年前',
-        '最后上线': '最終オンライン',
-        '缩放': 'ズーム',
-        '排序方式': '並び順',
-        '在线状态': 'オンライン状態',
-        '总流量': '総トラフィック',
-        '升序': '昇順',
-        '降序': '降順',
-        '按速度排序': '速度順',
-        '按用量排序': '使用量順',
-        '简易模式': 'シンプルモード',
-        '详细模式': '詳細モード'
-    },
-    'ru': {
-        'Bandix 流量监控': 'Монитор Трафика Bandix',
-        '正在加载数据...': 'Загрузка данных...',
-        '无法获取数据': 'Не удалось получить данные',
-        '无法获取历史数据': 'Не удалось получить исторические данные',
-        '主机名': 'Имя хоста',
-        'IP地址': 'IP-адрес',
-        'MAC地址': 'MAC-адрес',
-        '下载速度': 'Скорость загрузки',
-        '上传速度': 'Скорость выгрузки',
-        '总下载量': 'Общая загрузка',
-        '总上传量': 'Общая выгрузка',
-        '下载限速': 'Ограничение загрузки',
-        '上传限速': 'Ограничение выгрузки',
-        '界面语言': 'Язык интерфейса',
-        '选择 Bandix 流量监控的显示语言': 'Выберите язык отображения для Монитора Трафика Bandix',
-        '设备信息': 'Информация об устройстве',
-        '设备列表': 'Список устройств',
-        'LAN 流量': 'Трафик LAN',
-        'WAN 流量': 'Трафик WAN',
-        '限速设置': 'Ограничение скорости',
-        '操作': 'Действия',
-        '在线设备': 'Онлайн устройства',
-        '仅限WAN 流量': 'Только WAN',
-        '设置': 'Настройки',
-        '设备设置': 'Настройки устройства',
-        '限速设置': 'Настройки ограничения',
-        '取消限速': 'Удалить ограничение',
-        '保存': 'Сохранить',
-        '取消': 'Отмена',
-        '设置限速': 'Установить ограничение',
-        '设备': 'Устройство',
-        '上传限速': 'Ограничение выгрузки',
-        '下载限速': 'Ограничение загрузки',
-        '无限制': 'Без ограничений',
-        '设置成功': 'Настройки успешно сохранены',
-        '设置失败': 'Не удалось сохранить настройки',
-        '请输入有效的速度值': 'Пожалуйста, введите допустимое значение скорости',
-        '速度值必须大于0': 'Значение скорости должно быть больше 0',
-        '保存中...': 'Сохранение...',
-        '限速功能仅对 WAN 流量生效。': 'Ограничение скорости применяется только к WAN-трафику.',
-        '提示：输入 0 表示无限制': 'Совет: Введите 0 для снятия ограничений',
-        '历史流量趋势': 'История трафика',
-        '选择设备': 'Выбрать устройство',
-        '所有设备': 'Все устройства',
-        '时间范围': 'Временной диапазон',
-        '最近5分钟': 'Последние 5 минут',
-        '最近30分钟': 'Последние 30 минут',
-        '最近2小时': 'Последние 2 часа',
-        '类型': 'Тип',
-        '总流量': 'Общий',
-        'LAN 流量': 'LAN',
-        'WAN 流量': 'WAN',
-        '刷新': 'Обновить',
-        '上传速率': 'Скорость отправки',
-        '下载速率': 'Скорость загрузки',
-        '最近': 'За последние',
-        '秒': 'сек.',
-        '分钟': 'мин.',
-        '小时': 'ч.',
-        '天': 'дн.',
-        '周': 'нед.',
-        '其他速率': 'Другие скорости',
-        '累计流量': 'Суммарный трафик',
-        '总上传': 'Всего отправлено',
-        '总下载': 'Всего получено',
-        'LAN 已上传': 'LAN Отправлено',
-        'LAN 已下载': 'LAN Получено',
-        'WAN 已上传': 'WAN Отправлено',
-        'WAN 已下载': 'WAN Получено',
-        '总上传速率': 'Общая скорость отправки',
-        '总下载速率': 'Общая скорость загрузки',
-        'LAN 上传速率': 'Скорость отправки LAN',
-        'LAN 下载速率': 'Скорость загрузки LAN',
-        'WAN 上传速率': 'Скорость отправки WAN',
-        'WAN 下载速率': 'Скорость загрузки WAN',
-        '从未上线': 'Никогда не был онлайн',
-        '刚刚': 'Только что',
-        '分钟前': 'мин назад',
-        '小时前': 'ч назад',
-        '天前': 'дн назад',
-        '个月前': 'мес назад',
-        '年前': 'лет назад',
-        '最后上线': 'Последний онлайн',
-        '缩放': 'Масштаб',
-        '排序方式': 'Сортировка',
-        '在线状态': 'Статус онлайн',
-        '总流量': 'Общий трафик',
-        '升序': 'По возрастанию',
-        '降序': 'По убыванию',
-        '按速度排序': 'По скорости',
-        '按用量排序': 'По объёму',
-        '简易模式': 'Простой режим',
-        '详细模式': 'Подробный режим'
-    }
-};
-
-function getTranslation(key, language) {
-    return translations[language]?.[key] || key;
-}
-
-function getSystemLanguage() {
-    // 尝试获取 LuCI 的语言设置
-    var luciLang = uci.get('luci', 'main', 'lang');
-    
-    if (luciLang && translations[luciLang]) {
-        return luciLang;
-    }
-    
-    // 如果没有 LuCI 语言设置，尝试获取浏览器语言作为回退
-    var systemLang = document.documentElement.lang || 'en';
-    
-    if (translations[systemLang]) {
-        return systemLang;
-    }
-    
-    // 最终回退到英语
-    return 'en';
-}
 
 // 暗色模式检测已改为使用 CSS 媒体查询 @media (prefers-color-scheme: dark)
 
@@ -781,11 +168,7 @@ return view.extend({
     },
 
     render: function (data) {
-        var language = uci.get('bandix', 'general', 'language');
-        if (!language || language === 'auto') {
-            language = getSystemLanguage();
-        }
-
+        
         // 添加现代化样式
         var style = E('style', {}, `
             .bandix-container {
@@ -1410,13 +793,13 @@ return view.extend({
         var view = E('div', { 'class': 'bandix-container' }, [
             // 头部
             E('div', { 'class': 'bandix-header' }, [
-                E('h1', { 'class': 'bandix-title' }, getTranslation('Bandix 流量监控', language))
+                E('h1', { 'class': 'bandix-title' }, _('Bandix Traffic Monitor'))
             ]),
 
             // 警告提示（包含在线设备数）
             E('div', { 'class': 'bandix-alert' }, [
-                E('span', {}, getTranslation('限速功能仅对 WAN 流量生效。', language)),
-                E('div', { 'class': 'bandix-badge', 'id': 'device-count' }, getTranslation('在线设备', language) + ': 0 / 0')
+                E('span', {}, _('Rate limiting only applies to WAN traffic.')),
+                E('div', { 'class': 'bandix-badge', 'id': 'device-count' }, _('Online Devices') + ': 0 / 0')
             ]),
 
             // 统计卡片
@@ -1425,28 +808,28 @@ return view.extend({
             // 历史趋势卡片（无时间范围筛选）
             E('div', { 'class': 'cbi-section', 'id': 'history-card' }, [
                 E('h3', { 'class': 'history-header', 'style': 'display: flex; align-items: center; justify-content: space-between;' }, [
-                    E('span', {}, getTranslation('历史流量趋势', language)),
+                    E('span', {}, _('Traffic History')),
                     E('div', { 'class': 'history-legend' }, [
                         E('div', { 'class': 'legend-item' }, [
                             E('span', { 'class': 'legend-dot legend-up' }),
-                            getTranslation('上传速率', language)
+                            _('Upload Rate')
                         ]),
                         E('div', { 'class': 'legend-item' }, [
                             E('span', { 'class': 'legend-dot legend-down' }),
-                            getTranslation('下载速率', language)
+                            _('Download Rate')
                         ])
                     ])
                 ]),
                 E('div', { 'class': 'history-controls' }, [
-                    E('label', { 'class': 'form-label', 'style': 'margin: 0;' }, getTranslation('选择设备', language)),
+                    E('label', { 'class': 'form-label', 'style': 'margin: 0;' }, _('Select Device')),
                     E('select', { 'class': 'cbi-select', 'id': 'history-device-select' }, [
-                        E('option', { 'value': '' }, getTranslation('所有设备', language))
+                        E('option', { 'value': '' }, _('All Devices'))
                     ]),
-                    E('label', { 'class': 'form-label', 'style': 'margin: 0;' }, getTranslation('类型', language)),
+                    E('label', { 'class': 'form-label', 'style': 'margin: 0;' }, _('Type')),
                     E('select', { 'class': 'cbi-select', 'id': 'history-type-select' }, [
-                        E('option', { 'value': 'total' }, getTranslation('总流量', language)),
-                        E('option', { 'value': 'lan' }, getTranslation('LAN 流量', language)),
-                        E('option', { 'value': 'wan' }, getTranslation('WAN 流量', language))
+                        E('option', { 'value': 'total' }, _('Total')),
+                        E('option', { 'value': 'lan' }, _('LAN Traffic')),
+                        E('option', { 'value': 'wan' }, _('WAN Traffic'))
                     ]),
                     E('span', { 'class': 'bandix-badge', 'id': 'history-zoom-level', 'style': 'margin-left: 16px; display: none;' }, ''),
                     E('span', { 'class': 'bandix-badge', 'id': 'history-retention', 'style': 'margin-left: auto;' }, '')
@@ -1460,27 +843,27 @@ return view.extend({
             // 主要内容卡片
             E('div', { 'class': 'cbi-section' }, [
                 E('h3', { 'class': 'history-header', 'style': 'display: flex; align-items: center; justify-content: space-between;' }, [
-                    E('span', {}, getTranslation('设备列表', language)),
+                    E('span', {}, _('Device List')),
                     E('div', { 'class': 'device-mode-group' }, [
                         E('button', { 
                             'class': 'device-mode-btn' + (localStorage.getItem('bandix_device_mode') !== 'detailed' ? ' active' : ''),
                             'data-mode': 'simple'
-                        }, getTranslation('简易模式', language)),
+                        }, _('Simple Mode')),
                         E('button', { 
                             'class': 'device-mode-btn' + (localStorage.getItem('bandix_device_mode') === 'detailed' ? ' active' : ''),
                             'data-mode': 'detailed'
-                        }, getTranslation('详细模式', language))
+                        }, _('Detailed Mode'))
                     ])
                 ]),
                 E('div', { 'id': 'traffic-status' }, [
                     E('table', { 'class': 'bandix-table' }, [
                         E('thead', {}, [
                             E('tr', {}, [
-                                E('th', {}, getTranslation('设备信息', language)),
-                                E('th', {}, getTranslation('LAN 流量', language)),
-                                E('th', {}, getTranslation('WAN 流量', language)),
-                                E('th', {}, getTranslation('限速设置', language)),
-                                E('th', {}, getTranslation('操作', language))
+                                E('th', {}, _('Device Info')),
+                                E('th', {}, _('LAN Traffic')),
+                                E('th', {}, _('WAN Traffic')),
+                                E('th', {}, _('Rate Limit')),
+                                E('th', {}, _('Actions'))
                             ])
                         ]),
                         E('tbody', {})
@@ -1519,35 +902,35 @@ return view.extend({
         var modal = E('div', { 'class': 'modal-overlay', 'id': 'rate-limit-modal' }, [
             E('div', { 'class': 'modal' }, [
                 E('div', { 'class': 'modal-header' }, [
-                    E('h3', { 'class': 'modal-title' }, getTranslation('设备设置', language))
+                    E('h3', { 'class': 'modal-title' }, _('Device Settings'))
                 ]),
                 E('div', { 'class': 'modal-body' }, [
                     E('div', { 'class': 'device-summary', 'id': 'modal-device-summary' }),
                     E('div', { 'class': 'form-group' }, [
-                        E('label', { 'class': 'form-label' }, getTranslation('主机名', language)),
-                        E('input', { 'type': 'text', 'class': 'form-input', 'id': 'device-hostname-input', 'placeholder': getTranslation('请输入主机名', language) }),
-                        E('div', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-top: 4px;' }, getTranslation('设置主机名', language))
+                        E('label', { 'class': 'form-label' }, _('Hostname')),
+                        E('input', { 'type': 'text', 'class': 'form-input', 'id': 'device-hostname-input', 'placeholder': _('Please enter hostname') }),
+                        E('div', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-top: 4px;' }, _('Set Hostname'))
                     ]),
                     E('div', { 'class': 'form-group' }, [
-                        E('label', { 'class': 'form-label' }, getTranslation('上传限速', language)),
+                        E('label', { 'class': 'form-label' }, _('Upload Limit')),
                         E('div', { 'style': 'display: flex; gap: 8px;' }, [
                             E('input', { 'type': 'number', 'class': 'form-input', 'id': 'upload-limit-value', 'min': '0', 'step': '1', 'placeholder': '0' }),
                             E('select', { 'class': 'cbi-select', 'id': 'upload-limit-unit', 'style': 'width: 100px;' })
                         ]),
-                        E('div', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-top: 4px;' }, getTranslation('提示：输入 0 表示无限制', language))
+                        E('div', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-top: 4px;' }, _('Tip: Enter 0 for unlimited'))
                     ]),
                     E('div', { 'class': 'form-group' }, [
-                        E('label', { 'class': 'form-label' }, getTranslation('下载限速', language)),
+                        E('label', { 'class': 'form-label' }, _('Download Limit')),
                         E('div', { 'style': 'display: flex; gap: 8px;' }, [
                             E('input', { 'type': 'number', 'class': 'form-input', 'id': 'download-limit-value', 'min': '0', 'step': '1', 'placeholder': '0' }),
                             E('select', { 'class': 'cbi-select', 'id': 'download-limit-unit', 'style': 'width: 100px;' })
                         ]),
-                        E('div', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-top: 4px;' }, getTranslation('提示：输入 0 表示无限制', language))
+                        E('div', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-top: 4px;' }, _('Tip: Enter 0 for unlimited'))
                     ])
                 ]),
                 E('div', { 'class': 'modal-footer' }, [
-                    E('button', { 'class': 'cbi-button cbi-button-reset', 'id': 'modal-cancel' }, getTranslation('取消', language)),
-                    E('button', { 'class': 'cbi-button cbi-button-positive', 'id': 'modal-save' }, getTranslation('保存', language))
+                    E('button', { 'class': 'cbi-button cbi-button-reset', 'id': 'modal-cancel' }, _('Cancel')),
+                    E('button', { 'class': 'cbi-button cbi-button-positive', 'id': 'modal-save' }, _('Save'))
                 ])
             ])
         ]);
@@ -1780,7 +1163,7 @@ return view.extend({
             var originalText = saveButton.textContent;
 
             // 显示加载状态
-            saveButton.innerHTML = '<span class="loading-spinner"></span>' + getTranslation('保存中...', language);
+            saveButton.innerHTML = '<span class="loading-spinner"></span>' + _('Saving...');
             saveButton.classList.add('btn-loading');
 
             var uploadLimit = 0;
@@ -1843,10 +1226,10 @@ return view.extend({
                 results.forEach(function(result, index) {
                     if (result && result.hostnameError) {
                         hasError = true;
-                        errorMessages.push(getTranslation('主机名设置失败', language));
+                        errorMessages.push(_('Failed to set hostname'));
                     } else if (result && result.rateLimitError) {
                         hasError = true;
-                        errorMessages.push(getTranslation('设置失败', language));
+                        errorMessages.push(_('Failed to save settings'));
                     } else if (result !== true && result !== undefined) {
                         // 检查是否有其他错误
                         if (result && result.error) {
@@ -1866,7 +1249,7 @@ return view.extend({
                 // 恢复按钮状态
                 saveButton.innerHTML = originalText;
                 saveButton.classList.remove('btn-loading');
-                ui.addNotification(null, E('p', {}, getTranslation('设置失败', language)), 'error');
+                ui.addNotification(null, E('p', {}, _('Failed to save settings')), 'error');
             });
         }
 
@@ -1942,7 +1325,7 @@ return view.extend({
             var prev = select.value;
             // 重建选项
             select.innerHTML = '';
-            select.appendChild(E('option', { 'value': '' }, getTranslation('所有设备', language)));
+            select.appendChild(E('option', { 'value': '' }, _('All Devices')));
             sortedDevices.forEach(function (d) {
                 var label = (d.hostname || d.ip || d.mac || '-') + (d.ip ? ' (' + d.ip + ')' : '') + (d.mac ? ' [' + d.mac + ']' : '');
                 select.appendChild(E('option', { 'value': d.mac }, label));
@@ -1983,7 +1366,7 @@ return view.extend({
                 zoomLevelElement.style.display = 'none';
             } else {
                 zoomLevelElement.style.display = 'inline-block';
-                zoomLevelElement.textContent = getTranslation('缩放', language) + ': ' + zoomScale.toFixed(1) + 'x';
+                zoomLevelElement.textContent = _('Zoom') + ': ' + zoomScale.toFixed(1) + 'x';
             }
         }
 
@@ -2194,10 +1577,9 @@ return view.extend({
             return hh + ':' + mm + ':' + ss;
         }
 
-		function buildTooltipHtml(point, language) {
+		function buildTooltipHtml(point) {
 			if (!point) return '';
 			var lines = [];
-			var zh = (language === 'zh-cn' || language === 'zh-tw');
 			var typeSel = (typeof document !== 'undefined' ? document.getElementById('history-type-select') : null);
 			var selType = (typeSel && typeSel.value) ? typeSel.value : 'total';
 			var speedUnit = uci.get('bandix', 'traffic', 'speed_unit') || 'bytes';
@@ -2215,9 +1597,9 @@ return view.extend({
 			}
 
 			function labelsFor(type) {
-				if (type === 'lan') return { up: getTranslation('LAN 上传速率', language), down: getTranslation('LAN 下载速率', language) };
-				if (type === 'wan') return { up: getTranslation('WAN 上传速率', language), down: getTranslation('WAN 下载速率', language) };
-				return { up: getTranslation('总上传速率', language), down: getTranslation('总下载速率', language) };
+				if (type === 'lan') return { up: _('LAN Upload'), down: _('LAN Download') };
+				if (type === 'wan') return { up: _('WAN Upload'), down: _('WAN Download') };
+				return { up: _('Total Upload'), down: _('Total Download') };
 			}
 
 			function rateKeysFor(type) {
@@ -2247,7 +1629,7 @@ return view.extend({
 							ipv6Info = ' | IPv6: ' + lanIPv6.join(', ');
 						}
 						var devLabel = (dev.hostname || '-') + (dev.ip ? ' (' + dev.ip + ')' : '') + (dev.mac ? ' [' + dev.mac + ']' : '') + ipv6Info;
-						lines.push('<div class="ht-device">' + getTranslation('设备', language) + ': ' + devLabel + '</div>');
+						lines.push('<div class="ht-device">' + _('Device') + ': ' + devLabel + '</div>');
 					}
 				}
 			} catch (e) {}
@@ -2271,7 +1653,7 @@ return view.extend({
 			// 次要信息：其余类型的速率（精简展示）
 			var otherTypes = ['total', 'lan', 'wan'].filter(function (t) { return t !== selType; });
 			if (otherTypes.length) {
-				lines.push('<div class="ht-section-title">' + getTranslation('其他速率', language) + '</div>');
+				lines.push('<div class="ht-section-title">' + _('Other Rates') + '</div>');
 				otherTypes.forEach(function (t) {
 					var lbs = labelsFor(t);
 					var ks = rateKeysFor(t);
@@ -2282,13 +1664,13 @@ return view.extend({
 
 			// 累计：区分LAN 流量与公网
 			lines.push('<div class="ht-divider"></div>');
-			lines.push('<div class="ht-section-title">' + getTranslation('累计流量', language) + '</div>');
-			row(getTranslation('总上传', language), bytesValue('total_tx_bytes'));
-			row(getTranslation('总下载', language), bytesValue('total_rx_bytes'));
-			row(getTranslation('LAN 已上传', language), bytesValue('local_tx_bytes'));
-			row(getTranslation('LAN 已下载', language), bytesValue('local_rx_bytes'));
-			row(getTranslation('WAN 已上传', language), bytesValue('wide_tx_bytes'));
-			row(getTranslation('WAN 已下载', language), bytesValue('wide_rx_bytes'));
+			lines.push('<div class="ht-section-title">' + _('Cumulative') + '</div>');
+			row(_('Total Uploaded'), bytesValue('total_tx_bytes'));
+			row(_('Total Downloaded'), bytesValue('total_rx_bytes'));
+			row(_('LAN Uploaded'), bytesValue('local_tx_bytes'));
+			row(_('LAN Downloaded'), bytesValue('local_rx_bytes'));
+			row(_('WAN Uploaded'), bytesValue('wide_tx_bytes'));
+			row(_('WAN Downloaded'), bytesValue('wide_rx_bytes'));
 
 			return lines.join('');
         }
@@ -2489,9 +1871,9 @@ function isDeviceOnline(device) {
 }
 
 // 格式化最后上线时间
-function formatLastOnlineTime(lastOnlineTs, language) {
+function formatLastOnlineTime(lastOnlineTs) {
     if (!lastOnlineTs || lastOnlineTs <= 0) {
-        return getTranslation('从未上线', language);
+        return _('Never Online');
     }
     
     // 如果时间戳小于1000000000000，说明是秒级时间戳，需要转换为毫秒
@@ -2504,12 +1886,12 @@ function formatLastOnlineTime(lastOnlineTs, language) {
     
     // 1分钟以内显示"刚刚"
     if (minutesDiff < 1) {
-        return getTranslation('刚刚', language);
+        return _('Just Now');
     }
     
     // 10分钟以内显示具体的"几分钟前"
     if (minutesDiff <= 10) {
-        return minutesDiff + getTranslation('分钟前', language);
+        return minutesDiff + _('min ago');
     }
     
     // 转换为小时
@@ -2517,7 +1899,7 @@ function formatLastOnlineTime(lastOnlineTs, language) {
     
     // 如果不满1小时，显示分钟
     if (hoursDiff < 1) {
-        return minutesDiff + getTranslation('分钟前', language);
+        return minutesDiff + _('min ago');
     }
     
     // 转换为天
@@ -2525,7 +1907,7 @@ function formatLastOnlineTime(lastOnlineTs, language) {
     
     // 如果不满1天，显示小时（忽略分钟）
     if (daysDiff < 1) {
-        return hoursDiff + getTranslation('小时前', language);
+        return hoursDiff + _('h ago');
     }
     
     // 转换为月（按30天计算）
@@ -2533,7 +1915,7 @@ function formatLastOnlineTime(lastOnlineTs, language) {
     
     // 如果不满1个月，显示天（忽略小时）
     if (monthsDiff < 1) {
-        return daysDiff + getTranslation('天前', language);
+        return daysDiff + _('days ago');
     }
     
     // 转换为年（按365天计算）
@@ -2541,63 +1923,39 @@ function formatLastOnlineTime(lastOnlineTs, language) {
     
     // 如果不满1年，显示月（忽略天）
     if (yearsDiff < 1) {
-        return monthsDiff + getTranslation('个月前', language);
+        return monthsDiff + _('months ago');
     }
     
     // 超过1年，显示年（忽略月）
-    return yearsDiff + getTranslation('年前', language);
+    return yearsDiff + _('years ago');
 }
 
-function formatRetentionSeconds(seconds, language) {
+function formatRetentionSeconds(seconds) {
     if (!seconds || seconds <= 0) return '';
     var value;
     var unitKey;
     if (seconds < 60) {
         value = Math.round(seconds);
-        unitKey = '秒';
+        unitKey = _('seconds');
     } else if (seconds < 3600) {
         value = Math.round(seconds / 60);
         if (value < 1) value = 1;
-        unitKey = '分钟';
+        unitKey = _('minutes');
     } else if (seconds < 86400) {
         value = Math.round(seconds / 3600);
         if (value < 1) value = 1;
-        unitKey = '小时';
+        unitKey = _('hours');
     } else if (seconds < 604800) {
         value = Math.round(seconds / 86400);
         if (value < 1) value = 1;
-        unitKey = '天';
+        unitKey = _('days');
     } else {
         value = Math.round(seconds / 604800);
         if (value < 1) value = 1;
-        unitKey = '周';
+        unitKey = _('weeks');
     }
 
-    // 多语言格式化
-    if (language === 'zh-cn' || language === 'zh-tw') {
-        return getTranslation('最近', language) + value + getTranslation(unitKey, language);
-    }
-
-    if (language === 'ja') {
-        return getTranslation('最近', language) + value + getTranslation(unitKey, language);
-    }
-
-    if (language === 'fr') {
-        // 法语单复数：值>1 用复数，天/周/小时/分钟/秒分别加 s
-        var unitFr = getTranslation(unitKey, 'fr');
-        if (value > 1) unitFr = unitFr + 's';
-        return getTranslation('最近', 'fr') + ' ' + value + ' ' + unitFr;
-    }
-
-    if (language === 'ru') {
-        // 俄语用缩写，避免复杂变格
-        return getTranslation('最近', 'ru') + ' ' + value + ' ' + getTranslation(unitKey, 'ru');
-    }
-
-    // 英语默认
-    var unitEn = getTranslation(unitKey, 'en');
-    if (value > 1) unitEn = unitEn + 's';
-    return getTranslation('最近', 'en') + ' ' + value + ' ' + unitEn;
+    return _('Last') + ' ' + value + ' ' + unitKey;
 }
 
         function refreshHistory() {
@@ -2620,7 +1978,7 @@ function formatRetentionSeconds(seconds, language) {
 
                 var retentionBadge = document.getElementById('history-retention');
                 if (retentionBadge) {
-                    var text = formatRetentionSeconds(res && res.retention_seconds, language);
+                    var text = formatRetentionSeconds(res && res.retention_seconds);
                     retentionBadge.textContent = text || '';
                 }
 
@@ -2687,7 +2045,7 @@ function formatRetentionSeconds(seconds, language) {
                     historyHoverIndex = idx;
                     // 立即重绘以显示垂直虚线
                     try { drawHistoryChart(canvas, canvas.__bandixChart && canvas.__bandixChart.originalLabels ? canvas.__bandixChart.originalLabels : labels, canvas.__bandixChart && canvas.__bandixChart.originalUpSeries ? canvas.__bandixChart.originalUpSeries : upSeries, canvas.__bandixChart && canvas.__bandixChart.originalDownSeries ? canvas.__bandixChart.originalDownSeries : downSeries, zoomScale, zoomOffsetX); } catch(e){}
-					tooltip.innerHTML = buildTooltipHtml(point, language);
+					tooltip.innerHTML = buildTooltipHtml(point);
 					
 					// 应用主题颜色到 tooltip，使用 cbi-section 的颜色
 					try {
@@ -2874,7 +2232,7 @@ function formatRetentionSeconds(seconds, language) {
                 var ctx = canvas.getContext('2d');
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 drawHistoryChart(canvas, [], [], [], 1, 0);
-                // ui.addNotification(null, E('p', {}, getTranslation('无法获取历史数据', language)), 'error');
+                // ui.addNotification(null, E('p', {}, _('Unable to fetch history data')), 'error');
             }).finally(function () {
                 isHistoryLoading = false;
             });
@@ -2931,21 +2289,17 @@ function formatRetentionSeconds(seconds, language) {
                 var trafficDiv = document.getElementById('traffic-status');
                 var deviceCountDiv = document.getElementById('device-count');
                 var statsGrid = document.getElementById('stats-grid');
-                var language = uci.get('bandix', 'general', 'language');
-                if (!language || language === 'auto') {
-                    language = getSystemLanguage();
-                }
                 var speedUnit = uci.get('bandix', 'traffic', 'speed_unit') || 'bytes';
 
                 var stats = result;
                 if (!stats || !stats.devices) {
-                    trafficDiv.innerHTML = '<div class="error">' + getTranslation('无法获取数据', language) + '</div>';
+                    trafficDiv.innerHTML = '<div class="error">' + _('Unable to fetch data') + '</div>';
                     return;
                 }
 
                 // 更新设备计数
                 var onlineCount = stats.devices.filter(d => isDeviceOnline(d)).length;
-                deviceCountDiv.textContent = getTranslation('在线设备', language) + ': ' + onlineCount + ' / ' + stats.devices.length;
+                deviceCountDiv.textContent = _('Online Devices') + ': ' + onlineCount + ' / ' + stats.devices.length;
 
                 // 计算统计数据（包含所有设备）
                 var totalLanUp = stats.devices.reduce((sum, d) => sum + (d.local_tx_bytes || 0), 0);
@@ -2966,7 +2320,7 @@ function formatRetentionSeconds(seconds, language) {
 
                 // LAN 流量卡片
                 statsGrid.appendChild(E('div', { 'class': 'cbi-section' }, [
-                    E('div', { 'class': 'stats-card-title' }, getTranslation('LAN 流量', language)),
+                    E('div', { 'class': 'stats-card-title' }, _('LAN Traffic')),
                     E('div', { 'style': 'display: flex; flex-direction: column; gap: 8px;' }, [
                         // 上传行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
@@ -2985,7 +2339,7 @@ function formatRetentionSeconds(seconds, language) {
 
                 // WAN 流量卡片
                 statsGrid.appendChild(E('div', { 'class': 'cbi-section' }, [
-                    E('div', { 'class': 'stats-card-title' }, getTranslation('WAN 流量', language)),
+                    E('div', { 'class': 'stats-card-title' }, _('WAN Traffic')),
                     E('div', { 'style': 'display: flex; flex-direction: column; gap: 8px;' }, [
                         // 上传行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
@@ -3004,7 +2358,7 @@ function formatRetentionSeconds(seconds, language) {
 
                 // 总流量卡片
                 statsGrid.appendChild(E('div', { 'class': 'cbi-section' }, [
-                    E('div', { 'class': 'stats-card-title' }, getTranslation('总流量', language)),
+                    E('div', { 'class': 'stats-card-title' }, _('Total')),
                     E('div', { 'style': 'display: flex; flex-direction: column; gap: 8px;' }, [
                         // 上传行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
@@ -3070,7 +2424,7 @@ function formatRetentionSeconds(seconds, language) {
                     var speedBtn = E('div', {
                         'class': 'th-split-section' + (currentSortBy === speedKey ? ' active' : ''),
                         'data-sort': speedKey,
-                        'title': getTranslation('按速度排序', language)
+                        'title': _('Sort by Speed')
                     }, [
                         E('span', { 'class': 'th-split-icon' }, '⚡'),
                         E('span', { 'style': 'font-size: 0.75rem;' }, currentSortBy === speedKey ? (currentSortOrder ? '↑' : '↓') : '')
@@ -3083,7 +2437,7 @@ function formatRetentionSeconds(seconds, language) {
                     var trafficBtn = E('div', {
                         'class': 'th-split-section' + (currentSortBy === trafficKey ? ' active' : ''),
                         'data-sort': trafficKey,
-                        'title': getTranslation('按用量排序', language)
+                        'title': _('Sort by Traffic')
                     }, [
                         E('span', { 'class': 'th-split-icon' }, '∑'),
                         E('span', { 'style': 'font-size: 0.75rem;' }, currentSortBy === trafficKey ? (currentSortOrder ? '↑' : '↓') : '')
@@ -3136,11 +2490,11 @@ function formatRetentionSeconds(seconds, language) {
                 var table = E('table', { 'class': 'bandix-table' }, [
                     E('thead', {}, [
                         E('tr', {}, [
-                            createSortableHeader(getTranslation('设备信息', language), 'hostname'),
-                            createSplitHeader(getTranslation('LAN 流量', language), 'lan_speed', 'lan_traffic'),
-                            createSplitHeader(getTranslation('WAN 流量', language), 'wan_speed', 'wan_traffic'),
-                            E('th', {}, getTranslation('限速设置', language)),
-                            E('th', {}, getTranslation('操作', language))
+                            createSortableHeader(_('Device Info'), 'hostname'),
+                            createSplitHeader(_('LAN Traffic'), 'lan_speed', 'lan_traffic'),
+                            createSplitHeader(_('WAN Traffic'), 'wan_speed', 'wan_traffic'),
+                            E('th', {}, _('Rate Limit')),
+                            E('th', {}, _('Actions'))
                         ])
                     ]),
                     E('tbody', {})
@@ -3167,11 +2521,11 @@ function formatRetentionSeconds(seconds, language) {
 
                     // 根据主题类型决定按钮显示内容
                     var themeType = getThemeType();
-                    var buttonText = themeType === 'narrow' ? '⚙' : getTranslation('设置', language);
+                    var buttonText = themeType === 'narrow' ? '⚙' : _('Settings');
 
                     var actionButton = E('button', {
                         'class': 'cbi-button cbi-button-action',
-                        'title': getTranslation('设置', language)
+                        'title': _('Settings')
                     }, buttonText);
 
                     // 绑定点击事件
@@ -3214,8 +2568,8 @@ function formatRetentionSeconds(seconds, language) {
 						deviceInfoElements.push(
 							E('div', { 'class': 'device-mac' }, device.mac),
 							E('div', { 'class': 'device-last-online' }, [
-								E('span', { 'style': 'color: #6b7280; font-size: 0.75rem;' }, getTranslation('最后上线', language) + ': '),
-								E('span', { 'style': 'color: #9ca3af; font-size: 0.75rem;' }, formatLastOnlineTime(device.last_online_ts, language))
+								E('span', { 'style': 'color: #6b7280; font-size: 0.75rem;' }, _('Last Online') + ': '),
+								E('span', { 'style': 'color: #9ca3af; font-size: 0.75rem;' }, formatLastOnlineTime(device.last_online_ts))
 							])
 						);
 					}

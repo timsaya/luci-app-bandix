@@ -3,55 +3,55 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 
 msgid "Bandix Traffic Monitor"
-msgstr "Bandix 流量监控"
+msgstr "Bandix 流量監控"
 
 msgid "Loading data..."
-msgstr "正在加载数据..."
+msgstr "正在載入數据..."
 
 msgid "Unable to fetch data"
-msgstr "无法获取数据"
+msgstr "無法取得數据"
 
 msgid "Unable to fetch history data"
-msgstr "无法获取历史数据"
+msgstr "無法取得歷史數据"
 
 msgid "Hostname"
-msgstr "主机名"
+msgstr "主機名"
 
 msgid "IP Address"
-msgstr "IP地址"
+msgstr "IP位址"
 
 msgid "MAC Address"
-msgstr "MAC地址"
+msgstr "MAC位址"
 
 msgid "Download Speed"
-msgstr "下载速度"
+msgstr "下載速度"
 
 msgid "Upload Speed"
-msgstr "上传速度"
+msgstr "上傳速度"
 
 msgid "Total Download"
-msgstr "总下载量"
+msgstr "總下載量"
 
 msgid "Total Upload"
-msgstr "总上传量"
+msgstr "總上傳量"
 
 msgid "Download Limit"
-msgstr "下载限速"
+msgstr "下載限速"
 
 msgid "Upload Limit"
-msgstr "上传限速"
+msgstr "上傳限速"
 
 msgid "Interface Language"
-msgstr "界面语言"
+msgstr "介面語言"
 
 msgid "Select the display language for Bandix Traffic Monitor"
-msgstr "选择 Bandix 流量监控的显示语言"
+msgstr "選擇 Bandix 流量監控的顯示语言"
 
 msgid "Device Info"
-msgstr "设备信息"
+msgstr "設備資訊"
 
 msgid "Device List"
-msgstr "设备列表"
+msgstr "設備清單"
 
 msgid "LAN Traffic"
 msgstr "LAN 流量"
@@ -60,103 +60,103 @@ msgid "WAN Traffic"
 msgstr "WAN 流量"
 
 msgid "Rate Limit"
-msgstr "限速设置"
+msgstr "限速設定"
 
 msgid "Actions"
 msgstr "操作"
 
 msgid "Online Devices"
-msgstr "在线设备"
+msgstr "線上設備"
 
 msgid "WAN Only"
 msgstr "仅限WAN 流量"
 
 msgid "Settings"
-msgstr "设置"
+msgstr "設定"
 
 msgid "Device Settings"
-msgstr "设备设置"
+msgstr "設備設定"
 
 msgid "Rate Limits"
-msgstr "限速设置"
+msgstr "限速設定"
 
 msgid "Remove Rate Limit"
 msgstr "取消限速"
 
 msgid "Save"
-msgstr "保存"
+msgstr "儲存"
 
 msgid "Cancel"
 msgstr "取消"
 
 msgid "Set Rate Limit"
-msgstr "设置限速"
+msgstr "設定限速"
 
 msgid "Device"
-msgstr "设备"
+msgstr "設備"
 
 msgid "Set Hostname"
-msgstr "设置主机名"
+msgstr "設定主機名"
 
 msgid "Please enter hostname"
-msgstr "请输入主机名"
+msgstr "請輸入主機名"
 
 msgid "Hostname set successfully"
-msgstr "主机名设置成功"
+msgstr "主機名設定成功"
 
 msgid "Failed to set hostname"
-msgstr "主机名设置失败"
+msgstr "主機名設定失敗"
 
 msgid "Unlimited"
-msgstr "无限制"
+msgstr "無限制"
 
 msgid "Settings saved successfully"
-msgstr "设置成功"
+msgstr "設定成功"
 
 msgid "Failed to save settings"
-msgstr "设置失败"
+msgstr "設定失敗"
 
 msgid "Please enter a valid speed value"
-msgstr "请输入有效的速度值"
+msgstr "請輸入有效的速度值"
 
 msgid "Speed value must be greater than 0"
-msgstr "速度值必须大于0"
+msgstr "速度值必須大於0"
 
 msgid "Saving..."
-msgstr "保存中..."
+msgstr "儲存中..."
 
 msgid "Rate limiting only applies to WAN traffic."
-msgstr "限速功能仅对 WAN 流量生效。"
+msgstr "限速功能僅對 WAN 流量生效。"
 
 msgid "Tip: Enter 0 for unlimited"
-msgstr "提示：输入 0 表示无限制"
+msgstr "提示：输入 0 表示無限制"
 
 msgid "Traffic History"
-msgstr "历史流量趋势"
+msgstr "歷史流量趨勢"
 
 msgid "Select Device"
-msgstr "选择设备"
+msgstr "選擇設備"
 
 msgid "All Devices"
-msgstr "所有设备"
+msgstr "所有設備"
 
 msgid "Time Range"
-msgstr "时间范围"
+msgstr "時間範圍"
 
 msgid "Last 5 minutes"
-msgstr "最近5分钟"
+msgstr "最近5分鐘"
 
 msgid "Last 30 minutes"
-msgstr "最近30分钟"
+msgstr "最近30分鐘"
 
 msgid "Last 2 hours"
-msgstr "最近2小时"
+msgstr "最近2小時"
 
 msgid "Type"
-msgstr "类型"
+msgstr "類型"
 
 msgid "Total"
-msgstr "总流量"
+msgstr "總流量"
 
 msgid "LAN"
 msgstr "LAN 流量"
@@ -165,13 +165,13 @@ msgid "WAN"
 msgstr "WAN 流量"
 
 msgid "Refresh"
-msgstr "刷新"
+msgstr "重新整理"
 
 msgid "Upload Rate"
-msgstr "上传速率"
+msgstr "上傳速率"
 
 msgid "Download Rate"
-msgstr "下载速率"
+msgstr "下載速率"
 
 msgid "Last"
 msgstr "最近"
@@ -180,10 +180,10 @@ msgid "second"
 msgstr "秒"
 
 msgid "minute"
-msgstr "分钟"
+msgstr "分鐘"
 
 msgid "hour"
-msgstr "小时"
+msgstr "小時"
 
 msgid "day"
 msgstr "天"
@@ -195,55 +195,55 @@ msgid "Other Rates"
 msgstr "其他速率"
 
 msgid "Cumulative"
-msgstr "累计流量"
+msgstr "累計流量"
 
 msgid "Total Uploaded"
-msgstr "总上传"
+msgstr "總上傳"
 
 msgid "Total Downloaded"
-msgstr "总下载"
+msgstr "總下載"
 
 msgid "LAN Uploaded"
-msgstr "LAN 已上传"
+msgstr "LAN 已上傳"
 
 msgid "LAN Downloaded"
-msgstr "LAN 已下载"
+msgstr "LAN 已下載"
 
 msgid "WAN Uploaded"
-msgstr "WAN 已上传"
+msgstr "WAN 已上傳"
 
 msgid "WAN Downloaded"
-msgstr "WAN 已下载"
+msgstr "WAN 已下載"
 
 msgid "Total Upload"
-msgstr "总上传速率"
+msgstr "總上傳速率"
 
 msgid "Total Download"
-msgstr "总下载速率"
+msgstr "總下載速率"
 
 msgid "LAN Upload"
-msgstr "LAN 上传速率"
+msgstr "LAN 上傳速率"
 
 msgid "LAN Download"
-msgstr "LAN 下载速率"
+msgstr "LAN 下載速率"
 
 msgid "WAN Upload"
-msgstr "WAN 上传速率"
+msgstr "WAN 上傳速率"
 
 msgid "WAN Download"
-msgstr "WAN 下载速率"
+msgstr "WAN 下載速率"
 
 msgid "Never Online"
-msgstr "从未上线"
+msgstr "從未上線"
 
 msgid "Just Now"
-msgstr "刚刚"
+msgstr "剛剛"
 
 msgid "min ago"
-msgstr "分钟前"
+msgstr "分鐘前"
 
 msgid "h ago"
-msgstr "小时前"
+msgstr "小時前"
 
 msgid "days ago"
 msgstr "天前"
@@ -255,19 +255,19 @@ msgid "years ago"
 msgstr "年前"
 
 msgid "Last Online"
-msgstr "最后上线"
+msgstr "最後上線"
 
 msgid "Zoom"
-msgstr "缩放"
+msgstr "縮放"
 
 msgid "Sort By"
 msgstr "排序方式"
 
 msgid "Online Status"
-msgstr "在线状态"
+msgstr "線上狀態"
 
 msgid "Total Traffic"
-msgstr "总流量"
+msgstr "總流量"
 
 msgid "Ascending"
 msgstr "升序"
@@ -276,160 +276,160 @@ msgid "Descending"
 msgstr "降序"
 
 msgid "Sort by Speed"
-msgstr "按速度排序"
+msgstr "依速度排序"
 
 msgid "Sort by Traffic"
-msgstr "按用量排序"
+msgstr "依用量排序"
 
 msgid "Simple Mode"
-msgstr "简易模式"
+msgstr "簡易模式"
 
 msgid "Detailed Mode"
-msgstr "详细模式"
+msgstr "詳細模式"
 
 msgid "Bandix DNS Monitor"
-msgstr "Bandix DNS 监控"
+msgstr "Bandix DNS 監控"
 
 msgid "DNS Monitor"
-msgstr "DNS 监控"
+msgstr "DNS 監控"
 
 msgid "DNS Query Records"
-msgstr "DNS 查询记录"
+msgstr "DNS 查詢記錄"
 
 msgid "DNS Statistics"
-msgstr "DNS 统计信息"
+msgstr "DNS 統計資訊"
 
 msgid "DNS Monitoring Disabled"
-msgstr "DNS监控未启用"
+msgstr "DNS監控未啟用"
 
 msgid "Please enable DNS monitoring in settings"
-msgstr "请在设置中启用DNS监控功能"
+msgstr "请在設定中啟用DNS監控功能"
 
 msgid "Go to Settings"
-msgstr "前往设置"
+msgstr "前往設定"
 
 msgid "No Data"
-msgstr "无数据"
+msgstr "無資料"
 
 msgid "Time"
-msgstr "时间"
+msgstr "時間"
 
 msgid "Domain"
-msgstr "域名"
+msgstr "網域"
 
 msgid "Query Type"
-msgstr "查询类型"
+msgstr "查詢類型"
 
 msgid "Response Code"
-msgstr "响应码"
+msgstr "回應碼"
 
 msgid "Response Time"
-msgstr "响应时间"
+msgstr "回應時間"
 
 msgid "Source IP"
-msgstr "源IP"
+msgstr "來源IP"
 
 msgid "Destination IP"
-msgstr "目标IP"
+msgstr "目標IP"
 
 msgid "Response IPs"
-msgstr "响应IP"
+msgstr "回應IP"
 
 msgid "Response Result"
-msgstr "响应结果"
+msgstr "回應結果"
 
 msgid "DNS Server"
-msgstr "DNS服务器"
+msgstr "DNS伺服器"
 
 msgid "Query"
-msgstr "查询"
+msgstr "查詢"
 
 msgid "Response"
-msgstr "响应"
+msgstr "回應"
 
 msgid "Filter"
-msgstr "过滤"
+msgstr "篩選"
 
 msgid "Domain Filter"
-msgstr "域名过滤"
+msgstr "網域篩選"
 
 msgid "Device Filter"
-msgstr "设备过滤"
+msgstr "設備篩選"
 
 msgid "DNS Server Filter"
-msgstr "DNS服务器过滤"
+msgstr "DNS伺服器篩選"
 
 msgid "Type Filter"
-msgstr "类型过滤"
+msgstr "類型篩選"
 
 msgid "All"
 msgstr "全部"
 
 msgid "Queries Only"
-msgstr "仅查询"
+msgstr "仅查詢"
 
 msgid "Responses Only"
-msgstr "仅响应"
+msgstr "仅回應"
 
 msgid "Search"
-msgstr "搜索"
+msgstr "搜尋"
 
 msgid "Search Domain"
-msgstr "搜索域名"
+msgstr "搜尋網域"
 
 msgid "Search Device"
-msgstr "搜索设备"
+msgstr "搜尋設備"
 
 msgid "Search DNS Server"
-msgstr "搜索DNS服务器"
+msgstr "搜尋DNS伺服器"
 
 msgid "Clear"
 msgstr "清除"
 
 msgid "Previous"
-msgstr "上一页"
+msgstr "上一頁"
 
 msgid "Next"
-msgstr "下一页"
+msgstr "下一頁"
 
 msgid "Page"
 msgstr "第"
 
 msgid "of"
-msgstr "页，共"
+msgstr "頁，共"
 
 msgid "Total"
 msgstr "全部"
 
 msgid "records"
-msgstr "条记录"
+msgstr "筆記錄"
 
 msgid "Per Page"
-msgstr "每页显示"
+msgstr "每頁顯示"
 
 msgid ""
-msgstr "条"
+msgstr "筆"
 
 msgid "Total Queries"
-msgstr "总查询数"
+msgstr "總查詢數"
 
 msgid "Total Responses"
-msgstr "总响应数"
+msgstr "總回應數"
 
 msgid "Queries with Response"
-msgstr "有响应查询"
+msgstr "有回應查詢"
 
 msgid "Queries without Response"
-msgstr "无响应查询"
+msgstr "無回應查詢"
 
 msgid "Avg Response Time"
-msgstr "平均响应时间"
+msgstr "平均回應時間"
 
 msgid "Min Response Time"
-msgstr "最快响应时间"
+msgstr "最快回應時間"
 
 msgid "Max Response Time"
-msgstr "最慢响应时间"
+msgstr "最慢回應時間"
 
 msgid "Success Rate"
 msgstr "成功率"
@@ -438,43 +438,43 @@ msgid "Success"
 msgstr "成功"
 
 msgid "Failure"
-msgstr "失败"
+msgstr "失敗"
 
 msgid "Top Domains"
-msgstr "最常查询域名"
+msgstr "最常查詢網域"
 
 msgid "Top Query Types"
-msgstr "最常用查询类型"
+msgstr "最常用查詢類型"
 
 msgid "Top Devices"
-msgstr "最活跃设备"
+msgstr "最活躍設備"
 
 msgid "Top DNS Servers"
-msgstr "最常用DNS服务器"
+msgstr "最常用DNS伺服器"
 
 msgid "Unique Devices"
-msgstr "唯一设备数"
+msgstr "唯一設備數"
 
 msgid "ms"
 msgstr "毫秒"
 
 msgid "minutes"
-msgstr "分钟"
+msgstr "分鐘"
 
 msgid "Unknown Device"
-msgstr "未知设备"
+msgstr "未知設備"
 
 msgid "Domain not found"
-msgstr "域名未找到"
+msgstr "網域未找到"
 
 msgid "Server error"
-msgstr "服务器错误"
+msgstr "伺服器錯誤"
 
 msgid "Format error"
-msgstr "格式错误"
+msgstr "格式錯誤"
 
 msgid "Refused"
-msgstr "拒绝"
+msgstr "拒絕"
 
 msgid "Other"
 msgstr "其他"
@@ -483,13 +483,13 @@ msgid "Does not include DoH and DoT"
 msgstr "不包含 DoH 和 DoT"
 
 msgid "Latest Response Time"
-msgstr "最新响应时间"
+msgstr "最新回應時間"
 
 msgid "Response Code Distribution"
-msgstr "响应码分布"
+msgstr "回應碼分布"
 
 msgid "Response Time Percentiles"
-msgstr "响应时间百分位"
+msgstr "回應時間百分位"
 
 msgid "P50"
 msgstr "P50"
@@ -504,37 +504,37 @@ msgid "P99"
 msgstr "P99"
 
 msgid "Bandix Connection Monitor"
-msgstr "Bandix 连接监控"
+msgstr "Bandix 連線監控"
 
 msgid "Connection Monitor"
-msgstr "连接监控"
+msgstr "連線監控"
 
 msgid "Device Connection Statistics"
-msgstr "设备连接统计"
+msgstr "設備連線統計"
 
 msgid "Global Connection Statistics"
-msgstr "全局连接统计"
+msgstr "全域連線統計"
 
 msgid "Active TCP"
-msgstr "活跃TCP"
+msgstr "活躍TCP"
 
 msgid "Active UDP"
-msgstr "活跃UDP"
+msgstr "活躍UDP"
 
 msgid "Closed TCP"
-msgstr "已关闭TCP"
+msgstr "已關閉TCP"
 
 msgid "Total Connections"
-msgstr "总连接数"
+msgstr "總連線數"
 
 msgid "Last Updated"
-msgstr "最后更新"
+msgstr "最後更新"
 
 msgid "TCP Connections"
-msgstr "TCP连接数"
+msgstr "TCP連線數"
 
 msgid "UDP Connections"
-msgstr "UDP连接数"
+msgstr "UDP連線數"
 
 msgid "Established TCP"
 msgstr "已建立TCP"
@@ -546,70 +546,70 @@ msgid "CLOSE_WAIT TCP"
 msgstr "CLOSE_WAIT TCP"
 
 msgid "Total Devices"
-msgstr "设备总数"
+msgstr "設備總數"
 
 msgid "Connection Monitor Disabled"
-msgstr "连接监控未启用"
+msgstr "連線監控未啟用"
 
 msgid "Please enable connection monitoring in settings"
-msgstr "请在设置中启用连接监控功能"
+msgstr "请在設定中啟用連線監控功能"
 
 msgid "List only shows LAN device connections, data may differ from total connections."
-msgstr "列表只显示局域网设备连接，数据可能和总连接数不一致。"
+msgstr "清單只顯示區域網路設備連線，數据可能和總連線數不一致。"
 
 msgid "TCP Status Details"
-msgstr "TCP 状态详情"
+msgstr "TCP 狀態詳情"
 
 msgid "Basic Settings"
-msgstr "基本设置"
+msgstr "基本設定"
 
 msgid "Traffic Monitor Settings"
-msgstr "流量监控设置"
+msgstr "流量監控設定"
 
 msgid "Connection Monitor Settings"
-msgstr "连接监控设置"
+msgstr "連線監控設定"
 
 msgid "DNS Monitor Settings"
-msgstr "DNS监控设置"
+msgstr "DNS監控設定"
 
 msgid "Bandix Basic Configuration"
 msgstr "Bandix 基本配置"
 
 msgid "Configure basic parameters for Bandix service"
-msgstr "配置 Bandix 服务的基本参数"
+msgstr "配置 Bandix 服務的基本参數"
 
 msgid "Bandix Traffic Monitor Configuration"
-msgstr "Bandix 流量监控配置"
+msgstr "Bandix 流量監控配置"
 
 msgid "Configure traffic monitoring related parameters"
-msgstr "配置流量监控相关参数"
+msgstr "配置流量監控相關参數"
 
 msgid "Bandix Connection Monitor Configuration"
-msgstr "Bandix 连接监控配置"
+msgstr "Bandix 連線監控配置"
 
 msgid "Configure connection monitoring related parameters"
-msgstr "配置连接监控相关参数"
+msgstr "配置連線監控相關参數"
 
 msgid "Bandix DNS Monitor Configuration"
-msgstr "Bandix DNS监控配置"
+msgstr "Bandix DNS監控配置"
 
 msgid "Configure DNS monitoring related parameters"
-msgstr "配置DNS监控相关参数"
+msgstr "配置DNS監控相關参數"
 
 msgid "Enable"
-msgstr "启用"
+msgstr "啟用"
 
 msgid "Enable Bandix Traffic Monitor Service"
-msgstr "启用 Bandix 流量监控服务"
+msgstr "啟用 Bandix 流量監控服務"
 
 msgid "Enable Traffic Monitoring"
-msgstr "启用流量监控"
+msgstr "啟用流量監控"
 
 msgid "Enable Connection Monitoring"
-msgstr "启用连接监控"
+msgstr "啟用連線監控"
 
 msgid "Enable DNS Monitoring"
-msgstr "启用DNS监控"
+msgstr "啟用DNS監控"
 
 msgid "Simplified Chinese"
 msgstr "简体中文"
@@ -618,37 +618,37 @@ msgid "Traditional Chinese"
 msgstr "繁体中文"
 
 msgid "Port"
-msgstr "端口"
+msgstr "連接埠"
 
 msgid "Port for Bandix service to listen on"
-msgstr "Bandix 服务监听的端口"
+msgstr "Bandix 服務監聽的連接埠"
 
 msgid "Monitor Interface"
-msgstr "监控网卡"
+msgstr "監控網卡"
 
 msgid "Select the LAN network interface to monitor"
-msgstr "选择要监控的LAN网络接口"
+msgstr "選擇要監控的LAN網路介面"
 
 msgid "Speed Units"
-msgstr "网速单位"
+msgstr "网速單位"
 
 msgid "Select the speed display unit format"
-msgstr "选择网速显示的单位格式"
+msgstr "選擇网速顯示的單位格式"
 
 msgid "Bytes Units (B/s, KB/s, MB/s)"
-msgstr "字节单位 (B/s, KB/s, MB/s)"
+msgstr "位元組單位 (B/s, KB/s, MB/s)"
 
 msgid "Bits Units (bps, Kbps, Mbps)"
-msgstr "比特单位 (bps, Kbps, Mbps)"
+msgstr "位元單位 (bps, Kbps, Mbps)"
 
 msgid "Interface Theme"
-msgstr "界面主题"
+msgstr "界面主題"
 
 msgid "Select the display theme for Bandix Traffic Monitor"
-msgstr "选择 Bandix 流量监控的显示主题"
+msgstr "選擇 Bandix 流量監控的顯示主題"
 
 msgid "Follow System"
-msgstr "跟随系统"
+msgstr "跟隨系統"
 
 msgid "Light Mode"
 msgstr "明亮模式"
@@ -657,79 +657,79 @@ msgid "Dark Mode"
 msgstr "暗黑模式"
 
 msgid "Feedback"
-msgstr "意见反馈"
+msgstr "意見回饋"
 
 msgid "Log Level"
-msgstr "日志级别"
+msgstr "日誌層級"
 
 msgid "Set the log level for Bandix service"
-msgstr "设置 Bandix 服务的日志级别"
+msgstr "設定 Bandix 服務的日誌層級"
 
 msgid "Offline Timeout"
-msgstr "离线超时时间"
+msgstr "離線超时時間"
 
 msgid "Set the timeout for device offline detection (seconds). Devices inactive for longer than this time will be marked as offline"
-msgstr "设置设备离线判断的超时时间（秒）。超过此时间未活动的设备将被标记为离线"
+msgstr "設定設備離線判斷的超时時間（秒）。超過此時間未活動的設備将被標記为離線"
 
 msgid "Traffic History Period"
-msgstr "历史流量周期"
+msgstr "歷史流量週期"
 
 msgid "10 minutes interval uses about 60 KB per device"
-msgstr "10分钟历史周期，每个设备占用 60KB"
+msgstr "10分鐘歷史週期，每个設備佔用 60KB"
 
 msgid "Data Flush Interval"
-msgstr "数据 flush 间隔"
+msgstr "數据 flush 間隔"
 
 msgid "Set the interval for flushing data to disk"
-msgstr "设置数据写入磁盘的时间间隔"
+msgstr "設定數据寫入磁碟的時間間隔"
 
 msgid "1 minute"
-msgstr "1 分钟"
+msgstr "1 分鐘"
 
 msgid "5 minutes"
-msgstr "5 分钟"
+msgstr "5 分鐘"
 
 msgid "10 minutes"
-msgstr "10 分钟"
+msgstr "10 分鐘"
 
 msgid "15 minutes"
-msgstr "15 分钟"
+msgstr "15 分鐘"
 
 msgid "20 minutes"
-msgstr "20 分钟"
+msgstr "20 分鐘"
 
 msgid "25 minutes"
-msgstr "25 分钟"
+msgstr "25 分鐘"
 
 msgid "30 minutes"
-msgstr "30 分钟"
+msgstr "30 分鐘"
 
 msgid "1 hour"
-msgstr "1 小时"
+msgstr "1 小時"
 
 msgid "2 hours"
-msgstr "2 小时"
+msgstr "2 小時"
 
 msgid "Data Directory"
-msgstr "数据目录"
+msgstr "數据目录"
 
 msgid "Bandix data storage directory"
-msgstr "Bandix 数据存储目录"
+msgstr "Bandix 數据儲存目錄"
 
 msgid "Enable Bandix connection monitoring"
-msgstr "启用 Bandix 连接监控功能"
+msgstr "啟用 Bandix 連線監控功能"
 
 msgid "Enable Bandix DNS monitoring"
-msgstr "启用 Bandix DNS监控功能"
+msgstr "啟用 Bandix DNS監控功能"
 
 msgid "DNS Max Records"
-msgstr "DNS最大记录数"
+msgstr "DNS最大记录數"
 
 msgid "Set the maximum number of DNS query records to keep. Older records will be deleted when this limit is exceeded"
-msgstr "设置DNS查询记录的最大保存数量，超过此数量将删除最旧的记录"
+msgstr "設定DNS查詢記錄的最大儲存數量，超過此數量将刪除最舊的记录"
 
 msgid "Persist History Data"
-msgstr "持久化历史数据"
+msgstr "持久化歷史數据"
 
 msgid "Enable data persistence functionality, data will only be persisted to disk when this option is enabled"
-msgstr "启用数据持久化功能，只有启用此选项后才会持久化到磁盘"
+msgstr "啟用數据持久化功能，只有啟用此选项后才會持久化到磁碟"

@@ -1,0 +1,735 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Bandix Traffic Monitor"
+msgstr "Monitor de Tráfico Bandix"
+
+msgid "Loading data..."
+msgstr "Cargando datos..."
+
+msgid "Unable to fetch data"
+msgstr "No se pueden obtener los datos"
+
+msgid "Unable to fetch history data"
+msgstr "No se pueden obtener los datos del historial"
+
+msgid "Hostname"
+msgstr "Nombre de host"
+
+msgid "IP Address"
+msgstr "Dirección IP"
+
+msgid "MAC Address"
+msgstr "Dirección MAC"
+
+msgid "Download Speed"
+msgstr "Velocidad de descarga"
+
+msgid "Upload Speed"
+msgstr "Velocidad de carga"
+
+msgid "Total Download"
+msgstr "Descarga total"
+
+msgid "Total Upload"
+msgstr "Carga total"
+
+msgid "Download Limit"
+msgstr "Límite de descarga"
+
+msgid "Upload Limit"
+msgstr "Límite de carga"
+
+msgid "Interface Language"
+msgstr "Idioma de la interfaz"
+
+msgid "Select the display language for Bandix Traffic Monitor"
+msgstr "Seleccione el idioma de visualización para el Monitor de Tráfico Bandix"
+
+msgid "Device Info"
+msgstr "Información del dispositivo"
+
+msgid "Device List"
+msgstr "Lista de dispositivos"
+
+msgid "LAN Traffic"
+msgstr "Tráfico LAN"
+
+msgid "WAN Traffic"
+msgstr "Tráfico WAN"
+
+msgid "Rate Limit"
+msgstr "Límite de velocidad"
+
+msgid "Actions"
+msgstr "Acciones"
+
+msgid "Online Devices"
+msgstr "Dispositivos en línea"
+
+msgid "WAN Only"
+msgstr "Solo WAN"
+
+msgid "Settings"
+msgstr "Configuración"
+
+msgid "Device Settings"
+msgstr "Configuración del dispositivo"
+
+msgid "Rate Limits"
+msgstr "Límites de velocidad"
+
+msgid "Remove Rate Limit"
+msgstr "Eliminar límite de velocidad"
+
+msgid "Save"
+msgstr "Guardar"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Set Rate Limit"
+msgstr "Establecer límite de velocidad"
+
+msgid "Device"
+msgstr "Dispositivo"
+
+msgid "Set Hostname"
+msgstr "Establecer nombre de host"
+
+msgid "Please enter hostname"
+msgstr "Por favor ingrese el nombre de host"
+
+msgid "Hostname set successfully"
+msgstr "Nombre de host establecido correctamente"
+
+msgid "Failed to set hostname"
+msgstr "Error al establecer el nombre de host"
+
+msgid "Unlimited"
+msgstr "Ilimitado"
+
+msgid "Settings saved successfully"
+msgstr "Configuración guardada correctamente"
+
+msgid "Failed to save settings"
+msgstr "Error al guardar la configuración"
+
+msgid "Please enter a valid speed value"
+msgstr "Por favor ingrese un valor de velocidad válido"
+
+msgid "Speed value must be greater than 0"
+msgstr "El valor de velocidad debe ser mayor que 0"
+
+msgid "Saving..."
+msgstr "Guardando..."
+
+msgid "Rate limiting only applies to WAN traffic."
+msgstr "La limitación de velocidad solo se aplica al tráfico WAN."
+
+msgid "Tip: Enter 0 for unlimited"
+msgstr "Consejo: Ingrese 0 para ilimitado"
+
+msgid "Traffic History"
+msgstr "Historial de tráfico"
+
+msgid "Select Device"
+msgstr "Seleccionar dispositivo"
+
+msgid "All Devices"
+msgstr "Todos los dispositivos"
+
+msgid "Time Range"
+msgstr "Rango de tiempo"
+
+msgid "Last 5 minutes"
+msgstr "Últimos 5 minutos"
+
+msgid "Last 30 minutes"
+msgstr "Últimos 30 minutos"
+
+msgid "Last 2 hours"
+msgstr "Últimas 2 horas"
+
+msgid "Type"
+msgstr "Tipo"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "LAN"
+msgstr "Tráfico LAN"
+
+msgid "WAN"
+msgstr "Tráfico WAN"
+
+msgid "Refresh"
+msgstr "Actualizar"
+
+msgid "Upload Rate"
+msgstr "Velocidad de carga"
+
+msgid "Download Rate"
+msgstr "Velocidad de descarga"
+
+msgid "Last"
+msgstr "Último"
+
+msgid "second"
+msgstr "segundo"
+
+msgid "minute"
+msgstr "minuto"
+
+msgid "hour"
+msgstr "hora"
+
+msgid "day"
+msgstr "día"
+
+msgid "week"
+msgstr "semana"
+
+msgid "Other Rates"
+msgstr "Otras velocidades"
+
+msgid "Cumulative"
+msgstr "Acumulado"
+
+msgid "Total Uploaded"
+msgstr "Total cargado"
+
+msgid "Total Downloaded"
+msgstr "Total descargado"
+
+msgid "LAN Uploaded"
+msgstr "LAN cargado"
+
+msgid "LAN Downloaded"
+msgstr "LAN descargado"
+
+msgid "WAN Uploaded"
+msgstr "WAN cargado"
+
+msgid "WAN Downloaded"
+msgstr "WAN descargado"
+
+msgid "Total Upload"
+msgstr "Carga total"
+
+msgid "Total Download"
+msgstr "Descarga total"
+
+msgid "LAN Upload"
+msgstr "Carga LAN"
+
+msgid "LAN Download"
+msgstr "Descarga LAN"
+
+msgid "WAN Upload"
+msgstr "Carga WAN"
+
+msgid "WAN Download"
+msgstr "Descarga WAN"
+
+msgid "Never Online"
+msgstr "Nunca en línea"
+
+msgid "Just Now"
+msgstr "Ahora mismo"
+
+msgid "min ago"
+msgstr "min hace"
+
+msgid "h ago"
+msgstr "h hace"
+
+msgid "days ago"
+msgstr "días hace"
+
+msgid "months ago"
+msgstr "meses hace"
+
+msgid "years ago"
+msgstr "años hace"
+
+msgid "Last Online"
+msgstr "Última vez en línea"
+
+msgid "Zoom"
+msgstr "Zoom"
+
+msgid "Sort By"
+msgstr "Ordenar por"
+
+msgid "Online Status"
+msgstr "Estado en línea"
+
+msgid "Total Traffic"
+msgstr "Tráfico total"
+
+msgid "Ascending"
+msgstr "Ascendente"
+
+msgid "Descending"
+msgstr "Descendente"
+
+msgid "Sort by Speed"
+msgstr "Ordenar por velocidad"
+
+msgid "Sort by Traffic"
+msgstr "Ordenar por tráfico"
+
+msgid "Simple Mode"
+msgstr "Modo simple"
+
+msgid "Detailed Mode"
+msgstr "Modo detallado"
+
+msgid "Bandix DNS Monitor"
+msgstr "Monitor DNS Bandix"
+
+msgid "DNS Monitor"
+msgstr "Monitor DNS"
+
+msgid "DNS Query Records"
+msgstr "Registros de consultas DNS"
+
+msgid "DNS Statistics"
+msgstr "Estadísticas DNS"
+
+msgid "DNS Monitoring Disabled"
+msgstr "Monitoreo DNS deshabilitado"
+
+msgid "Please enable DNS monitoring in settings"
+msgstr "Por favor habilite el monitoreo DNS en la configuración"
+
+msgid "Go to Settings"
+msgstr "Ir a configuración"
+
+msgid "No Data"
+msgstr "Sin datos"
+
+msgid "Time"
+msgstr "Hora"
+
+msgid "Domain"
+msgstr "Dominio"
+
+msgid "Query Type"
+msgstr "Tipo de consulta"
+
+msgid "Response Code"
+msgstr "Código de respuesta"
+
+msgid "Response Time"
+msgstr "Tiempo de respuesta"
+
+msgid "Source IP"
+msgstr "IP de origen"
+
+msgid "Destination IP"
+msgstr "IP de destino"
+
+msgid "Response IPs"
+msgstr "IPs de respuesta"
+
+msgid "Response Result"
+msgstr "Resultado de respuesta"
+
+msgid "DNS Server"
+msgstr "Servidor DNS"
+
+msgid "Query"
+msgstr "Consulta"
+
+msgid "Response"
+msgstr "Respuesta"
+
+msgid "Filter"
+msgstr "Filtro"
+
+msgid "Domain Filter"
+msgstr "Filtro de dominio"
+
+msgid "Device Filter"
+msgstr "Filtro de dispositivo"
+
+msgid "DNS Server Filter"
+msgstr "Filtro de servidor DNS"
+
+msgid "Type Filter"
+msgstr "Filtro de tipo"
+
+msgid "All"
+msgstr "Todos"
+
+msgid "Queries Only"
+msgstr "Solo consultas"
+
+msgid "Responses Only"
+msgstr "Solo respuestas"
+
+msgid "Search"
+msgstr "Buscar"
+
+msgid "Search Domain"
+msgstr "Buscar dominio"
+
+msgid "Search Device"
+msgstr "Buscar dispositivo"
+
+msgid "Search DNS Server"
+msgstr "Buscar servidor DNS"
+
+msgid "Clear"
+msgstr "Limpiar"
+
+msgid "Previous"
+msgstr "Anterior"
+
+msgid "Next"
+msgstr "Siguiente"
+
+msgid "Page"
+msgstr "Página"
+
+msgid "of"
+msgstr "de"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "records"
+msgstr "registros"
+
+msgid "Per Page"
+msgstr "Por página"
+
+msgid ""
+msgstr ""
+
+msgid "Total Queries"
+msgstr "Total de consultas"
+
+msgid "Total Responses"
+msgstr "Total de respuestas"
+
+msgid "Queries with Response"
+msgstr "Consultas con respuesta"
+
+msgid "Queries without Response"
+msgstr "Consultas sin respuesta"
+
+msgid "Avg Response Time"
+msgstr "Tiempo de respuesta promedio"
+
+msgid "Min Response Time"
+msgstr "Tiempo de respuesta mínimo"
+
+msgid "Max Response Time"
+msgstr "Tiempo de respuesta máximo"
+
+msgid "Success Rate"
+msgstr "Tasa de éxito"
+
+msgid "Success"
+msgstr "Éxito"
+
+msgid "Failure"
+msgstr "Fallo"
+
+msgid "Top Domains"
+msgstr "Dominios principales"
+
+msgid "Top Query Types"
+msgstr "Tipos de consulta principales"
+
+msgid "Top Devices"
+msgstr "Dispositivos principales"
+
+msgid "Top DNS Servers"
+msgstr "Servidores DNS principales"
+
+msgid "Unique Devices"
+msgstr "Dispositivos únicos"
+
+msgid "ms"
+msgstr "ms"
+
+msgid "minutes"
+msgstr "minutos"
+
+msgid "Unknown Device"
+msgstr "Dispositivo desconocido"
+
+msgid "Domain not found"
+msgstr "Dominio no encontrado"
+
+msgid "Server error"
+msgstr "Error del servidor"
+
+msgid "Format error"
+msgstr "Error de formato"
+
+msgid "Refused"
+msgstr "Rechazado"
+
+msgid "Other"
+msgstr "Otro"
+
+msgid "Does not include DoH and DoT"
+msgstr "No incluye DoH y DoT"
+
+msgid "Latest Response Time"
+msgstr "Último tiempo de respuesta"
+
+msgid "Response Code Distribution"
+msgstr "Distribución de códigos de respuesta"
+
+msgid "Response Time Percentiles"
+msgstr "Percentiles de tiempo de respuesta"
+
+msgid "P50"
+msgstr "P50"
+
+msgid "P90"
+msgstr "P90"
+
+msgid "P95"
+msgstr "P95"
+
+msgid "P99"
+msgstr "P99"
+
+msgid "Bandix Connection Monitor"
+msgstr "Monitor de Conexión Bandix"
+
+msgid "Connection Monitor"
+msgstr "Monitor de conexión"
+
+msgid "Device Connection Statistics"
+msgstr "Estadísticas de conexión de dispositivos"
+
+msgid "Global Connection Statistics"
+msgstr "Estadísticas de conexión global"
+
+msgid "Active TCP"
+msgstr "TCP activo"
+
+msgid "Active UDP"
+msgstr "UDP activo"
+
+msgid "Closed TCP"
+msgstr "TCP cerrado"
+
+msgid "Total Connections"
+msgstr "Total de conexiones"
+
+msgid "Last Updated"
+msgstr "Última actualización"
+
+msgid "TCP Connections"
+msgstr "Conexiones TCP"
+
+msgid "UDP Connections"
+msgstr "Conexiones UDP"
+
+msgid "Established TCP"
+msgstr "TCP establecido"
+
+msgid "TIME_WAIT TCP"
+msgstr "TIME_WAIT TCP"
+
+msgid "CLOSE_WAIT TCP"
+msgstr "CLOSE_WAIT TCP"
+
+msgid "Total Devices"
+msgstr "Total de dispositivos"
+
+msgid "Connection Monitor Disabled"
+msgstr "Monitor de conexión deshabilitado"
+
+msgid "Please enable connection monitoring in settings"
+msgstr "Por favor habilite el monitoreo de conexión en la configuración"
+
+msgid "List only shows LAN device connections, data may differ from total connections."
+msgstr "La lista solo muestra conexiones de dispositivos LAN, los datos pueden diferir del total de conexiones."
+
+msgid "TCP Status Details"
+msgstr "Detalles del estado TCP"
+
+msgid "Basic Settings"
+msgstr "Configuración básica"
+
+msgid "Traffic Monitor Settings"
+msgstr "Configuración del monitor de tráfico"
+
+msgid "Connection Monitor Settings"
+msgstr "Configuración del monitor de conexión"
+
+msgid "DNS Monitor Settings"
+msgstr "Configuración del monitor DNS"
+
+msgid "Bandix Basic Configuration"
+msgstr "Configuración básica de Bandix"
+
+msgid "Configure basic parameters for Bandix service"
+msgstr "Configurar parámetros básicos para el servicio Bandix"
+
+msgid "Bandix Traffic Monitor Configuration"
+msgstr "Configuración del Monitor de Tráfico Bandix"
+
+msgid "Configure traffic monitoring related parameters"
+msgstr "Configurar parámetros relacionados con el monitoreo de tráfico"
+
+msgid "Bandix Connection Monitor Configuration"
+msgstr "Configuración del Monitor de Conexión Bandix"
+
+msgid "Configure connection monitoring related parameters"
+msgstr "Configurar parámetros relacionados con el monitoreo de conexión"
+
+msgid "Bandix DNS Monitor Configuration"
+msgstr "Configuración del Monitor DNS Bandix"
+
+msgid "Configure DNS monitoring related parameters"
+msgstr "Configurar parámetros relacionados con el monitoreo DNS"
+
+msgid "Enable"
+msgstr "Habilitar"
+
+msgid "Enable Bandix Traffic Monitor Service"
+msgstr "Habilitar servicio del Monitor de Tráfico Bandix"
+
+msgid "Enable Traffic Monitoring"
+msgstr "Habilitar monitoreo de tráfico"
+
+msgid "Enable Connection Monitoring"
+msgstr "Habilitar monitoreo de conexión"
+
+msgid "Enable DNS Monitoring"
+msgstr "Habilitar monitoreo DNS"
+
+msgid "Simplified Chinese"
+msgstr "Chino simplificado"
+
+msgid "Traditional Chinese"
+msgstr "Chino tradicional"
+
+msgid "Port"
+msgstr "Puerto"
+
+msgid "Port for Bandix service to listen on"
+msgstr "Puerto para que el servicio Bandix escuche"
+
+msgid "Monitor Interface"
+msgstr "Interfaz de monitoreo"
+
+msgid "Select the LAN network interface to monitor"
+msgstr "Seleccione la interfaz de red LAN para monitorear"
+
+msgid "Speed Units"
+msgstr "Unidades de velocidad"
+
+msgid "Select the speed display unit format"
+msgstr "Seleccione el formato de unidad de visualización de velocidad"
+
+msgid "Bytes Units (B/s, KB/s, MB/s)"
+msgstr "Unidades de bytes (B/s, KB/s, MB/s)"
+
+msgid "Bits Units (bps, Kbps, Mbps)"
+msgstr "Unidades de bits (bps, Kbps, Mbps)"
+
+msgid "Interface Theme"
+msgstr "Tema de la interfaz"
+
+msgid "Select the display theme for Bandix Traffic Monitor"
+msgstr "Seleccione el tema de visualización para el Monitor de Tráfico Bandix"
+
+msgid "Follow System"
+msgstr "Seguir sistema"
+
+msgid "Light Mode"
+msgstr "Modo claro"
+
+msgid "Dark Mode"
+msgstr "Modo oscuro"
+
+msgid "Feedback"
+msgstr "Comentarios"
+
+msgid "Log Level"
+msgstr "Nivel de registro"
+
+msgid "Set the log level for Bandix service"
+msgstr "Establecer el nivel de registro para el servicio Bandix"
+
+msgid "Offline Timeout"
+msgstr "Tiempo de espera sin conexión"
+
+msgid "Set the timeout for device offline detection (seconds). Devices inactive for longer than this time will be marked as offline"
+msgstr "Establecer el tiempo de espera para la detección de dispositivos sin conexión (segundos). Los dispositivos inactivos por más tiempo serán marcados como sin conexión"
+
+msgid "Traffic History Period"
+msgstr "Período del historial de tráfico"
+
+msgid "10 minutes interval uses about 60 KB per device"
+msgstr "Intervalo de 10 minutos usa aproximadamente 60 KB por dispositivo"
+
+msgid "Data Flush Interval"
+msgstr "Intervalo de vaciado de datos"
+
+msgid "Set the interval for flushing data to disk"
+msgstr "Establecer el intervalo para vaciar datos al disco"
+
+msgid "1 minute"
+msgstr "1 minuto"
+
+msgid "5 minutes"
+msgstr "5 minutos"
+
+msgid "10 minutes"
+msgstr "10 minutos"
+
+msgid "15 minutes"
+msgstr "15 minutos"
+
+msgid "20 minutes"
+msgstr "20 minutos"
+
+msgid "25 minutes"
+msgstr "25 minutos"
+
+msgid "30 minutes"
+msgstr "30 minutos"
+
+msgid "1 hour"
+msgstr "1 hora"
+
+msgid "2 hours"
+msgstr "2 horas"
+
+msgid "Data Directory"
+msgstr "Directorio de datos"
+
+msgid "Bandix data storage directory"
+msgstr "Directorio de almacenamiento de datos de Bandix"
+
+msgid "Enable Bandix connection monitoring"
+msgstr "Habilitar monitoreo de conexión Bandix"
+
+msgid "Enable Bandix DNS monitoring"
+msgstr "Habilitar monitoreo DNS Bandix"
+
+msgid "DNS Max Records"
+msgstr "Registros DNS máximos"
+
+msgid "Set the maximum number of DNS query records to keep. Older records will be deleted when this limit is exceeded"
+msgstr "Establecer el número máximo de registros de consulta DNS para mantener. Los registros más antiguos se eliminarán cuando se exceda este límite"
+
+msgid "Persist History Data"
+msgstr "Persistir datos del historial"
+
+msgid "Enable data persistence functionality, data will only be persisted to disk when this option is enabled"
+msgstr "Habilitar funcionalidad de persistencia de datos, los datos solo se persistirán en el disco cuando esta opción esté habilitada"

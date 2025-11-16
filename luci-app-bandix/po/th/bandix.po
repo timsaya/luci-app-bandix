@@ -1,0 +1,735 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Bandix Traffic Monitor"
+msgstr "ตัวตรวจสอบการจราจร Bandix"
+
+msgid "Loading data..."
+msgstr "กำลังโหลดข้อมูล..."
+
+msgid "Unable to fetch data"
+msgstr "ไม่สามารถดึงข้อมูลได้"
+
+msgid "Unable to fetch history data"
+msgstr "ไม่สามารถดึงข้อมูลประวัติได้"
+
+msgid "Hostname"
+msgstr "ชื่อโฮสต์"
+
+msgid "IP Address"
+msgstr "ที่อยู่ IP"
+
+msgid "MAC Address"
+msgstr "ที่อยู่ MAC"
+
+msgid "Download Speed"
+msgstr "ความเร็วในการดาวน์โหลด"
+
+msgid "Upload Speed"
+msgstr "ความเร็วในการอัปโหลด"
+
+msgid "Total Download"
+msgstr "การดาวน์โหลดทั้งหมด"
+
+msgid "Total Upload"
+msgstr "การอัปโหลดทั้งหมด"
+
+msgid "Download Limit"
+msgstr "ขีดจำกัดการดาวน์โหลด"
+
+msgid "Upload Limit"
+msgstr "ขีดจำกัดการอัปโหลด"
+
+msgid "Interface Language"
+msgstr "ภาษาของอินเทอร์เฟซ"
+
+msgid "Select the display language for Bandix Traffic Monitor"
+msgstr "เลือกภาษาการแสดงผลสำหรับตัวตรวจสอบการจราจร Bandix"
+
+msgid "Device Info"
+msgstr "ข้อมูลอุปกรณ์"
+
+msgid "Device List"
+msgstr "รายการอุปกรณ์"
+
+msgid "LAN Traffic"
+msgstr "การจราจร LAN"
+
+msgid "WAN Traffic"
+msgstr "การจราจร WAN"
+
+msgid "Rate Limit"
+msgstr "ขีดจำกัดอัตรา"
+
+msgid "Actions"
+msgstr "การดำเนินการ"
+
+msgid "Online Devices"
+msgstr "อุปกรณ์ออนไลน์"
+
+msgid "WAN Only"
+msgstr "WAN เท่านั้น"
+
+msgid "Settings"
+msgstr "การตั้งค่า"
+
+msgid "Device Settings"
+msgstr "การตั้งค่าอุปกรณ์"
+
+msgid "Rate Limits"
+msgstr "ขีดจำกัดอัตรา"
+
+msgid "Remove Rate Limit"
+msgstr "ลบขีดจำกัดอัตรา"
+
+msgid "Save"
+msgstr "บันทึก"
+
+msgid "Cancel"
+msgstr "ยกเลิก"
+
+msgid "Set Rate Limit"
+msgstr "ตั้งค่าขีดจำกัดอัตรา"
+
+msgid "Device"
+msgstr "อุปกรณ์"
+
+msgid "Set Hostname"
+msgstr "ตั้งชื่อโฮสต์"
+
+msgid "Please enter hostname"
+msgstr "กรุณากรอกชื่อโฮสต์"
+
+msgid "Hostname set successfully"
+msgstr "ตั้งชื่อโฮสต์สำเร็จ"
+
+msgid "Failed to set hostname"
+msgstr "ตั้งชื่อโฮสต์ล้มเหลว"
+
+msgid "Unlimited"
+msgstr "ไม่จำกัด"
+
+msgid "Settings saved successfully"
+msgstr "บันทึกการตั้งค่าสำเร็จ"
+
+msgid "Failed to save settings"
+msgstr "บันทึกการตั้งค่าล้มเหลว"
+
+msgid "Please enter a valid speed value"
+msgstr "กรุณากรอกค่าความเร็วที่ถูกต้อง"
+
+msgid "Speed value must be greater than 0"
+msgstr "ค่าความเร็วต้องมากกว่า 0"
+
+msgid "Saving..."
+msgstr "กำลังบันทึก..."
+
+msgid "Rate limiting only applies to WAN traffic."
+msgstr "การจำกัดอัตราใช้กับ WAN เท่านั้น"
+
+msgid "Tip: Enter 0 for unlimited"
+msgstr "เคล็ดลับ: ใส่ 0 สำหรับไม่จำกัด"
+
+msgid "Traffic History"
+msgstr "ประวัติการจราจร"
+
+msgid "Select Device"
+msgstr "เลือกอุปกรณ์"
+
+msgid "All Devices"
+msgstr "อุปกรณ์ทั้งหมด"
+
+msgid "Time Range"
+msgstr "ช่วงเวลา"
+
+msgid "Last 5 minutes"
+msgstr "5 นาทีที่แล้ว"
+
+msgid "Last 30 minutes"
+msgstr "30 นาทีที่แล้ว"
+
+msgid "Last 2 hours"
+msgstr "2 ชั่วโมงที่แล้ว"
+
+msgid "Type"
+msgstr "ประเภท"
+
+msgid "Total"
+msgstr "ทั้งหมด"
+
+msgid "LAN"
+msgstr "การจราจร LAN"
+
+msgid "WAN"
+msgstr "การจราจร WAN"
+
+msgid "Refresh"
+msgstr "รีเฟรช"
+
+msgid "Upload Rate"
+msgstr "อัตราการอัปโหลด"
+
+msgid "Download Rate"
+msgstr "อัตราการดาวน์โหลด"
+
+msgid "Last"
+msgstr "ล่าสุด"
+
+msgid "second"
+msgstr "วินาที"
+
+msgid "minute"
+msgstr "นาที"
+
+msgid "hour"
+msgstr "ชั่วโมง"
+
+msgid "day"
+msgstr "วัน"
+
+msgid "week"
+msgstr "สัปดาห์"
+
+msgid "Other Rates"
+msgstr "อัตราอื่นๆ"
+
+msgid "Cumulative"
+msgstr "สะสม"
+
+msgid "Total Uploaded"
+msgstr "อัปโหลดทั้งหมด"
+
+msgid "Total Downloaded"
+msgstr "ดาวน์โหลดทั้งหมด"
+
+msgid "LAN Uploaded"
+msgstr "LAN อัปโหลดแล้ว"
+
+msgid "LAN Downloaded"
+msgstr "LAN ดาวน์โหลดแล้ว"
+
+msgid "WAN Uploaded"
+msgstr "WAN อัปโหลดแล้ว"
+
+msgid "WAN Downloaded"
+msgstr "WAN ดาวน์โหลดแล้ว"
+
+msgid "Total Upload"
+msgstr "การอัปโหลดทั้งหมด"
+
+msgid "Total Download"
+msgstr "การดาวน์โหลดทั้งหมด"
+
+msgid "LAN Upload"
+msgstr "การอัปโหลด LAN"
+
+msgid "LAN Download"
+msgstr "การดาวน์โหลด LAN"
+
+msgid "WAN Upload"
+msgstr "การอัปโหลด WAN"
+
+msgid "WAN Download"
+msgstr "การดาวน์โหลด WAN"
+
+msgid "Never Online"
+msgstr "ไม่เคยออนไลน์"
+
+msgid "Just Now"
+msgstr "เมื่อสักครู่"
+
+msgid "min ago"
+msgstr "นาทีที่แล้ว"
+
+msgid "h ago"
+msgstr "ชั่วโมงที่แล้ว"
+
+msgid "days ago"
+msgstr "วันที่แล้ว"
+
+msgid "months ago"
+msgstr "เดือนที่แล้ว"
+
+msgid "years ago"
+msgstr "ปีที่แล้ว"
+
+msgid "Last Online"
+msgstr "ออนไลน์ล่าสุด"
+
+msgid "Zoom"
+msgstr "ซูม"
+
+msgid "Sort By"
+msgstr "เรียงตาม"
+
+msgid "Online Status"
+msgstr "สถานะออนไลน์"
+
+msgid "Total Traffic"
+msgstr "การจราจรทั้งหมด"
+
+msgid "Ascending"
+msgstr "จากน้อยไปมาก"
+
+msgid "Descending"
+msgstr "จากมากไปน้อย"
+
+msgid "Sort by Speed"
+msgstr "เรียงตามความเร็ว"
+
+msgid "Sort by Traffic"
+msgstr "เรียงตามการจราจร"
+
+msgid "Simple Mode"
+msgstr "โหมดง่าย"
+
+msgid "Detailed Mode"
+msgstr "โหมดละเอียด"
+
+msgid "Bandix DNS Monitor"
+msgstr "ตัวตรวจสอบ DNS Bandix"
+
+msgid "DNS Monitor"
+msgstr "ตัวตรวจสอบ DNS"
+
+msgid "DNS Query Records"
+msgstr "บันทึกการสอบถาม DNS"
+
+msgid "DNS Statistics"
+msgstr "สถิติ DNS"
+
+msgid "DNS Monitoring Disabled"
+msgstr "การตรวจสอบ DNS ถูกปิดใช้งาน"
+
+msgid "Please enable DNS monitoring in settings"
+msgstr "กรุณาเปิดใช้งานการตรวจสอบ DNS ในการตั้งค่า"
+
+msgid "Go to Settings"
+msgstr "ไปที่การตั้งค่า"
+
+msgid "No Data"
+msgstr "ไม่มีข้อมูล"
+
+msgid "Time"
+msgstr "เวลา"
+
+msgid "Domain"
+msgstr "โดเมน"
+
+msgid "Query Type"
+msgstr "ประเภทการสอบถาม"
+
+msgid "Response Code"
+msgstr "รหัสการตอบกลับ"
+
+msgid "Response Time"
+msgstr "เวลาตอบกลับ"
+
+msgid "Source IP"
+msgstr "IP ต้นทาง"
+
+msgid "Destination IP"
+msgstr "IP ปลายทาง"
+
+msgid "Response IPs"
+msgstr "IP การตอบกลับ"
+
+msgid "Response Result"
+msgstr "ผลการตอบกลับ"
+
+msgid "DNS Server"
+msgstr "เซิร์ฟเวอร์ DNS"
+
+msgid "Query"
+msgstr "สอบถาม"
+
+msgid "Response"
+msgstr "ตอบกลับ"
+
+msgid "Filter"
+msgstr "กรอง"
+
+msgid "Domain Filter"
+msgstr "กรองโดเมน"
+
+msgid "Device Filter"
+msgstr "กรองอุปกรณ์"
+
+msgid "DNS Server Filter"
+msgstr "กรองเซิร์ฟเวอร์ DNS"
+
+msgid "Type Filter"
+msgstr "กรองประเภท"
+
+msgid "All"
+msgstr "ทั้งหมด"
+
+msgid "Queries Only"
+msgstr "สอบถามเท่านั้น"
+
+msgid "Responses Only"
+msgstr "ตอบกลับเท่านั้น"
+
+msgid "Search"
+msgstr "ค้นหา"
+
+msgid "Search Domain"
+msgstr "ค้นหาโดเมน"
+
+msgid "Search Device"
+msgstr "ค้นหาอุปกรณ์"
+
+msgid "Search DNS Server"
+msgstr "ค้นหาเซิร์ฟเวอร์ DNS"
+
+msgid "Clear"
+msgstr "ล้าง"
+
+msgid "Previous"
+msgstr "ก่อนหน้า"
+
+msgid "Next"
+msgstr "ถัดไป"
+
+msgid "Page"
+msgstr "หน้า"
+
+msgid "of"
+msgstr "จาก"
+
+msgid "Total"
+msgstr "ทั้งหมด"
+
+msgid "records"
+msgstr "รายการ"
+
+msgid "Per Page"
+msgstr "ต่อหน้า"
+
+msgid ""
+msgstr ""
+
+msgid "Total Queries"
+msgstr "การสอบถามทั้งหมด"
+
+msgid "Total Responses"
+msgstr "การตอบกลับทั้งหมด"
+
+msgid "Queries with Response"
+msgstr "การสอบถามที่มีการตอบกลับ"
+
+msgid "Queries without Response"
+msgstr "การสอบถามที่ไม่มีการตอบกลับ"
+
+msgid "Avg Response Time"
+msgstr "เวลาตอบกลับเฉลี่ย"
+
+msgid "Min Response Time"
+msgstr "เวลาตอบกลับต่ำสุด"
+
+msgid "Max Response Time"
+msgstr "เวลาตอบกลับสูงสุด"
+
+msgid "Success Rate"
+msgstr "อัตราความสำเร็จ"
+
+msgid "Success"
+msgstr "สำเร็จ"
+
+msgid "Failure"
+msgstr "ล้มเหลว"
+
+msgid "Top Domains"
+msgstr "โดเมนยอดนิยม"
+
+msgid "Top Query Types"
+msgstr "ประเภทการสอบถามยอดนิยม"
+
+msgid "Top Devices"
+msgstr "อุปกรณ์ยอดนิยม"
+
+msgid "Top DNS Servers"
+msgstr "เซิร์ฟเวอร์ DNS ยอดนิยม"
+
+msgid "Unique Devices"
+msgstr "จำนวนอุปกรณ์ที่ไม่ซ้ำ"
+
+msgid "ms"
+msgstr "มิลลิวินาที"
+
+msgid "minutes"
+msgstr "นาที"
+
+msgid "Unknown Device"
+msgstr "อุปกรณ์ที่ไม่รู้จัก"
+
+msgid "Domain not found"
+msgstr "ไม่พบโดเมน"
+
+msgid "Server error"
+msgstr "ข้อผิดพลาดของเซิร์ฟเวอร์"
+
+msgid "Format error"
+msgstr "ข้อผิดพลาดของรูปแบบ"
+
+msgid "Refused"
+msgstr "ปฏิเสธ"
+
+msgid "Other"
+msgstr "อื่นๆ"
+
+msgid "Does not include DoH and DoT"
+msgstr "ไม่รวม DoH และ DoT"
+
+msgid "Latest Response Time"
+msgstr "เวลาตอบกลับล่าสุด"
+
+msgid "Response Code Distribution"
+msgstr "การกระจายรหัสการตอบกลับ"
+
+msgid "Response Time Percentiles"
+msgstr "เปอร์เซ็นไทล์เวลาตอบกลับ"
+
+msgid "P50"
+msgstr "P50"
+
+msgid "P90"
+msgstr "P90"
+
+msgid "P95"
+msgstr "P95"
+
+msgid "P99"
+msgstr "P99"
+
+msgid "Bandix Connection Monitor"
+msgstr "ตัวตรวจสอบการเชื่อมต่อ Bandix"
+
+msgid "Connection Monitor"
+msgstr "ตัวตรวจสอบการเชื่อมต่อ"
+
+msgid "Device Connection Statistics"
+msgstr "สถิติการเชื่อมต่ออุปกรณ์"
+
+msgid "Global Connection Statistics"
+msgstr "สถิติการเชื่อมต่อทั่วโลก"
+
+msgid "Active TCP"
+msgstr "TCP ที่ใช้งาน"
+
+msgid "Active UDP"
+msgstr "UDP ที่ใช้งาน"
+
+msgid "Closed TCP"
+msgstr "TCP ที่ปิด"
+
+msgid "Total Connections"
+msgstr "การเชื่อมต่อทั้งหมด"
+
+msgid "Last Updated"
+msgstr "อัปเดตล่าสุด"
+
+msgid "TCP Connections"
+msgstr "การเชื่อมต่อ TCP"
+
+msgid "UDP Connections"
+msgstr "การเชื่อมต่อ UDP"
+
+msgid "Established TCP"
+msgstr "TCP ที่สร้างแล้ว"
+
+msgid "TIME_WAIT TCP"
+msgstr "TIME_WAIT TCP"
+
+msgid "CLOSE_WAIT TCP"
+msgstr "CLOSE_WAIT TCP"
+
+msgid "Total Devices"
+msgstr "อุปกรณ์ทั้งหมด"
+
+msgid "Connection Monitor Disabled"
+msgstr "ตัวตรวจสอบการเชื่อมต่อถูกปิดใช้งาน"
+
+msgid "Please enable connection monitoring in settings"
+msgstr "กรุณาเปิดใช้งานการตรวจสอบการเชื่อมต่อในการตั้งค่า"
+
+msgid "List only shows LAN device connections, data may differ from total connections."
+msgstr "รายการแสดงเฉพาะการเชื่อมต่ออุปกรณ์ LAN ข้อมูลอาจแตกต่างจากจำนวนการเชื่อมต่อทั้งหมด"
+
+msgid "TCP Status Details"
+msgstr "รายละเอียดสถานะ TCP"
+
+msgid "Basic Settings"
+msgstr "การตั้งค่าพื้นฐาน"
+
+msgid "Traffic Monitor Settings"
+msgstr "การตั้งค่าตัวตรวจสอบการจราจร"
+
+msgid "Connection Monitor Settings"
+msgstr "การตั้งค่าตัวตรวจสอบการเชื่อมต่อ"
+
+msgid "DNS Monitor Settings"
+msgstr "การตั้งค่าตัวตรวจสอบ DNS"
+
+msgid "Bandix Basic Configuration"
+msgstr "การกำหนดค่าพื้นฐาน Bandix"
+
+msgid "Configure basic parameters for Bandix service"
+msgstr "กำหนดค่าพารามิเตอร์พื้นฐานสำหรับบริการ Bandix"
+
+msgid "Bandix Traffic Monitor Configuration"
+msgstr "การกำหนดค่าตัวตรวจสอบการจราจร Bandix"
+
+msgid "Configure traffic monitoring related parameters"
+msgstr "กำหนดค่าพารามิเตอร์ที่เกี่ยวข้องกับการตรวจสอบการจราจร"
+
+msgid "Bandix Connection Monitor Configuration"
+msgstr "การกำหนดค่าตัวตรวจสอบการเชื่อมต่อ Bandix"
+
+msgid "Configure connection monitoring related parameters"
+msgstr "กำหนดค่าพารามิเตอร์ที่เกี่ยวข้องกับการตรวจสอบการเชื่อมต่อ"
+
+msgid "Bandix DNS Monitor Configuration"
+msgstr "การกำหนดค่าตัวตรวจสอบ DNS Bandix"
+
+msgid "Configure DNS monitoring related parameters"
+msgstr "กำหนดค่าพารามิเตอร์ที่เกี่ยวข้องกับการตรวจสอบ DNS"
+
+msgid "Enable"
+msgstr "เปิดใช้งาน"
+
+msgid "Enable Bandix Traffic Monitor Service"
+msgstr "เปิดใช้งานบริการตัวตรวจสอบการจราจร Bandix"
+
+msgid "Enable Traffic Monitoring"
+msgstr "เปิดใช้งานการตรวจสอบการจราจร"
+
+msgid "Enable Connection Monitoring"
+msgstr "เปิดใช้งานการตรวจสอบการเชื่อมต่อ"
+
+msgid "Enable DNS Monitoring"
+msgstr "เปิดใช้งานการตรวจสอบ DNS"
+
+msgid "Simplified Chinese"
+msgstr "ภาษาจีนตัวย่อ"
+
+msgid "Traditional Chinese"
+msgstr "ภาษาจีนตัวเต็ม"
+
+msgid "Port"
+msgstr "พอร์ต"
+
+msgid "Port for Bandix service to listen on"
+msgstr "พอร์ตสำหรับบริการ Bandix ฟัง"
+
+msgid "Monitor Interface"
+msgstr "อินเทอร์เฟซตรวจสอบ"
+
+msgid "Select the LAN network interface to monitor"
+msgstr "เลือกอินเทอร์เฟซเครือข่าย LAN ที่จะตรวจสอบ"
+
+msgid "Speed Units"
+msgstr "หน่วยความเร็ว"
+
+msgid "Select the speed display unit format"
+msgstr "เลือกรูปแบบหน่วยแสดงความเร็ว"
+
+msgid "Bytes Units (B/s, KB/s, MB/s)"
+msgstr "หน่วยไบต์ (B/s, KB/s, MB/s)"
+
+msgid "Bits Units (bps, Kbps, Mbps)"
+msgstr "หน่วยบิต (bps, Kbps, Mbps)"
+
+msgid "Interface Theme"
+msgstr "ธีมอินเทอร์เฟซ"
+
+msgid "Select the display theme for Bandix Traffic Monitor"
+msgstr "เลือกธีมการแสดงผลสำหรับตัวตรวจสอบการจราจร Bandix"
+
+msgid "Follow System"
+msgstr "ตามระบบ"
+
+msgid "Light Mode"
+msgstr "โหมดสว่าง"
+
+msgid "Dark Mode"
+msgstr "โหมดมืด"
+
+msgid "Feedback"
+msgstr "ข้อเสนอแนะ"
+
+msgid "Log Level"
+msgstr "ระดับบันทึก"
+
+msgid "Set the log level for Bandix service"
+msgstr "ตั้งค่าระดับบันทึกสำหรับบริการ Bandix"
+
+msgid "Offline Timeout"
+msgstr "หมดเวลาออฟไลน์"
+
+msgid "Set the timeout for device offline detection (seconds). Devices inactive for longer than this time will be marked as offline"
+msgstr "ตั้งค่าเวลาหมดเวลาสำหรับการตรวจจับอุปกรณ์ออฟไลน์ (วินาที) อุปกรณ์ที่ไม่ใช้งานนานกว่านี้จะถูกทำเครื่องหมายว่าออฟไลน์"
+
+msgid "Traffic History Period"
+msgstr "ระยะเวลาประวัติการจราจร"
+
+msgid "10 minutes interval uses about 60 KB per device"
+msgstr "ช่วงเวลา 10 นาทีใช้ประมาณ 60 KB ต่ออุปกรณ์"
+
+msgid "Data Flush Interval"
+msgstr "ช่วงเวลาล้างข้อมูล"
+
+msgid "Set the interval for flushing data to disk"
+msgstr "ตั้งค่าช่วงเวลาสำหรับล้างข้อมูลไปยังดิสก์"
+
+msgid "1 minute"
+msgstr "1 นาที"
+
+msgid "5 minutes"
+msgstr "5 นาที"
+
+msgid "10 minutes"
+msgstr "10 นาที"
+
+msgid "15 minutes"
+msgstr "15 นาที"
+
+msgid "20 minutes"
+msgstr "20 นาที"
+
+msgid "25 minutes"
+msgstr "25 นาที"
+
+msgid "30 minutes"
+msgstr "30 นาที"
+
+msgid "1 hour"
+msgstr "1 ชั่วโมง"
+
+msgid "2 hours"
+msgstr "2 ชั่วโมง"
+
+msgid "Data Directory"
+msgstr "ไดเรกทอรีข้อมูล"
+
+msgid "Bandix data storage directory"
+msgstr "ไดเรกทอรีจัดเก็บข้อมูล Bandix"
+
+msgid "Enable Bandix connection monitoring"
+msgstr "เปิดใช้งานการตรวจสอบการเชื่อมต่อ Bandix"
+
+msgid "Enable Bandix DNS monitoring"
+msgstr "เปิดใช้งานการตรวจสอบ DNS Bandix"
+
+msgid "DNS Max Records"
+msgstr "จำนวนบันทึก DNS สูงสุด"
+
+msgid "Set the maximum number of DNS query records to keep. Older records will be deleted when this limit is exceeded"
+msgstr "ตั้งค่าจำนวนสูงสุดของบันทึกการสอบถาม DNS ที่จะเก็บ บันทึกเก่าจะถูกลบเมื่อเกินขีดจำกัดนี้"
+
+msgid "Persist History Data"
+msgstr "เก็บข้อมูลประวัติ"
+
+msgid "Enable data persistence functionality, data will only be persisted to disk when this option is enabled"
+msgstr "เปิดใช้งานฟังก์ชันการเก็บข้อมูล ข้อมูลจะถูกเก็บไว้ในดิสก์เมื่อเปิดใช้งานตัวเลือกนี้เท่านั้น"

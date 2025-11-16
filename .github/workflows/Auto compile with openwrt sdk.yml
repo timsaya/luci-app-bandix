@@ -188,6 +188,13 @@ jobs:
           echo "CONFIG_ALL=n" >> .config
           echo "CONFIG_AUTOREMOVE=n" >> .config
           echo "CONFIG_LUCI_LANG_zh_Hans=y" >> .config
+          echo "CONFIG_LUCI_LANG_zh_Hant=y" >> .config
+          echo "CONFIG_LUCI_LANG_ja=y" >> .config
+          echo "CONFIG_LUCI_LANG_fr=y" >> .config
+          echo "CONFIG_LUCI_LANG_ru=y" >> .config
+          echo "CONFIG_LUCI_LANG_id=y" >> .config
+          echo "CONFIG_LUCI_LANG_th=y" >> .config
+          echo "CONFIG_LUCI_LANG_es=y" >> .config
           echo "CONFIG_PACKAGE_luci-app-bandix=m" >> .config
           
 

@@ -1,0 +1,735 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Bandix Traffic Monitor"
+msgstr "Monitor Lalu Lintas Bandix"
+
+msgid "Loading data..."
+msgstr "Memuat data..."
+
+msgid "Unable to fetch data"
+msgstr "Tidak dapat mengambil data"
+
+msgid "Unable to fetch history data"
+msgstr "Tidak dapat mengambil data riwayat"
+
+msgid "Hostname"
+msgstr "Nama host"
+
+msgid "IP Address"
+msgstr "Alamat IP"
+
+msgid "MAC Address"
+msgstr "Alamat MAC"
+
+msgid "Download Speed"
+msgstr "Kecepatan unduh"
+
+msgid "Upload Speed"
+msgstr "Kecepatan unggah"
+
+msgid "Total Download"
+msgstr "Total unduhan"
+
+msgid "Total Upload"
+msgstr "Total unggahan"
+
+msgid "Download Limit"
+msgstr "Batas unduhan"
+
+msgid "Upload Limit"
+msgstr "Batas unggahan"
+
+msgid "Interface Language"
+msgstr "Bahasa antarmuka"
+
+msgid "Select the display language for Bandix Traffic Monitor"
+msgstr "Pilih bahasa tampilan untuk Monitor Lalu Lintas Bandix"
+
+msgid "Device Info"
+msgstr "Info perangkat"
+
+msgid "Device List"
+msgstr "Daftar perangkat"
+
+msgid "LAN Traffic"
+msgstr "Lalu lintas LAN"
+
+msgid "WAN Traffic"
+msgstr "Lalu lintas WAN"
+
+msgid "Rate Limit"
+msgstr "Batas kecepatan"
+
+msgid "Actions"
+msgstr "Tindakan"
+
+msgid "Online Devices"
+msgstr "Perangkat online"
+
+msgid "WAN Only"
+msgstr "Hanya WAN"
+
+msgid "Settings"
+msgstr "Pengaturan"
+
+msgid "Device Settings"
+msgstr "Pengaturan perangkat"
+
+msgid "Rate Limits"
+msgstr "Batas kecepatan"
+
+msgid "Remove Rate Limit"
+msgstr "Hapus batas kecepatan"
+
+msgid "Save"
+msgstr "Simpan"
+
+msgid "Cancel"
+msgstr "Batal"
+
+msgid "Set Rate Limit"
+msgstr "Atur batas kecepatan"
+
+msgid "Device"
+msgstr "Perangkat"
+
+msgid "Set Hostname"
+msgstr "Atur nama host"
+
+msgid "Please enter hostname"
+msgstr "Masukkan nama host"
+
+msgid "Hostname set successfully"
+msgstr "Nama host berhasil diatur"
+
+msgid "Failed to set hostname"
+msgstr "Gagal mengatur nama host"
+
+msgid "Unlimited"
+msgstr "Tidak terbatas"
+
+msgid "Settings saved successfully"
+msgstr "Pengaturan berhasil disimpan"
+
+msgid "Failed to save settings"
+msgstr "Gagal menyimpan pengaturan"
+
+msgid "Please enter a valid speed value"
+msgstr "Masukkan nilai kecepatan yang valid"
+
+msgid "Speed value must be greater than 0"
+msgstr "Nilai kecepatan harus lebih besar dari 0"
+
+msgid "Saving..."
+msgstr "Menyimpan..."
+
+msgid "Rate limiting only applies to WAN traffic."
+msgstr "Pembatasan kecepatan hanya berlaku untuk lalu lintas WAN."
+
+msgid "Tip: Enter 0 for unlimited"
+msgstr "Tip: Masukkan 0 untuk tidak terbatas"
+
+msgid "Traffic History"
+msgstr "Riwayat lalu lintas"
+
+msgid "Select Device"
+msgstr "Pilih perangkat"
+
+msgid "All Devices"
+msgstr "Semua perangkat"
+
+msgid "Time Range"
+msgstr "Rentang waktu"
+
+msgid "Last 5 minutes"
+msgstr "5 menit terakhir"
+
+msgid "Last 30 minutes"
+msgstr "30 menit terakhir"
+
+msgid "Last 2 hours"
+msgstr "2 jam terakhir"
+
+msgid "Type"
+msgstr "Jenis"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "LAN"
+msgstr "Lalu lintas LAN"
+
+msgid "WAN"
+msgstr "Lalu lintas WAN"
+
+msgid "Refresh"
+msgstr "Muat ulang"
+
+msgid "Upload Rate"
+msgstr "Tingkat unggahan"
+
+msgid "Download Rate"
+msgstr "Tingkat unduhan"
+
+msgid "Last"
+msgstr "Terakhir"
+
+msgid "second"
+msgstr "detik"
+
+msgid "minute"
+msgstr "menit"
+
+msgid "hour"
+msgstr "jam"
+
+msgid "day"
+msgstr "hari"
+
+msgid "week"
+msgstr "minggu"
+
+msgid "Other Rates"
+msgstr "Tingkat lainnya"
+
+msgid "Cumulative"
+msgstr "Kumulatif"
+
+msgid "Total Uploaded"
+msgstr "Total terunggah"
+
+msgid "Total Downloaded"
+msgstr "Total terunduh"
+
+msgid "LAN Uploaded"
+msgstr "LAN terunggah"
+
+msgid "LAN Downloaded"
+msgstr "LAN terunduh"
+
+msgid "WAN Uploaded"
+msgstr "WAN terunggah"
+
+msgid "WAN Downloaded"
+msgstr "WAN terunduh"
+
+msgid "Total Upload"
+msgstr "Total unggahan"
+
+msgid "Total Download"
+msgstr "Total unduhan"
+
+msgid "LAN Upload"
+msgstr "Unggahan LAN"
+
+msgid "LAN Download"
+msgstr "Unduhan LAN"
+
+msgid "WAN Upload"
+msgstr "Unggahan WAN"
+
+msgid "WAN Download"
+msgstr "Unduhan WAN"
+
+msgid "Never Online"
+msgstr "Tidak pernah online"
+
+msgid "Just Now"
+msgstr "Baru saja"
+
+msgid "min ago"
+msgstr "menit yang lalu"
+
+msgid "h ago"
+msgstr "jam yang lalu"
+
+msgid "days ago"
+msgstr "hari yang lalu"
+
+msgid "months ago"
+msgstr "bulan yang lalu"
+
+msgid "years ago"
+msgstr "tahun yang lalu"
+
+msgid "Last Online"
+msgstr "Terakhir online"
+
+msgid "Zoom"
+msgstr "Perbesar"
+
+msgid "Sort By"
+msgstr "Urutkan berdasarkan"
+
+msgid "Online Status"
+msgstr "Status online"
+
+msgid "Total Traffic"
+msgstr "Total lalu lintas"
+
+msgid "Ascending"
+msgstr "Naik"
+
+msgid "Descending"
+msgstr "Turun"
+
+msgid "Sort by Speed"
+msgstr "Urutkan berdasarkan kecepatan"
+
+msgid "Sort by Traffic"
+msgstr "Urutkan berdasarkan lalu lintas"
+
+msgid "Simple Mode"
+msgstr "Mode sederhana"
+
+msgid "Detailed Mode"
+msgstr "Mode detail"
+
+msgid "Bandix DNS Monitor"
+msgstr "Monitor DNS Bandix"
+
+msgid "DNS Monitor"
+msgstr "Monitor DNS"
+
+msgid "DNS Query Records"
+msgstr "Catatan kueri DNS"
+
+msgid "DNS Statistics"
+msgstr "Statistik DNS"
+
+msgid "DNS Monitoring Disabled"
+msgstr "Pemantauan DNS dinonaktifkan"
+
+msgid "Please enable DNS monitoring in settings"
+msgstr "Harap aktifkan pemantauan DNS di pengaturan"
+
+msgid "Go to Settings"
+msgstr "Buka pengaturan"
+
+msgid "No Data"
+msgstr "Tidak ada data"
+
+msgid "Time"
+msgstr "Waktu"
+
+msgid "Domain"
+msgstr "Domain"
+
+msgid "Query Type"
+msgstr "Jenis kueri"
+
+msgid "Response Code"
+msgstr "Kode respons"
+
+msgid "Response Time"
+msgstr "Waktu respons"
+
+msgid "Source IP"
+msgstr "IP sumber"
+
+msgid "Destination IP"
+msgstr "IP tujuan"
+
+msgid "Response IPs"
+msgstr "IP respons"
+
+msgid "Response Result"
+msgstr "Hasil respons"
+
+msgid "DNS Server"
+msgstr "Server DNS"
+
+msgid "Query"
+msgstr "Kueri"
+
+msgid "Response"
+msgstr "Respons"
+
+msgid "Filter"
+msgstr "Filter"
+
+msgid "Domain Filter"
+msgstr "Filter domain"
+
+msgid "Device Filter"
+msgstr "Filter perangkat"
+
+msgid "DNS Server Filter"
+msgstr "Filter server DNS"
+
+msgid "Type Filter"
+msgstr "Filter jenis"
+
+msgid "All"
+msgstr "Semua"
+
+msgid "Queries Only"
+msgstr "Hanya kueri"
+
+msgid "Responses Only"
+msgstr "Hanya respons"
+
+msgid "Search"
+msgstr "Cari"
+
+msgid "Search Domain"
+msgstr "Cari domain"
+
+msgid "Search Device"
+msgstr "Cari perangkat"
+
+msgid "Search DNS Server"
+msgstr "Cari server DNS"
+
+msgid "Clear"
+msgstr "Hapus"
+
+msgid "Previous"
+msgstr "Sebelumnya"
+
+msgid "Next"
+msgstr "Selanjutnya"
+
+msgid "Page"
+msgstr "Halaman"
+
+msgid "of"
+msgstr "dari"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "records"
+msgstr "catatan"
+
+msgid "Per Page"
+msgstr "Per halaman"
+
+msgid ""
+msgstr ""
+
+msgid "Total Queries"
+msgstr "Total kueri"
+
+msgid "Total Responses"
+msgstr "Total respons"
+
+msgid "Queries with Response"
+msgstr "Kueri dengan respons"
+
+msgid "Queries without Response"
+msgstr "Kueri tanpa respons"
+
+msgid "Avg Response Time"
+msgstr "Waktu respons rata-rata"
+
+msgid "Min Response Time"
+msgstr "Waktu respons minimum"
+
+msgid "Max Response Time"
+msgstr "Waktu respons maksimum"
+
+msgid "Success Rate"
+msgstr "Tingkat keberhasilan"
+
+msgid "Success"
+msgstr "Berhasil"
+
+msgid "Failure"
+msgstr "Gagal"
+
+msgid "Top Domains"
+msgstr "Domain teratas"
+
+msgid "Top Query Types"
+msgstr "Jenis kueri teratas"
+
+msgid "Top Devices"
+msgstr "Perangkat teratas"
+
+msgid "Top DNS Servers"
+msgstr "Server DNS teratas"
+
+msgid "Unique Devices"
+msgstr "Perangkat unik"
+
+msgid "ms"
+msgstr "ms"
+
+msgid "minutes"
+msgstr "menit"
+
+msgid "Unknown Device"
+msgstr "Perangkat tidak dikenal"
+
+msgid "Domain not found"
+msgstr "Domain tidak ditemukan"
+
+msgid "Server error"
+msgstr "Kesalahan server"
+
+msgid "Format error"
+msgstr "Kesalahan format"
+
+msgid "Refused"
+msgstr "Ditolak"
+
+msgid "Other"
+msgstr "Lainnya"
+
+msgid "Does not include DoH and DoT"
+msgstr "Tidak termasuk DoH dan DoT"
+
+msgid "Latest Response Time"
+msgstr "Waktu respons terbaru"
+
+msgid "Response Code Distribution"
+msgstr "Distribusi kode respons"
+
+msgid "Response Time Percentiles"
+msgstr "Persentil waktu respons"
+
+msgid "P50"
+msgstr "P50"
+
+msgid "P90"
+msgstr "P90"
+
+msgid "P95"
+msgstr "P95"
+
+msgid "P99"
+msgstr "P99"
+
+msgid "Bandix Connection Monitor"
+msgstr "Monitor Koneksi Bandix"
+
+msgid "Connection Monitor"
+msgstr "Monitor koneksi"
+
+msgid "Device Connection Statistics"
+msgstr "Statistik koneksi perangkat"
+
+msgid "Global Connection Statistics"
+msgstr "Statistik koneksi global"
+
+msgid "Active TCP"
+msgstr "TCP aktif"
+
+msgid "Active UDP"
+msgstr "UDP aktif"
+
+msgid "Closed TCP"
+msgstr "TCP tertutup"
+
+msgid "Total Connections"
+msgstr "Total koneksi"
+
+msgid "Last Updated"
+msgstr "Terakhir diperbarui"
+
+msgid "TCP Connections"
+msgstr "Koneksi TCP"
+
+msgid "UDP Connections"
+msgstr "Koneksi UDP"
+
+msgid "Established TCP"
+msgstr "TCP terbentuk"
+
+msgid "TIME_WAIT TCP"
+msgstr "TIME_WAIT TCP"
+
+msgid "CLOSE_WAIT TCP"
+msgstr "CLOSE_WAIT TCP"
+
+msgid "Total Devices"
+msgstr "Total perangkat"
+
+msgid "Connection Monitor Disabled"
+msgstr "Monitor koneksi dinonaktifkan"
+
+msgid "Please enable connection monitoring in settings"
+msgstr "Harap aktifkan pemantauan koneksi di pengaturan"
+
+msgid "List only shows LAN device connections, data may differ from total connections."
+msgstr "Daftar hanya menampilkan koneksi perangkat LAN, data mungkin berbeda dari total koneksi."
+
+msgid "TCP Status Details"
+msgstr "Detail status TCP"
+
+msgid "Basic Settings"
+msgstr "Pengaturan dasar"
+
+msgid "Traffic Monitor Settings"
+msgstr "Pengaturan monitor lalu lintas"
+
+msgid "Connection Monitor Settings"
+msgstr "Pengaturan monitor koneksi"
+
+msgid "DNS Monitor Settings"
+msgstr "Pengaturan monitor DNS"
+
+msgid "Bandix Basic Configuration"
+msgstr "Konfigurasi dasar Bandix"
+
+msgid "Configure basic parameters for Bandix service"
+msgstr "Konfigurasi parameter dasar untuk layanan Bandix"
+
+msgid "Bandix Traffic Monitor Configuration"
+msgstr "Konfigurasi Monitor Lalu Lintas Bandix"
+
+msgid "Configure traffic monitoring related parameters"
+msgstr "Konfigurasi parameter terkait pemantauan lalu lintas"
+
+msgid "Bandix Connection Monitor Configuration"
+msgstr "Konfigurasi Monitor Koneksi Bandix"
+
+msgid "Configure connection monitoring related parameters"
+msgstr "Konfigurasi parameter terkait pemantauan koneksi"
+
+msgid "Bandix DNS Monitor Configuration"
+msgstr "Konfigurasi Monitor DNS Bandix"
+
+msgid "Configure DNS monitoring related parameters"
+msgstr "Konfigurasi parameter terkait pemantauan DNS"
+
+msgid "Enable"
+msgstr "Aktifkan"
+
+msgid "Enable Bandix Traffic Monitor Service"
+msgstr "Aktifkan layanan Monitor Lalu Lintas Bandix"
+
+msgid "Enable Traffic Monitoring"
+msgstr "Aktifkan pemantauan lalu lintas"
+
+msgid "Enable Connection Monitoring"
+msgstr "Aktifkan pemantauan koneksi"
+
+msgid "Enable DNS Monitoring"
+msgstr "Aktifkan pemantauan DNS"
+
+msgid "Simplified Chinese"
+msgstr "Bahasa Cina Sederhana"
+
+msgid "Traditional Chinese"
+msgstr "Bahasa Cina Tradisional"
+
+msgid "Port"
+msgstr "Port"
+
+msgid "Port for Bandix service to listen on"
+msgstr "Port untuk layanan Bandix mendengarkan"
+
+msgid "Monitor Interface"
+msgstr "Antarmuka monitor"
+
+msgid "Select the LAN network interface to monitor"
+msgstr "Pilih antarmuka jaringan LAN untuk dipantau"
+
+msgid "Speed Units"
+msgstr "Satuan kecepatan"
+
+msgid "Select the speed display unit format"
+msgstr "Pilih format satuan tampilan kecepatan"
+
+msgid "Bytes Units (B/s, KB/s, MB/s)"
+msgstr "Satuan byte (B/s, KB/s, MB/s)"
+
+msgid "Bits Units (bps, Kbps, Mbps)"
+msgstr "Satuan bit (bps, Kbps, Mbps)"
+
+msgid "Interface Theme"
+msgstr "Tema antarmuka"
+
+msgid "Select the display theme for Bandix Traffic Monitor"
+msgstr "Pilih tema tampilan untuk Monitor Lalu Lintas Bandix"
+
+msgid "Follow System"
+msgstr "Ikuti sistem"
+
+msgid "Light Mode"
+msgstr "Mode terang"
+
+msgid "Dark Mode"
+msgstr "Mode gelap"
+
+msgid "Feedback"
+msgstr "Umpan balik"
+
+msgid "Log Level"
+msgstr "Tingkat log"
+
+msgid "Set the log level for Bandix service"
+msgstr "Atur tingkat log untuk layanan Bandix"
+
+msgid "Offline Timeout"
+msgstr "Timeout offline"
+
+msgid "Set the timeout for device offline detection (seconds). Devices inactive for longer than this time will be marked as offline"
+msgstr "Atur timeout untuk deteksi perangkat offline (detik). Perangkat yang tidak aktif lebih lama dari waktu ini akan ditandai sebagai offline"
+
+msgid "Traffic History Period"
+msgstr "Periode riwayat lalu lintas"
+
+msgid "10 minutes interval uses about 60 KB per device"
+msgstr "Interval 10 menit menggunakan sekitar 60 KB per perangkat"
+
+msgid "Data Flush Interval"
+msgstr "Interval flush data"
+
+msgid "Set the interval for flushing data to disk"
+msgstr "Atur interval untuk mem-flush data ke disk"
+
+msgid "1 minute"
+msgstr "1 menit"
+
+msgid "5 minutes"
+msgstr "5 menit"
+
+msgid "10 minutes"
+msgstr "10 menit"
+
+msgid "15 minutes"
+msgstr "15 menit"
+
+msgid "20 minutes"
+msgstr "20 menit"
+
+msgid "25 minutes"
+msgstr "25 menit"
+
+msgid "30 minutes"
+msgstr "30 menit"
+
+msgid "1 hour"
+msgstr "1 jam"
+
+msgid "2 hours"
+msgstr "2 jam"
+
+msgid "Data Directory"
+msgstr "Direktori data"
+
+msgid "Bandix data storage directory"
+msgstr "Direktori penyimpanan data Bandix"
+
+msgid "Enable Bandix connection monitoring"
+msgstr "Aktifkan pemantauan koneksi Bandix"
+
+msgid "Enable Bandix DNS monitoring"
+msgstr "Aktifkan pemantauan DNS Bandix"
+
+msgid "DNS Max Records"
+msgstr "Maksimum catatan DNS"
+
+msgid "Set the maximum number of DNS query records to keep. Older records will be deleted when this limit is exceeded"
+msgstr "Atur jumlah maksimum catatan kueri DNS yang disimpan. Catatan lama akan dihapus ketika batas ini terlampaui"
+
+msgid "Persist History Data"
+msgstr "Simpan data riwayat"
+
+msgid "Enable data persistence functionality, data will only be persisted to disk when this option is enabled"
+msgstr "Aktifkan fungsi persistensi data, data hanya akan disimpan ke disk ketika opsi ini diaktifkan"

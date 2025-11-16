@@ -1,0 +1,735 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Bandix Traffic Monitor"
+msgstr "Bandix トラフィックモニター"
+
+msgid "Loading data..."
+msgstr "データを読み込み中..."
+
+msgid "Unable to fetch data"
+msgstr "データを取得できません"
+
+msgid "Unable to fetch history data"
+msgstr "履歴データを取得できません"
+
+msgid "Hostname"
+msgstr "ホスト名"
+
+msgid "IP Address"
+msgstr "IPアドレス"
+
+msgid "MAC Address"
+msgstr "MACアドレス"
+
+msgid "Download Speed"
+msgstr "ダウンロード速度"
+
+msgid "Upload Speed"
+msgstr "アップロード速度"
+
+msgid "Total Download"
+msgstr "総ダウンロード量"
+
+msgid "Total Upload"
+msgstr "総アップロード量"
+
+msgid "Download Limit"
+msgstr "ダウンロード制限"
+
+msgid "Upload Limit"
+msgstr "アップロード制限"
+
+msgid "Interface Language"
+msgstr "インターフェース言語"
+
+msgid "Select the display language for Bandix Traffic Monitor"
+msgstr "Bandix トラフィックモニターの表示言語を選択"
+
+msgid "Device Info"
+msgstr "デバイス情報"
+
+msgid "Device List"
+msgstr "デバイス一覧"
+
+msgid "LAN Traffic"
+msgstr "LAN トラフィック"
+
+msgid "WAN Traffic"
+msgstr "WAN トラフィック"
+
+msgid "Rate Limit"
+msgstr "速度制限"
+
+msgid "Actions"
+msgstr "操作"
+
+msgid "Online Devices"
+msgstr "オンラインデバイス"
+
+msgid "WAN Only"
+msgstr "WAN トラフィックのみ"
+
+msgid "Settings"
+msgstr "設定"
+
+msgid "Device Settings"
+msgstr "デバイス設定"
+
+msgid "Rate Limits"
+msgstr "速度制限"
+
+msgid "Remove Rate Limit"
+msgstr "速度制限を解除"
+
+msgid "Save"
+msgstr "保存"
+
+msgid "Cancel"
+msgstr "キャンセル"
+
+msgid "Set Rate Limit"
+msgstr "速度制限を設定"
+
+msgid "Device"
+msgstr "デバイス"
+
+msgid "Set Hostname"
+msgstr "ホスト名を設定"
+
+msgid "Please enter hostname"
+msgstr "ホスト名を入力してください"
+
+msgid "Hostname set successfully"
+msgstr "ホスト名の設定に成功しました"
+
+msgid "Failed to set hostname"
+msgstr "ホスト名の設定に失敗しました"
+
+msgid "Unlimited"
+msgstr "無制限"
+
+msgid "Settings saved successfully"
+msgstr "設定を保存しました"
+
+msgid "Failed to save settings"
+msgstr "設定の保存に失敗しました"
+
+msgid "Please enter a valid speed value"
+msgstr "有効な速度値を入力してください"
+
+msgid "Speed value must be greater than 0"
+msgstr "速度値は0より大きい必要があります"
+
+msgid "Saving..."
+msgstr "保存中..."
+
+msgid "Rate limiting only applies to WAN traffic."
+msgstr "速度制限は WAN トラフィックにのみ適用されます。"
+
+msgid "Tip: Enter 0 for unlimited"
+msgstr "ヒント：0を入力すると無制限になります"
+
+msgid "Traffic History"
+msgstr "トラフィック履歴"
+
+msgid "Select Device"
+msgstr "デバイスを選択"
+
+msgid "All Devices"
+msgstr "すべてのデバイス"
+
+msgid "Time Range"
+msgstr "時間範囲"
+
+msgid "Last 5 minutes"
+msgstr "過去5分"
+
+msgid "Last 30 minutes"
+msgstr "過去30分"
+
+msgid "Last 2 hours"
+msgstr "過去2時間"
+
+msgid "Type"
+msgstr "タイプ"
+
+msgid "Total"
+msgstr "合計"
+
+msgid "LAN"
+msgstr "LAN トラフィック"
+
+msgid "WAN"
+msgstr "WAN トラフィック"
+
+msgid "Refresh"
+msgstr "更新"
+
+msgid "Upload Rate"
+msgstr "アップロード速度"
+
+msgid "Download Rate"
+msgstr "ダウンロード速度"
+
+msgid "Last"
+msgstr "最後"
+
+msgid "second"
+msgstr "秒"
+
+msgid "minute"
+msgstr "分"
+
+msgid "hour"
+msgstr "時間"
+
+msgid "day"
+msgstr "日"
+
+msgid "week"
+msgstr "週"
+
+msgid "Other Rates"
+msgstr "その他の速度"
+
+msgid "Cumulative"
+msgstr "累計トラフィック"
+
+msgid "Total Uploaded"
+msgstr "総アップロード"
+
+msgid "Total Downloaded"
+msgstr "総ダウンロード"
+
+msgid "LAN Uploaded"
+msgstr "LAN アップロード済み"
+
+msgid "LAN Downloaded"
+msgstr "LAN ダウンロード済み"
+
+msgid "WAN Uploaded"
+msgstr "WAN アップロード済み"
+
+msgid "WAN Downloaded"
+msgstr "WAN ダウンロード済み"
+
+msgid "Total Upload"
+msgstr "総アップロード速度"
+
+msgid "Total Download"
+msgstr "総ダウンロード速度"
+
+msgid "LAN Upload"
+msgstr "LAN アップロード速度"
+
+msgid "LAN Download"
+msgstr "LAN ダウンロード速度"
+
+msgid "WAN Upload"
+msgstr "WAN アップロード速度"
+
+msgid "WAN Download"
+msgstr "WAN ダウンロード速度"
+
+msgid "Never Online"
+msgstr "オンラインになったことがありません"
+
+msgid "Just Now"
+msgstr "たった今"
+
+msgid "min ago"
+msgstr "分前"
+
+msgid "h ago"
+msgstr "時間前"
+
+msgid "days ago"
+msgstr "日前"
+
+msgid "months ago"
+msgstr "ヶ月前"
+
+msgid "years ago"
+msgstr "年前"
+
+msgid "Last Online"
+msgstr "最終オンライン"
+
+msgid "Zoom"
+msgstr "ズーム"
+
+msgid "Sort By"
+msgstr "並び替え"
+
+msgid "Online Status"
+msgstr "オンライン状態"
+
+msgid "Total Traffic"
+msgstr "総トラフィック"
+
+msgid "Ascending"
+msgstr "昇順"
+
+msgid "Descending"
+msgstr "降順"
+
+msgid "Sort by Speed"
+msgstr "速度で並び替え"
+
+msgid "Sort by Traffic"
+msgstr "トラフィックで並び替え"
+
+msgid "Simple Mode"
+msgstr "シンプルモード"
+
+msgid "Detailed Mode"
+msgstr "詳細モード"
+
+msgid "Bandix DNS Monitor"
+msgstr "Bandix DNS モニター"
+
+msgid "DNS Monitor"
+msgstr "DNS モニター"
+
+msgid "DNS Query Records"
+msgstr "DNS クエリ記録"
+
+msgid "DNS Statistics"
+msgstr "DNS 統計情報"
+
+msgid "DNS Monitoring Disabled"
+msgstr "DNS監視が無効です"
+
+msgid "Please enable DNS monitoring in settings"
+msgstr "設定でDNS監視を有効にしてください"
+
+msgid "Go to Settings"
+msgstr "設定に移動"
+
+msgid "No Data"
+msgstr "データなし"
+
+msgid "Time"
+msgstr "時間"
+
+msgid "Domain"
+msgstr "ドメイン"
+
+msgid "Query Type"
+msgstr "クエリタイプ"
+
+msgid "Response Code"
+msgstr "応答コード"
+
+msgid "Response Time"
+msgstr "応答時間"
+
+msgid "Source IP"
+msgstr "送信元IP"
+
+msgid "Destination IP"
+msgstr "宛先IP"
+
+msgid "Response IPs"
+msgstr "応答IP"
+
+msgid "Response Result"
+msgstr "応答結果"
+
+msgid "DNS Server"
+msgstr "DNSサーバー"
+
+msgid "Query"
+msgstr "クエリ"
+
+msgid "Response"
+msgstr "応答"
+
+msgid "Filter"
+msgstr "フィルター"
+
+msgid "Domain Filter"
+msgstr "ドメインフィルター"
+
+msgid "Device Filter"
+msgstr "デバイスフィルター"
+
+msgid "DNS Server Filter"
+msgstr "DNSサーバーフィルター"
+
+msgid "Type Filter"
+msgstr "タイプフィルター"
+
+msgid "All"
+msgstr "すべて"
+
+msgid "Queries Only"
+msgstr "クエリのみ"
+
+msgid "Responses Only"
+msgstr "応答のみ"
+
+msgid "Search"
+msgstr "検索"
+
+msgid "Search Domain"
+msgstr "ドメインを検索"
+
+msgid "Search Device"
+msgstr "デバイスを検索"
+
+msgid "Search DNS Server"
+msgstr "DNSサーバーを検索"
+
+msgid "Clear"
+msgstr "クリア"
+
+msgid "Previous"
+msgstr "前へ"
+
+msgid "Next"
+msgstr "次へ"
+
+msgid "Page"
+msgstr "ページ"
+
+msgid "of"
+msgstr "の"
+
+msgid "Total"
+msgstr "合計"
+
+msgid "records"
+msgstr "件の記録"
+
+msgid "Per Page"
+msgstr "ページあたり"
+
+msgid ""
+msgstr "件"
+
+msgid "Total Queries"
+msgstr "総クエリ数"
+
+msgid "Total Responses"
+msgstr "総応答数"
+
+msgid "Queries with Response"
+msgstr "応答ありクエリ"
+
+msgid "Queries without Response"
+msgstr "応答なしクエリ"
+
+msgid "Avg Response Time"
+msgstr "平均応答時間"
+
+msgid "Min Response Time"
+msgstr "最短応答時間"
+
+msgid "Max Response Time"
+msgstr "最長応答時間"
+
+msgid "Success Rate"
+msgstr "成功率"
+
+msgid "Success"
+msgstr "成功"
+
+msgid "Failure"
+msgstr "失敗"
+
+msgid "Top Domains"
+msgstr "最もクエリされたドメイン"
+
+msgid "Top Query Types"
+msgstr "最も使用されたクエリタイプ"
+
+msgid "Top Devices"
+msgstr "最もアクティブなデバイス"
+
+msgid "Top DNS Servers"
+msgstr "最も使用されたDNSサーバー"
+
+msgid "Unique Devices"
+msgstr "ユニークデバイス数"
+
+msgid "ms"
+msgstr "ミリ秒"
+
+msgid "minutes"
+msgstr "分"
+
+msgid "Unknown Device"
+msgstr "不明なデバイス"
+
+msgid "Domain not found"
+msgstr "ドメインが見つかりません"
+
+msgid "Server error"
+msgstr "サーバーエラー"
+
+msgid "Format error"
+msgstr "フォーマットエラー"
+
+msgid "Refused"
+msgstr "拒否"
+
+msgid "Other"
+msgstr "その他"
+
+msgid "Does not include DoH and DoT"
+msgstr "DoH と DoT は含まれません"
+
+msgid "Latest Response Time"
+msgstr "最新の応答時間"
+
+msgid "Response Code Distribution"
+msgstr "応答コード分布"
+
+msgid "Response Time Percentiles"
+msgstr "応答時間パーセンタイル"
+
+msgid "P50"
+msgstr "P50"
+
+msgid "P90"
+msgstr "P90"
+
+msgid "P95"
+msgstr "P95"
+
+msgid "P99"
+msgstr "P99"
+
+msgid "Bandix Connection Monitor"
+msgstr "Bandix 接続モニター"
+
+msgid "Connection Monitor"
+msgstr "接続モニター"
+
+msgid "Device Connection Statistics"
+msgstr "デバイス接続統計"
+
+msgid "Global Connection Statistics"
+msgstr "グローバル接続統計"
+
+msgid "Active TCP"
+msgstr "アクティブTCP"
+
+msgid "Active UDP"
+msgstr "アクティブUDP"
+
+msgid "Closed TCP"
+msgstr "クローズTCP"
+
+msgid "Total Connections"
+msgstr "総接続数"
+
+msgid "Last Updated"
+msgstr "最終更新"
+
+msgid "TCP Connections"
+msgstr "TCP接続数"
+
+msgid "UDP Connections"
+msgstr "UDP接続数"
+
+msgid "Established TCP"
+msgstr "確立済みTCP"
+
+msgid "TIME_WAIT TCP"
+msgstr "TIME_WAIT TCP"
+
+msgid "CLOSE_WAIT TCP"
+msgstr "CLOSE_WAIT TCP"
+
+msgid "Total Devices"
+msgstr "デバイス総数"
+
+msgid "Connection Monitor Disabled"
+msgstr "接続モニターが無効です"
+
+msgid "Please enable connection monitoring in settings"
+msgstr "設定で接続モニターを有効にしてください"
+
+msgid "List only shows LAN device connections, data may differ from total connections."
+msgstr "リストはLANデバイス接続のみを表示します。データは総接続数と異なる場合があります。"
+
+msgid "TCP Status Details"
+msgstr "TCP 状態詳細"
+
+msgid "Basic Settings"
+msgstr "基本設定"
+
+msgid "Traffic Monitor Settings"
+msgstr "トラフィックモニター設定"
+
+msgid "Connection Monitor Settings"
+msgstr "接続モニター設定"
+
+msgid "DNS Monitor Settings"
+msgstr "DNSモニター設定"
+
+msgid "Bandix Basic Configuration"
+msgstr "Bandix 基本設定"
+
+msgid "Configure basic parameters for Bandix service"
+msgstr "Bandix サービスの基本パラメータを設定"
+
+msgid "Bandix Traffic Monitor Configuration"
+msgstr "Bandix トラフィックモニター設定"
+
+msgid "Configure traffic monitoring related parameters"
+msgstr "トラフィック監視関連のパラメータを設定"
+
+msgid "Bandix Connection Monitor Configuration"
+msgstr "Bandix 接続モニター設定"
+
+msgid "Configure connection monitoring related parameters"
+msgstr "接続監視関連のパラメータを設定"
+
+msgid "Bandix DNS Monitor Configuration"
+msgstr "Bandix DNSモニター設定"
+
+msgid "Configure DNS monitoring related parameters"
+msgstr "DNS監視関連のパラメータを設定"
+
+msgid "Enable"
+msgstr "有効"
+
+msgid "Enable Bandix Traffic Monitor Service"
+msgstr "Bandix トラフィックモニターサービスを有効にする"
+
+msgid "Enable Traffic Monitoring"
+msgstr "トラフィック監視を有効にする"
+
+msgid "Enable Connection Monitoring"
+msgstr "接続監視を有効にする"
+
+msgid "Enable DNS Monitoring"
+msgstr "DNS監視を有効にする"
+
+msgid "Simplified Chinese"
+msgstr "簡体字中国語"
+
+msgid "Traditional Chinese"
+msgstr "繁体字中国語"
+
+msgid "Port"
+msgstr "ポート"
+
+msgid "Port for Bandix service to listen on"
+msgstr "Bandix サービスがリッスンするポート"
+
+msgid "Monitor Interface"
+msgstr "監視インターフェース"
+
+msgid "Select the LAN network interface to monitor"
+msgstr "監視するLANネットワークインターフェースを選択"
+
+msgid "Speed Units"
+msgstr "速度単位"
+
+msgid "Select the speed display unit format"
+msgstr "速度表示の単位形式を選択"
+
+msgid "Bytes Units (B/s, KB/s, MB/s)"
+msgstr "バイト単位 (B/s, KB/s, MB/s)"
+
+msgid "Bits Units (bps, Kbps, Mbps)"
+msgstr "ビット単位 (bps, Kbps, Mbps)"
+
+msgid "Interface Theme"
+msgstr "インターフェーステーマ"
+
+msgid "Select the display theme for Bandix Traffic Monitor"
+msgstr "Bandix トラフィックモニターの表示テーマを選択"
+
+msgid "Follow System"
+msgstr "システムに従う"
+
+msgid "Light Mode"
+msgstr "ライトモード"
+
+msgid "Dark Mode"
+msgstr "ダークモード"
+
+msgid "Feedback"
+msgstr "フィードバック"
+
+msgid "Log Level"
+msgstr "ログレベル"
+
+msgid "Set the log level for Bandix service"
+msgstr "Bandix サービスのログレベルを設定"
+
+msgid "Offline Timeout"
+msgstr "オフラインタイムアウト"
+
+msgid "Set the timeout for device offline detection (seconds). Devices inactive for longer than this time will be marked as offline"
+msgstr "デバイスのオフライン検出のタイムアウトを設定（秒）。この時間より長く非アクティブなデバイスはオフラインとしてマークされます"
+
+msgid "Traffic History Period"
+msgstr "トラフィック履歴期間"
+
+msgid "10 minutes interval uses about 60 KB per device"
+msgstr "10分間隔でデバイスあたり約60KBを使用"
+
+msgid "Data Flush Interval"
+msgstr "データフラッシュ間隔"
+
+msgid "Set the interval for flushing data to disk"
+msgstr "データをディスクにフラッシュする間隔を設定"
+
+msgid "1 minute"
+msgstr "1分"
+
+msgid "5 minutes"
+msgstr "5分"
+
+msgid "10 minutes"
+msgstr "10分"
+
+msgid "15 minutes"
+msgstr "15分"
+
+msgid "20 minutes"
+msgstr "20分"
+
+msgid "25 minutes"
+msgstr "25分"
+
+msgid "30 minutes"
+msgstr "30分"
+
+msgid "1 hour"
+msgstr "1時間"
+
+msgid "2 hours"
+msgstr "2時間"
+
+msgid "Data Directory"
+msgstr "データディレクトリ"
+
+msgid "Bandix data storage directory"
+msgstr "Bandix データストレージディレクトリ"
+
+msgid "Enable Bandix connection monitoring"
+msgstr "Bandix 接続監視を有効にする"
+
+msgid "Enable Bandix DNS monitoring"
+msgstr "Bandix DNS監視を有効にする"
+
+msgid "DNS Max Records"
+msgstr "DNS最大記録数"
+
+msgid "Set the maximum number of DNS query records to keep. Older records will be deleted when this limit is exceeded"
+msgstr "保持するDNSクエリ記録の最大数を設定。この制限を超えると古い記録が削除されます"
+
+msgid "Persist History Data"
+msgstr "履歴データを永続化"
+
+msgid "Enable data persistence functionality, data will only be persisted to disk when this option is enabled"
+msgstr "データ永続化機能を有効にする。このオプションが有効な場合のみデータがディスクに永続化されます"
