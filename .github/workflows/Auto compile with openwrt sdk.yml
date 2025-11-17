@@ -89,15 +89,6 @@ jobs:
           - version: apk
             sdk_url: https://downloads.openwrt.org/snapshots/targets/x86/64/openwrt-sdk-x86-64_gcc-14.3.0_musl.Linux-x86_64.tar.zst
     steps:
-      - name: Cache APT packages
-        uses: actions/cache@v4
-        with:
-          path: |
-            /var/cache/apt/archives
-          key: apt-cache-${{ runner.os }}-${{ hashFiles('.github/workflows/Auto compile with openwrt sdk.yml') }}
-          restore-keys: |
-            apt-cache-${{ runner.os }}-
-
       - name: Install packages
         run: |
           sudo -E rm -rf /usr/share/dotnet /etc/mysql /etc/php /usr/local/lib/android
@@ -113,17 +104,7 @@ jobs:
             upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd
           sudo -E apt-get -qq autoremove --purge
 
-      - name: Cache OpenWrt SDK
-        id: cache-sdk
-        uses: actions/cache@v4
-        with:
-          path: sdk
-          key: openwrt-sdk-${{ matrix.version }}-${{ hashFiles('.github/workflows/Auto compile with openwrt sdk.yml') }}
-          restore-keys: |
-            openwrt-sdk-${{ matrix.version }}-
-
       - name: Initialization environment
-        if: steps.cache-sdk.outputs.cache-hit != 'true'
         run: |
           wget ${{ matrix.sdk_url }}
           file_name=$(echo ${{ matrix.sdk_url }} | awk -F/ '{print $NF}')
