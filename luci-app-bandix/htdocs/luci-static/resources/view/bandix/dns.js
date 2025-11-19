@@ -807,22 +807,22 @@ return view.extend({
                     return (value * 100).toFixed(2) + '%';
                 }
                 
-                // 总查询数卡片（合并成功率）
+                // 查询和响应数量卡片
+                // 使用后端返回的 total_queries 和 total_responses
+                var queryCount = stats.total_queries || 0;
+                var responseCount = stats.total_responses || 0;
+                
                 var totalQueriesCard = E('div', { 'class': 'cbi-section' }, [
-                    E('div', { 'class': 'stats-card-title' }, _('Total Queries')),
-                    E('div', { 'class': 'stats-card-main-value' }, (stats.total_queries || 0).toLocaleString()),
+                    E('div', { 'class': 'stats-card-title' }, _('Query & Response')),
+                    E('div', { 'class': 'stats-card-main-value' }, (queryCount + responseCount || 0).toLocaleString()),
                     E('div', { 'class': 'stats-card-details' }, [
                         E('div', { 'class': 'stats-detail-row' }, [
-                            E('span', { 'class': 'stats-detail-label' }, _('Success Rate') + ':'),
-                            E('span', { 'class': 'stats-detail-value' }, formatPercent(stats.success_rate || 0))
+                            E('span', { 'class': 'stats-detail-label' }, _('Queries') + ':'),
+                            E('span', { 'class': 'stats-detail-value' }, queryCount.toLocaleString())
                         ]),
                         E('div', { 'class': 'stats-detail-row' }, [
-                            E('span', { 'class': 'stats-detail-label' }, _('Success') + ':'),
-                            E('span', { 'class': 'stats-detail-value' }, (stats.success_count || 0).toLocaleString())
-                        ]),
-                        E('div', { 'class': 'stats-detail-row' }, [
-                            E('span', { 'class': 'stats-detail-label' }, _('Failure') + ':'),
-                            E('span', { 'class': 'stats-detail-value' }, (stats.failure_count || 0).toLocaleString())
+                            E('span', { 'class': 'stats-detail-label' }, _('Responses') + ':'),
+                            E('span', { 'class': 'stats-detail-value' }, responseCount.toLocaleString())
                         ])
                     ])
                 ]);
@@ -832,8 +832,12 @@ return view.extend({
                 // 响应时间卡片
                 statsGrid.appendChild(E('div', { 'class': 'cbi-section' }, [
                     E('div', { 'class': 'stats-card-title' }, _('Response Time')),
-                    E('div', { 'class': 'stats-card-main-value' }, (stats.avg_response_time_ms || 0).toFixed(2) + ' ' + _('ms')),
+                    E('div', { 'class': 'stats-card-main-value' }, Math.round(stats.latest_response_time_ms || 0) + ' ' + _('ms')),
                     E('div', { 'class': 'stats-card-details' }, [
+                        E('div', { 'class': 'stats-detail-row' }, [
+                            E('span', { 'class': 'stats-detail-label' }, _('Average Response Time') + ':'),
+                            E('span', { 'class': 'stats-detail-value' }, (stats.avg_response_time_ms || 0).toFixed(2) + ' ' + _('ms'))
+                        ]),
                         E('div', { 'class': 'stats-detail-row' }, [
                             E('span', { 'class': 'stats-detail-label' }, _('Min Response Time') + ':'),
                             E('span', { 'class': 'stats-detail-value' }, (stats.min_response_time_ms || 0) + ' ' + _('ms'))
@@ -841,10 +845,6 @@ return view.extend({
                         E('div', { 'class': 'stats-detail-row' }, [
                             E('span', { 'class': 'stats-detail-label' }, _('Max Response Time') + ':'),
                             E('span', { 'class': 'stats-detail-value' }, (stats.max_response_time_ms || 0) + ' ' + _('ms'))
-                        ]),
-                        E('div', { 'class': 'stats-detail-row' }, [
-                            E('span', { 'class': 'stats-detail-label' }, _('Latest Response Time') + ':'),
-                            E('span', { 'class': 'stats-detail-value' }, (stats.latest_response_time_ms || 0) + ' ' + _('ms'))
                         ])
                     ])
                 ]));

@@ -733,3 +733,15 @@ msgstr "履歴データを永続化"
 
 msgid "Enable data persistence functionality, data will only be persisted to disk when this option is enabled"
 msgstr "データ永続化機能を有効にする。このオプションが有効な場合のみデータがディスクに永続化されます"
+
+msgid "Query & Response"
+msgstr "クエリとレスポンス"
+
+msgid "Queries"
+msgstr "クエリ"
+
+msgid "Responses"
+msgstr "レスポンス"
+
+msgid "Average Response Time"
+msgstr "平均応答時間"

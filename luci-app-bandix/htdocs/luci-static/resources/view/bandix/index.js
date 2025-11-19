@@ -225,6 +225,10 @@ return view.extend({
                 padding: 4px 10px;
                 font-size: 0.875rem;
             }
+
+            #history-retention {
+                border: 1px solid rgba(107, 114, 128, 0.4);
+            }
             
             .bandix-alert {
                 border-radius: 4px;
@@ -412,6 +416,28 @@ return view.extend({
             .device-mac {
                 opacity: 0.6;
                 font-size: 0.75rem;
+            }
+
+            .device-last-online {
+                font-size: 0.75rem;
+                color: #6b7280;
+            }
+
+            .device-last-online-value {
+                color: #9ca3af;
+            }
+
+            .device-last-online-exact {
+                display: none;
+                color: #9ca3af;
+            }
+
+            .device-last-online:hover .device-last-online-value {
+                display: none;
+            }
+
+            .device-last-online:hover .device-last-online-exact {
+                display: inline;
             }
             
             .traffic-info {
@@ -1930,6 +1956,31 @@ function formatLastOnlineTime(lastOnlineTs) {
     return yearsDiff + _('years ago');
 }
 
+// 精确时间格式
+function formatLastOnlineExactTime(lastOnlineTs) {
+    if (!lastOnlineTs || lastOnlineTs <= 0) {
+        return '-';
+    }
+
+    var lastOnlineTime = lastOnlineTs < 1000000000000 ? lastOnlineTs * 1000 : lastOnlineTs;
+    var date = new Date(lastOnlineTime);
+
+    if (isNaN(date.getTime())) {
+        return '-';
+    }
+
+    function pad(value) {
+        return value < 10 ? '0' + value : value;
+    }
+
+    return date.getFullYear() + '-' +
+        pad(date.getMonth() + 1) + '-' +
+        pad(date.getDate()) + ' ' +
+        pad(date.getHours()) + ':' +
+        pad(date.getMinutes()) + ':' +
+        pad(date.getSeconds());
+}
+
 function formatRetentionSeconds(seconds) {
     if (!seconds || seconds <= 0) return '';
     var value;
@@ -2565,13 +2616,14 @@ function formatRetentionSeconds(seconds) {
 						}
 
 						// 添加 MAC 和最后上线信息
-						deviceInfoElements.push(
-							E('div', { 'class': 'device-mac' }, device.mac),
-							E('div', { 'class': 'device-last-online' }, [
-								E('span', { 'style': 'color: #6b7280; font-size: 0.75rem;' }, _('Last Online') + ': '),
-								E('span', { 'style': 'color: #9ca3af; font-size: 0.75rem;' }, formatLastOnlineTime(device.last_online_ts))
-							])
-						);
+                        deviceInfoElements.push(
+                            E('div', { 'class': 'device-mac' }, device.mac),
+                            E('div', { 'class': 'device-last-online' }, [
+                                E('span', {}, _('Last Online') + ': '),
+                                E('span', { 'class': 'device-last-online-value' }, formatLastOnlineTime(device.last_online_ts)),
+                                E('span', { 'class': 'device-last-online-exact' }, formatLastOnlineExactTime(device.last_online_ts))
+                            ])
+                        );
 					}
 
                     var row = E('tr', {}, [

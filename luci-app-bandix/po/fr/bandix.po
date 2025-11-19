@@ -732,4 +732,16 @@ msgid "Persist History Data"
 msgstr "Persister les données d'historique"
 
 msgid "Enable data persistence functionality, data will only be persisted to disk when this option is enabled"
-msgstr "启用数据持久化功能，只有启用此选项后才会持久化到磁盘"
+msgstr "Activer la fonctionnalité de persistance des données, les données ne seront enregistrées sur le disque que lorsque cette option est activée"
+
+msgid "Query & Response"
+msgstr "Requête et Réponse"
+
+msgid "Queries"
+msgstr "Requêtes"
+
+msgid "Responses"
+msgstr "Réponses"
+
+msgid "Average Response Time"
+msgstr "Temps de Réponse Moyen"

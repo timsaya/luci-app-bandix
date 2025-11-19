@@ -733,3 +733,15 @@ msgstr "เก็บข้อมูลประวัติ"
 
 msgid "Enable data persistence functionality, data will only be persisted to disk when this option is enabled"
 msgstr "เปิดใช้งานฟังก์ชันการเก็บข้อมูล ข้อมูลจะถูกเก็บไว้ในดิสก์เมื่อเปิดใช้งานตัวเลือกนี้เท่านั้น"
+
+msgid "Query & Response"
+msgstr "คำขอและคำตอบ"
+
+msgid "Queries"
+msgstr "คำขอ"
+
+msgid "Responses"
+msgstr "คำตอบ"
+
+msgid "Average Response Time"
+msgstr "เวลาเฉลี่ยในการตอบสนอง"

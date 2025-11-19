@@ -733,3 +733,15 @@ msgstr "持久化歷史數据"
 
 msgid "Enable data persistence functionality, data will only be persisted to disk when this option is enabled"
 msgstr "啟用數据持久化功能，只有啟用此选项后才會持久化到磁碟"
+
+msgid "Query & Response"
+msgstr "查詢與響應"
+
+msgid "Queries"
+msgstr "查詢"
+
+msgid "Responses"
+msgstr "響應"
+
+msgid "Average Response Time"
+msgstr "平均響應時間"

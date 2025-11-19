@@ -733,3 +733,15 @@ msgstr "Persistir datos del historial"
 
 msgid "Enable data persistence functionality, data will only be persisted to disk when this option is enabled"
 msgstr "Habilitar funcionalidad de persistencia de datos, los datos solo se persistirán en el disco cuando esta opción esté habilitada"
+
+msgid "Query & Response"
+msgstr "Consulta y Respuesta"
+
+msgid "Queries"
+msgstr "Consultas"
+
+msgid "Responses"
+msgstr "Respuestas"
+
+msgid "Average Response Time"
+msgstr "Tiempo de Respuesta Promedio"
