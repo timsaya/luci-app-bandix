@@ -8,6 +8,40 @@
 
 // 暗色模式检测已改为使用 CSS 媒体查询 @media (prefers-color-scheme: dark)
 
+// 检测主题类型：返回 'wide'（宽主题，如 Argon）或 'narrow'（窄主题，如 Bootstrap）
+function getThemeType() {
+    // 获取 LuCI 主题设置
+    var mediaUrlBase = uci.get('luci', 'main', 'mediaurlbase');
+    
+    if (!mediaUrlBase) {
+        // 如果无法获取，尝试从 DOM 中检测
+        var linkTags = document.querySelectorAll('link[rel="stylesheet"]');
+        for (var i = 0; i < linkTags.length; i++) {
+            var href = linkTags[i].getAttribute('href') || '';
+            if (href.toLowerCase().includes('argon')) {
+                return 'wide';
+            }
+        }
+        // 默认返回窄主题
+        return 'narrow';
+    }
+    
+    var mediaUrlBaseLower = mediaUrlBase.toLowerCase();
+    
+    // 宽主题关键词列表（可以根据需要扩展）
+    var wideThemeKeywords = ['argon', 'material', 'design', 'edge'];
+    
+    // 检查是否是宽主题
+    for (var i = 0; i < wideThemeKeywords.length; i++) {
+        if (mediaUrlBaseLower.includes(wideThemeKeywords[i])) {
+            return 'wide';
+        }
+    }
+    
+    // 默认是窄主题（Bootstrap 等）
+    return 'narrow';
+}
+
 // 格式化时间戳
 function formatTimestamp(timestamp) {
     if (!timestamp) return _('Never Online');
@@ -95,6 +129,21 @@ return view.extend({
                 align-items: center;
                 gap: 10px;
                 font-size: 0.875rem;
+            }
+            
+            /* 只在宽模式下应用警告样式 */
+            .bandix-alert.wide-theme {
+                background-color: rgba(251, 191, 36, 0.1);
+                border: 1px solid rgba(251, 191, 36, 0.3);
+                color: #92400e;
+            }
+            
+            @media (prefers-color-scheme: dark) {
+                .bandix-alert.wide-theme {
+                    background-color: rgba(251, 191, 36, 0.15);
+                    border-color: rgba(251, 191, 36, 0.4);
+                    color: #fbbf24;
+                }
             }
             
             .bandix-alert-icon {
@@ -326,11 +375,16 @@ return view.extend({
 
         // 检查连接监控是否启用
         if (!connectionEnabled) {
-            var alertDiv = E('div', { 'class': 'bandix-alert' }, [
-                E('div', {}, [
-                    E('strong', {}, _('Connection Monitor Disabled')),
-                    E('p', { 'style': 'margin: 4px 0 0 0;' },
-                        _('Please enable connection monitoring in settings'))
+            var alertDiv = E('div', { 
+                'class': 'bandix-alert' + (getThemeType() === 'wide' ? ' wide-theme' : '')
+            }, [
+                E('div', { 'style': 'display: flex; align-items: center; gap: 8px;' }, [
+                    E('span', { 'style': 'font-size: 1rem;' }, '⚠'),
+                    E('div', {}, [
+                        E('strong', {}, _('Connection Monitor Disabled')),
+                        E('p', { 'style': 'margin: 4px 0 0 0;' },
+                            _('Please enable connection monitoring in settings'))
+                    ])
                 ])
             ]);
             container.appendChild(alertDiv);
@@ -348,8 +402,13 @@ return view.extend({
         }
 
         // 添加提示信息
-        var infoAlert = E('div', { 'class': 'bandix-alert' }, [
-            E('span', {}, _('List only shows LAN device connections, data may differ from total connections.'))
+        var infoAlert = E('div', { 
+            'class': 'bandix-alert' + (getThemeType() === 'wide' ? ' wide-theme' : '')
+        }, [
+            E('div', { 'style': 'display: flex; align-items: center; gap: 8px;' }, [
+                E('span', { 'style': 'font-size: 1rem;' }, '⚠'),
+                E('span', {}, _('List only shows LAN device connections, data may differ from total connections.'))
+            ])
         ]);
         container.appendChild(infoAlert);
 

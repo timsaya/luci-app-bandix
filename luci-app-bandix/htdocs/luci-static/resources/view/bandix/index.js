@@ -240,6 +240,21 @@ return view.extend({
                 font-size: 0.875rem;
             }
             
+            /* 只在宽模式下应用警告样式 */
+            .bandix-alert.wide-theme {
+                background-color: rgba(251, 191, 36, 0.1);
+                border: 1px solid rgba(251, 191, 36, 0.3);
+                color: #92400e;
+            }
+            
+            @media (prefers-color-scheme: dark) {
+                .bandix-alert.wide-theme {
+                    background-color: rgba(251, 191, 36, 0.15);
+                    border-color: rgba(251, 191, 36, 0.4);
+                    color: #fbbf24;
+                }
+            }
+            
             .bandix-alert-icon {
                 font-size: 0.875rem;
                 font-weight: 700;
@@ -432,11 +447,12 @@ return view.extend({
                 color: #9ca3af;
             }
 
-            .device-last-online:hover .device-last-online-value {
+            /* 悬浮在整个设备信息区域时显示精确时间 */
+            .device-info:hover .device-last-online-value {
                 display: none;
             }
 
-            .device-last-online:hover .device-last-online-exact {
+            .device-info:hover .device-last-online-exact {
                 display: inline;
             }
             
@@ -823,8 +839,13 @@ return view.extend({
             ]),
 
             // 警告提示（包含在线设备数）
-            E('div', { 'class': 'bandix-alert' }, [
-                E('span', {}, _('Rate limiting only applies to WAN traffic.')),
+            E('div', { 
+                'class': 'bandix-alert' + (getThemeType() === 'wide' ? ' wide-theme' : '')
+            }, [
+                E('div', { 'style': 'display: flex; align-items: center; gap: 8px;' }, [
+                    E('span', { 'style': 'font-size: 1rem;' }, '⚠'),
+                    E('span', {}, _('Rate limiting only applies to WAN traffic.'))
+                ]),
                 E('div', { 'class': 'bandix-badge', 'id': 'device-count' }, _('Online Devices') + ': 0 / 0')
             ]),
 

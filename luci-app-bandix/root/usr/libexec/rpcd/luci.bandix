@@ -240,13 +240,15 @@ get_dns_queries() {
 	local device="$2"
 	local is_query="$3"
 	local dns_server="$4"
-	local page="$5"
-	local page_size="$6"
+	local query_type="$5"
+	local page="$6"
+	local page_size="$7"
 	
 	[ -n "$domain" ] && query_params="${query_params}domain=$(printf '%s' "$domain" | sed 's/ /%20/g')&"
 	[ -n "$device" ] && query_params="${query_params}device=$(printf '%s' "$device" | sed 's/ /%20/g')&"
 	[ -n "$is_query" ] && query_params="${query_params}is_query=$is_query&"
 	[ -n "$dns_server" ] && query_params="${query_params}dns_server=$(printf '%s' "$dns_server" | sed 's/ /%20/g')&"
+	[ -n "$query_type" ] && query_params="${query_params}query_type=$(printf '%s' "$query_type" | sed 's/ /%20/g')&"
 	[ -n "$page" ] && query_params="${query_params}page=$page&"
 	[ -n "$page_size" ] && query_params="${query_params}page_size=$page_size&"
 	
@@ -320,6 +322,7 @@ case "$1" in
 		json_add_string "device"
 		json_add_string "is_query"
 		json_add_string "dns_server"
+		json_add_string "query_type"
 		json_add_int "page"
 		json_add_int "page_size"
 		json_close_object
@@ -450,15 +453,18 @@ case "$1" in
 					dns_server=$(echo "$input" | jsonfilter -e '$[3]' 2>/dev/null)
 					[ -z "$dns_server" ] && dns_server=$(echo "$input" | jsonfilter -e '$.dns_server' 2>/dev/null)
 					
-					page=$(echo "$input" | jsonfilter -e '$[4]' 2>/dev/null)
+					query_type=$(echo "$input" | jsonfilter -e '$[4]' 2>/dev/null)
+					[ -z "$query_type" ] && query_type=$(echo "$input" | jsonfilter -e '$.query_type' 2>/dev/null)
+					
+					page=$(echo "$input" | jsonfilter -e '$[5]' 2>/dev/null)
 					[ -z "$page" ] && page=$(echo "$input" | jsonfilter -e '$.page' 2>/dev/null)
 					
-					page_size=$(echo "$input" | jsonfilter -e '$[5]' 2>/dev/null)
+					page_size=$(echo "$input" | jsonfilter -e '$[6]' 2>/dev/null)
 					[ -z "$page_size" ] && page_size=$(echo "$input" | jsonfilter -e '$.page_size' 2>/dev/null)
 					
-					get_dns_queries "$domain" "$device" "$is_query" "$dns_server" "$page" "$page_size"
+					get_dns_queries "$domain" "$device" "$is_query" "$dns_server" "$query_type" "$page" "$page_size"
 				else
-					get_dns_queries "" "" "" "" "" ""
+					get_dns_queries "" "" "" "" "" "" ""
 				fi
 				;;
 			getDnsStats)
