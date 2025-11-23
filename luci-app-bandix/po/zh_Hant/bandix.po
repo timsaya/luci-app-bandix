@@ -745,3 +745,9 @@ msgstr "響應"
 
 msgid "Average Response Time"
 msgstr "平均響應時間"
+
+msgid "Show More"
+msgstr "顯示更多"
+
+msgid "Show Less"
+msgstr "顯示更少"

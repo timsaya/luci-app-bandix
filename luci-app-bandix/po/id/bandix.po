@@ -745,3 +745,9 @@ msgstr "Respons"
 
 msgid "Average Response Time"
 msgstr "Waktu Respons Rata-rata"
+
+msgid "Show More"
+msgstr "Tampilkan lebih banyak"
+
+msgid "Show Less"
+msgstr "Tampilkan lebih sedikit"

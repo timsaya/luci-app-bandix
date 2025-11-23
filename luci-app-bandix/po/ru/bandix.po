@@ -745,3 +745,9 @@ msgstr "Ответы"
 
 msgid "Average Response Time"
 msgstr "Среднее Время Ответа"
+
+msgid "Show More"
+msgstr "Показать больше"
+
+msgid "Show Less"
+msgstr "Показать меньше"

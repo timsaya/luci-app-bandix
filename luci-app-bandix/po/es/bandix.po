@@ -745,3 +745,9 @@ msgstr "Respuestas"
 
 msgid "Average Response Time"
 msgstr "Tiempo de Respuesta Promedio"
+
+msgid "Show More"
+msgstr "Mostrar más"
+
+msgid "Show Less"
+msgstr "Mostrar menos"

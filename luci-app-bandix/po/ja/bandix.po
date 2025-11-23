@@ -745,3 +745,9 @@ msgstr "レスポンス"
 
 msgid "Average Response Time"
 msgstr "平均応答時間"
+
+msgid "Show More"
+msgstr "もっと見る"
+
+msgid "Show Less"
+msgstr "閉じる"
