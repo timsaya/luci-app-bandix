@@ -3428,7 +3428,7 @@ function downsampleForMobile(data, labels, upSeries, downSeries, maxPoints) {
         // 历史趋势轮询（每1秒）
         poll.add(function () {
             return refreshHistory();
-        },100);
+        },1);
 
 
 
@@ -3975,7 +3975,7 @@ function downsampleForMobile(data, labels, upSeries, downSeries, maxPoints) {
         }
 
         // 轮询获取数据
-        poll.add(updateDeviceData, 100);
+        poll.add(updateDeviceData, 1);
         
         // 轮询获取定时限速规则（每5秒）
         poll.add(function() {
