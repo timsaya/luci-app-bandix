@@ -751,3 +751,93 @@ msgstr "Tampilkan lebih banyak"
 
 msgid "Show Less"
 msgstr "Tampilkan lebih sedikit"
+
+msgid "Add Schedule Rule"
+msgstr "Tambah aturan pembatasan terjadwal"
+
+msgid "Add Rule"
+msgstr "Tambah aturan"
+
+msgid "Set rate limit rules for different time periods"
+msgstr "Tetapkan aturan pembatasan untuk periode waktu yang berbeda"
+
+msgid "Time Slot"
+msgstr "Slot waktu"
+
+msgid "Days of Week"
+msgstr "Hari dalam seminggu"
+
+msgid "Mon"
+msgstr "Sen"
+
+msgid "Tue"
+msgstr "Sel"
+
+msgid "Wed"
+msgstr "Rab"
+
+msgid "Thu"
+msgstr "Kam"
+
+msgid "Fri"
+msgstr "Jum"
+
+msgid "Sat"
+msgstr "Sab"
+
+msgid "Sun"
+msgstr "Min"
+
+msgid "Adding..."
+msgstr "Menambahkan..."
+
+msgid "Failed to add schedule rule: "
+msgstr "Gagal menambahkan aturan terjadwal: "
+
+msgid "Please set time slot"
+msgstr "Silakan atur slot waktu"
+
+msgid "Please select at least one day"
+msgstr "Silakan pilih setidaknya satu hari"
+
+msgid "No scheduled rules yet, click \"Add Rule\" to start setting"
+msgstr "Belum ada aturan terjadwal, klik \"Tambah aturan\" untuk mulai pengaturan"
+
+msgid "Loading..."
+msgstr "Memuat..."
+
+msgid "No schedule rules"
+msgstr "Tidak ada aturan terjadwal"
+
+msgid "Failed to load schedule rules"
+msgstr "Gagal memuat aturan terjadwal"
+
+msgid "Delete Schedule Rule"
+msgstr "Hapus aturan pembatasan terjadwal"
+
+msgid "Are you sure you want to delete this schedule rule?"
+msgstr "Apakah Anda yakin ingin menghapus aturan terjadwal ini?"
+
+msgid "Failed to delete schedule rule"
+msgstr "Gagal menghapus aturan terjadwal"
+
+msgid "Confirm"
+msgstr "Konfirmasi"
+
+msgid "Close"
+msgstr "Tutup"
+
+msgid "rule"
+msgstr "aturan"
+
+msgid "rules"
+msgstr "aturan"
+
+msgid "more"
+msgstr "lainnya"
+
+msgid "No active rule"
+msgstr "Tidak ada aturan aktif"
+
+msgid "Schedule Rules"
+msgstr "Aturan pembatasan terjadwal"

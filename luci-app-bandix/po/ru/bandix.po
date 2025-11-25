@@ -751,3 +751,93 @@ msgstr "Показать больше"
 
 msgid "Show Less"
 msgstr "Показать меньше"
+
+msgid "Add Schedule Rule"
+msgstr "Добавить правило ограничения по расписанию"
+
+msgid "Add Rule"
+msgstr "Добавить правило"
+
+msgid "Set rate limit rules for different time periods"
+msgstr "Установить правила ограничения скорости для разных периодов времени"
+
+msgid "Time Slot"
+msgstr "Временной интервал"
+
+msgid "Days of Week"
+msgstr "Дни недели"
+
+msgid "Mon"
+msgstr "Пн"
+
+msgid "Tue"
+msgstr "Вт"
+
+msgid "Wed"
+msgstr "Ср"
+
+msgid "Thu"
+msgstr "Чт"
+
+msgid "Fri"
+msgstr "Пт"
+
+msgid "Sat"
+msgstr "Сб"
+
+msgid "Sun"
+msgstr "Вс"
+
+msgid "Adding..."
+msgstr "Добавление..."
+
+msgid "Failed to add schedule rule: "
+msgstr "Не удалось добавить правило расписания: "
+
+msgid "Please set time slot"
+msgstr "Пожалуйста, установите временной интервал"
+
+msgid "Please select at least one day"
+msgstr "Пожалуйста, выберите хотя бы один день"
+
+msgid "No scheduled rules yet, click \"Add Rule\" to start setting"
+msgstr "Правил расписания пока нет, нажмите \"Добавить правило\", чтобы начать настройку"
+
+msgid "Loading..."
+msgstr "Загрузка..."
+
+msgid "No schedule rules"
+msgstr "Нет правил расписания"
+
+msgid "Failed to load schedule rules"
+msgstr "Не удалось загрузить правила расписания"
+
+msgid "Delete Schedule Rule"
+msgstr "Удалить правило ограничения по расписанию"
+
+msgid "Are you sure you want to delete this schedule rule?"
+msgstr "Вы уверены, что хотите удалить это правило расписания?"
+
+msgid "Failed to delete schedule rule"
+msgstr "Не удалось удалить правило расписания"
+
+msgid "Confirm"
+msgstr "Подтвердить"
+
+msgid "Close"
+msgstr "Закрыть"
+
+msgid "rule"
+msgstr "правило"
+
+msgid "rules"
+msgstr "правила"
+
+msgid "more"
+msgstr "еще"
+
+msgid "No active rule"
+msgstr "Нет активных правил"
+
+msgid "Schedule Rules"
+msgstr "Правила ограничения по расписанию"

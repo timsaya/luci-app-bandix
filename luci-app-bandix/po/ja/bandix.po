@@ -751,3 +751,93 @@ msgstr "もっと見る"
 
 msgid "Show Less"
 msgstr "閉じる"
+
+msgid "Add Schedule Rule"
+msgstr "スケジュール制限ルールを追加"
+
+msgid "Add Rule"
+msgstr "ルールを追加"
+
+msgid "Set rate limit rules for different time periods"
+msgstr "異なる時間帯にレート制限ルールを設定"
+
+msgid "Time Slot"
+msgstr "時間帯"
+
+msgid "Days of Week"
+msgstr "曜日"
+
+msgid "Mon"
+msgstr "月"
+
+msgid "Tue"
+msgstr "火"
+
+msgid "Wed"
+msgstr "水"
+
+msgid "Thu"
+msgstr "木"
+
+msgid "Fri"
+msgstr "金"
+
+msgid "Sat"
+msgstr "土"
+
+msgid "Sun"
+msgstr "日"
+
+msgid "Adding..."
+msgstr "追加中..."
+
+msgid "Failed to add schedule rule: "
+msgstr "スケジュール制限ルールの追加に失敗しました："
+
+msgid "Please set time slot"
+msgstr "時間帯を設定してください"
+
+msgid "Please select at least one day"
+msgstr "少なくとも1日を選択してください"
+
+msgid "No scheduled rules yet, click \"Add Rule\" to start setting"
+msgstr "スケジュール制限ルールがまだありません。「ルールを追加」をクリックして設定を開始してください"
+
+msgid "Loading..."
+msgstr "読み込み中..."
+
+msgid "No schedule rules"
+msgstr "スケジュール制限ルールなし"
+
+msgid "Failed to load schedule rules"
+msgstr "スケジュール制限ルールの読み込みに失敗しました"
+
+msgid "Delete Schedule Rule"
+msgstr "スケジュール制限ルールを削除"
+
+msgid "Are you sure you want to delete this schedule rule?"
+msgstr "このスケジュール制限ルールを削除してもよろしいですか？"
+
+msgid "Failed to delete schedule rule"
+msgstr "スケジュール制限ルールの削除に失敗しました"
+
+msgid "Confirm"
+msgstr "確認"
+
+msgid "Close"
+msgstr "閉じる"
+
+msgid "rule"
+msgstr "ルール"
+
+msgid "rules"
+msgstr "ルール"
+
+msgid "more"
+msgstr "その他"
+
+msgid "No active rule"
+msgstr "アクティブなルールなし"
+
+msgid "Schedule Rules"
+msgstr "スケジュール制限ルール"

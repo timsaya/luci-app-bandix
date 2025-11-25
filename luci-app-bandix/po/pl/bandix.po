@@ -752,3 +752,93 @@ msgstr "Pokaż więcej"
 msgid "Show Less"
 msgstr "Pokaż mniej"
 
+msgid "Add Schedule Rule"
+msgstr "Dodaj regułę limitu czasu"
+
+msgid "Add Rule"
+msgstr "Dodaj regułę"
+
+msgid "Set rate limit rules for different time periods"
+msgstr "Ustaw reguły limitu dla różnych okresów czasu"
+
+msgid "Time Slot"
+msgstr "Przedział czasowy"
+
+msgid "Days of Week"
+msgstr "Dni tygodnia"
+
+msgid "Mon"
+msgstr "Pon"
+
+msgid "Tue"
+msgstr "Wt"
+
+msgid "Wed"
+msgstr "Śr"
+
+msgid "Thu"
+msgstr "Czw"
+
+msgid "Fri"
+msgstr "Pt"
+
+msgid "Sat"
+msgstr "Sob"
+
+msgid "Sun"
+msgstr "Nie"
+
+msgid "Adding..."
+msgstr "Dodawanie..."
+
+msgid "Failed to add schedule rule: "
+msgstr "Nie udało się dodać reguły limitu czasu: "
+
+msgid "Please set time slot"
+msgstr "Proszę ustawić przedział czasowy"
+
+msgid "Please select at least one day"
+msgstr "Proszę wybrać co najmniej jeden dzień"
+
+msgid "No scheduled rules yet, click \"Add Rule\" to start setting"
+msgstr "Brak jeszcze reguł limitu czasu, kliknij \"Dodaj regułę\", aby rozpocząć"
+
+msgid "Loading..."
+msgstr "Ładowanie..."
+
+msgid "No schedule rules"
+msgstr "Brak reguł limitu czasu"
+
+msgid "Failed to load schedule rules"
+msgstr "Nie udało się załadować reguł limitu czasu"
+
+msgid "Delete Schedule Rule"
+msgstr "Usuń regułę limitu czasu"
+
+msgid "Are you sure you want to delete this schedule rule?"
+msgstr "Czy na pewno chcesz usunąć tę regułę limitu czasu?"
+
+msgid "Failed to delete schedule rule"
+msgstr "Nie udało się usunąć reguły limitu czasu"
+
+msgid "Confirm"
+msgstr "Potwierdź"
+
+msgid "Close"
+msgstr "Zamknij"
+
+msgid "rule"
+msgstr "reguła"
+
+msgid "rules"
+msgstr "reguły"
+
+msgid "more"
+msgstr "więcej"
+
+msgid "No active rule"
+msgstr "Brak aktywnej reguły"
+
+msgid "Schedule Rules"
+msgstr "Reguły limitu czasu"
+

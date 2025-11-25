@@ -12,6 +12,7 @@ readonly BANDIX_METRICS_API="$BANDIX_API_BASE/api/traffic/metrics"
 readonly BANDIX_CONNECTION_API="$BANDIX_API_BASE/api/connection/devices"
 readonly BANDIX_DNS_QUERIES_API="$BANDIX_API_BASE/api/dns/queries"
 readonly BANDIX_DNS_STATS_API="$BANDIX_API_BASE/api/dns/stats"
+readonly BANDIX_SCHEDULE_LIMITS_API="$BANDIX_API_BASE/api/traffic/limits/schedule"
 
 # 通用函数：创建简单的JSON响应
 make_value() {
@@ -96,56 +97,6 @@ get_metrics() {
         # logger "luci.bandix.metrics: jsonfilter failed to extract data part"
         echo '{"retention_seconds":600,"mac":"","metrics":[]}'
     fi
-}
-
-# 设置设备限速
-set_device_rate_limit() {
-	local mac="$1"
-	local wide_tx_rate_limit="$2"
-	local wide_rx_rate_limit="$3"
-
-	# logger "luci.bandix: set_device_rate_limit 参数: mac=$mac tx=$wide_tx_rate_limit rx=$wide_rx_rate_limit"
-	
-	# 验证参数
-	if [ -z "$mac" ]; then
-		make_error "MAC address is required"
-		return
-	fi
-	
-	# 转义MAC地址中的特殊字符
-	local mac_escaped=$(escape_json_string "$mac")
-	
-	# 构建请求数据
-	local request_data="{
-		\"mac\": \"$mac\",
-		\"wide_tx_rate_limit\": $wide_tx_rate_limit,
-		\"wide_rx_rate_limit\": $wide_rx_rate_limit
-	}"
-	
-	# 记录请求数据（用于调试）
-	# logger "luci.bandix: request_data=$request_data"
-	
-	# 发送请求到bandix API
-	local response=$(curl -s --connect-timeout 3 --max-time 10 -X POST -H "Content-Type: application/json" -d "$request_data" "$BANDIX_LIMITS_API" 2>/dev/null)
-	
-	# logger "luci.bandix: API response=$response"
-	
-	if [ $? -eq 0 ] && [ -n "$response" ]; then
-		# 检查API响应是否包含success状态
-		if echo "$response" | grep -q '"status":\s*"success"'; then
-			make_success "Rate limit set successfully"
-		else
-			# API返回了响应但不是success状态
-			json_init
-			json_add_boolean "success" 0
-			json_add_string "error" "API returned error response"
-			json_add_string "response" "$response"
-			json_dump
-			json_cleanup
-		fi
-	else
-		make_error "Failed to set rate limit"
-	fi
 }
 
 # 设置设备主机名绑定
@@ -293,6 +244,129 @@ get_dns_stats() {
 	echo "$response"
 }
 
+# 获取定时限速规则
+get_schedule_limits() {
+	# 从 Bandix API 获取定时限速规则
+	local response=$(curl -s --connect-timeout 2 --max-time 5 -X GET "$BANDIX_SCHEDULE_LIMITS_API" 2>/dev/null)
+	
+	# 检查API调用是否成功
+	if [ $? -ne 0 ] || [ -z "$response" ]; then
+		make_error "Failed to connect to Bandix service"
+		return
+	fi
+	
+	# 直接返回API结果
+	echo "$response"
+}
+
+# 设置定时限速规则
+set_schedule_limit() {
+	local mac="$1"
+	local start_time="$2"
+	local end_time="$3"
+	local days="$4"
+	local wide_tx_rate_limit="$5"
+	local wide_rx_rate_limit="$6"
+	
+	# 验证参数
+	if [ -z "$mac" ]; then
+		make_error "MAC address is required"
+		return
+	fi
+	
+	if [ -z "$start_time" ] || [ -z "$end_time" ] || [ -z "$days" ]; then
+		make_error "Time slot parameters are required"
+		return
+	fi
+	
+	# 转义MAC地址中的特殊字符
+	local mac_escaped=$(escape_json_string "$mac")
+	
+	# 构建请求数据
+	local request_data="{
+		\"mac\": \"$mac\",
+		\"time_slot\": {
+			\"start\": \"$start_time\",
+			\"end\": \"$end_time\",
+			\"days\": $days
+		},
+		\"wide_tx_rate_limit\": $wide_tx_rate_limit,
+		\"wide_rx_rate_limit\": $wide_rx_rate_limit
+	}"
+	
+	# 发送请求到bandix API
+	local response=$(curl -s --connect-timeout 3 --max-time 10 -X POST -H "Content-Type: application/json" -d "$request_data" "$BANDIX_SCHEDULE_LIMITS_API" 2>/dev/null)
+	
+	if [ $? -eq 0 ] && [ -n "$response" ]; then
+		# 检查API响应是否包含success状态
+		if echo "$response" | grep -q '"status":\s*"success"'; then
+			make_success "Schedule limit set successfully"
+		else
+			# API返回了响应但不是success状态
+			json_init
+			json_add_boolean "success" 0
+			json_add_string "error" "API returned error response"
+			json_add_string "response" "$response"
+			json_dump
+			json_cleanup
+		fi
+	else
+		make_error "Failed to set schedule limit"
+	fi
+}
+
+# 删除定时限速规则
+delete_schedule_limit() {
+	local mac="$1"
+	local start_time="$2"
+	local end_time="$3"
+	local days="$4"
+	
+	# 验证参数
+	if [ -z "$mac" ]; then
+		make_error "MAC address is required"
+		return
+	fi
+	
+	if [ -z "$start_time" ] || [ -z "$end_time" ] || [ -z "$days" ]; then
+		make_error "Time slot parameters are required"
+		return
+	fi
+	
+	# 转义MAC地址中的特殊字符
+	local mac_escaped=$(escape_json_string "$mac")
+	
+	# 构建请求数据
+	local request_data="{
+		\"mac\": \"$mac\",
+		\"time_slot\": {
+			\"start\": \"$start_time\",
+			\"end\": \"$end_time\",
+			\"days\": $days
+		}
+	}"
+	
+	# 发送请求到bandix API
+	local response=$(curl -s --connect-timeout 3 --max-time 10 -X DELETE -H "Content-Type: application/json" -d "$request_data" "$BANDIX_SCHEDULE_LIMITS_API" 2>/dev/null)
+	
+	if [ $? -eq 0 ] && [ -n "$response" ]; then
+		# 检查API响应是否包含success状态
+		if echo "$response" | grep -q '"status":\s*"success"'; then
+			make_success "Schedule limit deleted successfully"
+		else
+			# API返回了响应但不是success状态
+			json_init
+			json_add_boolean "success" 0
+			json_add_string "error" "API returned error response"
+			json_add_string "response" "$response"
+			json_dump
+			json_cleanup
+		fi
+	else
+		make_error "Failed to delete schedule limit"
+	fi
+}
+
 case "$1" in
 	list)
 		json_init
@@ -301,12 +375,6 @@ case "$1" in
 		
 		json_add_object "getMetrics"
 		json_add_string "mac"
-		json_close_object
-		
-		json_add_object "setRateLimit"
-		json_add_string "mac"
-		json_add_int "wide_rx_rate_limit"
-		json_add_int "wide_tx_rate_limit"
 		json_close_object
 		
 		json_add_object "setHostname"
@@ -328,6 +396,25 @@ case "$1" in
 		json_close_object
 		
 		json_add_object "getDnsStats"
+		json_close_object
+		
+		json_add_object "getScheduleLimits"
+		json_close_object
+		
+		json_add_object "setScheduleLimit"
+		json_add_string "mac"
+		json_add_string "start_time"
+		json_add_string "end_time"
+		json_add_string "days"
+		json_add_int "wide_rx_rate_limit"
+		json_add_int "wide_tx_rate_limit"
+		json_close_object
+		
+		json_add_object "deleteScheduleLimit"
+		json_add_string "mac"
+		json_add_string "start_time"
+		json_add_string "end_time"
+		json_add_string "days"
 		json_close_object
 		
 		json_dump
@@ -359,42 +446,6 @@ case "$1" in
 					# logger "luci.bandix: received argv mac: $mac"
 				fi
 				get_metrics "$mac"
-				;;
-			setRateLimit)
-				# logger "luci.bandix: setRateLimit called"
-				
-				# 从 stdin 读取 JSON 参数
-				read input
-				# logger "luci.bandix: received input: $input"
-				
-				if [ -n "$input" ]; then
-					# 尝试解析数组格式的 JSON 参数 (LuCI RPC 通常使用数组格式)
-					# 参数格式: ["mac", wide_tx_rate_limit, wide_rx_rate_limit]
-					mac=$(echo "$input" | jsonfilter -e '$[0]' 2>/dev/null)
-					wide_tx_rate_limit=$(echo "$input" | jsonfilter -e '$[1]' 2>/dev/null)
-					wide_rx_rate_limit=$(echo "$input" | jsonfilter -e '$[2]' 2>/dev/null)
-					
-					# 如果数组格式解析失败，尝试对象格式
-					if [ -z "$mac" ]; then
-						mac=$(echo "$input" | jsonfilter -e '$.mac' 2>/dev/null)
-						wide_tx_rate_limit=$(echo "$input" | jsonfilter -e '$.wide_tx_rate_limit' 2>/dev/null)
-						wide_rx_rate_limit=$(echo "$input" | jsonfilter -e '$.wide_rx_rate_limit' 2>/dev/null)
-					fi
-					
-					# logger "luci.bandix: parsed - mac=$mac tx=$wide_tx_rate_limit rx=$wide_rx_rate_limit"
-					
-					# 验证参数
-					if [ -n "$mac" ] && [ -n "$wide_tx_rate_limit" ] && [ -n "$wide_rx_rate_limit" ]; then
-						# 调用限速设置函数
-						set_device_rate_limit "$mac" "$wide_tx_rate_limit" "$wide_rx_rate_limit"
-					else
-						# logger "luci.bandix: setRateLimit 参数缺失或无效"
-						make_error "Missing or invalid parameters"
-					fi
-				else
-					# logger "luci.bandix: setRateLimit 没有接收到输入"
-					make_error "No input received"
-				fi
 				;;
 			setHostname)
 				# logger "luci.bandix: setHostname called"
@@ -470,6 +521,122 @@ case "$1" in
 			getDnsStats)
 				# logger "luci.bandix: getDnsStats called"
 				get_dns_stats
+				;;
+			getScheduleLimits)
+				# logger "luci.bandix: getScheduleLimits called"
+				get_schedule_limits
+				;;
+			setScheduleLimit)
+				# logger "luci.bandix: setScheduleLimit called"
+				
+				# 从 stdin 读取 JSON 参数
+				read input
+				# logger "luci.bandix: received input: $input"
+				
+				if [ -n "$input" ]; then
+					# 尝试解析数组格式的 JSON 参数 (LuCI RPC 通常使用数组格式)
+					# 参数格式: ["mac", "start_time", "end_time", "days", wide_tx_rate_limit, wide_rx_rate_limit]
+					mac=$(echo "$input" | jsonfilter -e '$[0]' 2>/dev/null)
+					start_time=$(echo "$input" | jsonfilter -e '$[1]' 2>/dev/null)
+					end_time=$(echo "$input" | jsonfilter -e '$[2]' 2>/dev/null)
+					# days 可能是 JSON 数组字符串，需要特殊处理
+					days=$(echo "$input" | jsonfilter -e '$[3]' 2>/dev/null)
+					# 如果提取失败，尝试作为字符串提取
+					if [ -z "$days" ]; then
+						days=$(echo "$input" | jsonfilter -e '$[3]' -s 2>/dev/null)
+					fi
+					wide_tx_rate_limit=$(echo "$input" | jsonfilter -e '$[4]' 2>/dev/null)
+					wide_rx_rate_limit=$(echo "$input" | jsonfilter -e '$[5]' 2>/dev/null)
+					
+					# 如果数组格式解析失败，尝试对象格式
+					if [ -z "$mac" ]; then
+						mac=$(echo "$input" | jsonfilter -e '$.mac' 2>/dev/null)
+						start_time=$(echo "$input" | jsonfilter -e '$.start_time' 2>/dev/null)
+						end_time=$(echo "$input" | jsonfilter -e '$.end_time' 2>/dev/null)
+						# days 可能是 JSON 数组字符串
+						days=$(echo "$input" | jsonfilter -e '$.days' 2>/dev/null)
+						# 如果提取失败，尝试提取为 JSON 数组
+						if [ -z "$days" ]; then
+							days=$(echo "$input" | jsonfilter -e '$.days' -s 2>/dev/null)
+						fi
+						wide_tx_rate_limit=$(echo "$input" | jsonfilter -e '$.wide_tx_rate_limit' 2>/dev/null)
+						wide_rx_rate_limit=$(echo "$input" | jsonfilter -e '$.wide_rx_rate_limit' 2>/dev/null)
+					fi
+					
+					# 如果 days 还不是有效的 JSON 数组格式，尝试从原始输入中提取
+					if [ -z "$days" ] || ! echo "$days" | grep -q '^\['; then
+						# 尝试直接提取 days 字段的值
+						days=$(echo "$input" | sed -n 's/.*"days"[[:space:]]*:[[:space:]]*\(\[.*\]\).*/\1/p' 2>/dev/null)
+					fi
+					
+					# logger "luci.bandix: parsed - mac=$mac start=$start_time end=$end_time days=$days tx=$wide_tx_rate_limit rx=$wide_rx_rate_limit"
+					
+					# 验证参数
+					if [ -n "$mac" ] && [ -n "$start_time" ] && [ -n "$end_time" ] && [ -n "$days" ] && [ -n "$wide_tx_rate_limit" ] && [ -n "$wide_rx_rate_limit" ]; then
+						# 调用定时限速设置函数
+						set_schedule_limit "$mac" "$start_time" "$end_time" "$days" "$wide_tx_rate_limit" "$wide_rx_rate_limit"
+					else
+						# logger "luci.bandix: setScheduleLimit 参数缺失或无效"
+						make_error "Missing or invalid parameters"
+					fi
+				else
+					# logger "luci.bandix: setScheduleLimit 没有接收到输入"
+					make_error "No input received"
+				fi
+				;;
+			deleteScheduleLimit)
+				# logger "luci.bandix: deleteScheduleLimit called"
+				
+				# 从 stdin 读取 JSON 参数
+				read input
+				# logger "luci.bandix: received input: $input"
+				
+				if [ -n "$input" ]; then
+					# 尝试解析数组格式的 JSON 参数 (LuCI RPC 通常使用数组格式)
+					# 参数格式: ["mac", "start_time", "end_time", "days"]
+					mac=$(echo "$input" | jsonfilter -e '$[0]' 2>/dev/null)
+					start_time=$(echo "$input" | jsonfilter -e '$[1]' 2>/dev/null)
+					end_time=$(echo "$input" | jsonfilter -e '$[2]' 2>/dev/null)
+					# days 可能是 JSON 数组字符串，需要特殊处理
+					days=$(echo "$input" | jsonfilter -e '$[3]' 2>/dev/null)
+					# 如果提取失败，尝试作为字符串提取
+					if [ -z "$days" ]; then
+						days=$(echo "$input" | jsonfilter -e '$[3]' -s 2>/dev/null)
+					fi
+					
+					# 如果数组格式解析失败，尝试对象格式
+					if [ -z "$mac" ]; then
+						mac=$(echo "$input" | jsonfilter -e '$.mac' 2>/dev/null)
+						start_time=$(echo "$input" | jsonfilter -e '$.start_time' 2>/dev/null)
+						end_time=$(echo "$input" | jsonfilter -e '$.end_time' 2>/dev/null)
+						# days 可能是 JSON 数组字符串
+						days=$(echo "$input" | jsonfilter -e '$.days' 2>/dev/null)
+						# 如果提取失败，尝试提取为 JSON 数组
+						if [ -z "$days" ]; then
+							days=$(echo "$input" | jsonfilter -e '$.days' -s 2>/dev/null)
+						fi
+					fi
+					
+					# 如果 days 还不是有效的 JSON 数组格式，尝试从原始输入中提取
+					if [ -z "$days" ] || ! echo "$days" | grep -q '^\['; then
+						# 尝试直接提取 days 字段的值
+						days=$(echo "$input" | sed -n 's/.*"days"[[:space:]]*:[[:space:]]*\(\[.*\]\).*/\1/p' 2>/dev/null)
+					fi
+					
+					# logger "luci.bandix: parsed - mac=$mac start=$start_time end=$end_time days=$days"
+					
+					# 验证参数
+					if [ -n "$mac" ] && [ -n "$start_time" ] && [ -n "$end_time" ] && [ -n "$days" ]; then
+						# 调用定时限速删除函数
+						delete_schedule_limit "$mac" "$start_time" "$end_time" "$days"
+					else
+						# logger "luci.bandix: deleteScheduleLimit 参数缺失或无效"
+						make_error "Missing or invalid parameters"
+					fi
+				else
+					# logger "luci.bandix: deleteScheduleLimit 没有接收到输入"
+					make_error "No input received"
+				fi
 				;;
 		esac
 		;;

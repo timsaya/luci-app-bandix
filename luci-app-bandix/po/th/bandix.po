@@ -751,3 +751,93 @@ msgstr "แสดงเพิ่มเติม"
 
 msgid "Show Less"
 msgstr "แสดงน้อยลง"
+
+msgid "Add Schedule Rule"
+msgstr "เพิ่มกฎการจำกัดอัตราแบบกำหนดเวลา"
+
+msgid "Add Rule"
+msgstr "เพิ่มกฎ"
+
+msgid "Set rate limit rules for different time periods"
+msgstr "ตั้งค่ากฎการจำกัดอัตราสำหรับช่วงเวลาต่างๆ"
+
+msgid "Time Slot"
+msgstr "ช่วงเวลา"
+
+msgid "Days of Week"
+msgstr "วันในสัปดาห์"
+
+msgid "Mon"
+msgstr "จ"
+
+msgid "Tue"
+msgstr "อ"
+
+msgid "Wed"
+msgstr "พ"
+
+msgid "Thu"
+msgstr "พฤ"
+
+msgid "Fri"
+msgstr "ศ"
+
+msgid "Sat"
+msgstr "ส"
+
+msgid "Sun"
+msgstr "อา"
+
+msgid "Adding..."
+msgstr "กำลังเพิ่ม..."
+
+msgid "Failed to add schedule rule: "
+msgstr "เพิ่มกฎการจำกัดอัตราแบบกำหนดเวลาล้มเหลว: "
+
+msgid "Please set time slot"
+msgstr "โปรดตั้งค่าช่วงเวลา"
+
+msgid "Please select at least one day"
+msgstr "โปรดเลือกอย่างน้อยหนึ่งวัน"
+
+msgid "No scheduled rules yet, click \"Add Rule\" to start setting"
+msgstr "ยังไม่มีกฎการจำกัดอัตราแบบกำหนดเวลา คลิก \"เพิ่มกฎ\" เพื่อเริ่มตั้งค่า"
+
+msgid "Loading..."
+msgstr "กำลังโหลด..."
+
+msgid "No schedule rules"
+msgstr "ไม่มีกฎการจำกัดอัตราแบบกำหนดเวลา"
+
+msgid "Failed to load schedule rules"
+msgstr "โหลดกฎการจำกัดอัตราแบบกำหนดเวลาล้มเหลว"
+
+msgid "Delete Schedule Rule"
+msgstr "ลบกฎการจำกัดอัตราแบบกำหนดเวลา"
+
+msgid "Are you sure you want to delete this schedule rule?"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบกฎการจำกัดอัตราแบบกำหนดเวลานี้?"
+
+msgid "Failed to delete schedule rule"
+msgstr "ลบกฎการจำกัดอัตราแบบกำหนดเวลาล้มเหลว"
+
+msgid "Confirm"
+msgstr "ยืนยัน"
+
+msgid "Close"
+msgstr "ปิด"
+
+msgid "rule"
+msgstr "กฎ"
+
+msgid "rules"
+msgstr "กฎ"
+
+msgid "more"
+msgstr "เพิ่มเติม"
+
+msgid "No active rule"
+msgstr "ไม่มีกฎที่ใช้งาน"
+
+msgid "Schedule Rules"
+msgstr "กฎการจำกัดอัตราแบบกำหนดเวลา"

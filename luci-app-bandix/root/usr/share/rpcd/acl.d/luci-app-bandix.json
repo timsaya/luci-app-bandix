@@ -6,11 +6,13 @@
 				"luci.bandix": [
 					"getStatus",
 					"getMetrics",
-					"setRateLimit",
 					"getConnection",
 					"setHostname",
 					"getDnsQueries",
-					"getDnsStats"
+					"getDnsStats",
+					"getScheduleLimits",
+					"setScheduleLimit",
+					"deleteScheduleLimit"
 				]
 			},
 			"uci": [
@@ -20,13 +22,15 @@
 		"write": {
 			"ubus": {
 				"luci.bandix": [
-					"setRateLimit",
 					"getStatus",
 					"getMetrics",
 					"getConnection",
 					"setHostname",
 					"getDnsQueries",
-					"getDnsStats"
+					"getDnsStats",
+					"getScheduleLimits",
+					"setScheduleLimit",
+					"deleteScheduleLimit"
 				]
 			},
 			"uci": [

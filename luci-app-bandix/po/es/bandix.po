@@ -751,3 +751,93 @@ msgstr "Mostrar más"
 
 msgid "Show Less"
 msgstr "Mostrar menos"
+
+msgid "Add Schedule Rule"
+msgstr "Agregar regla de limitación programada"
+
+msgid "Add Rule"
+msgstr "Agregar regla"
+
+msgid "Set rate limit rules for different time periods"
+msgstr "Establecer reglas de limitación para diferentes períodos de tiempo"
+
+msgid "Time Slot"
+msgstr "Franja horaria"
+
+msgid "Days of Week"
+msgstr "Días de la semana"
+
+msgid "Mon"
+msgstr "Lun"
+
+msgid "Tue"
+msgstr "Mar"
+
+msgid "Wed"
+msgstr "Mié"
+
+msgid "Thu"
+msgstr "Jue"
+
+msgid "Fri"
+msgstr "Vie"
+
+msgid "Sat"
+msgstr "Sáb"
+
+msgid "Sun"
+msgstr "Dom"
+
+msgid "Adding..."
+msgstr "Agregando..."
+
+msgid "Failed to add schedule rule: "
+msgstr "Error al agregar regla programada: "
+
+msgid "Please set time slot"
+msgstr "Por favor establezca la franja horaria"
+
+msgid "Please select at least one day"
+msgstr "Por favor seleccione al menos un día"
+
+msgid "No scheduled rules yet, click \"Add Rule\" to start setting"
+msgstr "Aún no hay reglas programadas, haga clic en \"Agregar regla\" para comenzar"
+
+msgid "Loading..."
+msgstr "Cargando..."
+
+msgid "No schedule rules"
+msgstr "No hay reglas programadas"
+
+msgid "Failed to load schedule rules"
+msgstr "Error al cargar reglas programadas"
+
+msgid "Delete Schedule Rule"
+msgstr "Eliminar regla programada"
+
+msgid "Are you sure you want to delete this schedule rule?"
+msgstr "¿Está seguro de que desea eliminar esta regla programada?"
+
+msgid "Failed to delete schedule rule"
+msgstr "Error al eliminar regla programada"
+
+msgid "Confirm"
+msgstr "Confirmar"
+
+msgid "Close"
+msgstr "Cerrar"
+
+msgid "rule"
+msgstr "regla"
+
+msgid "rules"
+msgstr "reglas"
+
+msgid "more"
+msgstr "más"
+
+msgid "No active rule"
+msgstr "Sin regla activa"
+
+msgid "Schedule Rules"
+msgstr "Reglas de limitación programada"
