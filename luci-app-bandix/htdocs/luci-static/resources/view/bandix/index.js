@@ -375,27 +375,27 @@ return view.extend({
             
             .bandix-table th:nth-child(1),
             .bandix-table td:nth-child(1) {
-                width: 25%;
+                width: 27%;
             }
             
             .bandix-table th:nth-child(2),
             .bandix-table td:nth-child(2) {
-                width: 20%;
+                width: 22%;
             }
             
             .bandix-table th:nth-child(3),
             .bandix-table td:nth-child(3) {
-                width: 20%;
+                width: 22%;
             }
             
             .bandix-table th:nth-child(4),
             .bandix-table td:nth-child(4) {
-                width: 25%;
+                width: 12.5%;
             }
             
             .bandix-table th:nth-child(5),
             .bandix-table td:nth-child(5) {
-                width: 10%;
+                width: 16.5%;
             }
             
             .schedule-rules-info {
@@ -1352,6 +1352,82 @@ return view.extend({
 			.history-tooltip .ht-kpi.up .ht-k-value { color: #f97316; }
 			.history-tooltip .ht-divider { height: 1px; background-color: currentColor; opacity: 0.3; margin: 8px 0; }
 			.history-tooltip .ht-section-title { font-weight: 600; font-size: 0.75rem; opacity: 0.7; margin: 4px 0 6px 0; }
+			
+			/* Schedule Rules Tooltip */
+			.schedule-rules-tooltip {
+				position: fixed;
+				display: none;
+				width: 360px;
+				max-width: 90vw;
+				box-sizing: border-box;
+				padding: 12px;
+				z-index: 10000;
+				pointer-events: none;
+				font-size: 0.8125rem;
+				line-height: 1.5;
+				background-color: rgba(255, 255, 255, 0.98);
+				border: 1px solid rgba(0, 0, 0, 0.1);
+				border-radius: 6px;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+				color: #1f2937;
+			}
+			
+			@media (prefers-color-scheme: dark) {
+				.schedule-rules-tooltip {
+					background-color: rgba(30, 30, 30, 0.98);
+					border-color: rgba(255, 255, 255, 0.2);
+					box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+					color: #e5e7eb;
+				}
+			}
+			
+			.schedule-rules-tooltip .srt-title {
+				font-weight: 700;
+				margin-bottom: 8px;
+				font-size: 0.875rem;
+			}
+			
+			.schedule-rules-tooltip .srt-rule-item {
+				padding: 8px 0;
+				border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+			}
+			
+			@media (prefers-color-scheme: dark) {
+				.schedule-rules-tooltip .srt-rule-item {
+					border-bottom-color: rgba(255, 255, 255, 0.15);
+				}
+			}
+			
+			.schedule-rules-tooltip .srt-rule-item:last-child {
+				border-bottom: none;
+			}
+			
+			.schedule-rules-tooltip .srt-rule-time {
+				font-weight: 600;
+				margin-bottom: 4px;
+				font-size: 0.75rem;
+			}
+			
+			.schedule-rules-tooltip .srt-rule-days {
+				font-size: 0.75rem;
+				font-weight: 500;
+				opacity: 0.7;
+				margin-bottom: 4px;
+			}
+			
+			.schedule-rules-tooltip .srt-rule-limits {
+				font-size: 0.875rem;
+				font-weight: 600;
+				opacity: 0.8;
+			}
+			
+			.schedule-rules-tooltip .srt-rule-limits .srt-arrow {
+				font-size: 0.75rem;
+				font-weight: bold;
+			}
+			
+			.schedule-rules-info {
+			}
         `);
 
         document.head.appendChild(style);
@@ -1444,6 +1520,59 @@ return view.extend({
             ])
         ]);
 
+        // 创建全局的 Schedule Rules Tooltip 元素
+        var scheduleRulesTooltip = E('div', { 'class': 'schedule-rules-tooltip', 'id': 'schedule-rules-tooltip' });
+        document.body.appendChild(scheduleRulesTooltip);
+        
+        // 构建规则列表的 HTML（用于 tooltip）
+        function buildScheduleRulesTooltipHtml(allRules, activeRules, speedUnit) {
+            if (!allRules || allRules.length === 0) {
+                return '';
+            }
+            
+            var lines = [];
+            lines.push('<div class="srt-title">' + _('Schedule Rules') + ' (' + allRules.length + ')</div>');
+            
+            allRules.forEach(function(rule, index) {
+                var startTime = rule.time_slot && rule.time_slot.start ? rule.time_slot.start : '';
+                var endTime = rule.time_slot && rule.time_slot.end ? rule.time_slot.end : '';
+                var days = rule.time_slot && rule.time_slot.days ? rule.time_slot.days : [];
+                
+                var dayNames = {
+                    1: _('Mon'),
+                    2: _('Tue'),
+                    3: _('Wed'),
+                    4: _('Thu'),
+                    5: _('Fri'),
+                    6: _('Sat'),
+                    7: _('Sun')
+                };
+                var daysText = days.length > 0 ? days.map(function(d) { return dayNames[d] || d; }).join(', ') : '-';
+                
+                var uploadLimit = rule.wide_tx_rate_limit || 0;
+                var downloadLimit = rule.wide_rx_rate_limit || 0;
+                
+                // 使用 isRuleActive 函数检查规则是否激活
+                var isActive = isRuleActive(rule);
+                
+                // 箭头固定颜色（橙色和青色），样式与 WAN 字段一致
+                var uploadLimitText = '<span class="srt-arrow" style="color: #f97316;">↑</span>' + (uploadLimit > 0 ? formatByterate(uploadLimit, speedUnit) : _('Unlimited'));
+                var downloadLimitText = '<span class="srt-arrow" style="color: #06b6d4;">↓</span>' + (downloadLimit > 0 ? formatByterate(downloadLimit, speedUnit) : _('Unlimited'));
+                
+                var activeMark = isActive ? '<span style="color: #10b981; margin-right: 4px;">●</span>' : '';
+                
+                lines.push(
+                    '<div class="srt-rule-item">' +
+                        '<div class="srt-rule-time">' + activeMark + startTime + ' - ' + endTime + '</div>' +
+                        '<div class="srt-rule-days">' + daysText + '</div>' +
+                        '<div class="srt-rule-limits">' + uploadLimitText + ' ' + downloadLimitText + '</div>' +
+                    '</div>'
+                );
+            });
+            
+            return lines.join('');
+        }
+        
         // 设备信息模式切换
         var deviceModeButtons = view.querySelectorAll('.device-mode-btn');
         
@@ -2254,6 +2383,80 @@ return view.extend({
             return allScheduleRules.filter(function(rule) {
                 return rule && rule.mac === mac && isRuleActive(rule);
             });
+        }
+        
+        // 合并多个生效规则的限制值
+        // 返回合并后的上传和下载限制（取所有规则中非零的最小值）
+        function mergeActiveRulesLimits(activeRules) {
+            if (!activeRules || activeRules.length === 0) {
+                return { uploadLimit: 0, downloadLimit: 0 };
+            }
+            
+            var uploadLimits = [];
+            var downloadLimits = [];
+            
+            activeRules.forEach(function(rule) {
+                var uploadLimit = rule.wide_tx_rate_limit || 0;
+                var downloadLimit = rule.wide_rx_rate_limit || 0;
+                
+                // 只收集非零的限制值
+                if (uploadLimit > 0) {
+                    uploadLimits.push(uploadLimit);
+                }
+                if (downloadLimit > 0) {
+                    downloadLimits.push(downloadLimit);
+                }
+            });
+            
+            // 取最小值（如果有多个规则都有限制，取最严格的限制）
+            var mergedUploadLimit = uploadLimits.length > 0 ? Math.min.apply(Math, uploadLimits) : 0;
+            var mergedDownloadLimit = downloadLimits.length > 0 ? Math.min.apply(Math, downloadLimits) : 0;
+            
+            return {
+                uploadLimit: mergedUploadLimit,
+                downloadLimit: mergedDownloadLimit
+            };
+        }
+        
+        // 获取多个规则的时间段显示文本
+        // 如果所有规则的时间段相同，显示时间段；如果不同，显示"多个时间段"
+        function getTimeSlotDisplayText(activeRules) {
+            if (!activeRules || activeRules.length === 0) {
+                return '';
+            }
+            
+            if (activeRules.length === 1) {
+                // 单个规则，直接显示时间段
+                var rule = activeRules[0];
+                var startTime = rule.time_slot && rule.time_slot.start ? rule.time_slot.start : '';
+                var endTime = rule.time_slot && rule.time_slot.end ? rule.time_slot.end : '';
+                return startTime + '-' + endTime;
+            }
+            
+            // 多个规则，检查时间段是否相同
+            var firstRule = activeRules[0];
+            var firstStartTime = firstRule.time_slot && firstRule.time_slot.start ? firstRule.time_slot.start : '';
+            var firstEndTime = firstRule.time_slot && firstRule.time_slot.end ? firstRule.time_slot.end : '';
+            
+            var allSame = true;
+            for (var i = 1; i < activeRules.length; i++) {
+                var rule = activeRules[i];
+                var startTime = rule.time_slot && rule.time_slot.start ? rule.time_slot.start : '';
+                var endTime = rule.time_slot && rule.time_slot.end ? rule.time_slot.end : '';
+                
+                if (startTime !== firstStartTime || endTime !== firstEndTime) {
+                    allSame = false;
+                    break;
+                }
+            }
+            
+            if (allSame) {
+                // 所有规则时间段相同，显示时间段和规则数量
+                return firstStartTime + '-' + firstEndTime + ' (' + activeRules.length + ' ' + _('rules') + ')';
+            } else {
+                // 时间段不同，显示"多个时间段"
+                return _('Multiple time slots') + ' (' + activeRules.length + ' ' + _('rules') + ')';
+            }
         }
         
         // 排序状态管理
@@ -3781,44 +3984,160 @@ function downsampleForMobile(data, labels, upSeries, downSeries, maxPoints) {
                             if (allDeviceRules.length === 0) {
                                 rulesInfo.appendChild(E('div', { 'style': 'font-size: 0.75rem; opacity: 0.6;' }, '-'));
                             } else {
-                                // 显示规则数量
-                                rulesInfo.appendChild(E('div', { 
-                                    'style': 'font-size: 0.75rem; font-weight: 600; margin-bottom: 4px;' 
-                                }, allDeviceRules.length + ' ' + (allDeviceRules.length === 1 ? _('rule') : _('rules'))));
-                                
                                 // 显示当前生效的规则
                                 if (activeRules.length > 0) {
-                                    var activeRule = activeRules[0]; // 显示第一个生效的规则
-                                    var startTime = activeRule.time_slot && activeRule.time_slot.start ? activeRule.time_slot.start : '';
-                                    var endTime = activeRule.time_slot && activeRule.time_slot.end ? activeRule.time_slot.end : '';
+                                    // 合并多个规则的限制值
+                                    var mergedLimits = mergeActiveRulesLimits(activeRules);
+                                    var uploadLimit = mergedLimits.uploadLimit;
+                                    var downloadLimit = mergedLimits.downloadLimit;
                                     
-                                    var uploadLimit = activeRule.wide_tx_rate_limit || 0;
-                                    var downloadLimit = activeRule.wide_rx_rate_limit || 0;
-                                    
-                                    // 时间段和限速值放在同一行
-                                    var timeSlotText = startTime + '-' + endTime;
-                                    var limitsText = [];
-                                    // 即使限速是0也显示
-                                    limitsText.push('↑' + (uploadLimit > 0 ? formatByterate(uploadLimit, speedUnit) : _('Unlimited')));
-                                    limitsText.push('↓' + (downloadLimit > 0 ? formatByterate(downloadLimit, speedUnit) : _('Unlimited')));
-                                    
+                                    // 显示规则数量
                                     rulesInfo.appendChild(E('div', { 
-                                        'style': 'font-size: 0.75rem; color: #10b981; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;' 
-                                    }, [
-                                        E('span', {}, '● ' + timeSlotText),
-                                        E('span', { 'style': 'opacity: 0.8; font-size: 0.7rem;' }, limitsText.join(' '))
-                                    ]));
+                                        'style': 'font-size: 0.75rem; font-weight: 600; margin-bottom: 4px;' 
+                                    }, activeRules.length + ' ' + (activeRules.length === 1 ? _('rule') : _('rules'))));
                                     
-                                    if (activeRules.length > 1) {
-                                        rulesInfo.appendChild(E('div', { 
-                                            'style': 'font-size: 0.7rem; opacity: 0.6; margin-top: 2px;' 
-                                        }, '+' + (activeRules.length - 1) + ' ' + _('more')));
-                                    }
+                                    // 显示限速值（箭头固定颜色，文字默认颜色）
+                                    var limitsContainer = E('div', { 
+                                        'style': 'font-size: 0.75rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;' 
+                                    });
+                                    
+                                    // 上传限速（橙色箭头）
+                                    var uploadSpan = E('span', {});
+                                    uploadSpan.appendChild(E('span', { 'style': 'color: #f97316;' }, '↑'));
+                                    uploadSpan.appendChild(document.createTextNode(uploadLimit > 0 ? formatByterate(uploadLimit, speedUnit) : _('Unlimited')));
+                                    limitsContainer.appendChild(uploadSpan);
+                                    
+                                    // 下载限速（青色箭头）
+                                    var downloadSpan = E('span', {});
+                                    downloadSpan.appendChild(E('span', { 'style': 'color: #06b6d4;' }, '↓'));
+                                    downloadSpan.appendChild(document.createTextNode(downloadLimit > 0 ? formatByterate(downloadLimit, speedUnit) : _('Unlimited')));
+                                    limitsContainer.appendChild(downloadSpan);
+                                    
+                                    rulesInfo.appendChild(limitsContainer);
                                 } else {
                                     rulesInfo.appendChild(E('div', { 
                                         'style': 'font-size: 0.75rem; opacity: 0.5;' 
                                     }, _('No active rule')));
                                 }
+                            }
+                            
+                            // PC 端添加鼠标悬浮事件（显示所有规则）- 只要有规则就绑定事件
+                            var screenWidth = window.innerWidth || document.documentElement.clientWidth;
+                            if (screenWidth > 768 && allDeviceRules.length > 0) {
+                                rulesInfo.onmouseenter = function(evt) {
+                                    var tooltip = document.getElementById('schedule-rules-tooltip');
+                                    if (!tooltip) return;
+                                    
+                                    var html = buildScheduleRulesTooltipHtml(allDeviceRules, activeRules, speedUnit);
+                                    if (!html) return;
+                                    
+                                    tooltip.innerHTML = html;
+                                    
+                                    // 应用主题颜色
+                                    try {
+                                        var cbiSection = document.querySelector('.cbi-section');
+                                        var targetElement = cbiSection || document.querySelector('.main') || document.body;
+                                        var computedStyle = window.getComputedStyle(targetElement);
+                                        var bgColor = computedStyle.backgroundColor;
+                                        var textColor = computedStyle.color;
+                                        
+                                        if (bgColor && bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent') {
+                                            var rgbaMatch = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+                                            if (rgbaMatch) {
+                                                var r = parseInt(rgbaMatch[1]);
+                                                var g = parseInt(rgbaMatch[2]);
+                                                var b = parseInt(rgbaMatch[3]);
+                                                var alpha = rgbaMatch[4] ? parseFloat(rgbaMatch[4]) : 1;
+                                                if (alpha < 0.95) {
+                                                    tooltip.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
+                                                } else {
+                                                    tooltip.style.backgroundColor = bgColor;
+                                                }
+                                            } else {
+                                                tooltip.style.backgroundColor = bgColor;
+                                            }
+                                        }
+                                        
+                                        if (textColor && textColor !== 'rgba(0, 0, 0, 0)') {
+                                            tooltip.style.color = textColor;
+                                        }
+                                    } catch(e) {}
+                                    
+                                    // 先隐藏，设置内容后再显示以计算尺寸
+                                    tooltip.style.display = 'block';
+                                    tooltip.style.visibility = 'hidden';
+                                    tooltip.style.left = '-9999px';
+                                    tooltip.style.top = '-9999px';
+                                    
+                                    // 强制浏览器计算尺寸
+                                    var tw = tooltip.offsetWidth || 0;
+                                    var th = tooltip.offsetHeight || 0;
+                                    
+                                    if (tw === 0 || th === 0) {
+                                        tooltip.style.display = 'none';
+                                        return;
+                                    }
+                                    
+                                    tooltip.style.visibility = 'visible';
+                                    
+                                    var padding = 12;
+                                    var maxX = window.innerWidth - 4;
+                                    var maxY = window.innerHeight - 4;
+                                    
+                                    var rect = evt.currentTarget.getBoundingClientRect();
+                                    var cx = rect.left + rect.width / 2;
+                                    var cy = rect.top + rect.height / 2;
+                                    
+                                    // 计算位置：优先显示在右侧，如果空间不足则显示在左侧
+                                    var baseX = cx + padding;
+                                    var baseY = cy - th / 2;
+                                    
+                                    if (baseX + tw > maxX) {
+                                        baseX = cx - tw - padding;
+                                    }
+                                    
+                                    if (baseY < 4) baseY = 4;
+                                    if (baseY + th > maxY) baseY = maxY - th - 4;
+                                    
+                                    tooltip.style.left = baseX + 'px';
+                                    tooltip.style.top = baseY + 'px';
+                                };
+                                
+                                rulesInfo.onmouseleave = function() {
+                                    var tooltip = document.getElementById('schedule-rules-tooltip');
+                                    if (tooltip) {
+                                        tooltip.style.display = 'none';
+                                        tooltip.style.visibility = 'visible';
+                                    }
+                                };
+                                
+                                rulesInfo.onmousemove = function(evt) {
+                                    var tooltip = document.getElementById('schedule-rules-tooltip');
+                                    if (!tooltip || tooltip.style.display === 'none') return;
+                                    
+                                    var tw = tooltip.offsetWidth || 0;
+                                    var th = tooltip.offsetHeight || 0;
+                                    var padding = 12;
+                                    var maxX = window.innerWidth - 4;
+                                    var maxY = window.innerHeight - 4;
+                                    
+                                    var rect = evt.currentTarget.getBoundingClientRect();
+                                    var cx = rect.left + rect.width / 2;
+                                    var cy = rect.top + rect.height / 2;
+                                    
+                                    var baseX = cx + padding;
+                                    var baseY = cy - th / 2;
+                                    
+                                    if (baseX + tw > maxX) {
+                                        baseX = cx - tw - padding;
+                                    }
+                                    
+                                    if (baseY < 4) baseY = 4;
+                                    if (baseY + th > maxY) baseY = maxY - th - 4;
+                                    
+                                    tooltip.style.left = baseX + 'px';
+                                    tooltip.style.top = baseY + 'px';
+                                };
                             }
                             
                             return E('td', {}, rulesInfo);
@@ -3889,41 +4208,25 @@ function downsampleForMobile(data, labels, upSeries, downSeries, maxPoints) {
                             
                             var rulesContent = E('div', { 'class': 'device-card-rules-content' });
                             
-                            // 规则数量
-                            rulesContent.appendChild(E('div', { 
-                                'class': 'device-card-rules-count' 
-                            }, allDeviceRules.length + ' ' + (allDeviceRules.length === 1 ? _('rule') : _('rules'))));
-                            
                             if (activeRules.length > 0) {
-                                var activeRule = activeRules[0];
-                                var startTime = activeRule.time_slot && activeRule.time_slot.start ? activeRule.time_slot.start : '';
-                                var endTime = activeRule.time_slot && activeRule.time_slot.end ? activeRule.time_slot.end : '';
+                                // 合并多个规则的限制值
+                                var mergedLimits = mergeActiveRulesLimits(activeRules);
+                                var uploadLimit = mergedLimits.uploadLimit;
+                                var downloadLimit = mergedLimits.downloadLimit;
                                 
-                                var uploadLimit = activeRule.wide_tx_rate_limit || 0;
-                                var downloadLimit = activeRule.wide_rx_rate_limit || 0;
+                                // 显示规则数量
+                                rulesContent.appendChild(E('div', { 
+                                    'class': 'device-card-rules-count' 
+                                }, activeRules.length + ' ' + (activeRules.length === 1 ? _('rule') : _('rules'))));
                                 
-                                // 时间段和限速值放在同一行
-                                var timeSlotText = startTime + '-' + endTime;
+                                // 显示限速值
                                 var limitsText = [];
-                                // 即使限速是0也显示
                                 limitsText.push('↑' + (uploadLimit > 0 ? formatByterate(uploadLimit, speedUnit) : _('Unlimited')));
                                 limitsText.push('↓' + (downloadLimit > 0 ? formatByterate(downloadLimit, speedUnit) : _('Unlimited')));
                                 
-                                // 生效规则的时间段和限速值
-                                var activeTimeInfo = E('div', { 
+                                rulesContent.appendChild(E('div', { 
                                     'class': 'device-card-rules-active-time' 
-                                }, [
-                                    E('span', {}, '● ' + timeSlotText),
-                                    E('span', { 'style': 'opacity: 0.8; font-size: 0.7rem; margin-left: 8px;' }, limitsText.join(' '))
-                                ]);
-                                
-                                if (activeRules.length > 1) {
-                                    activeTimeInfo.appendChild(E('div', { 
-                                        'class': 'device-card-rules-more' 
-                                    }, '+' + (activeRules.length - 1) + ' ' + _('more')));
-                                }
-                                
-                                rulesContent.appendChild(activeTimeInfo);
+                                }, limitsText.join(' ')));
                             } else {
                                 rulesContent.appendChild(E('div', { 
                                     'class': 'device-card-rules-inactive' 
