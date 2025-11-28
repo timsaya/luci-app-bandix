@@ -3984,17 +3984,17 @@ function downsampleForMobile(data, labels, upSeries, downSeries, maxPoints) {
                             if (allDeviceRules.length === 0) {
                                 rulesInfo.appendChild(E('div', { 'style': 'font-size: 0.75rem; opacity: 0.6;' }, '-'));
                             } else {
+                                // 显示规则总数
+                                rulesInfo.appendChild(E('div', { 
+                                    'style': 'font-size: 0.75rem; font-weight: 600; margin-bottom: 4px;' 
+                                }, allDeviceRules.length + ' ' + (allDeviceRules.length === 1 ? _('rule') : _('rules'))));
+                                
                                 // 显示当前生效的规则
                                 if (activeRules.length > 0) {
                                     // 合并多个规则的限制值
                                     var mergedLimits = mergeActiveRulesLimits(activeRules);
                                     var uploadLimit = mergedLimits.uploadLimit;
                                     var downloadLimit = mergedLimits.downloadLimit;
-                                    
-                                    // 显示规则数量
-                                    rulesInfo.appendChild(E('div', { 
-                                        'style': 'font-size: 0.75rem; font-weight: 600; margin-bottom: 4px;' 
-                                    }, activeRules.length + ' ' + (activeRules.length === 1 ? _('rule') : _('rules'))));
                                     
                                     // 显示限速值（箭头固定颜色，文字默认颜色）
                                     var limitsContainer = E('div', { 
@@ -4208,16 +4208,16 @@ function downsampleForMobile(data, labels, upSeries, downSeries, maxPoints) {
                             
                             var rulesContent = E('div', { 'class': 'device-card-rules-content' });
                             
+                            // 显示规则总数
+                            rulesContent.appendChild(E('div', { 
+                                'class': 'device-card-rules-count' 
+                            }, allDeviceRules.length + ' ' + (allDeviceRules.length === 1 ? _('rule') : _('rules'))));
+                            
                             if (activeRules.length > 0) {
                                 // 合并多个规则的限制值
                                 var mergedLimits = mergeActiveRulesLimits(activeRules);
                                 var uploadLimit = mergedLimits.uploadLimit;
                                 var downloadLimit = mergedLimits.downloadLimit;
-                                
-                                // 显示规则数量
-                                rulesContent.appendChild(E('div', { 
-                                    'class': 'device-card-rules-count' 
-                                }, activeRules.length + ' ' + (activeRules.length === 1 ? _('rule') : _('rules'))));
                                 
                                 // 显示限速值
                                 var limitsText = [];
