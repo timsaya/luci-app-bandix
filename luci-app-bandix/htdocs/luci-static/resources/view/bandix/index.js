@@ -2535,6 +2535,34 @@ return view.extend({
             return callGetMetrics(mac || '').then(function (res) { return res || { metrics: [] }; });
         }
 
+        // 将数组数组格式转换为对象数组格式
+        // 输入格式: [[ts_ms, total_rx_rate, total_tx_rate, local_rx_rate, local_tx_rate, wide_rx_rate, wide_tx_rate, total_rx_bytes, total_tx_bytes, local_rx_bytes, local_tx_bytes, wide_rx_bytes, wide_tx_bytes], ...]
+        // 输出格式: [{ts_ms, total_rx_rate, total_tx_rate, ...}, ...]
+        function convertMetricsArrayToObjects(metricsArray) {
+            if (!Array.isArray(metricsArray)) {
+                return [];
+            }
+            
+            return metricsArray.map(function(arr) {
+                
+                return {
+                    ts_ms: arr[0] || 0,
+                    total_rx_rate: arr[1] || 0,
+                    total_tx_rate: arr[2] || 0,
+                    local_rx_rate: arr[3] || 0,
+                    local_tx_rate: arr[4] || 0,
+                    wide_rx_rate: arr[5] || 0,
+                    wide_tx_rate: arr[6] || 0,
+                    total_rx_bytes: arr[7] || 0,
+                    total_tx_bytes: arr[8] || 0,
+                    local_rx_bytes: arr[9] || 0,
+                    local_tx_bytes: arr[10] || 0,
+                    wide_rx_bytes: arr[11] || 0,
+                    wide_tx_bytes: arr[12] || 0
+                };
+            }).filter(function(item) { return item !== null; });
+        }
+
         // 辅助函数：使用当前缩放设置绘制图表
         function drawHistoryChartWithZoom(canvas, labels, upSeries, downSeries) {
             drawHistoryChart(canvas, labels, upSeries, downSeries, zoomScale, zoomOffsetX);
@@ -3236,7 +3264,9 @@ function downsampleForMobile(data, labels, upSeries, downSeries, maxPoints) {
             
 
             return fetchMetricsData(mac).then(function (res) {
-                var data = Array.isArray(res && res.metrics) ? res.metrics.slice() : [];
+                // 将数组数组格式转换为对象数组格式
+                var rawMetrics = res && res.metrics ? res.metrics : [];
+                var data = convertMetricsArrayToObjects(rawMetrics);
                 lastHistoryData = data;
 
                 var retentionBadge = document.getElementById('history-retention');

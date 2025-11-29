@@ -173,6 +173,7 @@ return view.extend({
 		o.value('1200', _('20 minutes'));
 		o.value('1500', _('25 minutes'));
 		o.value('1800', _('30 minutes'));
+		o.value('3600', _('1 hour'));
 		o.default = '600';
 		o.rmempty = false;
 
