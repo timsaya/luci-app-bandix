@@ -841,3 +841,66 @@ msgstr "Tidak ada aturan aktif"
 
 msgid "Schedule Rules"
 msgstr "Aturan pembatasan terjadwal"
+
+msgid "Upload Statistics"
+msgstr "Statistik unggahan"
+
+msgid "Download Statistics"
+msgstr "Statistik unduhan"
+
+msgid "Cumulative Traffic"
+msgstr "Lalu lintas kumulatif"
+
+msgid "Daily"
+msgstr "Harian"
+
+msgid "Weekly"
+msgstr "Mingguan"
+
+msgid "Monthly"
+msgstr "Bulanan"
+
+msgid "Statistics"
+msgstr "Statistik"
+
+msgid "Average"
+msgstr "Rata-rata"
+
+msgid "Maximum"
+msgstr "Maksimum"
+
+msgid "Minimum"
+msgstr "Minimum"
+
+msgid "WAN Upload"
+msgstr "Unggahan WAN"
+
+msgid "WAN Download"
+msgstr "Unduhan WAN"
+
+msgid "WAN Uploaded"
+msgstr "Diunggah WAN"
+
+msgid "WAN Downloaded"
+msgstr "Diunduh WAN"
+
+msgid "Clear Traffic Data"
+msgstr "Hapus Data Lalu Lintas"
+
+msgid "Are you sure you want to clear all traffic data? This action cannot be undone."
+msgstr "Apakah Anda yakin ingin menghapus semua data lalu lintas? Tindakan ini tidak dapat dibatalkan."
+
+msgid "Failed to clear traffic data: "
+msgstr "Gagal menghapus data lalu lintas: "
+
+msgid "Restart Service"
+msgstr "Mulai Ulang Layanan"
+
+msgid "Restart Bandix Service"
+msgstr "Mulai Ulang Layanan Bandix"
+
+msgid "Are you sure you want to restart the Bandix service?"
+msgstr "Apakah Anda yakin ingin memulai ulang layanan Bandix?"
+
+msgid "Failed to restart service: "
+msgstr "Gagal memulai ulang layanan: "

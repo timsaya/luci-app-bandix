@@ -841,3 +841,66 @@ msgstr "ไม่มีกฎที่ใช้งาน"
 
 msgid "Schedule Rules"
 msgstr "กฎการจำกัดอัตราแบบกำหนดเวลา"
+
+msgid "Upload Statistics"
+msgstr "สถิติการอัปโหลด"
+
+msgid "Download Statistics"
+msgstr "สถิติการดาวน์โหลด"
+
+msgid "Cumulative Traffic"
+msgstr "ปริมาณการใช้งานสะสม"
+
+msgid "Daily"
+msgstr "รายวัน"
+
+msgid "Weekly"
+msgstr "รายสัปดาห์"
+
+msgid "Monthly"
+msgstr "รายเดือน"
+
+msgid "Statistics"
+msgstr "สถิติ"
+
+msgid "Average"
+msgstr "ค่าเฉลี่ย"
+
+msgid "Maximum"
+msgstr "สูงสุด"
+
+msgid "Minimum"
+msgstr "ต่ำสุด"
+
+msgid "WAN Upload"
+msgstr "อัปโหลด WAN"
+
+msgid "WAN Download"
+msgstr "ดาวน์โหลด WAN"
+
+msgid "WAN Uploaded"
+msgstr "อัปโหลด WAN แล้ว"
+
+msgid "WAN Downloaded"
+msgstr "ดาวน์โหลด WAN แล้ว"
+
+msgid "Clear Traffic Data"
+msgstr "ลบข้อมูลทราฟฟิก"
+
+msgid "Are you sure you want to clear all traffic data? This action cannot be undone."
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลทราฟฟิกทั้งหมด? การกระทำนี้ไม่สามารถยกเลิกได้"
+
+msgid "Failed to clear traffic data: "
+msgstr "ล้มเหลวในการลบข้อมูลทราฟฟิก: "
+
+msgid "Restart Service"
+msgstr "รีสตาร์ทบริการ"
+
+msgid "Restart Bandix Service"
+msgstr "รีสตาร์ทบริการ Bandix"
+
+msgid "Are you sure you want to restart the Bandix service?"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการรีสตาร์ทบริการ Bandix?"
+
+msgid "Failed to restart service: "
+msgstr "ล้มเหลวในการรีสตาร์ทบริการ: "

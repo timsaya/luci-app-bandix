@@ -36,6 +36,7 @@ LuCI Bandix is developed based on the LuCI framework, offering network traffic m
 - Support for WAN speed limitation
 - Support IPv4/IPv6
 - Persistent data storage
+- Support real-time/daily/weekly/monthly monitoring
 - Historical traffic trends and charts
 - Support DNS query monitoring and statistical analysis
 
@@ -65,13 +66,11 @@ The following table shows the version dependency relationship between luci-app-b
 
 | luci-app-bandix version | Required openwrt-bandix version |
 |------------------------|--------------------------------|
-| 0.2.x                  | 0.2.x                          |
-| 0.3.x                  | 0.3.x                          |
-| 0.4.x                  | 0.4.x                          |
-| 0.5.x                  | 0.5.x                          |
 | 0.6.x                  | 0.6.x                          |
 | 0.7.x                  | 0.7.x                          |
 | 0.8.x                  | 0.8.x                          |
+| 0.9.x                  | 0.9.x                          |
+| 0.10.x                 | 0.10.x                         |
 
 
 Please ensure you install matching versions to ensure compatibility and proper functionality.

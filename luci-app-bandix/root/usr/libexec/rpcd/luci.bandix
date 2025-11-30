@@ -9,6 +9,9 @@ readonly BANDIX_API_BASE="http://127.0.0.1:$BANDIX_PORT"
 readonly BANDIX_DEVICES_API="$BANDIX_API_BASE/api/traffic/devices"
 readonly BANDIX_LIMITS_API="$BANDIX_API_BASE/api/traffic/limits"
 readonly BANDIX_METRICS_API="$BANDIX_API_BASE/api/traffic/metrics"
+readonly BANDIX_METRICS_DAY_API="$BANDIX_API_BASE/api/traffic/metrics/day"
+readonly BANDIX_METRICS_WEEK_API="$BANDIX_API_BASE/api/traffic/metrics/week"
+readonly BANDIX_METRICS_MONTH_API="$BANDIX_API_BASE/api/traffic/metrics/month"
 readonly BANDIX_CONNECTION_API="$BANDIX_API_BASE/api/connection/devices"
 readonly BANDIX_DNS_QUERIES_API="$BANDIX_API_BASE/api/dns/queries"
 readonly BANDIX_DNS_STATS_API="$BANDIX_API_BASE/api/dns/stats"
@@ -96,6 +99,90 @@ get_metrics() {
     else
         # logger "luci.bandix.metrics: jsonfilter failed to extract data part"
         echo '{"retention_seconds":600,"mac":"","metrics":[]}'
+    fi
+}
+
+# 获取日指标（可选MAC）
+get_metrics_day() {
+    local mac="$1"
+    local url="$BANDIX_METRICS_DAY_API"
+    if [ -n "$mac" ]; then
+        # 转义MAC
+        local mac_escaped=$(echo "$mac" | sed 's/\//\\\//g')
+        url="$url?mac=$mac_escaped"
+    fi
+
+    local api_result=$(curl -s --connect-timeout 2 --max-time 10 "$url" 2>/dev/null)
+    local curl_exit_code=$?
+    
+    if [ $curl_exit_code -ne 0 ] || [ -z "$api_result" ]; then
+        echo '{"retention_seconds":86400,"mac":"","metrics":[]}'
+        return
+    fi
+    
+    # 使用 jsonfilter 提取 data 部分
+    local data_part=$(echo "$api_result" | jsonfilter -e '$.data' 2>/dev/null)
+    if [ -n "$data_part" ]; then
+        echo "$data_part"
+        return
+    else
+        echo '{"retention_seconds":86400,"mac":"","metrics":[]}'
+    fi
+}
+
+# 获取周指标（可选MAC）
+get_metrics_week() {
+    local mac="$1"
+    local url="$BANDIX_METRICS_WEEK_API"
+    if [ -n "$mac" ]; then
+        # 转义MAC
+        local mac_escaped=$(echo "$mac" | sed 's/\//\\\//g')
+        url="$url?mac=$mac_escaped"
+    fi
+
+    local api_result=$(curl -s --connect-timeout 2 --max-time 10 "$url" 2>/dev/null)
+    local curl_exit_code=$?
+    
+    if [ $curl_exit_code -ne 0 ] || [ -z "$api_result" ]; then
+        echo '{"retention_seconds":604800,"mac":"","metrics":[]}'
+        return
+    fi
+    
+    # 使用 jsonfilter 提取 data 部分
+    local data_part=$(echo "$api_result" | jsonfilter -e '$.data' 2>/dev/null)
+    if [ -n "$data_part" ]; then
+        echo "$data_part"
+        return
+    else
+        echo '{"retention_seconds":604800,"mac":"","metrics":[]}'
+    fi
+}
+
+# 获取月指标（可选MAC）
+get_metrics_month() {
+    local mac="$1"
+    local url="$BANDIX_METRICS_MONTH_API"
+    if [ -n "$mac" ]; then
+        # 转义MAC
+        local mac_escaped=$(echo "$mac" | sed 's/\//\\\//g')
+        url="$url?mac=$mac_escaped"
+    fi
+
+    local api_result=$(curl -s --connect-timeout 2 --max-time 10 "$url" 2>/dev/null)
+    local curl_exit_code=$?
+    
+    if [ $curl_exit_code -ne 0 ] || [ -z "$api_result" ]; then
+        echo '{"retention_seconds":2592000,"mac":"","metrics":[]}'
+        return
+    fi
+    
+    # 使用 jsonfilter 提取 data 部分
+    local data_part=$(echo "$api_result" | jsonfilter -e '$.data' 2>/dev/null)
+    if [ -n "$data_part" ]; then
+        echo "$data_part"
+        return
+    else
+        echo '{"retention_seconds":2592000,"mac":"","metrics":[]}'
     fi
 }
 
@@ -367,6 +454,39 @@ delete_schedule_limit() {
 	fi
 }
 
+# 清空数据
+clear_data() {
+	local data_dir=$(uci get bandix.general.data_dir 2>/dev/null || echo "/usr/share/bandix")
+	local metrics_dir="$data_dir/metrics"
+	
+	# 检查目录是否存在
+	if [ ! -d "$metrics_dir" ]; then
+		make_error "Metrics directory does not exist"
+		return
+	fi
+	
+	# 删除 metrics 目录下的所有文件
+	rm -rf "$metrics_dir"/* 2>/dev/null
+	
+	if [ $? -eq 0 ]; then
+		make_success "Data cleared successfully"
+	else
+		make_error "Failed to clear data"
+	fi
+}
+
+# 重启服务
+restart_service() {
+	# 执行服务重启
+	/etc/init.d/bandix restart >/dev/null 2>&1
+	
+	if [ $? -eq 0 ]; then
+		make_success "Service restarted successfully"
+	else
+		make_error "Failed to restart service"
+	fi
+}
+
 case "$1" in
 	list)
 		json_init
@@ -374,6 +494,18 @@ case "$1" in
 		json_close_object
 		
 		json_add_object "getMetrics"
+		json_add_string "mac"
+		json_close_object
+		
+		json_add_object "getMetricsDay"
+		json_add_string "mac"
+		json_close_object
+		
+		json_add_object "getMetricsWeek"
+		json_add_string "mac"
+		json_close_object
+		
+		json_add_object "getMetricsMonth"
 		json_add_string "mac"
 		json_close_object
 		
@@ -410,16 +542,22 @@ case "$1" in
 		json_add_int "wide_tx_rate_limit"
 		json_close_object
 		
-		json_add_object "deleteScheduleLimit"
-		json_add_string "mac"
-		json_add_string "start_time"
-		json_add_string "end_time"
-		json_add_string "days"
-		json_close_object
-		
-		json_dump
-		json_cleanup
-		;;
+	json_add_object "deleteScheduleLimit"
+	json_add_string "mac"
+	json_add_string "start_time"
+	json_add_string "end_time"
+	json_add_string "days"
+	json_close_object
+	
+	json_add_object "clearData"
+	json_close_object
+	
+	json_add_object "restartService"
+	json_close_object
+	
+	json_dump
+	json_cleanup
+	;;
 	call)
 		case "$2" in
 			getStatus)
@@ -446,6 +584,48 @@ case "$1" in
 					# logger "luci.bandix: received argv mac: $mac"
 				fi
 				get_metrics "$mac"
+				;;
+			getMetricsDay)
+				mac=""
+				input=""
+				if read -t 1 -r input; then
+					:
+				fi
+				if [ -n "$input" ]; then
+					mac="$(echo "$input" | jsonfilter -e '$[0]' 2>/dev/null)"
+					[ -z "$mac" ] && mac="$(echo "$input" | jsonfilter -e '$.mac' 2>/dev/null)"
+				else
+					[ -n "$3" ] && mac="$3"
+				fi
+				get_metrics_day "$mac"
+				;;
+			getMetricsWeek)
+				mac=""
+				input=""
+				if read -t 1 -r input; then
+					:
+				fi
+				if [ -n "$input" ]; then
+					mac="$(echo "$input" | jsonfilter -e '$[0]' 2>/dev/null)"
+					[ -z "$mac" ] && mac="$(echo "$input" | jsonfilter -e '$.mac' 2>/dev/null)"
+				else
+					[ -n "$3" ] && mac="$3"
+				fi
+				get_metrics_week "$mac"
+				;;
+			getMetricsMonth)
+				mac=""
+				input=""
+				if read -t 1 -r input; then
+					:
+				fi
+				if [ -n "$input" ]; then
+					mac="$(echo "$input" | jsonfilter -e '$[0]' 2>/dev/null)"
+					[ -z "$mac" ] && mac="$(echo "$input" | jsonfilter -e '$.mac' 2>/dev/null)"
+				else
+					[ -n "$3" ] && mac="$3"
+				fi
+				get_metrics_month "$mac"
 				;;
 			setHostname)
 				# logger "luci.bandix: setHostname called"
@@ -637,6 +817,14 @@ case "$1" in
 					# logger "luci.bandix: deleteScheduleLimit 没有接收到输入"
 					make_error "No input received"
 				fi
+				;;
+			clearData)
+				# logger "luci.bandix: clearData called"
+				clear_data
+				;;
+			restartService)
+				# logger "luci.bandix: restartService called"
+				restart_service
 				;;
 		esac
 		;;

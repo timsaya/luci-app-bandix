@@ -841,3 +841,66 @@ msgstr "アクティブなルールなし"
 
 msgid "Schedule Rules"
 msgstr "スケジュール制限ルール"
+
+msgid "Upload Statistics"
+msgstr "アップロード統計"
+
+msgid "Download Statistics"
+msgstr "ダウンロード統計"
+
+msgid "Cumulative Traffic"
+msgstr "累積トラフィック"
+
+msgid "Daily"
+msgstr "日次"
+
+msgid "Weekly"
+msgstr "週次"
+
+msgid "Monthly"
+msgstr "月次"
+
+msgid "Statistics"
+msgstr "統計"
+
+msgid "Average"
+msgstr "平均"
+
+msgid "Maximum"
+msgstr "最大"
+
+msgid "Minimum"
+msgstr "最小"
+
+msgid "WAN Upload"
+msgstr "WAN アップロード"
+
+msgid "WAN Download"
+msgstr "WAN ダウンロード"
+
+msgid "WAN Uploaded"
+msgstr "WAN アップロード量"
+
+msgid "WAN Downloaded"
+msgstr "WAN ダウンロード量"
+
+msgid "Clear Traffic Data"
+msgstr "トラフィックデータを削除"
+
+msgid "Are you sure you want to clear all traffic data? This action cannot be undone."
+msgstr "すべてのトラフィックデータを削除してもよろしいですか？この操作は元に戻せません。"
+
+msgid "Failed to clear traffic data: "
+msgstr "トラフィックデータの削除に失敗しました："
+
+msgid "Restart Service"
+msgstr "サービス再起動"
+
+msgid "Restart Bandix Service"
+msgstr "Bandix サービスを再起動"
+
+msgid "Are you sure you want to restart the Bandix service?"
+msgstr "Bandix サービスを再起動してもよろしいですか？"
+
+msgid "Failed to restart service: "
+msgstr "サービスの再起動に失敗しました："

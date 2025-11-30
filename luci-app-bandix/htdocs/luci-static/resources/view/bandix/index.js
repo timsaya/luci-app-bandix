@@ -148,6 +148,27 @@ var callGetMetrics = rpc.declare({
     expect: {}
 });
 
+var callGetMetricsDay = rpc.declare({
+    object: 'luci.bandix',
+    method: 'getMetricsDay',
+    params: ['mac'],
+    expect: {}
+});
+
+var callGetMetricsWeek = rpc.declare({
+    object: 'luci.bandix',
+    method: 'getMetricsWeek',
+    params: ['mac'],
+    expect: {}
+});
+
+var callGetMetricsMonth = rpc.declare({
+    object: 'luci.bandix',
+    method: 'getMetricsMonth',
+    params: ['mac'],
+    expect: {}
+});
+
 // 定时限速 RPC
 var callGetScheduleLimits = rpc.declare({
     object: 'luci.bandix',
@@ -1017,6 +1038,94 @@ return view.extend({
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
+                margin-bottom: 16px;
+            }
+            .history-header-left {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+            }
+            .history-tabs {
+                display: inline-flex;
+                background-color: rgba(0, 0, 0, 0.04);
+                border-radius: 8px;
+                padding: 3px;
+                gap: 2px;
+            }
+            @media (prefers-color-scheme: dark) {
+                .history-tabs {
+                    background-color: rgba(255, 255, 255, 0.08);
+                }
+            }
+            .history-tab {
+                padding: 6px 16px;
+                text-align: center;
+                cursor: pointer;
+                border: none;
+                background: transparent;
+                font-size: 0.8125rem;
+                font-weight: 500;
+                color: rgba(0, 0, 0, 0.65);
+                transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+                border-radius: 6px;
+                white-space: nowrap;
+                position: relative;
+            }
+            @media (prefers-color-scheme: dark) {
+                .history-tab {
+                    color: rgba(255, 255, 255, 0.65);
+                }
+            }
+            .history-tab:hover:not(.active) {
+                color: rgba(0, 0, 0, 0.85);
+                background-color: rgba(0, 0, 0, 0.06);
+            }
+            @media (prefers-color-scheme: dark) {
+                .history-tab:hover:not(.active) {
+                    color: rgba(255, 255, 255, 0.85);
+                    background-color: rgba(255, 255, 255, 0.12);
+                }
+            }
+            .history-tab.active {
+                background-color: #ffffff;
+                color: #3b82f6;
+                font-weight: 600;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+            }
+            @media (prefers-color-scheme: dark) {
+                .history-tab.active {
+                    background-color: rgba(59, 130, 246, 0.15);
+                    color: #60a5fa;
+                    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
+                }
+            }
+            @media (max-width: 768px) {
+                .history-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 12px;
+                }
+                .history-header-left {
+                    width: 100%;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 12px;
+                }
+                .history-tabs {
+                    width: 100%;
+                    padding: 2px;
+                }
+                .history-tab {
+                    flex: 1;
+                    padding: 8px 6px;
+                    font-size: 0.75rem;
+                }
+                /* 移动端只显示 Realtime tab */
+                .history-tab[data-range="day"],
+                .history-tab[data-range="week"],
+                .history-tab[data-range="month"] {
+                    display: none !important;
+                }
             }
             .history-controls {
                 display: flex;
@@ -1034,7 +1143,6 @@ return view.extend({
                 position: relative;
             }
             .history-legend {
-                margin-left: auto;
                 display: flex;
                 align-items: center;
                 gap: 12px;
@@ -1452,10 +1560,19 @@ return view.extend({
             // 统计卡片
             E('div', { 'class': 'stats-grid', 'id': 'stats-grid' }),
 
-            // 历史趋势卡片（无时间范围筛选）
+            // 历史趋势卡片（带时间范围 tab 切换）
             E('div', { 'class': 'cbi-section', 'id': 'history-card' }, [
-                E('h3', { 'class': 'history-header', 'style': 'display: flex; align-items: center; justify-content: space-between;' }, [
-                    E('span', {}, _('Traffic History')),
+                E('div', { 'class': 'history-header' }, [
+                    E('div', { 'class': 'history-header-left' }, [
+                        // E('h3', { 'style': 'margin: 0; font-size: 1rem; font-weight: 600;' }, _('Traffic History')),
+                        // 时间范围 Tab 切换
+                        E('div', { 'class': 'history-tabs' }, [
+                            E('button', { 'class': 'history-tab active', 'data-range': 'realtime', 'id': 'history-tab-realtime' }, _('Realtime')),
+                            E('button', { 'class': 'history-tab', 'data-range': 'day', 'id': 'history-tab-day' }, _('Day')),
+                            E('button', { 'class': 'history-tab', 'data-range': 'week', 'id': 'history-tab-week' }, _('Week')),
+                            E('button', { 'class': 'history-tab', 'data-range': 'month', 'id': 'history-tab-month' }, _('Month'))
+                        ])
+                    ]),
                     E('div', { 'class': 'history-legend' }, [
                         E('div', { 'class': 'legend-item' }, [
                             E('span', { 'class': 'legend-dot legend-up' }),
@@ -2525,14 +2642,109 @@ return view.extend({
         }
 
         function getTypeKeys(type) {
+            // 对于非实时时间范围（day/week/month），只有 WAN 数据
+            if (currentTimeRange !== 'realtime') {
+                // 所有类型都使用 WAN 数据
+                return { up: 'wide_tx_rate', down: 'wide_rx_rate' };
+            }
+            
             if (type === 'lan') return { up: 'local_tx_rate', down: 'local_rx_rate' };
             if (type === 'wan') return { up: 'wide_tx_rate', down: 'wide_rx_rate' };
             return { up: 'total_tx_rate', down: 'total_rx_rate' };
         }
 
+        // 当前选择的时间范围
+        var currentTimeRange = localStorage.getItem('bandix_time_range') || 'realtime';
+        
         function fetchMetricsData(mac) {
+            // 根据选择的时间范围调用不同的接口
+            var range = currentTimeRange;
+            var callFunction;
+            
+            switch (range) {
+                case 'day':
+                    callFunction = callGetMetricsDay;
+                    break;
+                case 'week':
+                    callFunction = callGetMetricsWeek;
+                    break;
+                case 'month':
+                    callFunction = callGetMetricsMonth;
+                    break;
+                case 'realtime':
+                default:
+                    callFunction = callGetMetrics;
+                    break;
+            }
+            
             // 通过 ubus RPC 获取，避免跨域与鉴权问题
-            return callGetMetrics(mac || '').then(function (res) { return res || { metrics: [] }; });
+            return callFunction(mac || '').then(function (res) { return res || { metrics: [] }; });
+        }
+
+        // 将数组数组格式转换为对象数组格式（实时数据格式：13个字段）
+        // 输入格式: [[ts_ms, total_rx_rate, total_tx_rate, local_rx_rate, local_tx_rate, wide_rx_rate, wide_tx_rate, total_rx_bytes, total_tx_bytes, local_rx_bytes, local_tx_bytes, wide_rx_bytes, wide_tx_bytes], ...]
+        // 输出格式: [{ts_ms, total_rx_rate, total_tx_rate, ...}, ...]
+        function convertMetricsArrayToObjects(metricsArray) {
+            if (!Array.isArray(metricsArray)) {
+                return [];
+            }
+            
+            return metricsArray.map(function(arr) {
+                // 检查数据格式：如果是15个字段，说明是 day/week/month 格式
+                if (arr.length >= 15) {
+                    // day/week/month 格式：使用 P95 作为主要显示值
+                    return {
+                        ts_ms: arr[0] || 0,
+                        // 使用 P95 作为主要速率显示（最有价值的指标）
+                        wide_rx_rate: arr[5] || 0, // wide_rx_rate_p95
+                        wide_tx_rate: arr[11] || 0, // wide_tx_rate_p95
+                        // 保存所有统计信息供 tooltip 使用
+                        wide_rx_rate_avg: arr[1] || 0,
+                        wide_rx_rate_max: arr[2] || 0,
+                        wide_rx_rate_min: arr[3] || 0,
+                        wide_rx_rate_p90: arr[4] || 0,
+                        wide_rx_rate_p95: arr[5] || 0,
+                        wide_rx_rate_p99: arr[6] || 0,
+                        wide_tx_rate_avg: arr[7] || 0,
+                        wide_tx_rate_max: arr[8] || 0,
+                        wide_tx_rate_min: arr[9] || 0,
+                        wide_tx_rate_p90: arr[10] || 0,
+                        wide_tx_rate_p95: arr[11] || 0,
+                        wide_tx_rate_p99: arr[12] || 0,
+                        wide_rx_bytes: arr[13] || 0,
+                        wide_tx_bytes: arr[14] || 0,
+                        // 标记这是聚合数据
+                        is_aggregated: true,
+                        // 为了兼容性，设置其他字段（day/week/month 只有 WAN 数据）
+                        total_rx_rate: arr[5] || 0, // 使用 P95
+                        total_tx_rate: arr[11] || 0, // 使用 P95
+                        local_rx_rate: 0,
+                        local_tx_rate: 0,
+                        total_rx_bytes: arr[13] || 0,
+                        total_tx_bytes: arr[14] || 0,
+                        local_rx_bytes: 0,
+                        local_tx_bytes: 0
+                    };
+                } else {
+                    // 实时数据格式（13个字段）
+                    return {
+                        ts_ms: arr[0] || 0,
+                        total_rx_rate: arr[1] || 0,
+                        total_tx_rate: arr[2] || 0,
+                        local_rx_rate: arr[3] || 0,
+                        local_tx_rate: arr[4] || 0,
+                        wide_rx_rate: arr[5] || 0,
+                        wide_tx_rate: arr[6] || 0,
+                        total_rx_bytes: arr[7] || 0,
+                        total_tx_bytes: arr[8] || 0,
+                        local_rx_bytes: arr[9] || 0,
+                        local_tx_bytes: arr[10] || 0,
+                        wide_rx_bytes: arr[11] || 0,
+                        wide_tx_bytes: arr[12] || 0,
+                        is_aggregated: false
+                    };
+                }
+            }).filter(function(item) { return item !== null; });
         }
 
         // 辅助函数：使用当前缩放设置绘制图表
@@ -2777,6 +2989,18 @@ return view.extend({
             var ss = ('' + d.getSeconds()).padStart(2, '0');
             return hh + ':' + mm + ':' + ss;
         }
+        
+        // 完整日期时间格式（用于聚合数据）
+        function msToFullDateTimeLabel(ts) {
+            var d = new Date(ts);
+            var year = d.getFullYear();
+            var month = ('' + (d.getMonth() + 1)).padStart(2, '0');
+            var day = ('' + d.getDate()).padStart(2, '0');
+            var hh = ('' + d.getHours()).padStart(2, '0');
+            var mm = ('' + d.getMinutes()).padStart(2, '0');
+            var ss = ('' + d.getSeconds()).padStart(2, '0');
+            return year + '-' + month + '-' + day + ' ' + hh + ':' + mm + ':' + ss;
+        }
 
 		function buildTooltipHtml(point) {
 			if (!point) return '';
@@ -2784,6 +3008,7 @@ return view.extend({
 			var typeSel = (typeof document !== 'undefined' ? document.getElementById('history-type-select') : null);
 			var selType = (typeSel && typeSel.value) ? typeSel.value : 'total';
 			var speedUnit = uci.get('bandix', 'traffic', 'speed_unit') || 'bytes';
+			var isAggregated = point.is_aggregated || false;
 
 			function row(label, val) {
 				lines.push('<div class="ht-row"><span class="ht-key">' + label + '</span><span class="ht-val">' + val + '</span></div>');
@@ -2815,63 +3040,98 @@ return view.extend({
 				return { up: 'total_tx_bytes', down: 'total_rx_bytes' };
 			}
 
-			lines.push('<div class="ht-title">' + msToTimeLabel(point.ts_ms) + '</div>');
-
-			// 若选择了设备，显示设备信息
-			try {
-				var macSel = (typeof document !== 'undefined' ? document.getElementById('history-device-select') : null);
-				var macVal = (macSel && macSel.value) ? macSel.value : '';
-				if (macVal && Array.isArray(latestDevices)) {
-					var dev = latestDevices.find(function(d){ return d.mac === macVal; });
-					if (dev) {
-						var ipv6Info = '';
-						var lanIPv6 = filterLanIPv6(dev.ipv6_addresses);
-						if (lanIPv6.length > 0) {
-							ipv6Info = ' | IPv6: ' + lanIPv6.join(', ');
-						}
-						var devLabel = (dev.hostname || '-') + (dev.ip ? ' (' + dev.ip + ')' : '') + (dev.mac ? ' [' + dev.mac + ']' : '') + ipv6Info;
-						lines.push('<div class="ht-device">' + _('Device') + ': ' + devLabel + '</div>');
-					}
+			// 标题：聚合数据显示完整日期时间，实时数据只显示时间
+			if (isAggregated) {
+				lines.push('<div class="ht-title">' + msToFullDateTimeLabel(point.ts_ms) + '</div>');
+				var rangeLabel = currentTimeRange === 'day' ? _('Daily') : 
+				                 currentTimeRange === 'week' ? _('Weekly') : 
+				                 currentTimeRange === 'month' ? _('Monthly') : '';
+				if (rangeLabel) {
+					lines.push('<div style="font-size: 0.75rem; opacity: 0.6; margin-bottom: 4px;">' + rangeLabel + ' ' + _('Statistics') + '</div>');
 				}
-			} catch (e) {}
+			} else {
+				lines.push('<div class="ht-title">' + msToTimeLabel(point.ts_ms) + '</div>');
+			}
 
 			// 关键信息：选中类型的上下行速率（大号显示）
 			var kpiLabels = labelsFor(selType);
 			var kpiRateKeys = rateKeysFor(selType);
-			lines.push(
-				'<div class="ht-kpis">' +
-					'<div class="ht-kpi up">' +
-						'<div class="ht-k-label">' + kpiLabels.up + '</div>' +
-						'<div class="ht-k-value">' + rateValue(kpiRateKeys.up) + '</div>' +
-					'</div>' +
-					'<div class="ht-kpi down">' +
-						'<div class="ht-k-label">' + kpiLabels.down + '</div>' +
-						'<div class="ht-k-value">' + rateValue(kpiRateKeys.down) + '</div>' +
-					'</div>' +
-				'</div>'
-			);
+			
+			if (isAggregated) {
+				// 聚合数据：显示 P95 值（主要指标）
+				lines.push(
+					'<div class="ht-kpis">' +
+						'<div class="ht-kpi up">' +
+							'<div class="ht-k-label">' + _('WAN Upload') + ' (P95)</div>' +
+							'<div class="ht-k-value">' + formatByterate(point.wide_tx_rate_p95 || 0, speedUnit) + '</div>' +
+						'</div>' +
+						'<div class="ht-kpi down">' +
+							'<div class="ht-k-label">' + _('WAN Download') + ' (P95)</div>' +
+							'<div class="ht-k-value">' + formatByterate(point.wide_rx_rate_p95 || 0, speedUnit) + '</div>' +
+						'</div>' +
+					'</div>'
+				);
+				
+				// 详细统计信息
+				lines.push('<div class="ht-divider"></div>');
+				lines.push('<div class="ht-section-title">' + _('Upload Statistics') + '</div>');
+				row(_('Average'), formatByterate(point.wide_tx_rate_avg || 0, speedUnit));
+				row(_('Maximum'), formatByterate(point.wide_tx_rate_max || 0, speedUnit));
+				row(_('Minimum'), formatByterate(point.wide_tx_rate_min || 0, speedUnit));
+				row('P90', formatByterate(point.wide_tx_rate_p90 || 0, speedUnit));
+				row('P95', formatByterate(point.wide_tx_rate_p95 || 0, speedUnit));
+				row('P99', formatByterate(point.wide_tx_rate_p99 || 0, speedUnit));
+				
+				lines.push('<div class="ht-section-title" style="margin-top: 8px;">' + _('Download Statistics') + '</div>');
+				row(_('Average'), formatByterate(point.wide_rx_rate_avg || 0, speedUnit));
+				row(_('Maximum'), formatByterate(point.wide_rx_rate_max || 0, speedUnit));
+				row(_('Minimum'), formatByterate(point.wide_rx_rate_min || 0, speedUnit));
+				row('P90', formatByterate(point.wide_rx_rate_p90 || 0, speedUnit));
+				row('P95', formatByterate(point.wide_rx_rate_p95 || 0, speedUnit));
+				row('P99', formatByterate(point.wide_rx_rate_p99 || 0, speedUnit));
+				
+				// 累计流量（只显示 WAN）
+				lines.push('<div class="ht-divider"></div>');
+				lines.push('<div class="ht-section-title">' + _('Cumulative Traffic') + '</div>');
+				row(_('WAN Uploaded'), bytesValue('wide_tx_bytes'));
+				row(_('WAN Downloaded'), bytesValue('wide_rx_bytes'));
+			} else {
+				// 实时数据：显示实时速率
+				lines.push(
+					'<div class="ht-kpis">' +
+						'<div class="ht-kpi up">' +
+							'<div class="ht-k-label">' + kpiLabels.up + '</div>' +
+							'<div class="ht-k-value">' + rateValue(kpiRateKeys.up) + '</div>' +
+						'</div>' +
+						'<div class="ht-kpi down">' +
+							'<div class="ht-k-label">' + kpiLabels.down + '</div>' +
+							'<div class="ht-k-value">' + rateValue(kpiRateKeys.down) + '</div>' +
+						'</div>' +
+					'</div>'
+				);
 
-			// 次要信息：其余类型的速率（精简展示）
-			var otherTypes = ['total', 'lan', 'wan'].filter(function (t) { return t !== selType; });
-			if (otherTypes.length) {
-				lines.push('<div class="ht-section-title">' + _('Other Rates') + '</div>');
-				otherTypes.forEach(function (t) {
-					var lbs = labelsFor(t);
-					var ks = rateKeysFor(t);
-					row(lbs.up, rateValue(ks.up));
-					row(lbs.down, rateValue(ks.down));
-				});
+				// 次要信息：其余类型的速率（精简展示）
+				var otherTypes = ['total', 'lan', 'wan'].filter(function (t) { return t !== selType; });
+				if (otherTypes.length) {
+					lines.push('<div class="ht-section-title">' + _('Other Rates') + '</div>');
+					otherTypes.forEach(function (t) {
+						var lbs = labelsFor(t);
+						var ks = rateKeysFor(t);
+						row(lbs.up, rateValue(ks.up));
+						row(lbs.down, rateValue(ks.down));
+					});
+				}
+
+				// 累计：区分LAN 流量与公网
+				lines.push('<div class="ht-divider"></div>');
+				lines.push('<div class="ht-section-title">' + _('Cumulative') + '</div>');
+				row(_('Total Uploaded'), bytesValue('total_tx_bytes'));
+				row(_('Total Downloaded'), bytesValue('total_rx_bytes'));
+				row(_('LAN Uploaded'), bytesValue('local_tx_bytes'));
+				row(_('LAN Downloaded'), bytesValue('local_rx_bytes'));
+				row(_('WAN Uploaded'), bytesValue('wide_tx_bytes'));
+				row(_('WAN Downloaded'), bytesValue('wide_rx_bytes'));
 			}
-
-			// 累计：区分LAN 流量与公网
-			lines.push('<div class="ht-divider"></div>');
-			lines.push('<div class="ht-section-title">' + _('Cumulative') + '</div>');
-			row(_('Total Uploaded'), bytesValue('total_tx_bytes'));
-			row(_('Total Downloaded'), bytesValue('total_rx_bytes'));
-			row(_('LAN Uploaded'), bytesValue('local_tx_bytes'));
-			row(_('LAN Downloaded'), bytesValue('local_rx_bytes'));
-			row(_('WAN Uploaded'), bytesValue('wide_tx_bytes'));
-			row(_('WAN Downloaded'), bytesValue('wide_rx_bytes'));
 
 			return lines.join('');
         }
@@ -3236,7 +3496,9 @@ function downsampleForMobile(data, labels, upSeries, downSeries, maxPoints) {
             
 
             return fetchMetricsData(mac).then(function (res) {
-                var data = Array.isArray(res && res.metrics) ? res.metrics.slice() : [];
+                // 将数组数组格式转换为对象数组格式
+                var rawMetrics = res && res.metrics ? res.metrics : [];
+                var data = convertMetricsArrayToObjects(rawMetrics);
                 lastHistoryData = data;
 
                 var retentionBadge = document.getElementById('history-retention');
@@ -3603,14 +3865,99 @@ function downsampleForMobile(data, labels, upSeries, downSeries, maxPoints) {
             });
         }
 
-        // 历史趋势：事件绑定
-        (function initHistoryControls() {
+        // 历史趋势：事件绑定（延迟执行以确保 DOM 已加载）
+        function initHistoryControls() {
             var typeSel = document.getElementById('history-type-select');
             var devSel = document.getElementById('history-device-select');
             if (typeSel) typeSel.value = 'total';
             
             // 初始化缩放倍率显示
             updateZoomLevelDisplay();
+            
+            // Tab 切换事件处理
+            var tabButtons = document.querySelectorAll('.history-tab');
+            
+            // 确保找到了 tab 按钮
+            if (tabButtons.length === 0) {
+                console.warn('History tab buttons not found, retrying...');
+                setTimeout(initHistoryControls, 100);
+                return;
+            }
+            
+            tabButtons.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var range = this.getAttribute('data-range');
+                    
+                    // 更新当前选择的时间范围
+                    currentTimeRange = range;
+                    localStorage.setItem('bandix_time_range', range);
+                    
+                    // 更新 tab 状态
+                    tabButtons.forEach(function(b) {
+                        b.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // 对于非实时时间范围，禁用 LAN 和 Total 选项（因为只有 WAN 数据）
+                    if (range !== 'realtime') {
+                        if (typeSel) {
+                            // 如果当前选择的是 LAN 或 Total，切换到 WAN
+                            if (typeSel.value === 'lan' || typeSel.value === 'total') {
+                                typeSel.value = 'wan';
+                            }
+                            // 禁用 LAN 和 Total 选项
+                            var lanOption = typeSel.querySelector('option[value="lan"]');
+                            var totalOption = typeSel.querySelector('option[value="total"]');
+                            if (lanOption) lanOption.disabled = true;
+                            if (totalOption) totalOption.disabled = true;
+                        }
+                    } else {
+                        // 实时模式下，启用所有选项
+                        if (typeSel) {
+                            var lanOption = typeSel.querySelector('option[value="lan"]');
+                            var totalOption = typeSel.querySelector('option[value="total"]');
+                            if (lanOption) lanOption.disabled = false;
+                            if (totalOption) totalOption.disabled = false;
+                        }
+                    }
+                    
+                    // 刷新历史数据
+                    refreshHistory();
+                });
+            });
+            
+            // 恢复之前选择的时间范围
+            var savedRange = localStorage.getItem('bandix_time_range') || 'realtime';
+            
+            // 移动端强制使用 realtime
+            var screenWidth = window.innerWidth || document.documentElement.clientWidth;
+            var isMobileScreen = screenWidth <= 768;
+            if (isMobileScreen) {
+                savedRange = 'realtime';
+                currentTimeRange = 'realtime';
+                localStorage.setItem('bandix_time_range', 'realtime');
+            } else {
+                currentTimeRange = savedRange;
+            }
+            
+            tabButtons.forEach(function(btn) {
+                if (btn.getAttribute('data-range') === savedRange) {
+                    btn.classList.add('active');
+                    // 触发一次点击以应用选项禁用逻辑
+                    if (savedRange !== 'realtime' && typeSel) {
+                        var lanOption = typeSel.querySelector('option[value="lan"]');
+                        var totalOption = typeSel.querySelector('option[value="total"]');
+                        if (lanOption) lanOption.disabled = true;
+                        if (totalOption) totalOption.disabled = true;
+                        if (typeSel.value === 'lan' || typeSel.value === 'total') {
+                            typeSel.value = 'wan';
+                        }
+                    }
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
 			function onFilterChange() {
 				refreshHistory();
 				// 同步刷新表格（立即生效，不等轮询）
@@ -3626,12 +3973,16 @@ function downsampleForMobile(data, labels, upSeries, downSeries, maxPoints) {
 
             // 首次加载
             refreshHistory();
-        })();
+        }
+        
+        // 延迟执行以确保 DOM 已加载
+        setTimeout(initHistoryControls, 0);
 
-        // 历史趋势轮询（每1秒）
+        // 历史趋势轮询（实时数据每1秒，其他时间范围每30秒）
+        // 使用 poll.add 但根据时间范围动态调整
         poll.add(function () {
             return refreshHistory();
-        },1);
+        }, 1);
 
 
 

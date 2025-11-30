@@ -841,3 +841,66 @@ msgstr "无生效规则"
 
 msgid "Schedule Rules"
 msgstr "定时限速规则"
+
+msgid "Upload Statistics"
+msgstr "上传统计"
+
+msgid "Download Statistics"
+msgstr "下载统计"
+
+msgid "Cumulative Traffic"
+msgstr "累计流量"
+
+msgid "Daily"
+msgstr "每日"
+
+msgid "Weekly"
+msgstr "每周"
+
+msgid "Monthly"
+msgstr "每月"
+
+msgid "Statistics"
+msgstr "统计"
+
+msgid "Average"
+msgstr "平均值"
+
+msgid "Maximum"
+msgstr "最大值"
+
+msgid "Minimum"
+msgstr "最小值"
+
+msgid "WAN Upload"
+msgstr "WAN 上传"
+
+msgid "WAN Download"
+msgstr "WAN 下载"
+
+msgid "WAN Uploaded"
+msgstr "WAN 上传量"
+
+msgid "WAN Downloaded"
+msgstr "WAN 下载量"
+
+msgid "Clear Traffic Data"
+msgstr "删除流量数据"
+
+msgid "Are you sure you want to clear all traffic data? This action cannot be undone."
+msgstr "确定要清除所有流量数据吗？此操作无法撤销。"
+
+msgid "Failed to clear traffic data: "
+msgstr "清除流量数据失败："
+
+msgid "Restart Service"
+msgstr "重启服务"
+
+msgid "Restart Bandix Service"
+msgstr "重启 Bandix 服务"
+
+msgid "Are you sure you want to restart the Bandix service?"
+msgstr "确定要重启 Bandix 服务吗？"
+
+msgid "Failed to restart service: "
+msgstr "重启服务失败："

@@ -841,3 +841,66 @@ msgstr "Sin regla activa"
 
 msgid "Schedule Rules"
 msgstr "Reglas de limitación programada"
+
+msgid "Upload Statistics"
+msgstr "Estadísticas de subida"
+
+msgid "Download Statistics"
+msgstr "Estadísticas de descarga"
+
+msgid "Cumulative Traffic"
+msgstr "Tráfico acumulado"
+
+msgid "Daily"
+msgstr "Diario"
+
+msgid "Weekly"
+msgstr "Semanal"
+
+msgid "Monthly"
+msgstr "Mensual"
+
+msgid "Statistics"
+msgstr "Estadísticas"
+
+msgid "Average"
+msgstr "Promedio"
+
+msgid "Maximum"
+msgstr "Máximo"
+
+msgid "Minimum"
+msgstr "Mínimo"
+
+msgid "WAN Upload"
+msgstr "Subida WAN"
+
+msgid "WAN Download"
+msgstr "Descarga WAN"
+
+msgid "WAN Uploaded"
+msgstr "Subido WAN"
+
+msgid "WAN Downloaded"
+msgstr "Descargado WAN"
+
+msgid "Clear Traffic Data"
+msgstr "Borrar datos de tráfico"
+
+msgid "Are you sure you want to clear all traffic data? This action cannot be undone."
+msgstr "¿Está seguro de que desea borrar todos los datos de tráfico? Esta acción no se puede deshacer."
+
+msgid "Failed to clear traffic data: "
+msgstr "Error al borrar los datos de tráfico: "
+
+msgid "Restart Service"
+msgstr "Reiniciar servicio"
+
+msgid "Restart Bandix Service"
+msgstr "Reiniciar servicio Bandix"
+
+msgid "Are you sure you want to restart the Bandix service?"
+msgstr "¿Está seguro de que desea reiniciar el servicio Bandix?"
+
+msgid "Failed to restart service: "
+msgstr "Error al reiniciar el servicio: "

@@ -842,3 +842,66 @@ msgstr "Brak aktywnej reguły"
 msgid "Schedule Rules"
 msgstr "Reguły limitu czasu"
 
+msgid "Upload Statistics"
+msgstr "Statystyki wysyłania"
+
+msgid "Download Statistics"
+msgstr "Statystyki pobierania"
+
+msgid "Cumulative Traffic"
+msgstr "Skumulowany ruch"
+
+msgid "Daily"
+msgstr "Dzienny"
+
+msgid "Weekly"
+msgstr "Tygodniowy"
+
+msgid "Monthly"
+msgstr "Miesięczny"
+
+msgid "Statistics"
+msgstr "Statystyki"
+
+msgid "Average"
+msgstr "Średnia"
+
+msgid "Maximum"
+msgstr "Maksimum"
+
+msgid "Minimum"
+msgstr "Minimum"
+
+msgid "WAN Upload"
+msgstr "Wysyłanie WAN"
+
+msgid "WAN Download"
+msgstr "Pobieranie WAN"
+
+msgid "WAN Uploaded"
+msgstr "Wysłano WAN"
+
+msgid "WAN Downloaded"
+msgstr "Pobrano WAN"
+
+msgid "Clear Traffic Data"
+msgstr "Wyczyść dane ruchu"
+
+msgid "Are you sure you want to clear all traffic data? This action cannot be undone."
+msgstr "Czy na pewno chcesz wyczyścić wszystkie dane ruchu? Tej operacji nie można cofnąć."
+
+msgid "Failed to clear traffic data: "
+msgstr "Nie udało się wyczyścić danych ruchu: "
+
+msgid "Restart Service"
+msgstr "Uruchom ponownie usługę"
+
+msgid "Restart Bandix Service"
+msgstr "Uruchom ponownie usługę Bandix"
+
+msgid "Are you sure you want to restart the Bandix service?"
+msgstr "Czy na pewno chcesz uruchomić ponownie usługę Bandix?"
+
+msgid "Failed to restart service: "
+msgstr "Nie udało się uruchomić ponownie usługi: "
+

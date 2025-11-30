@@ -6,13 +6,18 @@
 				"luci.bandix": [
 					"getStatus",
 					"getMetrics",
+					"getMetricsDay",
+					"getMetricsWeek",
+					"getMetricsMonth",
 					"getConnection",
 					"setHostname",
 					"getDnsQueries",
 					"getDnsStats",
 					"getScheduleLimits",
 					"setScheduleLimit",
-					"deleteScheduleLimit"
+					"deleteScheduleLimit",
+					"clearData",
+					"restartService"
 				]
 			},
 			"uci": [
@@ -24,13 +29,18 @@
 				"luci.bandix": [
 					"getStatus",
 					"getMetrics",
+					"getMetricsDay",
+					"getMetricsWeek",
+					"getMetricsMonth",
 					"getConnection",
 					"setHostname",
 					"getDnsQueries",
 					"getDnsStats",
 					"getScheduleLimits",
 					"setScheduleLimit",
-					"deleteScheduleLimit"
+					"deleteScheduleLimit",
+					"clearData",
+					"restartService"
 				]
 			},
 			"uci": [

@@ -841,3 +841,66 @@ msgstr "Aucune règle active"
 
 msgid "Schedule Rules"
 msgstr "Règles de limitation programmée"
+
+msgid "Upload Statistics"
+msgstr "Statistiques d'envoi"
+
+msgid "Download Statistics"
+msgstr "Statistiques de téléchargement"
+
+msgid "Cumulative Traffic"
+msgstr "Trafic cumulé"
+
+msgid "Daily"
+msgstr "Quotidien"
+
+msgid "Weekly"
+msgstr "Hebdomadaire"
+
+msgid "Monthly"
+msgstr "Mensuel"
+
+msgid "Statistics"
+msgstr "Statistiques"
+
+msgid "Average"
+msgstr "Moyenne"
+
+msgid "Maximum"
+msgstr "Maximum"
+
+msgid "Minimum"
+msgstr "Minimum"
+
+msgid "WAN Upload"
+msgstr "Envoi WAN"
+
+msgid "WAN Download"
+msgstr "Téléchargement WAN"
+
+msgid "WAN Uploaded"
+msgstr "Envoyé WAN"
+
+msgid "WAN Downloaded"
+msgstr "Téléchargé WAN"
+
+msgid "Clear Traffic Data"
+msgstr "Effacer les données de trafic"
+
+msgid "Are you sure you want to clear all traffic data? This action cannot be undone."
+msgstr "Êtes-vous sûr de vouloir effacer toutes les données de trafic ? Cette action est irréversible."
+
+msgid "Failed to clear traffic data: "
+msgstr "Échec de l'effacement des données de trafic : "
+
+msgid "Restart Service"
+msgstr "Redémarrer le service"
+
+msgid "Restart Bandix Service"
+msgstr "Redémarrer le service Bandix"
+
+msgid "Are you sure you want to restart the Bandix service?"
+msgstr "Êtes-vous sûr de vouloir redémarrer le service Bandix ?"
+
+msgid "Failed to restart service: "
+msgstr "Échec du redémarrage du service : "
