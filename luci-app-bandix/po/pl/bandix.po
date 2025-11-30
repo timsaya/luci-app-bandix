@@ -842,3 +842,45 @@ msgstr "Brak aktywnej reguły"
 msgid "Schedule Rules"
 msgstr "Reguły limitu czasu"
 
+msgid "Upload Statistics"
+msgstr "Statystyki wysyłania"
+
+msgid "Download Statistics"
+msgstr "Statystyki pobierania"
+
+msgid "Cumulative Traffic"
+msgstr "Skumulowany ruch"
+
+msgid "Daily"
+msgstr "Dzienny"
+
+msgid "Weekly"
+msgstr "Tygodniowy"
+
+msgid "Monthly"
+msgstr "Miesięczny"
+
+msgid "Statistics"
+msgstr "Statystyki"
+
+msgid "Average"
+msgstr "Średnia"
+
+msgid "Maximum"
+msgstr "Maksimum"
+
+msgid "Minimum"
+msgstr "Minimum"
+
+msgid "WAN Upload"
+msgstr "Wysyłanie WAN"
+
+msgid "WAN Download"
+msgstr "Pobieranie WAN"
+
+msgid "WAN Uploaded"
+msgstr "Wysłano WAN"
+
+msgid "WAN Downloaded"
+msgstr "Pobrano WAN"
+

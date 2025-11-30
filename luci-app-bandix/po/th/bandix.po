@@ -841,3 +841,45 @@ msgstr "ไม่มีกฎที่ใช้งาน"
 
 msgid "Schedule Rules"
 msgstr "กฎการจำกัดอัตราแบบกำหนดเวลา"
+
+msgid "Upload Statistics"
+msgstr "สถิติการอัปโหลด"
+
+msgid "Download Statistics"
+msgstr "สถิติการดาวน์โหลด"
+
+msgid "Cumulative Traffic"
+msgstr "ปริมาณการใช้งานสะสม"
+
+msgid "Daily"
+msgstr "รายวัน"
+
+msgid "Weekly"
+msgstr "รายสัปดาห์"
+
+msgid "Monthly"
+msgstr "รายเดือน"
+
+msgid "Statistics"
+msgstr "สถิติ"
+
+msgid "Average"
+msgstr "ค่าเฉลี่ย"
+
+msgid "Maximum"
+msgstr "สูงสุด"
+
+msgid "Minimum"
+msgstr "ต่ำสุด"
+
+msgid "WAN Upload"
+msgstr "อัปโหลด WAN"
+
+msgid "WAN Download"
+msgstr "ดาวน์โหลด WAN"
+
+msgid "WAN Uploaded"
+msgstr "อัปโหลด WAN แล้ว"
+
+msgid "WAN Downloaded"
+msgstr "ดาวน์โหลด WAN แล้ว"

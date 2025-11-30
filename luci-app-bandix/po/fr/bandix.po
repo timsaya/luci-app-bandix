@@ -841,3 +841,45 @@ msgstr "Aucune règle active"
 
 msgid "Schedule Rules"
 msgstr "Règles de limitation programmée"
+
+msgid "Upload Statistics"
+msgstr "Statistiques d'envoi"
+
+msgid "Download Statistics"
+msgstr "Statistiques de téléchargement"
+
+msgid "Cumulative Traffic"
+msgstr "Trafic cumulé"
+
+msgid "Daily"
+msgstr "Quotidien"
+
+msgid "Weekly"
+msgstr "Hebdomadaire"
+
+msgid "Monthly"
+msgstr "Mensuel"
+
+msgid "Statistics"
+msgstr "Statistiques"
+
+msgid "Average"
+msgstr "Moyenne"
+
+msgid "Maximum"
+msgstr "Maximum"
+
+msgid "Minimum"
+msgstr "Minimum"
+
+msgid "WAN Upload"
+msgstr "Envoi WAN"
+
+msgid "WAN Download"
+msgstr "Téléchargement WAN"
+
+msgid "WAN Uploaded"
+msgstr "Envoyé WAN"
+
+msgid "WAN Downloaded"
+msgstr "Téléchargé WAN"

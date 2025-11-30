@@ -841,3 +841,45 @@ msgstr "无生效规则"
 
 msgid "Schedule Rules"
 msgstr "定时限速规则"
+
+msgid "Upload Statistics"
+msgstr "上传统计"
+
+msgid "Download Statistics"
+msgstr "下载统计"
+
+msgid "Cumulative Traffic"
+msgstr "累计流量"
+
+msgid "Daily"
+msgstr "每日"
+
+msgid "Weekly"
+msgstr "每周"
+
+msgid "Monthly"
+msgstr "每月"
+
+msgid "Statistics"
+msgstr "统计"
+
+msgid "Average"
+msgstr "平均值"
+
+msgid "Maximum"
+msgstr "最大值"
+
+msgid "Minimum"
+msgstr "最小值"
+
+msgid "WAN Upload"
+msgstr "WAN 上传"
+
+msgid "WAN Download"
+msgstr "WAN 下载"
+
+msgid "WAN Uploaded"
+msgstr "WAN 上传量"
+
+msgid "WAN Downloaded"
+msgstr "WAN 下载量"

@@ -841,3 +841,45 @@ msgstr "Tidak ada aturan aktif"
 
 msgid "Schedule Rules"
 msgstr "Aturan pembatasan terjadwal"
+
+msgid "Upload Statistics"
+msgstr "Statistik unggahan"
+
+msgid "Download Statistics"
+msgstr "Statistik unduhan"
+
+msgid "Cumulative Traffic"
+msgstr "Lalu lintas kumulatif"
+
+msgid "Daily"
+msgstr "Harian"
+
+msgid "Weekly"
+msgstr "Mingguan"
+
+msgid "Monthly"
+msgstr "Bulanan"
+
+msgid "Statistics"
+msgstr "Statistik"
+
+msgid "Average"
+msgstr "Rata-rata"
+
+msgid "Maximum"
+msgstr "Maksimum"
+
+msgid "Minimum"
+msgstr "Minimum"
+
+msgid "WAN Upload"
+msgstr "Unggahan WAN"
+
+msgid "WAN Download"
+msgstr "Unduhan WAN"
+
+msgid "WAN Uploaded"
+msgstr "Diunggah WAN"
+
+msgid "WAN Downloaded"
+msgstr "Diunduh WAN"

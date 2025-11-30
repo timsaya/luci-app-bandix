@@ -841,3 +841,45 @@ msgstr "Нет активных правил"
 
 msgid "Schedule Rules"
 msgstr "Правила ограничения по расписанию"
+
+msgid "Upload Statistics"
+msgstr "Статистика отправки"
+
+msgid "Download Statistics"
+msgstr "Статистика загрузки"
+
+msgid "Cumulative Traffic"
+msgstr "Накопительный трафик"
+
+msgid "Daily"
+msgstr "Ежедневно"
+
+msgid "Weekly"
+msgstr "Еженедельно"
+
+msgid "Monthly"
+msgstr "Ежемесячно"
+
+msgid "Statistics"
+msgstr "Статистика"
+
+msgid "Average"
+msgstr "Среднее"
+
+msgid "Maximum"
+msgstr "Максимум"
+
+msgid "Minimum"
+msgstr "Минимум"
+
+msgid "WAN Upload"
+msgstr "Отправка WAN"
+
+msgid "WAN Download"
+msgstr "Загрузка WAN"
+
+msgid "WAN Uploaded"
+msgstr "Отправлено WAN"
+
+msgid "WAN Downloaded"
+msgstr "Загружено WAN"
