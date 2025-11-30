@@ -883,3 +883,24 @@ msgstr "Отправлено WAN"
 
 msgid "WAN Downloaded"
 msgstr "Загружено WAN"
+
+msgid "Clear Traffic Data"
+msgstr "Очистить данные трафика"
+
+msgid "Are you sure you want to clear all traffic data? This action cannot be undone."
+msgstr "Вы уверены, что хотите очистить все данные трафика? Это действие нельзя отменить."
+
+msgid "Failed to clear traffic data: "
+msgstr "Не удалось очистить данные трафика: "
+
+msgid "Restart Service"
+msgstr "Перезапустить службу"
+
+msgid "Restart Bandix Service"
+msgstr "Перезапустить службу Bandix"
+
+msgid "Are you sure you want to restart the Bandix service?"
+msgstr "Вы уверены, что хотите перезапустить службу Bandix?"
+
+msgid "Failed to restart service: "
+msgstr "Не удалось перезапустить службу: "

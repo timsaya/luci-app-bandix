@@ -15,7 +15,9 @@
 					"getDnsStats",
 					"getScheduleLimits",
 					"setScheduleLimit",
-					"deleteScheduleLimit"
+					"deleteScheduleLimit",
+					"clearData",
+					"restartService"
 				]
 			},
 			"uci": [
@@ -36,7 +38,9 @@
 					"getDnsStats",
 					"getScheduleLimits",
 					"setScheduleLimit",
-					"deleteScheduleLimit"
+					"deleteScheduleLimit",
+					"clearData",
+					"restartService"
 				]
 			},
 			"uci": [

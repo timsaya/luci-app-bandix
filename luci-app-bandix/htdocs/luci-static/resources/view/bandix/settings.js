@@ -3,10 +3,23 @@
 'require form';
 'require ui';
 'require uci';
-'require fs';
+'require rpc';
 
 
 // 暗色模式检测已改为使用 CSS 媒体查询 @media (prefers-color-scheme: dark)
+
+// 声明 RPC 调用方法
+var callClearData = rpc.declare({
+	object: 'luci.bandix',
+	method: 'clearData',
+	expect: { }
+});
+
+var callRestartService = rpc.declare({
+	object: 'luci.bandix',
+	method: 'restartService',
+	expect: { }
+});
 
 return view.extend({
 	load: function () {
@@ -108,14 +121,78 @@ return view.extend({
 			return uci.get('bandix', section_id, 'data_dir') || '/usr/share/bandix';
 		};
 
-		// 添加意见反馈信息
-		o = s.option(form.DummyValue, 'feedback_info', _('Feedback'));
-		o.href = 'https://github.com/timsaya';
-		o.cfgvalue = function () {
-			return 'https://github.com/timsaya';
-		};
+	// 添加意见反馈信息
+	o = s.option(form.DummyValue, 'feedback_info', _('Feedback'));
+	o.href = 'https://github.com/timsaya';
+	o.cfgvalue = function () {
+		return 'https://github.com/timsaya';
+	};
 
-		// 2. 流量监控设置部分 (traffic)
+	// 添加清空数据按钮
+	o = s.option(form.Button, 'clear_data', _('Clear Traffic Data'));
+	o.inputtitle = _('Clear Traffic Data');
+	o.inputstyle = 'reset';
+	o.onclick = function () {
+		return ui.showModal(_('Clear Traffic Data'), [
+			E('p', _('Are you sure you want to clear all traffic data? This action cannot be undone.')),
+			E('div', { 'class': 'right' }, [
+				E('button', {
+					'class': 'btn',
+					'click': ui.hideModal
+				}, _('Cancel')),
+				' ',
+				E('button', {
+					'class': 'btn cbi-button-negative',
+					'click': function () {
+						ui.hideModal();
+						return callClearData()
+							.then(function (result) {
+								if (result && !result.success) {
+									ui.addNotification(null, E('p', _('Failed to clear traffic data: ') + (result.error || 'Unknown error')), 'error');
+								}
+							})
+							.catch(function (err) {
+								ui.addNotification(null, E('p', _('Failed to clear traffic data: ') + err.message), 'error');
+							});
+					}
+				}, _('Confirm'))
+			])
+		]);
+	};
+
+	// 添加重启服务按钮
+	o = s.option(form.Button, 'restart_service', _('Restart Service'));
+	o.inputtitle = _('Restart Bandix Service');
+	o.inputstyle = 'apply';
+	o.onclick = function () {
+		return ui.showModal(_('Restart Service'), [
+			E('p', _('Are you sure you want to restart the Bandix service?')),
+			E('div', { 'class': 'right' }, [
+				E('button', {
+					'class': 'btn',
+					'click': ui.hideModal
+				}, _('Cancel')),
+				' ',
+				E('button', {
+					'class': 'btn cbi-button-action',
+					'click': function () {
+						ui.hideModal();
+						return callRestartService()
+							.then(function (result) {
+								if (result && !result.success) {
+									ui.addNotification(null, E('p', _('Failed to restart service: ') + (result.error || 'Unknown error')), 'error');
+								}
+							})
+							.catch(function (err) {
+								ui.addNotification(null, E('p', _('Failed to restart service: ') + err.message), 'error');
+							});
+					}
+				}, _('Confirm'))
+			])
+		]);
+	};
+
+	// 2. 流量监控设置部分 (traffic)
 		s = m.section(form.NamedSection, 'traffic', 'traffic', _('Traffic Monitor Settings'));
 		s.description = _('Configure traffic monitoring related parameters');
 		s.addremove = false;

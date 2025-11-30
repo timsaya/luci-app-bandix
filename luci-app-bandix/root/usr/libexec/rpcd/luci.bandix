@@ -454,6 +454,39 @@ delete_schedule_limit() {
 	fi
 }
 
+# 清空数据
+clear_data() {
+	local data_dir=$(uci get bandix.general.data_dir 2>/dev/null || echo "/usr/share/bandix")
+	local metrics_dir="$data_dir/metrics"
+	
+	# 检查目录是否存在
+	if [ ! -d "$metrics_dir" ]; then
+		make_error "Metrics directory does not exist"
+		return
+	fi
+	
+	# 删除 metrics 目录下的所有文件
+	rm -rf "$metrics_dir"/* 2>/dev/null
+	
+	if [ $? -eq 0 ]; then
+		make_success "Data cleared successfully"
+	else
+		make_error "Failed to clear data"
+	fi
+}
+
+# 重启服务
+restart_service() {
+	# 执行服务重启
+	/etc/init.d/bandix restart >/dev/null 2>&1
+	
+	if [ $? -eq 0 ]; then
+		make_success "Service restarted successfully"
+	else
+		make_error "Failed to restart service"
+	fi
+}
+
 case "$1" in
 	list)
 		json_init
@@ -509,16 +542,22 @@ case "$1" in
 		json_add_int "wide_tx_rate_limit"
 		json_close_object
 		
-		json_add_object "deleteScheduleLimit"
-		json_add_string "mac"
-		json_add_string "start_time"
-		json_add_string "end_time"
-		json_add_string "days"
-		json_close_object
-		
-		json_dump
-		json_cleanup
-		;;
+	json_add_object "deleteScheduleLimit"
+	json_add_string "mac"
+	json_add_string "start_time"
+	json_add_string "end_time"
+	json_add_string "days"
+	json_close_object
+	
+	json_add_object "clearData"
+	json_close_object
+	
+	json_add_object "restartService"
+	json_close_object
+	
+	json_dump
+	json_cleanup
+	;;
 	call)
 		case "$2" in
 			getStatus)
@@ -778,6 +817,14 @@ case "$1" in
 					# logger "luci.bandix: deleteScheduleLimit 没有接收到输入"
 					make_error "No input received"
 				fi
+				;;
+			clearData)
+				# logger "luci.bandix: clearData called"
+				clear_data
+				;;
+			restartService)
+				# logger "luci.bandix: restartService called"
+				restart_service
 				;;
 		esac
 		;;
