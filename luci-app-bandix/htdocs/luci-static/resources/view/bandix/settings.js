@@ -147,6 +147,7 @@ return view.extend({
 		o.default = '0';
 		o.rmempty = false;
 
+
 		// 添加数据 flush 间隔（秒）
 		o = s.option(form.ListValue, 'traffic_flush_interval_seconds', _('Data Flush Interval'),
 			_('Set the interval for flushing data to disk'));
@@ -166,12 +167,8 @@ return view.extend({
 		// 添加历史流量周期（秒）
 		o = s.option(form.ListValue, 'traffic_retention_seconds', _('Traffic History Period'),
 			_('10 minutes interval uses about 60 KB per device'));
-		o.value('60', _('1 minute'));
-		o.value('300', _('5 minutes'));
 		o.value('600', _('10 minutes'));
 		o.value('900', _('15 minutes'));
-		o.value('1200', _('20 minutes'));
-		o.value('1500', _('25 minutes'));
 		o.value('1800', _('30 minutes'));
 		o.value('3600', _('1 hour'));
 		o.default = '600';
