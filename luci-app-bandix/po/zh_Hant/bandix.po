@@ -1015,3 +1015,6 @@ msgstr "手動下載"
 
 msgid "Close"
 msgstr "關閉"
+
+msgid "Starting installation... The page will refresh automatically in 5 seconds."
+msgstr "開始安裝... 頁面將在5秒後自動重新整理。"

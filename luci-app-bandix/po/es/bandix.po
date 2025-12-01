@@ -1015,3 +1015,6 @@ msgstr "Descarga Manual"
 
 msgid "Close"
 msgstr "Cerrar"
+
+msgid "Starting installation... The page will refresh automatically in 5 seconds."
+msgstr "Iniciando instalación... La página se actualizará automáticamente en 5 segundos."

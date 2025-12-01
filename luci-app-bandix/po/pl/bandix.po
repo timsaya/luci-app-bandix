@@ -1016,3 +1016,6 @@ msgstr "Pobieranie Ręczne"
 msgid "Close"
 msgstr "Zamknij"
 
+msgid "Starting installation... The page will refresh automatically in 5 seconds."
+msgstr "Rozpoczynanie instalacji... Strona odświeży się automatycznie za 5 sekund."
+

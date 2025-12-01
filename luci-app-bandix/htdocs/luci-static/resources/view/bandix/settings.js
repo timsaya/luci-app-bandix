@@ -389,60 +389,19 @@ return view.extend({
 							statusDiv.style.display = 'block';
 							statusDiv.style.background = 'rgba(59, 130, 246, 0.1)';
 							statusDiv.style.color = '#1e40af';
-							statusDiv.textContent = _('Starting installation...');
+							statusDiv.textContent = _('Starting installation... The page will refresh automatically in 5 seconds.');
 							
-							return callInstallUpdate('luci', result.luci_download_url).then(function(installResult) {
-								// 判断成功：success 为 true 或 step 为 completed
-								var isSuccess = installResult && (
-									installResult.success === true || 
-									installResult.success === 1 || 
-									installResult.success === "true" || 
-									installResult.success === "1" ||
-									installResult.step === "completed"
-								);
-								
-								if (isSuccess) {
-									installButton.textContent = originalBtnText;
-									installButton.disabled = false;
-									// 显示成功提示
-									var successMsg = _('LuCI App updated successfully!');
-									if (installResult.message) {
-										successMsg = installResult.message;
-									}
-									statusDiv.style.background = 'rgba(34, 197, 94, 0.1)';
-									statusDiv.style.color = '#15803d';
-									statusDiv.textContent = successMsg + ' ' + _('Page will refresh in 3 seconds.');
-									// 3秒后刷新页面
-									setTimeout(function() {
-										window.location.reload();
-									}, 3000);
-								} else {
-									installButton.textContent = originalBtnText;
-									installButton.disabled = false;
-									var errorMsg = installResult && installResult.error ? installResult.error : _('Installation failed');
-									if (installResult && installResult.step) {
-										errorMsg = _('Installation failed at step: ') + installResult.step + '. ' + errorMsg;
-									}
-									if (installResult && installResult.output) {
-										// 截取输出信息的前500个字符，避免提示过长
-										var output = installResult.output;
-										if (output.length > 500) {
-											output = output.substring(0, 500) + '...';
-										}
-										errorMsg += '\n' + _('Details: ') + output;
-									}
-									statusDiv.style.background = 'rgba(239, 68, 68, 0.1)';
-									statusDiv.style.color = '#dc2626';
-									statusDiv.innerHTML = errorMsg.replace(/\n/g, '<br>');
-								}
-							}).catch(function(err) {
-								installButton.textContent = originalBtnText;
-								installButton.disabled = false;
-								var errorMsg = _('Installation failed: ') + (err.message || err || _('Unknown error'));
-								statusDiv.style.background = 'rgba(239, 68, 68, 0.1)';
-								statusDiv.style.color = '#dc2626';
-								statusDiv.textContent = errorMsg;
+							// 对于 luci-app-bandix 安装，由于会重启 uhttpd/rpcd 导致连接断开，
+							// 所以不等待响应，直接设置 5 秒后刷新页面
+							callInstallUpdate('luci', result.luci_download_url).catch(function(err) {
+								// 忽略错误，因为连接可能会断开
+								// 即使出错也会刷新页面，让用户看到最新状态
 							});
+							
+							// 5秒后自动刷新页面
+							setTimeout(function() {
+								window.location.reload();
+							}, 5000);
 						}
 					}, _('Download and Install'));
 					luciContainer.appendChild(installBtn);
