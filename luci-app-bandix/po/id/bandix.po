@@ -671,8 +671,8 @@ msgstr "Timeout offline"
 msgid "Set the timeout for device offline detection (seconds). Devices inactive for longer than this time will be marked as offline"
 msgstr "Atur timeout untuk deteksi perangkat offline (detik). Perangkat yang tidak aktif lebih lama dari waktu ini akan ditandai sebagai offline"
 
-msgid "Traffic History Period"
-msgstr "Periode riwayat lalu lintas"
+msgid "Realtime Traffic Period"
+msgstr "Periode lalu lintas waktu nyata"
 
 msgid "10 minutes interval uses about 60 KB per device"
 msgstr "Interval 10 menit menggunakan sekitar 60 KB per perangkat"
@@ -904,3 +904,114 @@ msgstr "Apakah Anda yakin ingin memulai ulang layanan Bandix?"
 
 msgid "Failed to restart service: "
 msgstr "Gagal memulai ulang layanan: "
+
+msgid "Realtime"
+msgstr "Waktu Nyata"
+
+msgid "Last 24 Hours"
+msgstr "24 Jam Terakhir"
+
+msgid "Last 7 Days"
+msgstr "7 Hari Terakhir"
+
+msgid "Last 30 Days"
+msgstr "30 Hari Terakhir"
+
+msgid "Last 10 Minutes"
+msgstr "10 Menit Terakhir"
+
+msgid "Last 15 Minutes"
+msgstr "15 Menit Terakhir"
+
+msgid "Last 30 Minutes"
+msgstr "30 Menit Terakhir"
+
+msgid "Last 1 Hour"
+msgstr "1 Jam Terakhir"
+
+msgid "Starting installation..."
+msgstr "Memulai instalasi..."
+
+msgid "Page will refresh in 3 seconds."
+msgstr "Halaman akan dimuat ulang dalam 3 detik."
+
+msgid "Installation failed"
+msgstr "Instalasi gagal"
+
+msgid "Installation failed at step: "
+msgstr "Instalasi gagal pada langkah: "
+
+msgid "Details: "
+msgstr "Detail: "
+
+msgid "Installation failed: "
+msgstr "Instalasi gagal: "
+
+msgid "Unknown error"
+msgstr "Kesalahan tidak diketahui"
+
+msgid "Service restarted successfully."
+msgstr "Layanan berhasil dimulai ulang."
+
+msgid "Service restart may have failed. Please check manually."
+msgstr "Mulai ulang layanan mungkin gagal. Silakan periksa secara manual."
+
+msgid "Please restart the service."
+msgstr "Silakan mulai ulang layanan."
+
+msgid "LuCI App updated successfully!"
+msgstr "Aplikasi LuCI berhasil diperbarui!"
+
+msgid "Bandix updated successfully!"
+msgstr "Bandix berhasil diperbarui!"
+
+msgid "LuCI App has update: "
+msgstr "Aplikasi LuCI memiliki pembaruan: "
+
+msgid "Bandix has update: "
+msgstr "Bandix memiliki pembaruan: "
+
+msgid "LuCI App is up to date: "
+msgstr "Aplikasi LuCI sudah terbaru: "
+
+msgid "Bandix is up to date: "
+msgstr "Bandix sudah terbaru: "
+
+msgid "Updates Available"
+msgstr "Pembaruan Tersedia"
+
+msgid "No Updates Available"
+msgstr "Tidak Ada Pembaruan Tersedia"
+
+msgid "Detected Architecture"
+msgstr "Arsitektur yang Terdeteksi"
+
+msgid "Package Manager"
+msgstr "Manajer Paket"
+
+msgid "LuCI Assets"
+msgstr "Aset LuCI"
+
+msgid "Bandix Assets"
+msgstr "Aset Bandix"
+
+msgid "Failed to check for updates"
+msgstr "Gagal memeriksa pembaruan"
+
+msgid "Failed to check for updates: "
+msgstr "Gagal memeriksa pembaruan: "
+
+msgid "Checking..."
+msgstr "Memeriksa..."
+
+msgid "Installing..."
+msgstr "Menginstal..."
+
+msgid "Download and Install"
+msgstr "Unduh dan Instal"
+
+msgid "Manual Download"
+msgstr "Unduh Manual"
+
+msgid "Close"
+msgstr "Tutup"

@@ -671,8 +671,8 @@ msgstr "Tiempo de espera sin conexión"
 msgid "Set the timeout for device offline detection (seconds). Devices inactive for longer than this time will be marked as offline"
 msgstr "Establecer el tiempo de espera para la detección de dispositivos sin conexión (segundos). Los dispositivos inactivos por más tiempo serán marcados como sin conexión"
 
-msgid "Traffic History Period"
-msgstr "Período del historial de tráfico"
+msgid "Realtime Traffic Period"
+msgstr "Período de tráfico en tiempo real"
 
 msgid "10 minutes interval uses about 60 KB per device"
 msgstr "Intervalo de 10 minutos usa aproximadamente 60 KB por dispositivo"
@@ -904,3 +904,114 @@ msgstr "¿Está seguro de que desea reiniciar el servicio Bandix?"
 
 msgid "Failed to restart service: "
 msgstr "Error al reiniciar el servicio: "
+
+msgid "Realtime"
+msgstr "Tiempo real"
+
+msgid "Last 24 Hours"
+msgstr "Últimas 24 horas"
+
+msgid "Last 7 Days"
+msgstr "Últimos 7 días"
+
+msgid "Last 30 Days"
+msgstr "Últimos 30 días"
+
+msgid "Last 10 Minutes"
+msgstr "Últimos 10 minutos"
+
+msgid "Last 15 Minutes"
+msgstr "Últimos 15 minutos"
+
+msgid "Last 30 Minutes"
+msgstr "Últimos 30 minutos"
+
+msgid "Last 1 Hour"
+msgstr "Última 1 hora"
+
+msgid "Starting installation..."
+msgstr "Iniciando instalación..."
+
+msgid "Page will refresh in 3 seconds."
+msgstr "La página se actualizará en 3 segundos."
+
+msgid "Installation failed"
+msgstr "Instalación fallida"
+
+msgid "Installation failed at step: "
+msgstr "Instalación fallida en el paso: "
+
+msgid "Details: "
+msgstr "Detalles: "
+
+msgid "Installation failed: "
+msgstr "Instalación fallida: "
+
+msgid "Unknown error"
+msgstr "Error desconocido"
+
+msgid "Service restarted successfully."
+msgstr "Servicio reiniciado exitosamente."
+
+msgid "Service restart may have failed. Please check manually."
+msgstr "El reinicio del servicio puede haber fallado. Por favor, verifique manualmente."
+
+msgid "Please restart the service."
+msgstr "Por favor, reinicie el servicio."
+
+msgid "LuCI App updated successfully!"
+msgstr "¡Aplicación LuCI actualizada exitosamente!"
+
+msgid "Bandix updated successfully!"
+msgstr "¡Bandix actualizado exitosamente!"
+
+msgid "LuCI App has update: "
+msgstr "La aplicación LuCI tiene actualización: "
+
+msgid "Bandix has update: "
+msgstr "Bandix tiene actualización: "
+
+msgid "LuCI App is up to date: "
+msgstr "La aplicación LuCI está actualizada: "
+
+msgid "Bandix is up to date: "
+msgstr "Bandix está actualizado: "
+
+msgid "Updates Available"
+msgstr "Actualizaciones Disponibles"
+
+msgid "No Updates Available"
+msgstr "No Hay Actualizaciones Disponibles"
+
+msgid "Detected Architecture"
+msgstr "Arquitectura Detectada"
+
+msgid "Package Manager"
+msgstr "Gestor de Paquetes"
+
+msgid "LuCI Assets"
+msgstr "Recursos de LuCI"
+
+msgid "Bandix Assets"
+msgstr "Recursos de Bandix"
+
+msgid "Failed to check for updates"
+msgstr "Error al verificar actualizaciones"
+
+msgid "Failed to check for updates: "
+msgstr "Error al verificar actualizaciones: "
+
+msgid "Checking..."
+msgstr "Verificando..."
+
+msgid "Installing..."
+msgstr "Instalando..."
+
+msgid "Download and Install"
+msgstr "Descargar e Instalar"
+
+msgid "Manual Download"
+msgstr "Descarga Manual"
+
+msgid "Close"
+msgstr "Cerrar"

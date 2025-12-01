@@ -671,8 +671,8 @@ msgstr "オフラインタイムアウト"
 msgid "Set the timeout for device offline detection (seconds). Devices inactive for longer than this time will be marked as offline"
 msgstr "デバイスのオフライン検出のタイムアウトを設定（秒）。この時間より長く非アクティブなデバイスはオフラインとしてマークされます"
 
-msgid "Traffic History Period"
-msgstr "トラフィック履歴期間"
+msgid "Realtime Traffic Period"
+msgstr "リアルタイムトラフィック周期"
 
 msgid "10 minutes interval uses about 60 KB per device"
 msgstr "10分間隔でデバイスあたり約60KBを使用"
@@ -904,3 +904,114 @@ msgstr "Bandix サービスを再起動してもよろしいですか？"
 
 msgid "Failed to restart service: "
 msgstr "サービスの再起動に失敗しました："
+
+msgid "Realtime"
+msgstr "リアルタイム"
+
+msgid "Last 24 Hours"
+msgstr "過去24時間"
+
+msgid "Last 7 Days"
+msgstr "過去7日間"
+
+msgid "Last 30 Days"
+msgstr "過去30日間"
+
+msgid "Last 10 Minutes"
+msgstr "過去10分"
+
+msgid "Last 15 Minutes"
+msgstr "過去15分"
+
+msgid "Last 30 Minutes"
+msgstr "過去30分"
+
+msgid "Last 1 Hour"
+msgstr "過去1時間"
+
+msgid "Starting installation..."
+msgstr "インストールを開始しています..."
+
+msgid "Page will refresh in 3 seconds."
+msgstr "3秒後にページが更新されます。"
+
+msgid "Installation failed"
+msgstr "インストール失敗"
+
+msgid "Installation failed at step: "
+msgstr "インストールがステップで失敗しました："
+
+msgid "Details: "
+msgstr "詳細："
+
+msgid "Installation failed: "
+msgstr "インストール失敗："
+
+msgid "Unknown error"
+msgstr "不明なエラー"
+
+msgid "Service restarted successfully."
+msgstr "サービスが正常に再起動されました。"
+
+msgid "Service restart may have failed. Please check manually."
+msgstr "サービスの再起動が失敗した可能性があります。手動で確認してください。"
+
+msgid "Please restart the service."
+msgstr "サービスを再起動してください。"
+
+msgid "LuCI App updated successfully!"
+msgstr "LuCIアプリが正常に更新されました！"
+
+msgid "Bandix updated successfully!"
+msgstr "Bandixが正常に更新されました！"
+
+msgid "LuCI App has update: "
+msgstr "LuCIアプリに更新があります："
+
+msgid "Bandix has update: "
+msgstr "Bandixに更新があります："
+
+msgid "LuCI App is up to date: "
+msgstr "LuCIアプリは最新です："
+
+msgid "Bandix is up to date: "
+msgstr "Bandixは最新です："
+
+msgid "Updates Available"
+msgstr "利用可能な更新"
+
+msgid "No Updates Available"
+msgstr "利用可能な更新なし"
+
+msgid "Detected Architecture"
+msgstr "検出されたアーキテクチャ"
+
+msgid "Package Manager"
+msgstr "パッケージマネージャー"
+
+msgid "LuCI Assets"
+msgstr "LuCIアセット"
+
+msgid "Bandix Assets"
+msgstr "Bandixアセット"
+
+msgid "Failed to check for updates"
+msgstr "更新の確認に失敗しました"
+
+msgid "Failed to check for updates: "
+msgstr "更新の確認に失敗しました："
+
+msgid "Checking..."
+msgstr "確認中..."
+
+msgid "Installing..."
+msgstr "インストール中..."
+
+msgid "Download and Install"
+msgstr "ダウンロードしてインストール"
+
+msgid "Manual Download"
+msgstr "手動ダウンロード"
+
+msgid "Close"
+msgstr "閉じる"

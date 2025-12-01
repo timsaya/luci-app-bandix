@@ -17,7 +17,11 @@
 					"setScheduleLimit",
 					"deleteScheduleLimit",
 					"clearData",
-					"restartService"
+					"restartService",
+					"getVersion",
+					"getSystemArch",
+					"checkUpdate",
+					"installUpdate"
 				]
 			},
 			"uci": [
@@ -40,7 +44,11 @@
 					"setScheduleLimit",
 					"deleteScheduleLimit",
 					"clearData",
-					"restartService"
+					"restartService",
+					"getVersion",
+					"getSystemArch",
+					"checkUpdate",
+					"installUpdate"
 				]
 			},
 			"uci": [

@@ -487,6 +487,443 @@ restart_service() {
 	fi
 }
 
+# 获取版本信息
+get_version() {
+	json_init
+	
+	# 获取 luci-app-bandix 版本
+	local luci_version=""
+	if [ -f "/usr/lib/opkg/info/luci-app-bandix.control" ]; then
+		luci_version=$(grep "^Version:" /usr/lib/opkg/info/luci-app-bandix.control 2>/dev/null | cut -d' ' -f2)
+	fi
+	# 如果无法从 control 文件获取，尝试从 opkg 命令获取
+	if [ -z "$luci_version" ]; then
+		luci_version=$(opkg info luci-app-bandix 2>/dev/null | grep "^Version:" | cut -d' ' -f2)
+	fi
+	# 如果还是无法获取，使用默认值
+	if [ -z "$luci_version" ]; then
+		luci_version="Unknown"
+	fi
+	
+	# 获取 bandix 版本
+	local bandix_version=""
+	if [ -f "/usr/lib/opkg/info/bandix.control" ]; then
+		bandix_version=$(grep "^Version:" /usr/lib/opkg/info/bandix.control 2>/dev/null | cut -d' ' -f2)
+	fi
+	# 如果无法从 control 文件获取，尝试从 opkg 命令获取
+	if [ -z "$bandix_version" ]; then
+		bandix_version=$(opkg info bandix 2>/dev/null | grep "^Version:" | cut -d' ' -f2)
+	fi
+	# 如果还是无法获取，尝试从 bandix API 获取（如果服务运行中）
+	if [ -z "$bandix_version" ]; then
+		local api_result=$(curl -s --connect-timeout 2 --max-time 5 "$BANDIX_API_BASE/api/version" 2>/dev/null)
+		if [ $? -eq 0 ] && [ -n "$api_result" ]; then
+			bandix_version=$(echo "$api_result" | jsonfilter -e '$.version' 2>/dev/null)
+			[ -z "$bandix_version" ] && bandix_version=$(echo "$api_result" | jsonfilter -e '$.data.version' 2>/dev/null)
+		fi
+	fi
+	# 如果还是无法获取，使用默认值
+	if [ -z "$bandix_version" ]; then
+		bandix_version="Unknown"
+	fi
+	
+	json_add_string "luci_app_version" "$luci_version"
+	json_add_string "bandix_version" "$bandix_version"
+	json_dump
+	json_cleanup
+}
+
+# 提取主版本号（去掉修订号，如 -r1, -r2 等）
+extract_base_version() {
+	local version="$1"
+	# 去掉 -r1, -r2 等修订号后缀
+	echo "$version" | sed 's/-r[0-9]*$//'
+}
+
+# 检测包管理器类型
+get_package_manager() {
+	# 先尝试运行 opkg -v，检查是否能成功执行并返回版本信息
+	local opkg_output=$(opkg -v 2>&1)
+	if [ $? -eq 0 ] && [ -n "$opkg_output" ] && echo "$opkg_output" | grep -qE "(opkg|version)"; then
+		echo "opkg"
+		return
+	fi
+	
+	# 再尝试运行 apk -v，检查是否能成功执行（不是 "not found"）
+	local apk_output=$(apk -v 2>&1)
+	if [ $? -eq 0 ] && [ -n "$apk_output" ] && ! echo "$apk_output" | grep -qiE "(not found|command not found|no such file)"; then
+		echo "apk"
+		return
+	fi
+	
+	# 默认返回 opkg
+	echo "opkg"
+}
+
+# 获取系统架构
+get_system_arch() {
+	# 优先从 /etc/os-release 获取 OPENWRT_ARCH
+	if [ -f "/etc/os-release" ]; then
+		local arch=$(grep "^OPENWRT_ARCH=" /etc/os-release 2>/dev/null | cut -d'=' -f2 | tr -d '"')
+		if [ -n "$arch" ]; then
+			echo "$arch"
+			return
+		fi
+	fi
+	
+	# 如果无法获取，尝试从 opkg 获取
+	local arch=$(opkg print-architecture 2>/dev/null | head -n 1 | awk '{print $2}')
+	if [ -n "$arch" ]; then
+		echo "$arch"
+		return
+	fi
+	
+	# 最后尝试从 uname 获取
+	uname -m 2>/dev/null
+}
+
+# 检查更新
+check_update() {
+	json_init
+	
+	# 获取当前版本
+	local current_luci_version=""
+	if [ -f "/usr/lib/opkg/info/luci-app-bandix.control" ]; then
+		current_luci_version=$(grep "^Version:" /usr/lib/opkg/info/luci-app-bandix.control 2>/dev/null | cut -d' ' -f2)
+	fi
+	if [ -z "$current_luci_version" ]; then
+		current_luci_version=$(opkg info luci-app-bandix 2>/dev/null | grep "^Version:" | cut -d' ' -f2)
+	fi
+	
+	local current_bandix_version=""
+	if [ -f "/usr/lib/opkg/info/bandix.control" ]; then
+		current_bandix_version=$(grep "^Version:" /usr/lib/opkg/info/bandix.control 2>/dev/null | cut -d' ' -f2)
+	fi
+	if [ -z "$current_bandix_version" ]; then
+		current_bandix_version=$(opkg info bandix 2>/dev/null | grep "^Version:" | cut -d' ' -f2)
+	fi
+	
+	# 检查 luci-app-bandix 更新
+	local luci_latest_version=""
+	local luci_has_update="0"
+	local luci_update_url=""
+	local luci_release_body=""
+	local luci_download_url=""
+	
+	local luci_api_result=$(curl -s --connect-timeout 5 --max-time 10 "https://api.github.com/repos/timsaya/luci-app-bandix/releases/latest" 2>/dev/null)
+	if [ $? -eq 0 ] && [ -n "$luci_api_result" ]; then
+		luci_latest_version=$(echo "$luci_api_result" | jsonfilter -e '$.tag_name' 2>/dev/null)
+		# 去掉 v 前缀
+		luci_latest_version=${luci_latest_version#v}
+		luci_update_url=$(echo "$luci_api_result" | jsonfilter -e '$.html_url' 2>/dev/null)
+		luci_release_body=$(echo "$luci_api_result" | jsonfilter -e '$.body' 2>/dev/null)
+		
+		# 获取架构信息和包管理器类型
+		local arch=$(get_system_arch)
+		local pkg_manager=$(get_package_manager)
+		
+		# 根据包管理器类型确定优先的文件扩展名
+		local preferred_ext=""
+		if [ "$pkg_manager" = "opkg" ]; then
+			preferred_ext="ipk"
+		elif [ "$pkg_manager" = "apk" ]; then
+			preferred_ext="apk"
+		fi
+		
+		# 查找对应架构的 ipk/apk 文件
+		# 只查找匹配包管理器格式的包，找不到就报错
+		# 使用循环遍历 assets 数组，直到找不到元素为止
+		local i=0
+		local asset_count=0
+		
+		# 先统计 assets 数量
+		while true; do
+			local asset_name=$(echo "$luci_api_result" | jsonfilter -e "$.assets[$i].name" 2>/dev/null)
+			if [ -z "$asset_name" ]; then
+				break
+			fi
+			asset_count=$((asset_count + 1))
+			i=$((i + 1))
+		done
+		
+		# 查找匹配包管理器格式的 _all 包
+		if [ -n "$preferred_ext" ] && [ "$asset_count" -gt 0 ]; then
+			i=0
+			while true; do
+				local asset_name=$(echo "$luci_api_result" | jsonfilter -e "$.assets[$i].name" 2>/dev/null)
+				if [ -z "$asset_name" ]; then
+					break
+				fi
+				# 匹配 _all 格式，且必须是优先格式
+				if echo "$asset_name" | grep -qE "(luci-app-bandix.*_all|luci-app-bandix-.*-all)\.${preferred_ext}$"; then
+					luci_download_url=$(echo "$luci_api_result" | jsonfilter -e "$.assets[$i].browser_download_url" 2>/dev/null)
+					break
+				fi
+				i=$((i + 1))
+			done
+		fi
+		
+		# 如果没找到 _all，尝试找包含当前架构的（只匹配包管理器格式）
+		# 例如：luci-app-bandix_0.10.0-r1_aarch64_cortex-a53.ipk
+		if [ -z "$luci_download_url" ] && [ -n "$arch" ] && [ -n "$preferred_ext" ] && [ "$asset_count" -gt 0 ]; then
+			i=0
+			while true; do
+				local asset_name=$(echo "$luci_api_result" | jsonfilter -e "$.assets[$i].name" 2>/dev/null)
+				if [ -z "$asset_name" ]; then
+					break
+				fi
+				# 匹配格式：*_架构.优先扩展名
+				# 例如：文件名包含 "_aarch64_cortex-a53." 且以 .ipk 或 .apk 结尾
+				# 同时排除 i18n 包（只匹配主包）
+				if echo "$asset_name" | grep -qE "^luci-app-bandix[^-]" && \
+				   echo "$asset_name" | grep -qE "\.${preferred_ext}$" && \
+				   echo "$asset_name" | grep -q "_${arch}\."; then
+					luci_download_url=$(echo "$luci_api_result" | jsonfilter -e "$.assets[$i].browser_download_url" 2>/dev/null)
+					break
+				fi
+				i=$((i + 1))
+			done
+		fi
+		
+		# 提取主版本号进行比较（忽略修订号）
+		local current_luci_base=$(extract_base_version "$current_luci_version")
+		local latest_luci_base=$(extract_base_version "$luci_latest_version")
+		
+		# 比较主版本号
+		if [ -n "$current_luci_base" ] && [ -n "$latest_luci_base" ] && [ "$current_luci_base" != "$latest_luci_base" ]; then
+			luci_has_update="1"
+		fi
+	fi
+	
+	# 检查 bandix 更新
+	local bandix_latest_version=""
+	local bandix_has_update="0"
+	local bandix_update_url=""
+	local bandix_release_body=""
+	local bandix_download_url=""
+	
+	local bandix_api_result=$(curl -s --connect-timeout 5 --max-time 10 "https://api.github.com/repos/timsaya/openwrt-bandix/releases/latest" 2>/dev/null)
+	if [ $? -eq 0 ] && [ -n "$bandix_api_result" ]; then
+		bandix_latest_version=$(echo "$bandix_api_result" | jsonfilter -e '$.tag_name' 2>/dev/null)
+		# 去掉 v 前缀
+		bandix_latest_version=${bandix_latest_version#v}
+		bandix_update_url=$(echo "$bandix_api_result" | jsonfilter -e '$.html_url' 2>/dev/null)
+		bandix_release_body=$(echo "$bandix_api_result" | jsonfilter -e '$.body' 2>/dev/null)
+		
+		# 获取架构信息和包管理器类型
+		local arch=$(get_system_arch)
+		local pkg_manager=$(get_package_manager)
+		
+		# 根据包管理器类型确定优先的文件扩展名
+		local preferred_ext=""
+		if [ "$pkg_manager" = "opkg" ]; then
+			preferred_ext="ipk"
+		elif [ "$pkg_manager" = "apk" ]; then
+			preferred_ext="apk"
+		fi
+		
+		# 查找对应架构的 ipk/apk 文件
+		# bandix 包格式：bandix-版本-r修订号_架构.apk 或 bandix-版本-r修订号_架构.ipk
+		# 或者：bandix_版本-r修订号_架构.apk 或 bandix_版本-r修订号_架构.ipk
+		# 例如：bandix-0.10.2-r1_aarch64_cortex-a53.apk 或 bandix_0.10.2-r1_aarch64_cortex-a53.apk
+		local bandix_asset_count=0
+		
+		# 先统计 assets 数量
+		if [ -n "$arch" ]; then
+			local i=0
+			while true; do
+				local asset_name=$(echo "$bandix_api_result" | jsonfilter -e "$.assets[$i].name" 2>/dev/null)
+				if [ -z "$asset_name" ]; then
+					break
+				fi
+				bandix_asset_count=$((bandix_asset_count + 1))
+				i=$((i + 1))
+			done
+			
+			# 只查找匹配包管理器格式的架构特定包
+			# 如果找不到匹配格式的包，就不设置 download_url，后续会报错
+			if [ -n "$preferred_ext" ] && [ "$bandix_asset_count" -gt 0 ]; then
+				i=0
+				while true; do
+					local asset_name=$(echo "$bandix_api_result" | jsonfilter -e "$.assets[$i].name" 2>/dev/null)
+					if [ -z "$asset_name" ]; then
+						break
+					fi
+					# 匹配格式：bandix-*_架构.优先扩展名 或 bandix_*_架构.优先扩展名
+					# 例如：bandix-0.10.2-r1_aarch64_cortex-a53.ipk 或 bandix_0.10.2-r1_aarch64_cortex-a53.ipk
+					if echo "$asset_name" | grep -qE "^(bandix-|bandix_)" && \
+					   echo "$asset_name" | grep -qE "\.${preferred_ext}$" && \
+					   echo "$asset_name" | grep -q "_${arch}\."; then
+						bandix_download_url=$(echo "$bandix_api_result" | jsonfilter -e "$.assets[$i].browser_download_url" 2>/dev/null)
+						break
+					fi
+					i=$((i + 1))
+				done
+			fi
+		fi
+		
+		# 提取主版本号进行比较（忽略修订号）
+		local current_bandix_base=$(extract_base_version "$current_bandix_version")
+		local latest_bandix_base=$(extract_base_version "$bandix_latest_version")
+		
+		# 比较主版本号
+		if [ -n "$current_bandix_base" ] && [ -n "$latest_bandix_base" ] && [ "$current_bandix_base" != "$latest_bandix_base" ]; then
+			bandix_has_update="1"
+		fi
+	fi
+	
+	json_add_string "current_luci_version" "$current_luci_version"
+	json_add_string "current_bandix_version" "$current_bandix_version"
+	json_add_string "latest_luci_version" "$luci_latest_version"
+	json_add_string "latest_bandix_version" "$bandix_latest_version"
+	# 使用字符串 "1" 或 "0" 表示布尔值，在 JavaScript 中可以转换为布尔值
+	json_add_string "luci_has_update" "$luci_has_update"
+	json_add_string "bandix_has_update" "$bandix_has_update"
+	json_add_string "luci_update_url" "$luci_update_url"
+	json_add_string "bandix_update_url" "$bandix_update_url"
+	json_add_string "luci_release_body" "$luci_release_body"
+	json_add_string "bandix_release_body" "$bandix_release_body"
+	# 检查是否找到了下载链接，如果没找到则添加错误信息
+	local luci_error=""
+	local bandix_error=""
+	
+	if [ -z "$luci_download_url" ] && [ "$luci_has_update" = "1" ]; then
+		local pkg_manager=$(get_package_manager)
+		local preferred_ext=""
+		if [ "$pkg_manager" = "opkg" ]; then
+			preferred_ext="ipk"
+		elif [ "$pkg_manager" = "apk" ]; then
+			preferred_ext="apk"
+		fi
+		if [ -n "$preferred_ext" ]; then
+			luci_error="No ${preferred_ext} package found for luci-app-bandix"
+		else
+			luci_error="Unknown package manager, cannot determine package format"
+		fi
+	fi
+	
+	if [ -z "$bandix_download_url" ] && [ "$bandix_has_update" = "1" ]; then
+		local pkg_manager=$(get_package_manager)
+		local preferred_ext=""
+		if [ "$pkg_manager" = "opkg" ]; then
+			preferred_ext="ipk"
+		elif [ "$pkg_manager" = "apk" ]; then
+			preferred_ext="apk"
+		fi
+		if [ -n "$preferred_ext" ]; then
+			bandix_error="No ${preferred_ext} package found for bandix"
+		else
+			bandix_error="Unknown package manager, cannot determine package format"
+		fi
+	fi
+	
+	json_add_string "luci_download_url" "$luci_download_url"
+	json_add_string "bandix_download_url" "$bandix_download_url"
+	json_add_string "luci_error" "$luci_error"
+	json_add_string "bandix_error" "$bandix_error"
+	# 添加调试信息：架构、包管理器和资产数量
+	local detected_arch=$(get_system_arch)
+	local detected_pkg_manager=$(get_package_manager)
+	json_add_string "detected_arch" "$detected_arch"
+	json_add_string "detected_pkg_manager" "$detected_pkg_manager"
+	json_add_int "luci_asset_count" "$asset_count"
+	json_add_int "bandix_asset_count" "$bandix_asset_count"
+	json_dump
+	json_cleanup
+}
+
+# 下载并安装更新
+install_update() {
+	local package_type="$1"  # "luci" 或 "bandix"
+	local download_url="$2"
+	
+	if [ -z "$package_type" ] || [ -z "$download_url" ]; then
+		make_error "Missing parameters"
+		return
+	fi
+	
+	json_init
+	
+	# 步骤1: 下载文件到 /tmp
+	local filename=$(basename "$download_url")
+	local filepath="/tmp/$filename"
+	
+	json_add_string "step" "downloading"
+	json_add_string "filepath" "$filepath"
+	
+	# 使用 wget 下载文件
+	wget -q --timeout=10 -O "$filepath" "$download_url" 2>&1
+	local download_exit_code=$?
+	
+	if [ $download_exit_code -ne 0 ] || [ ! -f "$filepath" ]; then
+		rm -f "$filepath"
+		json_add_boolean "success" 0
+		json_add_string "error" "Failed to download package"
+		json_add_string "step" "download_failed"
+		json_dump
+		json_cleanup
+		return
+	fi
+	
+	# 步骤2: 安装包
+	json_add_string "step" "installing"
+	local install_result=""
+	local install_exit_code=1
+	
+	if command -v opkg >/dev/null 2>&1; then
+		# OpenWrt 使用 opkg
+		install_result=$(opkg install "$filepath" 2>&1)
+		install_exit_code=$?
+	elif command -v apk >/dev/null 2>&1; then
+		# Alpine 使用 apk
+		install_result=$(apk add --allow-untrusted "$filepath" 2>&1)
+		install_exit_code=$?
+	else
+		rm -f "$filepath"
+		json_add_boolean "success" 0
+		json_add_string "error" "No package manager found (opkg or apk)"
+		json_add_string "step" "install_failed"
+		json_dump
+		json_cleanup
+		return
+	fi
+	
+	# 清理下载的文件
+	rm -f "$filepath"
+	
+	if [ $install_exit_code -ne 0 ]; then
+		json_add_boolean "success" 0
+		json_add_string "error" "Failed to install package"
+		json_add_string "output" "$install_result"
+		json_add_string "step" "install_failed"
+		json_dump
+		json_cleanup
+		return
+	fi
+	
+	# 步骤3: 如果是 bandix 包，重启服务
+	if [ "$package_type" = "bandix" ]; then
+		json_add_string "step" "restarting"
+		if [ -f "/etc/init.d/bandix" ]; then
+			local restart_result=$(/etc/init.d/bandix restart 2>&1)
+			local restart_exit_code=$?
+			json_add_string "restart_output" "$restart_result"
+			json_add_int "restart_exit_code" "$restart_exit_code"
+		else
+			json_add_string "restart_output" "Service script not found: /etc/init.d/bandix"
+			json_add_int "restart_exit_code" 1
+		fi
+	fi
+	
+	# 返回成功结果
+	json_add_boolean "success" 1
+	json_add_string "message" "Package installed successfully"
+	json_add_string "output" "$install_result"
+	json_add_string "step" "completed"
+	json_dump
+	json_cleanup
+}
+
 case "$1" in
 	list)
 		json_init
@@ -553,6 +990,20 @@ case "$1" in
 	json_close_object
 	
 	json_add_object "restartService"
+	json_close_object
+	
+	json_add_object "getVersion"
+	json_close_object
+	
+	json_add_object "getSystemArch"
+	json_close_object
+	
+	json_add_object "checkUpdate"
+	json_close_object
+	
+	json_add_object "installUpdate"
+	json_add_string "package_type"
+	json_add_string "download_url"
 	json_close_object
 	
 	json_dump
@@ -825,6 +1276,44 @@ case "$1" in
 			restartService)
 				# logger "luci.bandix: restartService called"
 				restart_service
+				;;
+			getVersion)
+				# logger "luci.bandix: getVersion called"
+				get_version
+				;;
+			getSystemArch)
+				# logger "luci.bandix: getSystemArch called"
+				local arch=$(get_system_arch)
+				json_init
+				json_add_string "arch" "$arch"
+				json_dump
+				json_cleanup
+				;;
+			checkUpdate)
+				# logger "luci.bandix: checkUpdate called"
+				check_update
+				;;
+			installUpdate)
+				# logger "luci.bandix: installUpdate called"
+				# 从 stdin 读取 JSON 参数
+				read input
+				
+				if [ -n "$input" ]; then
+					# 解析参数
+					package_type=$(echo "$input" | jsonfilter -e '$[0]' 2>/dev/null)
+					[ -z "$package_type" ] && package_type=$(echo "$input" | jsonfilter -e '$.package_type' 2>/dev/null)
+					
+					download_url=$(echo "$input" | jsonfilter -e '$[1]' 2>/dev/null)
+					[ -z "$download_url" ] && download_url=$(echo "$input" | jsonfilter -e '$.download_url' 2>/dev/null)
+					
+					if [ -n "$package_type" ] && [ -n "$download_url" ]; then
+						install_update "$package_type" "$download_url"
+					else
+						make_error "Missing package_type or download_url parameter"
+					fi
+				else
+					make_error "No input received"
+				fi
 				;;
 		esac
 		;;

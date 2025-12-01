@@ -671,8 +671,8 @@ msgstr "離線超时時間"
 msgid "Set the timeout for device offline detection (seconds). Devices inactive for longer than this time will be marked as offline"
 msgstr "設定設備離線判斷的超时時間（秒）。超過此時間未活動的設備将被標記为離線"
 
-msgid "Traffic History Period"
-msgstr "歷史流量週期"
+msgid "Realtime Traffic Period"
+msgstr "即時流量週期"
 
 msgid "10 minutes interval uses about 60 KB per device"
 msgstr "10分鐘歷史週期，每个設備佔用 60KB"
@@ -904,3 +904,114 @@ msgstr "確定要重啟 Bandix 服務嗎？"
 
 msgid "Failed to restart service: "
 msgstr "重啟服務失敗："
+
+msgid "Realtime"
+msgstr "即時"
+
+msgid "Last 24 Hours"
+msgstr "最近24小時"
+
+msgid "Last 7 Days"
+msgstr "最近7天"
+
+msgid "Last 30 Days"
+msgstr "最近30天"
+
+msgid "Last 10 Minutes"
+msgstr "最近10分鐘"
+
+msgid "Last 15 Minutes"
+msgstr "最近15分鐘"
+
+msgid "Last 30 Minutes"
+msgstr "最近30分鐘"
+
+msgid "Last 1 Hour"
+msgstr "最近1小時"
+
+msgid "Starting installation..."
+msgstr "開始安裝..."
+
+msgid "Page will refresh in 3 seconds."
+msgstr "頁面將在3秒後重新整理。"
+
+msgid "Installation failed"
+msgstr "安裝失敗"
+
+msgid "Installation failed at step: "
+msgstr "安裝在步驟失敗："
+
+msgid "Details: "
+msgstr "詳細資訊："
+
+msgid "Installation failed: "
+msgstr "安裝失敗："
+
+msgid "Unknown error"
+msgstr "未知錯誤"
+
+msgid "Service restarted successfully."
+msgstr "服務重啟成功。"
+
+msgid "Service restart may have failed. Please check manually."
+msgstr "服務重啟可能失敗，請手動檢查。"
+
+msgid "Please restart the service."
+msgstr "請重啟服務。"
+
+msgid "LuCI App updated successfully!"
+msgstr "LuCI 應用更新成功！"
+
+msgid "Bandix updated successfully!"
+msgstr "Bandix 更新成功！"
+
+msgid "LuCI App has update: "
+msgstr "LuCI 應用有更新："
+
+msgid "Bandix has update: "
+msgstr "Bandix 有更新："
+
+msgid "LuCI App is up to date: "
+msgstr "LuCI 應用已是最新版本："
+
+msgid "Bandix is up to date: "
+msgstr "Bandix 已是最新版本："
+
+msgid "Updates Available"
+msgstr "有可用更新"
+
+msgid "No Updates Available"
+msgstr "無可用更新"
+
+msgid "Detected Architecture"
+msgstr "檢測到的架構"
+
+msgid "Package Manager"
+msgstr "套件管理器"
+
+msgid "LuCI Assets"
+msgstr "LuCI 資源"
+
+msgid "Bandix Assets"
+msgstr "Bandix 資源"
+
+msgid "Failed to check for updates"
+msgstr "檢查更新失敗"
+
+msgid "Failed to check for updates: "
+msgstr "檢查更新失敗："
+
+msgid "Checking..."
+msgstr "檢查中..."
+
+msgid "Installing..."
+msgstr "安裝中..."
+
+msgid "Download and Install"
+msgstr "下載並安裝"
+
+msgid "Manual Download"
+msgstr "手動下載"
+
+msgid "Close"
+msgstr "關閉"

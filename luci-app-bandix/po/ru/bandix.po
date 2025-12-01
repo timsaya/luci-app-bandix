@@ -671,8 +671,8 @@ msgstr "Таймаут офлайн"
 msgid "Set the timeout for device offline detection (seconds). Devices inactive for longer than this time will be marked as offline"
 msgstr "设置设备离线判断的超时时间（秒）。超过此时间未活动的设备将被标记为离线"
 
-msgid "Traffic History Period"
-msgstr "Период истории трафика"
+msgid "Realtime Traffic Period"
+msgstr "Период трафика в реальном времени"
 
 msgid "10 minutes interval uses about 60 KB per device"
 msgstr "Интервал 10 минут использует около 60 КБ на устройство"
@@ -904,3 +904,114 @@ msgstr "Вы уверены, что хотите перезапустить сл
 
 msgid "Failed to restart service: "
 msgstr "Не удалось перезапустить службу: "
+
+msgid "Realtime"
+msgstr "В реальном времени"
+
+msgid "Last 24 Hours"
+msgstr "Последние 24 часа"
+
+msgid "Last 7 Days"
+msgstr "Последние 7 дней"
+
+msgid "Last 30 Days"
+msgstr "Последние 30 дней"
+
+msgid "Last 10 Minutes"
+msgstr "Последние 10 минут"
+
+msgid "Last 15 Minutes"
+msgstr "Последние 15 минут"
+
+msgid "Last 30 Minutes"
+msgstr "Последние 30 минут"
+
+msgid "Last 1 Hour"
+msgstr "Последний 1 час"
+
+msgid "Starting installation..."
+msgstr "Начало установки..."
+
+msgid "Page will refresh in 3 seconds."
+msgstr "Страница обновится через 3 секунды."
+
+msgid "Installation failed"
+msgstr "Установка не удалась"
+
+msgid "Installation failed at step: "
+msgstr "Установка не удалась на шаге: "
+
+msgid "Details: "
+msgstr "Подробности: "
+
+msgid "Installation failed: "
+msgstr "Установка не удалась: "
+
+msgid "Unknown error"
+msgstr "Неизвестная ошибка"
+
+msgid "Service restarted successfully."
+msgstr "Служба успешно перезапущена."
+
+msgid "Service restart may have failed. Please check manually."
+msgstr "Перезапуск службы мог не удаться. Пожалуйста, проверьте вручную."
+
+msgid "Please restart the service."
+msgstr "Пожалуйста, перезапустите службу."
+
+msgid "LuCI App updated successfully!"
+msgstr "Приложение LuCI успешно обновлено!"
+
+msgid "Bandix updated successfully!"
+msgstr "Bandix успешно обновлен!"
+
+msgid "LuCI App has update: "
+msgstr "Приложение LuCI имеет обновление: "
+
+msgid "Bandix has update: "
+msgstr "Bandix имеет обновление: "
+
+msgid "LuCI App is up to date: "
+msgstr "Приложение LuCI актуально: "
+
+msgid "Bandix is up to date: "
+msgstr "Bandix актуален: "
+
+msgid "Updates Available"
+msgstr "Доступны Обновления"
+
+msgid "No Updates Available"
+msgstr "Нет Доступных Обновлений"
+
+msgid "Detected Architecture"
+msgstr "Обнаруженная Архитектура"
+
+msgid "Package Manager"
+msgstr "Менеджер Пакетов"
+
+msgid "LuCI Assets"
+msgstr "Ресурсы LuCI"
+
+msgid "Bandix Assets"
+msgstr "Ресурсы Bandix"
+
+msgid "Failed to check for updates"
+msgstr "Не удалось проверить обновления"
+
+msgid "Failed to check for updates: "
+msgstr "Не удалось проверить обновления: "
+
+msgid "Checking..."
+msgstr "Проверка..."
+
+msgid "Installing..."
+msgstr "Установка..."
+
+msgid "Download and Install"
+msgstr "Скачать и Установить"
+
+msgid "Manual Download"
+msgstr "Ручная Загрузка"
+
+msgid "Close"
+msgstr "Закрыть"
