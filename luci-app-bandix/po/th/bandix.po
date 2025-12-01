@@ -928,3 +928,90 @@ msgstr "30 นาทีที่ผ่านมา"
 
 msgid "Last 1 Hour"
 msgstr "1 ชั่วโมงที่ผ่านมา"
+
+msgid "Starting installation..."
+msgstr "กำลังเริ่มการติดตั้ง..."
+
+msgid "Page will refresh in 3 seconds."
+msgstr "หน้าจะรีเฟรชใน 3 วินาที"
+
+msgid "Installation failed"
+msgstr "การติดตั้งล้มเหลว"
+
+msgid "Installation failed at step: "
+msgstr "การติดตั้งล้มเหลวในขั้นตอน: "
+
+msgid "Details: "
+msgstr "รายละเอียด: "
+
+msgid "Installation failed: "
+msgstr "การติดตั้งล้มเหลว: "
+
+msgid "Unknown error"
+msgstr "ข้อผิดพลาดที่ไม่ทราบสาเหตุ"
+
+msgid "Service restarted successfully."
+msgstr "รีสตาร์ทบริการสำเร็จแล้ว"
+
+msgid "Service restart may have failed. Please check manually."
+msgstr "การรีสตาร์ทบริการอาจล้มเหลว กรุณาตรวจสอบด้วยตนเอง"
+
+msgid "Please restart the service."
+msgstr "กรุณารีสตาร์ทบริการ"
+
+msgid "LuCI App updated successfully!"
+msgstr "อัปเดตแอป LuCI สำเร็จแล้ว!"
+
+msgid "Bandix updated successfully!"
+msgstr "อัปเดต Bandix สำเร็จแล้ว!"
+
+msgid "LuCI App has update: "
+msgstr "แอป LuCI มีการอัปเดต: "
+
+msgid "Bandix has update: "
+msgstr "Bandix มีการอัปเดต: "
+
+msgid "LuCI App is up to date: "
+msgstr "แอป LuCI เป็นเวอร์ชันล่าสุด: "
+
+msgid "Bandix is up to date: "
+msgstr "Bandix เป็นเวอร์ชันล่าสุด: "
+
+msgid "Updates Available"
+msgstr "มีการอัปเดต"
+
+msgid "No Updates Available"
+msgstr "ไม่มีอัปเดต"
+
+msgid "Detected Architecture"
+msgstr "สถาปัตยกรรมที่ตรวจพบ"
+
+msgid "Package Manager"
+msgstr "ตัวจัดการแพ็คเกจ"
+
+msgid "LuCI Assets"
+msgstr "ทรัพยากร LuCI"
+
+msgid "Bandix Assets"
+msgstr "ทรัพยากร Bandix"
+
+msgid "Failed to check for updates"
+msgstr "ตรวจสอบอัปเดตล้มเหลว"
+
+msgid "Failed to check for updates: "
+msgstr "ตรวจสอบอัปเดตล้มเหลว: "
+
+msgid "Checking..."
+msgstr "กำลังตรวจสอบ..."
+
+msgid "Installing..."
+msgstr "กำลังติดตั้ง..."
+
+msgid "Download and Install"
+msgstr "ดาวน์โหลดและติดตั้ง"
+
+msgid "Manual Download"
+msgstr "ดาวน์โหลดด้วยตนเอง"
+
+msgid "Close"
+msgstr "ปิด"

@@ -928,3 +928,90 @@ msgstr "最近30分钟"
 
 msgid "Last 1 Hour"
 msgstr "最近1小时"
+
+msgid "Starting installation..."
+msgstr "开始安装..."
+
+msgid "Page will refresh in 3 seconds."
+msgstr "页面将在3秒后刷新。"
+
+msgid "Installation failed"
+msgstr "安装失败"
+
+msgid "Installation failed at step: "
+msgstr "安装在步骤失败："
+
+msgid "Details: "
+msgstr "详细信息："
+
+msgid "Installation failed: "
+msgstr "安装失败："
+
+msgid "Unknown error"
+msgstr "未知错误"
+
+msgid "Service restarted successfully."
+msgstr "服务重启成功。"
+
+msgid "Service restart may have failed. Please check manually."
+msgstr "服务重启可能失败，请手动检查。"
+
+msgid "Please restart the service."
+msgstr "请重启服务。"
+
+msgid "LuCI App updated successfully!"
+msgstr "LuCI 应用更新成功！"
+
+msgid "Bandix updated successfully!"
+msgstr "Bandix 更新成功！"
+
+msgid "LuCI App has update: "
+msgstr "LuCI 应用有更新："
+
+msgid "Bandix has update: "
+msgstr "Bandix 有更新："
+
+msgid "LuCI App is up to date: "
+msgstr "LuCI 应用已是最新版本："
+
+msgid "Bandix is up to date: "
+msgstr "Bandix 已是最新版本："
+
+msgid "Updates Available"
+msgstr "有可用更新"
+
+msgid "No Updates Available"
+msgstr "无可用更新"
+
+msgid "Detected Architecture"
+msgstr "检测到的架构"
+
+msgid "Package Manager"
+msgstr "包管理器"
+
+msgid "LuCI Assets"
+msgstr "LuCI 资源"
+
+msgid "Bandix Assets"
+msgstr "Bandix 资源"
+
+msgid "Failed to check for updates"
+msgstr "检查更新失败"
+
+msgid "Failed to check for updates: "
+msgstr "检查更新失败："
+
+msgid "Checking..."
+msgstr "检查中..."
+
+msgid "Installing..."
+msgstr "安装中..."
+
+msgid "Download and Install"
+msgstr "下载并安装"
+
+msgid "Manual Download"
+msgstr "手动下载"
+
+msgid "Close"
+msgstr "关闭"

@@ -928,3 +928,90 @@ msgstr "Últimos 30 minutos"
 
 msgid "Last 1 Hour"
 msgstr "Última 1 hora"
+
+msgid "Starting installation..."
+msgstr "Iniciando instalación..."
+
+msgid "Page will refresh in 3 seconds."
+msgstr "La página se actualizará en 3 segundos."
+
+msgid "Installation failed"
+msgstr "Instalación fallida"
+
+msgid "Installation failed at step: "
+msgstr "Instalación fallida en el paso: "
+
+msgid "Details: "
+msgstr "Detalles: "
+
+msgid "Installation failed: "
+msgstr "Instalación fallida: "
+
+msgid "Unknown error"
+msgstr "Error desconocido"
+
+msgid "Service restarted successfully."
+msgstr "Servicio reiniciado exitosamente."
+
+msgid "Service restart may have failed. Please check manually."
+msgstr "El reinicio del servicio puede haber fallado. Por favor, verifique manualmente."
+
+msgid "Please restart the service."
+msgstr "Por favor, reinicie el servicio."
+
+msgid "LuCI App updated successfully!"
+msgstr "¡Aplicación LuCI actualizada exitosamente!"
+
+msgid "Bandix updated successfully!"
+msgstr "¡Bandix actualizado exitosamente!"
+
+msgid "LuCI App has update: "
+msgstr "La aplicación LuCI tiene actualización: "
+
+msgid "Bandix has update: "
+msgstr "Bandix tiene actualización: "
+
+msgid "LuCI App is up to date: "
+msgstr "La aplicación LuCI está actualizada: "
+
+msgid "Bandix is up to date: "
+msgstr "Bandix está actualizado: "
+
+msgid "Updates Available"
+msgstr "Actualizaciones Disponibles"
+
+msgid "No Updates Available"
+msgstr "No Hay Actualizaciones Disponibles"
+
+msgid "Detected Architecture"
+msgstr "Arquitectura Detectada"
+
+msgid "Package Manager"
+msgstr "Gestor de Paquetes"
+
+msgid "LuCI Assets"
+msgstr "Recursos de LuCI"
+
+msgid "Bandix Assets"
+msgstr "Recursos de Bandix"
+
+msgid "Failed to check for updates"
+msgstr "Error al verificar actualizaciones"
+
+msgid "Failed to check for updates: "
+msgstr "Error al verificar actualizaciones: "
+
+msgid "Checking..."
+msgstr "Verificando..."
+
+msgid "Installing..."
+msgstr "Instalando..."
+
+msgid "Download and Install"
+msgstr "Descargar e Instalar"
+
+msgid "Manual Download"
+msgstr "Descarga Manual"
+
+msgid "Close"
+msgstr "Cerrar"
