@@ -671,8 +671,8 @@ msgstr "Timeout offline"
 msgid "Set the timeout for device offline detection (seconds). Devices inactive for longer than this time will be marked as offline"
 msgstr "Atur timeout untuk deteksi perangkat offline (detik). Perangkat yang tidak aktif lebih lama dari waktu ini akan ditandai sebagai offline"
 
-msgid "Traffic History Period"
-msgstr "Periode riwayat lalu lintas"
+msgid "Realtime Traffic Period"
+msgstr "Periode lalu lintas waktu nyata"
 
 msgid "10 minutes interval uses about 60 KB per device"
 msgstr "Interval 10 menit menggunakan sekitar 60 KB per perangkat"
@@ -904,3 +904,27 @@ msgstr "Apakah Anda yakin ingin memulai ulang layanan Bandix?"
 
 msgid "Failed to restart service: "
 msgstr "Gagal memulai ulang layanan: "
+
+msgid "Realtime"
+msgstr "Waktu Nyata"
+
+msgid "Last 24 Hours"
+msgstr "24 Jam Terakhir"
+
+msgid "Last 7 Days"
+msgstr "7 Hari Terakhir"
+
+msgid "Last 30 Days"
+msgstr "30 Hari Terakhir"
+
+msgid "Last 10 Minutes"
+msgstr "10 Menit Terakhir"
+
+msgid "Last 15 Minutes"
+msgstr "15 Menit Terakhir"
+
+msgid "Last 30 Minutes"
+msgstr "30 Menit Terakhir"
+
+msgid "Last 1 Hour"
+msgstr "1 Jam Terakhir"

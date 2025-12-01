@@ -1568,9 +1568,9 @@ return view.extend({
                         // 时间范围 Tab 切换
                         E('div', { 'class': 'history-tabs' }, [
                             E('button', { 'class': 'history-tab active', 'data-range': 'realtime', 'id': 'history-tab-realtime' }, _('Realtime')),
-                            E('button', { 'class': 'history-tab', 'data-range': 'day', 'id': 'history-tab-day' }, _('Day')),
-                            E('button', { 'class': 'history-tab', 'data-range': 'week', 'id': 'history-tab-week' }, _('Week')),
-                            E('button', { 'class': 'history-tab', 'data-range': 'month', 'id': 'history-tab-month' }, _('Month'))
+                            E('button', { 'class': 'history-tab', 'data-range': 'day', 'id': 'history-tab-day' }, _('Last 24 Hours')),
+                            E('button', { 'class': 'history-tab', 'data-range': 'week', 'id': 'history-tab-week' }, _('Last 7 Days')),
+                            E('button', { 'class': 'history-tab', 'data-range': 'month', 'id': 'history-tab-month' }, _('Last 30 Days'))
                         ])
                     ]),
                     E('div', { 'class': 'history-legend' }, [
@@ -3395,6 +3395,30 @@ function formatLastOnlineExactTime(lastOnlineTs) {
 
 function formatRetentionSeconds(seconds) {
     if (!seconds || seconds <= 0) return '';
+    
+    // 固定值映射
+    if (seconds === 600) {
+        return _('Last 10 Minutes');
+    }
+    if (seconds === 900) {
+        return _('Last 15 Minutes');
+    }
+    if (seconds === 1800) {
+        return _('Last 30 Minutes');
+    }
+    if (seconds === 3600) {
+        return _('Last 1 Hour');
+    }
+    if (seconds === 86400) {
+        return _('Last 24 Hours');
+    }
+    if (seconds === 604800) {
+        return _('Last 7 Days');
+    }
+    if (seconds === 2592000) {
+        return _('Last 30 Days');
+    }
+    
     var value;
     var unitKey;
     if (seconds < 60) {

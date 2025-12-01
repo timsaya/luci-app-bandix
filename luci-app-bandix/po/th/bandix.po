@@ -671,8 +671,8 @@ msgstr "หมดเวลาออฟไลน์"
 msgid "Set the timeout for device offline detection (seconds). Devices inactive for longer than this time will be marked as offline"
 msgstr "ตั้งค่าเวลาหมดเวลาสำหรับการตรวจจับอุปกรณ์ออฟไลน์ (วินาที) อุปกรณ์ที่ไม่ใช้งานนานกว่านี้จะถูกทำเครื่องหมายว่าออฟไลน์"
 
-msgid "Traffic History Period"
-msgstr "ระยะเวลาประวัติการจราจร"
+msgid "Realtime Traffic Period"
+msgstr "ระยะเวลาทราฟฟิกเรียลไทม์"
 
 msgid "10 minutes interval uses about 60 KB per device"
 msgstr "ช่วงเวลา 10 นาทีใช้ประมาณ 60 KB ต่ออุปกรณ์"
@@ -904,3 +904,27 @@ msgstr "คุณแน่ใจหรือไม่ว่าต้องกา
 
 msgid "Failed to restart service: "
 msgstr "ล้มเหลวในการรีสตาร์ทบริการ: "
+
+msgid "Realtime"
+msgstr "เรียลไทม์"
+
+msgid "Last 24 Hours"
+msgstr "24 ชั่วโมงล่าสุด"
+
+msgid "Last 7 Days"
+msgstr "7 วันที่ผ่านมา"
+
+msgid "Last 30 Days"
+msgstr "30 วันที่ผ่านมา"
+
+msgid "Last 10 Minutes"
+msgstr "10 นาทีที่ผ่านมา"
+
+msgid "Last 15 Minutes"
+msgstr "15 นาทีที่ผ่านมา"
+
+msgid "Last 30 Minutes"
+msgstr "30 นาทีที่ผ่านมา"
+
+msgid "Last 1 Hour"
+msgstr "1 ชั่วโมงที่ผ่านมา"

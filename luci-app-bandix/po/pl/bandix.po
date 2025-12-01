@@ -671,8 +671,8 @@ msgstr "Limit czasu offline"
 msgid "Set the timeout for device offline detection (seconds). Devices inactive for longer than this time will be marked as offline"
 msgstr "Ustaw limit czasu wykrywania urządzeń offline (sekundy). Urządzenia nieaktywne dłużej niż ten czas zostaną oznaczone jako offline"
 
-msgid "Traffic History Period"
-msgstr "Okres historii ruchu"
+msgid "Realtime Traffic Period"
+msgstr "Okres ruchu w czasie rzeczywistym"
 
 msgid "10 minutes interval uses about 60 KB per device"
 msgstr "Interwał 10 minut używa około 60 KB na urządzenie"
@@ -904,4 +904,28 @@ msgstr "Czy na pewno chcesz uruchomić ponownie usługę Bandix?"
 
 msgid "Failed to restart service: "
 msgstr "Nie udało się uruchomić ponownie usługi: "
+
+msgid "Realtime"
+msgstr "Czas rzeczywisty"
+
+msgid "Last 24 Hours"
+msgstr "Ostatnie 24 godziny"
+
+msgid "Last 7 Days"
+msgstr "Ostatnie 7 dni"
+
+msgid "Last 30 Days"
+msgstr "Ostatnie 30 dni"
+
+msgid "Last 10 Minutes"
+msgstr "Ostatnie 10 minut"
+
+msgid "Last 15 Minutes"
+msgstr "Ostatnie 15 minut"
+
+msgid "Last 30 Minutes"
+msgstr "Ostatnie 30 minut"
+
+msgid "Last 1 Hour"
+msgstr "Ostatnia 1 godzina"
 

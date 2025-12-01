@@ -671,8 +671,8 @@ msgstr "離線超时時間"
 msgid "Set the timeout for device offline detection (seconds). Devices inactive for longer than this time will be marked as offline"
 msgstr "設定設備離線判斷的超时時間（秒）。超過此時間未活動的設備将被標記为離線"
 
-msgid "Traffic History Period"
-msgstr "歷史流量週期"
+msgid "Realtime Traffic Period"
+msgstr "即時流量週期"
 
 msgid "10 minutes interval uses about 60 KB per device"
 msgstr "10分鐘歷史週期，每个設備佔用 60KB"
@@ -904,3 +904,27 @@ msgstr "確定要重啟 Bandix 服務嗎？"
 
 msgid "Failed to restart service: "
 msgstr "重啟服務失敗："
+
+msgid "Realtime"
+msgstr "即時"
+
+msgid "Last 24 Hours"
+msgstr "最近24小時"
+
+msgid "Last 7 Days"
+msgstr "最近7天"
+
+msgid "Last 30 Days"
+msgstr "最近30天"
+
+msgid "Last 10 Minutes"
+msgstr "最近10分鐘"
+
+msgid "Last 15 Minutes"
+msgstr "最近15分鐘"
+
+msgid "Last 30 Minutes"
+msgstr "最近30分鐘"
+
+msgid "Last 1 Hour"
+msgstr "最近1小時"

@@ -242,7 +242,7 @@ return view.extend({
 		o.depends('traffic_persist_history', '1');
 
 		// 添加历史流量周期（秒）
-		o = s.option(form.ListValue, 'traffic_retention_seconds', _('Traffic History Period'),
+		o = s.option(form.ListValue, 'traffic_retention_seconds', _('Realtime Traffic Period'),
 			_('10 minutes interval uses about 60 KB per device'));
 		o.value('600', _('10 minutes'));
 		o.value('900', _('15 minutes'));

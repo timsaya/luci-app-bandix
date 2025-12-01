@@ -671,8 +671,8 @@ msgstr "Délai d'expiration hors ligne"
 msgid "Set the timeout for device offline detection (seconds). Devices inactive for longer than this time will be marked as offline"
 msgstr "设置设备离线判断的超时时间（秒）。超过此时间未活动的设备将被标记为离线"
 
-msgid "Traffic History Period"
-msgstr "Période d'historique du trafic"
+msgid "Realtime Traffic Period"
+msgstr "Période de trafic en temps réel"
 
 msgid "10 minutes interval uses about 60 KB per device"
 msgstr "Intervalle de 10 minutes utilise environ 60 Ko par appareil"
@@ -904,3 +904,27 @@ msgstr "Êtes-vous sûr de vouloir redémarrer le service Bandix ?"
 
 msgid "Failed to restart service: "
 msgstr "Échec du redémarrage du service : "
+
+msgid "Realtime"
+msgstr "Temps réel"
+
+msgid "Last 24 Hours"
+msgstr "Dernières 24 heures"
+
+msgid "Last 7 Days"
+msgstr "7 derniers jours"
+
+msgid "Last 30 Days"
+msgstr "30 derniers jours"
+
+msgid "Last 10 Minutes"
+msgstr "10 dernières minutes"
+
+msgid "Last 15 Minutes"
+msgstr "15 dernières minutes"
+
+msgid "Last 30 Minutes"
+msgstr "30 dernières minutes"
+
+msgid "Last 1 Hour"
+msgstr "Dernière heure"

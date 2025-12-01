@@ -671,8 +671,8 @@ msgstr "Таймаут офлайн"
 msgid "Set the timeout for device offline detection (seconds). Devices inactive for longer than this time will be marked as offline"
 msgstr "设置设备离线判断的超时时间（秒）。超过此时间未活动的设备将被标记为离线"
 
-msgid "Traffic History Period"
-msgstr "Период истории трафика"
+msgid "Realtime Traffic Period"
+msgstr "Период трафика в реальном времени"
 
 msgid "10 minutes interval uses about 60 KB per device"
 msgstr "Интервал 10 минут использует около 60 КБ на устройство"
@@ -904,3 +904,27 @@ msgstr "Вы уверены, что хотите перезапустить сл
 
 msgid "Failed to restart service: "
 msgstr "Не удалось перезапустить службу: "
+
+msgid "Realtime"
+msgstr "В реальном времени"
+
+msgid "Last 24 Hours"
+msgstr "Последние 24 часа"
+
+msgid "Last 7 Days"
+msgstr "Последние 7 дней"
+
+msgid "Last 30 Days"
+msgstr "Последние 30 дней"
+
+msgid "Last 10 Minutes"
+msgstr "Последние 10 минут"
+
+msgid "Last 15 Minutes"
+msgstr "Последние 15 минут"
+
+msgid "Last 30 Minutes"
+msgstr "Последние 30 минут"
+
+msgid "Last 1 Hour"
+msgstr "Последний 1 час"
