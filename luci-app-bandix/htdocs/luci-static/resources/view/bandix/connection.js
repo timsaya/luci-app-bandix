@@ -190,7 +190,6 @@ return view.extend({
                 }
                 
                 .device-card {
-                    background-color: var(--cbi-section-bg, #fff);
                     border: 1px solid rgba(0, 0, 0, 0.1);
                     border-radius: 8px;
                     padding: 12px;
@@ -200,7 +199,6 @@ return view.extend({
                 
                 @media (prefers-color-scheme: dark) {
                     .device-card {
-                        background-color: var(--cbi-section-bg, rgba(30, 30, 30, 0.98));
                         border-color: rgba(255, 255, 255, 0.15);
                     }
                 }

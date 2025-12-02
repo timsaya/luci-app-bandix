@@ -190,6 +190,19 @@ var callDeleteScheduleLimit = rpc.declare({
     expect: { success: true }
 });
 
+// 版本和更新检查 RPC
+var callGetVersion = rpc.declare({
+    object: 'luci.bandix',
+    method: 'getVersion',
+    expect: {}
+});
+
+var callCheckUpdate = rpc.declare({
+    object: 'luci.bandix',
+    method: 'checkUpdate',
+    expect: {}
+});
+
 return view.extend({
     load: function () {
         return Promise.all([
@@ -226,6 +239,67 @@ return view.extend({
                 display: flex;
                 align-items: center;
                 gap: 12px;
+            }
+            
+            .bandix-title-wrapper {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            
+            .bandix-version {
+                font-size: 0.875rem;
+                opacity: 0.5;
+                font-weight: 400;
+            }
+            
+            .bandix-version-wrapper {
+                display: inline-flex;
+                align-items: center;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+            
+            .bandix-version-item {
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+            }
+            
+            .bandix-update-badge {
+                display: inline-block;
+                cursor: pointer;
+                padding: 2px 8px;
+                margin-left: 8px;
+                background-color: rgba(239, 68, 68, 0.1);
+                color: #ef4444;
+                border-radius: 4px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                transition: all 0.2s ease;
+            }
+            
+            .bandix-update-badge:hover {
+                background-color: rgba(239, 68, 68, 0.2);
+                transform: translateY(-1px);
+            }
+            
+            @media (prefers-color-scheme: dark) {
+                .bandix-update-badge {
+                    background-color: rgba(239, 68, 68, 0.2);
+                    color: #f87171;
+                }
+                
+                .bandix-update-badge:hover {
+                    background-color: rgba(239, 68, 68, 0.3);
+                }
+            }
+            
+            /* 移动端隐藏版本信息和更新徽章 */
+            @media (max-width: 768px) {
+                .bandix-version-wrapper {
+                    display: none;
+                }
             }
             
             .device-mode-group {
@@ -1245,7 +1319,6 @@ return view.extend({
                 }
                 
                 .device-card {
-                    background-color: var(--cbi-section-bg, #fff);
                     border: 1px solid rgba(0, 0, 0, 0.1);
                     border-radius: 8px;
                     padding: 12px;
@@ -1255,7 +1328,6 @@ return view.extend({
                 
                 @media (prefers-color-scheme: dark) {
                     .device-card {
-                        background-color: var(--cbi-section-bg, rgba(30, 30, 30, 0.98));
                         border-color: rgba(255, 255, 255, 0.15);
                     }
                 }
@@ -1554,7 +1626,18 @@ return view.extend({
         var view = E('div', { 'class': 'bandix-container' }, [
             // 头部
             E('div', { 'class': 'bandix-header' }, [
-                E('h1', { 'class': 'bandix-title' }, _('Bandix Traffic Monitor'))
+                E('div', { 'class': 'bandix-title-wrapper' }, [
+                    E('h1', { 'class': 'bandix-title' }, _('Bandix Traffic Monitor')),
+                    E('div', { 'class': 'bandix-version-wrapper' }, [
+                        E('div', { 'class': 'bandix-version-item' }, [
+                            E('span', { 'class': 'bandix-version', 'id': 'bandix-luci-version' }, ''),
+                        ]),
+                        E('div', { 'class': 'bandix-version-item' }, [
+                            E('span', { 'class': 'bandix-version', 'id': 'bandix-core-version' }, ''),
+                        ]),
+                        E('span', { 'class': 'bandix-update-badge', 'id': 'bandix-update-badge', 'style': 'display: none;' }, _('Update available'))
+                    ])
+                ])
             ]),
 
             // 警告提示（包含在线设备数）
@@ -4665,6 +4748,68 @@ function downsampleForMobile(data, labels, upSeries, downSeries, maxPoints) {
         // 立即执行一次，不等待轮询
         updateDeviceData();
         fetchAllScheduleRules();
+        
+        // 异步加载版本信息（不阻塞主流程）
+        (function() {
+            // 延迟执行，确保页面先完成初始化
+            setTimeout(function() {
+                callGetVersion().then(function(result) {
+                    if (result) {
+                        // 显示 luci-app-bandix 版本
+                        var luciVersionEl = document.getElementById('bandix-luci-version');
+                        if (luciVersionEl && result.luci_app_version) {
+                            luciVersionEl.textContent = result.luci_app_version;
+                        }
+                        
+                        // 显示 bandix 版本
+                        var coreVersionEl = document.getElementById('bandix-core-version');
+                        if (coreVersionEl && result.bandix_version) {
+                            coreVersionEl.textContent = result.bandix_version;
+                        }
+                    }
+                }).catch(function(err) {
+                    // 静默失败，不影响页面功能
+                    console.debug('Failed to load version:', err);
+                });
+            }, 100);
+        })();
+        
+        // 异步检查更新（不阻塞主流程）
+        (function() {
+            // 延迟执行，确保页面先完成初始化，更新检查可能需要网络请求
+            setTimeout(function() {
+                callCheckUpdate().then(function(result) {
+                    if (!result) return;
+                    
+                    // 检查是否有更新（luci-app-bandix 或 bandix）
+                    var hasUpdate = false;
+                    if (result.luci_has_update === true || result.luci_has_update === '1' || result.luci_has_update === 1) {
+                        hasUpdate = true;
+                    }
+                    if (result.bandix_has_update === true || result.bandix_has_update === '1' || result.bandix_has_update === 1) {
+                        hasUpdate = true;
+                    }
+                    
+                    // 显示或隐藏更新提示
+                    var updateBadge = document.getElementById('bandix-update-badge');
+                    if (updateBadge) {
+                        if (hasUpdate) {
+                            updateBadge.style.display = 'inline-block';
+                            // 点击跳转到设置页面
+                            updateBadge.onclick = function() {
+                                window.location.href = '/cgi-bin/luci/admin/network/bandix/settings';
+                            };
+                            updateBadge.title = _('Update available, click to go to settings');
+                        } else {
+                            updateBadge.style.display = 'none';
+                        }
+                    }
+                }).catch(function(err) {
+                    // 静默失败，不影响页面功能
+                    console.debug('Failed to check update:', err);
+                });
+            }, 500);
+        })();
 
         // 自动适应主题背景色和文字颜色的函数（仅应用于弹窗和 tooltip）
         function applyThemeColors() {

@@ -502,7 +502,6 @@ return view.extend({
                 
                 /* 移动端卡片样式 */
                 .dns-query-card {
-                    background-color: var(--cbi-section-bg, #fff);
                     border: 1px solid rgba(0, 0, 0, 0.1);
                     border-radius: 8px;
                     padding: 12px;
@@ -512,7 +511,6 @@ return view.extend({
                 
                 @media (prefers-color-scheme: dark) {
                     .dns-query-card {
-                        background-color: var(--cbi-section-bg, rgba(30, 30, 30, 0.98));
                         border-color: rgba(255, 255, 255, 0.15);
                     }
                 }
@@ -1440,12 +1438,6 @@ return view.extend({
                     // 应用到统计卡片
                     var statsCards = document.querySelectorAll('.stats-grid .cbi-section');
                     statsCards.forEach(function(card) {
-                        card.style.backgroundColor = bgColor;
-                    });
-                    
-                    // 应用到 DNS 查询卡片（移动端）
-                    var dnsQueryCards = document.querySelectorAll('.dns-query-card');
-                    dnsQueryCards.forEach(function(card) {
                         card.style.backgroundColor = bgColor;
                     });
                     

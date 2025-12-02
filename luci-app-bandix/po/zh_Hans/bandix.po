@@ -1021,3 +1021,9 @@ msgstr "开始安装... 页面将在5秒后自动刷新。"
 
 msgid "Please clear your browser cache manually after updating."
 msgstr "更新后请手动清空浏览器缓存。"
+
+msgid "Update available"
+msgstr "有更新"
+
+msgid "Update available, click to go to settings"
+msgstr "有更新，点击前往设置"
