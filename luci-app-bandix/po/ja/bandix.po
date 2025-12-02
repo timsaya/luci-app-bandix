@@ -1018,3 +1018,6 @@ msgstr "閉じる"
 
 msgid "Starting installation... The page will refresh automatically in 5 seconds."
 msgstr "インストールを開始しています... ページは5秒後に自動的に更新されます。"
+
+msgid "Please clear your browser cache manually after updating."
+msgstr "更新後、ブラウザのキャッシュを手動でクリアしてください。"

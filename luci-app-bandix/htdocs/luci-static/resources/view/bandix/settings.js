@@ -558,6 +558,14 @@ return view.extend({
 			// 显示结果（添加关闭按钮）
 			var title = hasUpdate ? _('Updates Available') : _('No Updates Available');
 			
+			// 添加红色提示文字（如果有更新）
+			if (hasUpdate) {
+				var warningMsg = E('div', {
+					'style': 'background: rgba(239, 68, 68, 0.1); color: #dc2626; padding: 12px; border-radius: 4px; margin-bottom: 16px; font-weight: 600;'
+				}, _('Please clear your browser cache manually after updating.'));
+				messages.unshift(warningMsg);
+			}
+			
 			// 创建弹窗内容，包含关闭按钮
 			var modalContent = E('div', {}, messages);
 			

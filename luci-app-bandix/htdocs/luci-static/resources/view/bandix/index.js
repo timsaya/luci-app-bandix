@@ -1120,7 +1120,10 @@ return view.extend({
                     padding: 8px 6px;
                     font-size: 0.75rem;
                 }
-                /* 移动端只显示 Realtime tab */
+                /* 移动端隐藏 Realtime tab */
+                .history-tab[data-range="realtime"] {
+                    display: none !important;
+                }
                 .history-tab[data-range="day"],
                 .history-tab[data-range="week"],
                 .history-tab[data-range="month"] {
@@ -1145,7 +1148,9 @@ return view.extend({
             .history-legend {
                 display: flex;
                 align-items: center;
+                justify-content: center;
                 gap: 12px;
+                padding-right: 16px;
             }
             .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.875rem; }
             .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
@@ -1189,7 +1194,9 @@ return view.extend({
                 .history-legend {
                     margin-left: 0;
                     margin-top: 8px;
+                    width: 100%;
                     justify-content: center;
+                    padding-right: 0;
                 }
                 .history-header {
                     flex-direction: column;
@@ -1198,6 +1205,10 @@ return view.extend({
                 }
                 .history-card-body {
                     padding: 12px;
+                }
+                .device-card {
+                    margin-left: 12px;
+                    margin-right: 12px;
                 }
                 .history-tooltip {
                     width: calc(100vw - 32px);
@@ -2009,13 +2020,6 @@ return view.extend({
         // 添加规则模态框取消按钮
         document.getElementById('add-rule-cancel').addEventListener('click', hideAddRuleModal);
 
-        // 点击添加规则模态框背景关闭
-        document.getElementById('add-rule-modal').addEventListener('click', function (e) {
-            if (e.target === this) {
-                hideAddRuleModal();
-            }
-        });
-
         // 保存定时限速规则（从添加规则模态框）
         document.getElementById('add-rule-save').addEventListener('click', function() {
             if (!currentDevice) {
@@ -2403,13 +2407,6 @@ return view.extend({
 
         // 绑定关闭按钮事件
         document.getElementById('modal-close').addEventListener('click', hideRateLimitModal);
-
-        // 点击模态框背景关闭
-        document.getElementById('rate-limit-modal').addEventListener('click', function (e) {
-            if (e.target === this) {
-                hideRateLimitModal();
-            }
-        });
 
         // 历史趋势：状态与工具
         var latestDevices = [];
