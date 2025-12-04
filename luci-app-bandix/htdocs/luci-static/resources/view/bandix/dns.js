@@ -230,7 +230,7 @@ return view.extend({
                 opacity: 1;
             }
             
-            .filter-section .cbi-select {
+            .filter-section .cbi-input-select {
                 min-width: 120px;
                 max-width: 200px;
                 width: 120px;
@@ -616,7 +616,7 @@ return view.extend({
                 }
                 
                 .filter-input,
-                .filter-section .cbi-select {
+                .filter-section .cbi-input-select {
                     width: 100%;
                     max-width: 100%;
                     min-width: 100%;
@@ -641,7 +641,7 @@ return view.extend({
                     flex-wrap: wrap;
                 }
                 
-                .pagination-controls .cbi-select {
+                .pagination-controls .cbi-input-select {
                     width: 100%;
                     margin-right: 0;
                     margin-bottom: 8px;
@@ -722,7 +722,7 @@ return view.extend({
             E('div', { 'class': 'filter-section' }, [
                 E('div', { 'class': 'filter-group' }, [
                     E('label', { 'class': 'filter-label' }, _('Type Filter') + ':'),
-                    E('select', { 'class': 'cbi-select', 'id': 'type-filter' }, [
+                    E('select', { 'class': 'cbi-input-select', 'id': 'type-filter' }, [
                         E('option', { 'value': '' }, _('All')),
                         E('option', { 'value': 'true' }, _('Queries Only')),
                         E('option', { 'value': 'false' }, _('Responses Only'))
@@ -739,7 +739,7 @@ return view.extend({
                 ]),
                 E('div', { 'class': 'filter-group' }, [
                     E('label', { 'class': 'filter-label' }, _('Query Type') + ':'),
-                    E('select', { 'class': 'cbi-select', 'id': 'query-type-filter' }, [
+                    E('select', { 'class': 'cbi-input-select', 'id': 'query-type-filter' }, [
                         E('option', { 'value': '' }, _('All')),
                         E('option', { 'value': 'A' }, 'A'),
                         E('option', { 'value': 'AAAA' }, 'AAAA'),
@@ -1037,7 +1037,7 @@ return view.extend({
                     ),
                     E('div', { 'class': 'pagination-controls' }, [
                         E('select', {
-                            'class': 'cbi-select',
+                            'class': 'cbi-input-select',
                             'id': 'page-size-select',
                             'style': 'margin-right: 8px;'
                         }, [
@@ -1429,7 +1429,7 @@ return view.extend({
                         badge.style.backgroundColor = bgColor;
                     });
                     
-                    // 应用到搜索框（不包括 cbi-select，因为它使用官方样式）
+                    // 应用到搜索框（不包括 cbi-input-select，因为它使用官方样式）
                     var inputs = document.querySelectorAll('.filter-input');
                     inputs.forEach(function(input) {
                         input.style.backgroundColor = bgColor;
@@ -1481,7 +1481,7 @@ return view.extend({
                         containerEl.style.color = textColor;
                     }
                     
-                    // 应用到搜索框的文字颜色（不包括 cbi-select）
+                    // 应用到搜索框的文字颜色（不包括 cbi-input-select）
                     var inputs = document.querySelectorAll('.filter-input');
                     inputs.forEach(function(input) {
                         input.style.color = textColor;

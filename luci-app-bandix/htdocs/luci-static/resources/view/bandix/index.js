@@ -1211,7 +1211,7 @@ return view.extend({
                 align-items: center;
                 padding: 12px 16px;
             }
-            .history-controls .cbi-select {
+            .history-controls .cbi-input-select {
                 width: auto;
                 min-width: 160px;
             }
@@ -1258,7 +1258,7 @@ return view.extend({
                     gap: 8px;
                     padding: 12px;
                 }
-                .history-controls .cbi-select {
+                .history-controls .cbi-input-select {
                     width: 100%;
                     min-width: 0;
                 }
@@ -1680,11 +1680,11 @@ return view.extend({
                 ]),
                 E('div', { 'class': 'history-controls' }, [
                     E('label', { 'class': 'form-label', 'style': 'margin: 0;' }, _('Select Device')),
-                    E('select', { 'class': 'cbi-select', 'id': 'history-device-select' }, [
+                    E('select', { 'class': 'cbi-input-select', 'id': 'history-device-select' }, [
                         E('option', { 'value': '' }, _('All Devices'))
                     ]),
                     E('label', { 'class': 'form-label', 'style': 'margin: 0;' }, _('Type')),
-                    E('select', { 'class': 'cbi-select', 'id': 'history-type-select' }, [
+                    E('select', { 'class': 'cbi-input-select', 'id': 'history-type-select' }, [
                         E('option', { 'value': 'total' }, _('Total')),
                         E('option', { 'value': 'lan' }, _('LAN Traffic')),
                         E('option', { 'value': 'wan' }, _('WAN Traffic'))
@@ -1884,7 +1884,7 @@ return view.extend({
                         E('label', { 'class': 'form-label' }, _('Upload Limit')),
                         E('div', { 'style': 'display: flex; gap: 8px;' }, [
                             E('input', { 'type': 'number', 'class': 'form-input', 'id': 'add-rule-upload-limit-value', 'min': '0', 'step': '1', 'placeholder': '0' }),
-                            E('select', { 'class': 'cbi-select', 'id': 'add-rule-upload-limit-unit', 'style': 'width: 100px;' })
+                            E('select', { 'class': 'cbi-input-select', 'id': 'add-rule-upload-limit-unit', 'style': 'width: 100px;' })
                         ]),
                         E('div', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-top: 4px;' }, _('Tip: Enter 0 for unlimited'))
                     ]),
@@ -1892,7 +1892,7 @@ return view.extend({
                         E('label', { 'class': 'form-label' }, _('Download Limit')),
                         E('div', { 'style': 'display: flex; gap: 8px;' }, [
                             E('input', { 'type': 'number', 'class': 'form-input', 'id': 'add-rule-download-limit-value', 'min': '0', 'step': '1', 'placeholder': '0' }),
-                            E('select', { 'class': 'cbi-select', 'id': 'add-rule-download-limit-unit', 'style': 'width: 100px;' })
+                            E('select', { 'class': 'cbi-input-select', 'id': 'add-rule-download-limit-unit', 'style': 'width: 100px;' })
                         ]),
                         E('div', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-top: 4px;' }, _('Tip: Enter 0 for unlimited'))
                     ])
