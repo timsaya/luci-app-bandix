@@ -1021,3 +1021,57 @@ msgstr "Начало установки... Страница автоматиче
 
 msgid "Please clear your browser cache manually after updating."
 msgstr "Пожалуйста, вручную очистите кеш браузера после обновления."
+
+msgid "Traffic Statistics"
+msgstr "Статистика трафика"
+
+msgid "Traffic Statistics (WAN Only)"
+msgstr "Статистика трафика (только WAN)"
+
+msgid "Device Usage Ranking"
+msgstr "Рейтинг использования устройств"
+
+msgid "(Data has 1 hour delay)"
+msgstr "(Данные имеют задержку 1 час)"
+
+msgid "Start Date"
+msgstr "Дата начала"
+
+msgid "End Date"
+msgstr "Дата окончания"
+
+msgid "Reset"
+msgstr "Сбросить"
+
+msgid "Today"
+msgstr "Сегодня"
+
+msgid "This Week"
+msgstr "На этой неделе"
+
+msgid "Last Week"
+msgstr "На прошлой неделе"
+
+msgid "This Month"
+msgstr "В этом месяце"
+
+msgid "Last Month"
+msgstr "В прошлом месяце"
+
+msgid "Last 90 Days"
+msgstr "Последние 90 дней"
+
+msgid "Last Year"
+msgstr "За последний год"
+
+msgid "Traffic Timeline"
+msgstr "Временная шкала трафика"
+
+msgid "Aggregation:"
+msgstr "Агрегация:"
+
+msgid "Hourly"
+msgstr "По часам"
+
+msgid "Device:"
+msgstr "Устройство:"

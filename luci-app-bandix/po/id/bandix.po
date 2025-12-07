@@ -1021,3 +1021,57 @@ msgstr "Memulai instalasi... Halaman akan dimuat ulang secara otomatis dalam 5 d
 
 msgid "Please clear your browser cache manually after updating."
 msgstr "Harap hapus cache browser secara manual setelah memperbarui."
+
+msgid "Traffic Statistics"
+msgstr "Statistik Lalu Lintas"
+
+msgid "Traffic Statistics (WAN Only)"
+msgstr "Statistik Lalu Lintas (Hanya WAN)"
+
+msgid "Device Usage Ranking"
+msgstr "Peringkat Penggunaan Perangkat"
+
+msgid "(Data has 1 hour delay)"
+msgstr "(Data memiliki penundaan 1 jam)"
+
+msgid "Start Date"
+msgstr "Tanggal Mulai"
+
+msgid "End Date"
+msgstr "Tanggal Akhir"
+
+msgid "Reset"
+msgstr "Setel Ulang"
+
+msgid "Today"
+msgstr "Hari Ini"
+
+msgid "This Week"
+msgstr "Minggu Ini"
+
+msgid "Last Week"
+msgstr "Minggu Lalu"
+
+msgid "This Month"
+msgstr "Bulan Ini"
+
+msgid "Last Month"
+msgstr "Bulan Lalu"
+
+msgid "Last 90 Days"
+msgstr "90 Hari Terakhir"
+
+msgid "Last Year"
+msgstr "Tahun Lalu"
+
+msgid "Traffic Timeline"
+msgstr "Timeline Lalu Lintas"
+
+msgid "Aggregation:"
+msgstr "Agregasi:"
+
+msgid "Hourly"
+msgstr "Per Jam"
+
+msgid "Device:"
+msgstr "Perangkat:"

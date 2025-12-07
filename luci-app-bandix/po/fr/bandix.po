@@ -1021,3 +1021,57 @@ msgstr "Démarrage de l'installation... La page sera actualisée automatiquement
 
 msgid "Please clear your browser cache manually after updating."
 msgstr "Veuillez vider manuellement le cache du navigateur après la mise à jour."
+
+msgid "Traffic Statistics"
+msgstr "Statistiques de Trafic"
+
+msgid "Traffic Statistics (WAN Only)"
+msgstr "Statistiques de Trafic (WAN uniquement)"
+
+msgid "Device Usage Ranking"
+msgstr "Classement d'Utilisation des Appareils"
+
+msgid "(Data has 1 hour delay)"
+msgstr "(Les données ont 1 heure de retard)"
+
+msgid "Start Date"
+msgstr "Date de Début"
+
+msgid "End Date"
+msgstr "Date de Fin"
+
+msgid "Reset"
+msgstr "Réinitialiser"
+
+msgid "Today"
+msgstr "Aujourd'hui"
+
+msgid "This Week"
+msgstr "Cette Semaine"
+
+msgid "Last Week"
+msgstr "Semaine Dernière"
+
+msgid "This Month"
+msgstr "Ce Mois"
+
+msgid "Last Month"
+msgstr "Mois Dernier"
+
+msgid "Last 90 Days"
+msgstr "90 Derniers Jours"
+
+msgid "Last Year"
+msgstr "Dernière Année"
+
+msgid "Traffic Timeline"
+msgstr "Chronologie du Trafic"
+
+msgid "Aggregation:"
+msgstr "Agrégation :"
+
+msgid "Hourly"
+msgstr "Par Heure"
+
+msgid "Device:"
+msgstr "Appareil :"

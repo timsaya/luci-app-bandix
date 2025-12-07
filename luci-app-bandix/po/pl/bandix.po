@@ -1022,3 +1022,57 @@ msgstr "Rozpoczynanie instalacji... Strona odświeży się automatycznie za 5 se
 msgid "Please clear your browser cache manually after updating."
 msgstr "Po aktualizacji należy ręcznie wyczyścić pamięć podręczną przeglądarki."
 
+msgid "Traffic Statistics"
+msgstr "Statystyki ruchu"
+
+msgid "Traffic Statistics (WAN Only)"
+msgstr "Statystyki ruchu (tylko WAN)"
+
+msgid "Device Usage Ranking"
+msgstr "Ranking Użycia Urządzeń"
+
+msgid "(Data has 1 hour delay)"
+msgstr "(Dane mają 1 godzinę opóźnienia)"
+
+msgid "Start Date"
+msgstr "Data Początkowa"
+
+msgid "End Date"
+msgstr "Data Końcowa"
+
+msgid "Reset"
+msgstr "Resetuj"
+
+msgid "Today"
+msgstr "Dzisiaj"
+
+msgid "This Week"
+msgstr "Ten Tydzień"
+
+msgid "Last Week"
+msgstr "Zeszły Tydzień"
+
+msgid "This Month"
+msgstr "Ten Miesiąc"
+
+msgid "Last Month"
+msgstr "Zeszły Miesiąc"
+
+msgid "Last 90 Days"
+msgstr "Ostatnie 90 Dni"
+
+msgid "Last Year"
+msgstr "Ostatni Rok"
+
+msgid "Traffic Timeline"
+msgstr "Oś Czasu Ruchu"
+
+msgid "Aggregation:"
+msgstr "Agregacja:"
+
+msgid "Hourly"
+msgstr "Co Godzinę"
+
+msgid "Device:"
+msgstr "Urządzenie:"
+

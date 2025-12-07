@@ -1021,3 +1021,57 @@ msgstr "開始安裝... 頁面將在5秒後自動重新整理。"
 
 msgid "Please clear your browser cache manually after updating."
 msgstr "更新後請手動清空瀏覽器快取。"
+
+msgid "Traffic Statistics"
+msgstr "流量統計"
+
+msgid "Traffic Statistics (WAN Only)"
+msgstr "流量統計（僅WAN）"
+
+msgid "Device Usage Ranking"
+msgstr "設備用量排行"
+
+msgid "(Data has 1 hour delay)"
+msgstr "（資料有1小時延遲）"
+
+msgid "Start Date"
+msgstr "開始日期"
+
+msgid "End Date"
+msgstr "結束日期"
+
+msgid "Reset"
+msgstr "重置"
+
+msgid "Today"
+msgstr "今天"
+
+msgid "This Week"
+msgstr "本週"
+
+msgid "Last Week"
+msgstr "上週"
+
+msgid "This Month"
+msgstr "本月"
+
+msgid "Last Month"
+msgstr "上月"
+
+msgid "Last 90 Days"
+msgstr "最近90天"
+
+msgid "Last Year"
+msgstr "最近一年"
+
+msgid "Traffic Timeline"
+msgstr "流量時間線"
+
+msgid "Aggregation:"
+msgstr "聚合方式："
+
+msgid "Hourly"
+msgstr "按小時"
+
+msgid "Device:"
+msgstr "設備："

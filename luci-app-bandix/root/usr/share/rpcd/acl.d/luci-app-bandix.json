@@ -21,7 +21,9 @@
 					"getVersion",
 					"getSystemArch",
 					"checkUpdate",
-					"installUpdate"
+					"installUpdate",
+					"getTrafficUsageRanking",
+					"getTrafficUsageIncrements"
 				]
 			},
 			"uci": [
@@ -48,7 +50,9 @@
 					"getVersion",
 					"getSystemArch",
 					"checkUpdate",
-					"installUpdate"
+					"installUpdate",
+					"getTrafficUsageRanking",
+					"getTrafficUsageIncrements"
 				]
 			},
 			"uci": [

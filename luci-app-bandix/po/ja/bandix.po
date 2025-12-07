@@ -1021,3 +1021,57 @@ msgstr "インストールを開始しています... ページは5秒後に自�
 
 msgid "Please clear your browser cache manually after updating."
 msgstr "更新後、ブラウザのキャッシュを手動でクリアしてください。"
+
+msgid "Traffic Statistics"
+msgstr "トラフィック統計"
+
+msgid "Traffic Statistics (WAN Only)"
+msgstr "トラフィック統計（WANのみ）"
+
+msgid "Device Usage Ranking"
+msgstr "デバイス使用量ランキング"
+
+msgid "(Data has 1 hour delay)"
+msgstr "（データは1時間遅延）"
+
+msgid "Start Date"
+msgstr "開始日"
+
+msgid "End Date"
+msgstr "終了日"
+
+msgid "Reset"
+msgstr "リセット"
+
+msgid "Today"
+msgstr "今日"
+
+msgid "This Week"
+msgstr "今週"
+
+msgid "Last Week"
+msgstr "先週"
+
+msgid "This Month"
+msgstr "今月"
+
+msgid "Last Month"
+msgstr "先月"
+
+msgid "Last 90 Days"
+msgstr "過去90日"
+
+msgid "Last Year"
+msgstr "過去1年"
+
+msgid "Traffic Timeline"
+msgstr "トラフィックタイムライン"
+
+msgid "Aggregation:"
+msgstr "集計："
+
+msgid "Hourly"
+msgstr "時間単位"
+
+msgid "Device:"
+msgstr "デバイス："

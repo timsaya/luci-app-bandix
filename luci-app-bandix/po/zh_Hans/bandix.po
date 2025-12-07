@@ -1027,3 +1027,57 @@ msgstr "有更新"
 
 msgid "Update available, click to go to settings"
 msgstr "有更新，点击前往设置"
+
+msgid "Traffic Statistics"
+msgstr "流量统计"
+
+msgid "Traffic Statistics (WAN Only)"
+msgstr "流量统计（仅WAN）"
+
+msgid "Device Usage Ranking"
+msgstr "设备用量排行"
+
+msgid "(Data has 1 hour delay)"
+msgstr "（数据有1小时延迟）"
+
+msgid "Start Date"
+msgstr "开始日期"
+
+msgid "End Date"
+msgstr "结束日期"
+
+msgid "Reset"
+msgstr "重置"
+
+msgid "Today"
+msgstr "今天"
+
+msgid "This Week"
+msgstr "本周"
+
+msgid "Last Week"
+msgstr "上周"
+
+msgid "This Month"
+msgstr "本月"
+
+msgid "Last Month"
+msgstr "上月"
+
+msgid "Last 90 Days"
+msgstr "最近90天"
+
+msgid "Last Year"
+msgstr "最近一年"
+
+msgid "Traffic Timeline"
+msgstr "流量时间线"
+
+msgid "Aggregation:"
+msgstr "聚合方式："
+
+msgid "Hourly"
+msgstr "按小时"
+
+msgid "Device:"
+msgstr "设备："
