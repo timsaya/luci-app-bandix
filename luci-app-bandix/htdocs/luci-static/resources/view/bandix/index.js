@@ -6179,6 +6179,12 @@ return view.extend({
             
             callGetTrafficUsageIncrements(startMs, endMs, selectedAggregation, selectedMac).then(function (result) {
                 if (!result || !result.increments) {
+                    var container = document.getElementById('traffic-increments-container');
+                    if (container) {
+                        container.innerHTML = '<div class="loading-state">' + _('No data') + '</div>';
+                    }
+                    // 调用回调函数以移除 loading 状态
+                    if (callback) callback();
                     return;
                 }
                 
@@ -6203,10 +6209,16 @@ return view.extend({
                 }
 
                 var container = document.getElementById('traffic-increments-container');
-                if (!container) return;
+                if (!container) {
+                    // 调用回调函数以移除 loading 状态
+                    if (callback) callback();
+                    return;
+                }
 
                 if (result.increments.length === 0) {
                     container.innerHTML = '<div class="loading-state">' + _('No data') + '</div>';
+                    // 调用回调函数以移除 loading 状态
+                    if (callback) callback();
                     return;
                 }
 
