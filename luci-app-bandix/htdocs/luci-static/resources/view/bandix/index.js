@@ -6949,8 +6949,16 @@ return view.extend({
             // 初始化：默认选择最近一年
             var oneYearAgo = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
             setDateRange(oneYearAgo, today, '1year');
-            // 初始化时也查询一次数据
-            queryData();
+            
+            // 设置初始时间范围并自动加载数据（不显示 loading）
+            var startMs = oneYearAgo.getTime();
+            var endMs = today.getTime();
+            trafficIncrementsCustomRange = {
+                start_ms: startMs,
+                end_ms: endMs
+            };
+            // 自动加载数据，但不设置 loading 状态
+            updateTrafficIncrements(startMs, endMs, null, null);
         }, 700);
 
         // 异步加载版本信息（不阻塞主流程）
