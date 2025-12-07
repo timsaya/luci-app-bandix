@@ -14,13 +14,39 @@ LuCI Bandix 基于 LuCI 框架开发，为 OpenWrt 路由器提供网络流量�
 
 **注意**：本应用主要面向家庭用户和简单网络环境设计，不适用于复杂的网络架构（如 VLAN）或企业级部署。
 
+## 安装
+
+
+1. 先安装 openwrt-bandix 后端
+
+   从 [openwrt-bandix Releases](https://github.com/timsaya/openwrt-bandix/releases) 下载适合您设备的包，然后安装：
+
+   ```bash
+   opkg install bandix_最新版本_架构.ipk  # (或 apk add --allow-untrusted bandix_最新版本_架构.apk)
+   ```
+
+2. 安装 luci-app-bandix 前端
+
+   从 [luci-app-bandix Releases](https://github.com/timsaya/luci-app-bandix/releases) 下载包，然后安装：
+
+   ```bash
+   opkg install luci-app-bandix_最新版本_all.ipk  # (或 apk add --allow-untrusted luci-app-bandix_最新版本_all.apk)
+   ```
+
+3. 在设置中配置您的 LAN 接口
+
+   安装完成后，可以通过 LuCI Web 界面访问 Bandix 应用，应用位于"网络"菜单下。进入 Bandix 设置页面，选择您的 LAN 接口以启用正确的监控功能。请确保勾选"启用"选项来启动服务。
+
+## 截图
+
 ![LuCI Bandix Screenshot](docs/images/index-1.png)
 
 ![LuCI Bandix Screenshot](docs/images/index-2.png)
 
+![LuCI Bandix Screenshot](docs/images/index-3.png)
+
 ![LuCI Bandix Screenshot](docs/images/dns-1.png)
 
-![LuCI Bandix Screenshot](docs/images/settings.png)
 
 
 ## 功能特点
@@ -72,31 +98,6 @@ luci-app-bandix 需要以下依赖包：
 | 0.10.x              | 0.10.x                  |
 
 请确保安装匹配的版本以确保兼容性和正常功能。
-
-## 安装
-
-
-1. 先安装 openwrt-bandix 后端
-
-   从 [openwrt-bandix Releases](https://github.com/timsaya/openwrt-bandix/releases) 下载适合您设备的包，然后安装：
-
-   ```bash
-   opkg install bandix_最新版本_架构.ipk  # (或 apk add --allow-untrusted bandix_最新版本_架构.apk)
-   ```
-
-2. 安装 luci-app-bandix 前端
-
-   从 [luci-app-bandix Releases](https://github.com/timsaya/luci-app-bandix/releases) 下载包，然后安装：
-
-   ```bash
-   opkg install luci-app-bandix_最新版本_all.ipk  # (或 apk add --allow-untrusted luci-app-bandix_最新版本_all.apk)
-   ```
-
-3. 在设置中配置您的 LAN 接口
-
-   安装完成后，可以通过 LuCI Web 界面访问 Bandix 应用，应用位于"网络"菜单下。进入 Bandix 设置页面，选择您的 LAN 接口以启用正确的监控功能。请确保勾选"启用"选项来启动服务。
-
-
 
 
 ## 许可证

@@ -14,14 +14,39 @@ LuCI Bandix is developed based on the LuCI framework, offering network traffic m
 
 **Note**: This application is primarily designed for home users and simple network environments. It is not recommended for complex network architectures (such as VLAN) or enterprise-level deployments.
 
+## Installation
+
+
+1. First install the openwrt-bandix backend
+
+   Download the appropriate package for your device from [openwrt-bandix Releases](https://github.com/timsaya/openwrt-bandix/releases), then install:
+
+   ```bash
+   opkg install bandix_latest_architecture.ipk  # (or apk add --allow-untrusted bandix_latest_architecture.apk)
+   ```
+
+2. Install the luci-app-bandix frontend
+
+   Download the package from [luci-app-bandix Releases](https://github.com/timsaya/luci-app-bandix/releases), then install:
+
+   ```bash
+   opkg install luci-app-bandix_latest_all.ipk  # (or apk add --allow-untrusted luci-app-bandix_latest_all.apk)
+   ```
+
+3. Configure your LAN interface in settings
+
+   After installation, you can access the Bandix application through the LuCI web interface under the "Network" menu. Go to the Bandix settings page and select your LAN interface to enable proper monitoring. Make sure to check the "Enable" option to start the service.
+
+
+## Screenshots
 
 ![LuCI Bandix Screenshot](docs/images/index-1.png)
 
 ![LuCI Bandix Screenshot](docs/images/index-2.png)
 
-![LuCI Bandix Screenshot](docs/images/dns-1.png)
+![LuCI Bandix Screenshot](docs/images/index-3.png)
 
-![LuCI Bandix Screenshot](docs/images/settings.png)
+![LuCI Bandix Screenshot](docs/images/dns-1.png)
 
 
 ## Features
@@ -74,30 +99,6 @@ The following table shows the version dependency relationship between luci-app-b
 
 
 Please ensure you install matching versions to ensure compatibility and proper functionality.
-
-## Installation
-
-
-1. First install the openwrt-bandix backend
-
-   Download the appropriate package for your device from [openwrt-bandix Releases](https://github.com/timsaya/openwrt-bandix/releases), then install:
-
-   ```bash
-   opkg install bandix_latest_architecture.ipk  # (or apk add --allow-untrusted bandix_latest_architecture.apk)
-   ```
-
-2. Install the luci-app-bandix frontend
-
-   Download the package from [luci-app-bandix Releases](https://github.com/timsaya/luci-app-bandix/releases), then install:
-
-   ```bash
-   opkg install luci-app-bandix_latest_all.ipk  # (or apk add --allow-untrusted luci-app-bandix_latest_all.apk)
-   ```
-
-3. Configure your LAN interface in settings
-
-   After installation, you can access the Bandix application through the LuCI web interface under the "Network" menu. Go to the Bandix settings page and select your LAN interface to enable proper monitoring. Make sure to check the "Enable" option to start the service.
-
 
 
 ## License
