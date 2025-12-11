@@ -6782,6 +6782,18 @@ return view.extend({
             // 初始化：默认选择最近一年
             var oneYearAgo = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
             setDateRange(oneYearAgo, today, '1year');
+            
+            // 设置初始时间范围并自动加载数据（结束时间为当天的 23:59:59）
+            var startMs = oneYearAgo.getTime();
+            var endToday = new Date(today);
+            endToday.setHours(23, 59, 59, 999);
+            var endMs = endToday.getTime();
+            usageRankingCustomRange = {
+                start_ms: startMs,
+                end_ms: endMs
+            };
+            // 使用初始时间范围重新加载数据
+            updateTrafficStatistics(usageRankingCustomRange);
         }, 500);
         
         // 初始化时间序列筛选条件
@@ -6964,7 +6976,9 @@ return view.extend({
             
             // 设置初始时间范围并自动加载数据（不显示 loading）
             var startMs = oneYearAgo.getTime();
-            var endMs = today.getTime();
+            var endToday = new Date(today);
+            endToday.setHours(23, 59, 59, 999);
+            var endMs = endToday.getTime();
             trafficIncrementsCustomRange = {
                 start_ms: startMs,
                 end_ms: endMs
