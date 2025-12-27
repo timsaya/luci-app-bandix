@@ -1,6 +1,7 @@
 # LuCI Bandix
 
-[English](README.md) | 简体中文
+[English](README.md) | 简体中文 | [架构文档](ARCHITECTURE.md)
+
 
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 ![Downloads](https://gh-down-badges.linkof.link/timsaya/luci-app-bandix)

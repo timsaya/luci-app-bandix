@@ -581,19 +581,75 @@ restart_service() {
 	fi
 }
 
+# 从 apk info 输出中提取版本号
+# 输入：包名（如 luci-app-bandix）和 apk info 的输出
+# 输出：版本号（如 0.11.1-r1）
+extract_version_from_apk_info() {
+	local package_name="$1"
+	local apk_output="$2"
+	
+	# 查找包含 "description:" 的行，格式：包名-版本-r修订号 description:
+	# 例如：luci-app-bandix-0.11.1-r1 description:
+	# 使用 grep -F 进行字面匹配，避免特殊字符问题
+	local version_line=$(echo "$apk_output" | grep -F "${package_name}-" | grep "description:" 2>/dev/null | head -n 1)
+	
+	if [ -n "$version_line" ]; then
+		# 提取版本号：从包名后面提取到 description: 之前的部分
+		# 例如：luci-app-bandix-0.11.1-r1 description: -> 0.11.1-r1
+		# 转义包名中的特殊字符用于 sed
+		local escaped_package_name=$(echo "$package_name" | sed 's/[[\.*^$()+?{|]/\\&/g')
+		local version=$(echo "$version_line" | sed -n "s/^${escaped_package_name}-\([^ ]*\) description:.*/\1/p")
+		if [ -n "$version" ]; then
+			echo "$version"
+			return
+		fi
+	fi
+	
+	# 如果上述方法失败，尝试更通用的正则匹配
+	# 匹配格式：包名-版本-r修订号
+	local version=$(echo "$apk_output" | grep -oE "^${package_name}-[0-9]+\.[0-9]+\.[0-9]+(-r[0-9]+)?" 2>/dev/null | head -n 1 | sed "s/^${package_name}-//")
+	if [ -n "$version" ]; then
+		echo "$version"
+		return
+	fi
+	
+	echo ""
+}
+
 # 获取版本信息
 get_version() {
 	json_init
 	
+	# 检测包管理器类型
+	local pkg_manager=$(get_package_manager)
+	
 	# 获取 luci-app-bandix 版本
 	local luci_version=""
-	if [ -f "/usr/lib/opkg/info/luci-app-bandix.control" ]; then
-		luci_version=$(grep "^Version:" /usr/lib/opkg/info/luci-app-bandix.control 2>/dev/null | cut -d' ' -f2)
+	
+	if [ "$pkg_manager" = "opkg" ]; then
+		# opkg 方式
+		if [ -f "/usr/lib/opkg/info/luci-app-bandix.control" ]; then
+			luci_version=$(grep "^Version:" /usr/lib/opkg/info/luci-app-bandix.control 2>/dev/null | cut -d' ' -f2)
+		fi
+		# 如果无法从 control 文件获取，尝试从 opkg 命令获取
+		if [ -z "$luci_version" ]; then
+			luci_version=$(opkg info luci-app-bandix 2>/dev/null | grep "^Version:" | cut -d' ' -f2)
+		fi
+	elif [ "$pkg_manager" = "apk" ]; then
+		# apk 方式
+		# apk 的 control 文件路径可能不同，先尝试常见路径
+		if [ -f "/usr/lib/apk/db/installed" ]; then
+			luci_version=$(grep "^luci-app-bandix-" /usr/lib/apk/db/installed 2>/dev/null | head -n 1 | sed -n 's/^luci-app-bandix-\(.*\)$/\1/p')
+		fi
+		# 如果无法从 installed 文件获取，尝试从 apk info 命令获取
+		if [ -z "$luci_version" ]; then
+			local apk_output=$(apk info luci-app-bandix 2>/dev/null)
+			if [ -n "$apk_output" ]; then
+				luci_version=$(extract_version_from_apk_info "luci-app-bandix" "$apk_output")
+			fi
+		fi
 	fi
-	# 如果无法从 control 文件获取，尝试从 opkg 命令获取
-	if [ -z "$luci_version" ]; then
-		luci_version=$(opkg info luci-app-bandix 2>/dev/null | grep "^Version:" | cut -d' ' -f2)
-	fi
+	
 	# 如果还是无法获取，使用默认值
 	if [ -z "$luci_version" ]; then
 		luci_version="Unknown"
@@ -601,13 +657,31 @@ get_version() {
 	
 	# 获取 bandix 版本
 	local bandix_version=""
-	if [ -f "/usr/lib/opkg/info/bandix.control" ]; then
-		bandix_version=$(grep "^Version:" /usr/lib/opkg/info/bandix.control 2>/dev/null | cut -d' ' -f2)
+	
+	if [ "$pkg_manager" = "opkg" ]; then
+		# opkg 方式
+		if [ -f "/usr/lib/opkg/info/bandix.control" ]; then
+			bandix_version=$(grep "^Version:" /usr/lib/opkg/info/bandix.control 2>/dev/null | cut -d' ' -f2)
+		fi
+		# 如果无法从 control 文件获取，尝试从 opkg 命令获取
+		if [ -z "$bandix_version" ]; then
+			bandix_version=$(opkg info bandix 2>/dev/null | grep "^Version:" | cut -d' ' -f2)
+		fi
+	elif [ "$pkg_manager" = "apk" ]; then
+		# apk 方式
+		# apk 的 control 文件路径可能不同，先尝试常见路径
+		if [ -f "/usr/lib/apk/db/installed" ]; then
+			bandix_version=$(grep "^bandix-" /usr/lib/apk/db/installed 2>/dev/null | head -n 1 | sed -n 's/^bandix-\(.*\)$/\1/p')
+		fi
+		# 如果无法从 installed 文件获取，尝试从 apk info 命令获取
+		if [ -z "$bandix_version" ]; then
+			local apk_output=$(apk info bandix 2>/dev/null)
+			if [ -n "$apk_output" ]; then
+				bandix_version=$(extract_version_from_apk_info "bandix" "$apk_output")
+			fi
+		fi
 	fi
-	# 如果无法从 control 文件获取，尝试从 opkg 命令获取
-	if [ -z "$bandix_version" ]; then
-		bandix_version=$(opkg info bandix 2>/dev/null | grep "^Version:" | cut -d' ' -f2)
-	fi
+	
 	# 如果还是无法获取，尝试从 bandix API 获取（如果服务运行中）
 	if [ -z "$bandix_version" ]; then
 		local api_result=$(curl -s --connect-timeout 2 --max-time 5 "$BANDIX_API_BASE/api/version" 2>/dev/null)
