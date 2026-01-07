@@ -134,6 +134,9 @@ msgstr "Wskazówka: Wprowadź 0 dla bez limitu"
 msgid "Traffic History"
 msgstr "Historia ruchu"
 
+msgid "Realtime Traffic Trends"
+msgstr "Trendy Ruchu w Czasie Rzeczywistym"
+
 msgid "Select Device"
 msgstr "Wybierz urządzenie"
 
@@ -713,6 +716,9 @@ msgstr "2 godziny"
 msgid "Data Directory"
 msgstr "Katalog danych"
 
+msgid "If you change the directory, please manually add it to the backup directory"
+msgstr "Jeśli zmienisz katalog, proszę dodać go ręcznie do katalogu kopii zapasowej"
+
 msgid "Bandix data storage directory"
 msgstr "Katalog przechowywania danych Bandix"
 
@@ -733,6 +739,9 @@ msgstr "Zachowaj dane historyczne"
 
 msgid "Enable data persistence functionality, data will only be persisted to disk when this option is enabled"
 msgstr "Włącz funkcję trwałości danych, dane będą zapisywane na dysk tylko gdy ta opcja jest włączona"
+
+msgid "Does not occupy storage space, stored only in memory"
+msgstr "Nie zajmuje miejsca na dysku, przechowywane tylko w pamięci"
 
 msgid "Query & Response"
 msgstr "Zapytanie i Odpowiedź"
@@ -1003,6 +1012,9 @@ msgstr "Nie udało się sprawdzić aktualizacji: "
 
 msgid "Checking..."
 msgstr "Sprawdzanie..."
+
+msgid "Check for Updates"
+msgstr "Sprawdź Aktualizacje"
 
 msgid "Installing..."
 msgstr "Instalowanie..."

@@ -134,6 +134,9 @@ msgstr "提示：输入 0 表示无限制"
 msgid "Traffic History"
 msgstr "История трафика"
 
+msgid "Realtime Traffic Trends"
+msgstr "Тренды Трафика в Реальном Времени"
+
 msgid "Select Device"
 msgstr "Выбрать устройство"
 
@@ -713,6 +716,9 @@ msgstr "2 часа"
 msgid "Data Directory"
 msgstr "Каталог данных"
 
+msgid "If you change the directory, please manually add it to the backup directory"
+msgstr "Если вы измените каталог, пожалуйста, добавьте его вручную в каталог резервных копий"
+
 msgid "Bandix data storage directory"
 msgstr "Bandix 数据存储目录"
 
@@ -733,6 +739,9 @@ msgstr "Сохранять историю данных"
 
 msgid "Enable data persistence functionality, data will only be persisted to disk when this option is enabled"
 msgstr "Включить функцию постоянного хранения данных, данные будут сохраняться на диск только при включении этой опции"
+
+msgid "Does not occupy storage space, stored only in memory"
+msgstr "Не занимает дисковое пространство, хранится только в памяти"
 
 msgid "Query & Response"
 msgstr "Запрос и Ответ"
@@ -1003,6 +1012,9 @@ msgstr "Не удалось проверить обновления: "
 
 msgid "Checking..."
 msgstr "Проверка..."
+
+msgid "Check for Updates"
+msgstr "Проверить Обновления"
 
 msgid "Installing..."
 msgstr "Установка..."

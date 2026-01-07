@@ -134,6 +134,9 @@ msgstr "ヒント：0を入力すると無制限になります"
 msgid "Traffic History"
 msgstr "トラフィック履歴"
 
+msgid "Realtime Traffic Trends"
+msgstr "リアルタイムトラフィックトレンド"
+
 msgid "Select Device"
 msgstr "デバイスを選択"
 
@@ -713,6 +716,9 @@ msgstr "2時間"
 msgid "Data Directory"
 msgstr "データディレクトリ"
 
+msgid "If you change the directory, please manually add it to the backup directory"
+msgstr "ディレクトリを変更した場合は、手動でバックアップディレクトリに追加してください"
+
 msgid "Bandix data storage directory"
 msgstr "Bandix データストレージディレクトリ"
 
@@ -733,6 +739,9 @@ msgstr "履歴データを永続化"
 
 msgid "Enable data persistence functionality, data will only be persisted to disk when this option is enabled"
 msgstr "データ永続化機能を有効にする。このオプションが有効な場合のみデータがディスクに永続化されます"
+
+msgid "Does not occupy storage space, stored only in memory"
+msgstr "ストレージ容量を占有せず、メモリにのみ保存"
 
 msgid "Query & Response"
 msgstr "クエリとレスポンス"
@@ -1003,6 +1012,9 @@ msgstr "更新の確認に失敗しました："
 
 msgid "Checking..."
 msgstr "確認中..."
+
+msgid "Check for Updates"
+msgstr "更新を確認"
 
 msgid "Installing..."
 msgstr "インストール中..."

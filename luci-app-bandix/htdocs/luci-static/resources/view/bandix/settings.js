@@ -285,12 +285,13 @@ return view.extend({
 		o.default = 'info';
 		o.rmempty = false;
 
-	// 添加数据目录设置（只读）
-	o = s.option(form.DummyValue, 'data_dir', _('Data Directory'));
+	// 添加数据目录设置
+	o = s.option(form.Value, 'data_dir', _('Data Directory'),
+		_('If you change the directory, please manually add it to the backup directory'));
 	o.default = '/usr/share/bandix';
-	o.cfgvalue = function (section_id) {
-		return uci.get('bandix', section_id, 'data_dir') || '/usr/share/bandix';
-	};
+	o.datatype = 'string';
+	o.placeholder = '/usr/share/bandix';
+	o.rmempty = false;
 
 	// 添加版本信息显示（合并显示）
 	o = s.option(form.DummyValue, 'version', _('Version'));
@@ -654,10 +655,12 @@ return view.extend({
 
 
 	// 添加意见反馈信息
-	o = s.option(form.DummyValue, 'feedback_info', _('Feedback'));
-	o.href = 'https://github.com/timsaya';
-	o.cfgvalue = function () {
-		return 'https://github.com/timsaya';
+	o = s.option(form.Button, 'feedback_info', _('Feedback'));
+	o.inputtitle = _('Feedback');
+	o.inputstyle = 'link';
+	o.onclick = function() {
+		window.open('https://github.com/timsaya', '_blank');
+		return false;
 	};
 
 	// 2. 流量监控设置部分 (traffic)
@@ -711,7 +714,7 @@ return view.extend({
 
 		// 添加历史流量周期（秒）
 		o = s.option(form.ListValue, 'traffic_retention_seconds', _('Realtime Traffic Period'),
-			_('10 minutes interval uses about 60 KB per device'));
+			_('Does not occupy storage space, stored only in memory'));
 		o.value('600', _('10 minutes'));
 		o.value('900', _('15 minutes'));
 		o.value('1800', _('30 minutes'));

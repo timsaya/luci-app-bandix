@@ -9,9 +9,6 @@ readonly BANDIX_API_BASE="http://127.0.0.1:$BANDIX_PORT"
 readonly BANDIX_DEVICES_API="$BANDIX_API_BASE/api/traffic/devices"
 readonly BANDIX_LIMITS_API="$BANDIX_API_BASE/api/traffic/limits"
 readonly BANDIX_METRICS_API="$BANDIX_API_BASE/api/traffic/metrics"
-readonly BANDIX_METRICS_DAY_API="$BANDIX_API_BASE/api/traffic/metrics/day"
-readonly BANDIX_METRICS_WEEK_API="$BANDIX_API_BASE/api/traffic/metrics/week"
-readonly BANDIX_METRICS_MONTH_API="$BANDIX_API_BASE/api/traffic/metrics/month"
 readonly BANDIX_CONNECTION_API="$BANDIX_API_BASE/api/connection/devices"
 readonly BANDIX_DNS_QUERIES_API="$BANDIX_API_BASE/api/dns/queries"
 readonly BANDIX_DNS_STATS_API="$BANDIX_API_BASE/api/dns/stats"
@@ -101,90 +98,6 @@ get_metrics() {
     else
         # logger "luci.bandix.metrics: jsonfilter failed to extract data part"
         echo '{"retention_seconds":600,"mac":"","metrics":[]}'
-    fi
-}
-
-# 获取日指标（可选MAC）
-get_metrics_day() {
-    local mac="$1"
-    local url="$BANDIX_METRICS_DAY_API"
-    if [ -n "$mac" ]; then
-        # 转义MAC
-        local mac_escaped=$(echo "$mac" | sed 's/\//\\\//g')
-        url="$url?mac=$mac_escaped"
-    fi
-
-    local api_result=$(curl -s --connect-timeout 2 --max-time 10 "$url" 2>/dev/null)
-    local curl_exit_code=$?
-    
-    if [ $curl_exit_code -ne 0 ] || [ -z "$api_result" ]; then
-        echo '{"retention_seconds":86400,"mac":"","metrics":[]}'
-        return
-    fi
-    
-    # 使用 jsonfilter 提取 data 部分
-    local data_part=$(echo "$api_result" | jsonfilter -e '$.data' 2>/dev/null)
-    if [ -n "$data_part" ]; then
-        echo "$data_part"
-        return
-    else
-        echo '{"retention_seconds":86400,"mac":"","metrics":[]}'
-    fi
-}
-
-# 获取周指标（可选MAC）
-get_metrics_week() {
-    local mac="$1"
-    local url="$BANDIX_METRICS_WEEK_API"
-    if [ -n "$mac" ]; then
-        # 转义MAC
-        local mac_escaped=$(echo "$mac" | sed 's/\//\\\//g')
-        url="$url?mac=$mac_escaped"
-    fi
-
-    local api_result=$(curl -s --connect-timeout 2 --max-time 10 "$url" 2>/dev/null)
-    local curl_exit_code=$?
-    
-    if [ $curl_exit_code -ne 0 ] || [ -z "$api_result" ]; then
-        echo '{"retention_seconds":604800,"mac":"","metrics":[]}'
-        return
-    fi
-    
-    # 使用 jsonfilter 提取 data 部分
-    local data_part=$(echo "$api_result" | jsonfilter -e '$.data' 2>/dev/null)
-    if [ -n "$data_part" ]; then
-        echo "$data_part"
-        return
-    else
-        echo '{"retention_seconds":604800,"mac":"","metrics":[]}'
-    fi
-}
-
-# 获取月指标（可选MAC）
-get_metrics_month() {
-    local mac="$1"
-    local url="$BANDIX_METRICS_MONTH_API"
-    if [ -n "$mac" ]; then
-        # 转义MAC
-        local mac_escaped=$(echo "$mac" | sed 's/\//\\\//g')
-        url="$url?mac=$mac_escaped"
-    fi
-
-    local api_result=$(curl -s --connect-timeout 2 --max-time 10 "$url" 2>/dev/null)
-    local curl_exit_code=$?
-    
-    if [ $curl_exit_code -ne 0 ] || [ -z "$api_result" ]; then
-        echo '{"retention_seconds":2592000,"mac":"","metrics":[]}'
-        return
-    fi
-    
-    # 使用 jsonfilter 提取 data 部分
-    local data_part=$(echo "$api_result" | jsonfilter -e '$.data' 2>/dev/null)
-    if [ -n "$data_part" ]; then
-        echo "$data_part"
-        return
-    else
-        echo '{"retention_seconds":2592000,"mac":"","metrics":[]}'
     fi
 }
 
@@ -446,8 +359,8 @@ set_schedule_limit() {
 	local start_time="$2"
 	local end_time="$3"
 	local days="$4"
-	local wide_tx_rate_limit="$5"
-	local wide_rx_rate_limit="$6"
+	local wan_tx_rate_limit="$5"
+	local wan_rx_rate_limit="$6"
 	
 	# 验证参数
 	if [ -z "$mac" ]; then
@@ -471,8 +384,8 @@ set_schedule_limit() {
 			\"end\": \"$end_time\",
 			\"days\": $days
 		},
-		\"wide_tx_rate_limit\": $wide_tx_rate_limit,
-		\"wide_rx_rate_limit\": $wide_rx_rate_limit
+		\"wan_tx_rate_limit\": $wan_tx_rate_limit,
+		\"wan_rx_rate_limit\": $wan_rx_rate_limit
 	}"
 	
 	# 发送请求到bandix API
@@ -1101,19 +1014,7 @@ case "$1" in
 		json_add_object "getMetrics"
 		json_add_string "mac"
 		json_close_object
-		
-		json_add_object "getMetricsDay"
-		json_add_string "mac"
-		json_close_object
-		
-		json_add_object "getMetricsWeek"
-		json_add_string "mac"
-		json_close_object
-		
-		json_add_object "getMetricsMonth"
-		json_add_string "mac"
-		json_close_object
-		
+
 		json_add_object "setHostname"
 		json_add_string "mac"
 		json_add_string "hostname"
@@ -1155,8 +1056,8 @@ case "$1" in
 		json_add_string "start_time"
 		json_add_string "end_time"
 		json_add_string "days"
-		json_add_int "wide_rx_rate_limit"
-		json_add_int "wide_tx_rate_limit"
+		json_add_int "wan_rx_rate_limit"
+		json_add_int "wan_tx_rate_limit"
 		json_close_object
 		
 	json_add_object "deleteScheduleLimit"
@@ -1215,48 +1116,6 @@ case "$1" in
 					# logger "luci.bandix: received argv mac: $mac"
 				fi
 				get_metrics "$mac"
-				;;
-			getMetricsDay)
-				mac=""
-				input=""
-				if read -t 1 -r input; then
-					:
-				fi
-				if [ -n "$input" ]; then
-					mac="$(echo "$input" | jsonfilter -e '$[0]' 2>/dev/null)"
-					[ -z "$mac" ] && mac="$(echo "$input" | jsonfilter -e '$.mac' 2>/dev/null)"
-				else
-					[ -n "$3" ] && mac="$3"
-				fi
-				get_metrics_day "$mac"
-				;;
-			getMetricsWeek)
-				mac=""
-				input=""
-				if read -t 1 -r input; then
-					:
-				fi
-				if [ -n "$input" ]; then
-					mac="$(echo "$input" | jsonfilter -e '$[0]' 2>/dev/null)"
-					[ -z "$mac" ] && mac="$(echo "$input" | jsonfilter -e '$.mac' 2>/dev/null)"
-				else
-					[ -n "$3" ] && mac="$3"
-				fi
-				get_metrics_week "$mac"
-				;;
-			getMetricsMonth)
-				mac=""
-				input=""
-				if read -t 1 -r input; then
-					:
-				fi
-				if [ -n "$input" ]; then
-					mac="$(echo "$input" | jsonfilter -e '$[0]' 2>/dev/null)"
-					[ -z "$mac" ] && mac="$(echo "$input" | jsonfilter -e '$.mac' 2>/dev/null)"
-				else
-					[ -n "$3" ] && mac="$3"
-				fi
-				get_metrics_month "$mac"
 				;;
 			setHostname)
 				# logger "luci.bandix: setHostname called"
@@ -1390,7 +1249,7 @@ case "$1" in
 				
 				if [ -n "$input" ]; then
 					# 尝试解析数组格式的 JSON 参数 (LuCI RPC 通常使用数组格式)
-					# 参数格式: ["mac", "start_time", "end_time", "days", wide_tx_rate_limit, wide_rx_rate_limit]
+					# 参数格式: ["mac", "start_time", "end_time", "days", wan_tx_rate_limit, wan_rx_rate_limit]
 					mac=$(echo "$input" | jsonfilter -e '$[0]' 2>/dev/null)
 					start_time=$(echo "$input" | jsonfilter -e '$[1]' 2>/dev/null)
 					end_time=$(echo "$input" | jsonfilter -e '$[2]' 2>/dev/null)
@@ -1400,8 +1259,8 @@ case "$1" in
 					if [ -z "$days" ]; then
 						days=$(echo "$input" | jsonfilter -e '$[3]' -s 2>/dev/null)
 					fi
-					wide_tx_rate_limit=$(echo "$input" | jsonfilter -e '$[4]' 2>/dev/null)
-					wide_rx_rate_limit=$(echo "$input" | jsonfilter -e '$[5]' 2>/dev/null)
+					wan_tx_rate_limit=$(echo "$input" | jsonfilter -e '$[4]' 2>/dev/null)
+					wan_rx_rate_limit=$(echo "$input" | jsonfilter -e '$[5]' 2>/dev/null)
 					
 					# 如果数组格式解析失败，尝试对象格式
 					if [ -z "$mac" ]; then
@@ -1414,8 +1273,8 @@ case "$1" in
 						if [ -z "$days" ]; then
 							days=$(echo "$input" | jsonfilter -e '$.days' -s 2>/dev/null)
 						fi
-						wide_tx_rate_limit=$(echo "$input" | jsonfilter -e '$.wide_tx_rate_limit' 2>/dev/null)
-						wide_rx_rate_limit=$(echo "$input" | jsonfilter -e '$.wide_rx_rate_limit' 2>/dev/null)
+						wan_tx_rate_limit=$(echo "$input" | jsonfilter -e '$.wan_tx_rate_limit' 2>/dev/null)
+						wan_rx_rate_limit=$(echo "$input" | jsonfilter -e '$.wan_rx_rate_limit' 2>/dev/null)
 					fi
 					
 					# 如果 days 还不是有效的 JSON 数组格式，尝试从原始输入中提取
@@ -1424,12 +1283,12 @@ case "$1" in
 						days=$(echo "$input" | sed -n 's/.*"days"[[:space:]]*:[[:space:]]*\(\[.*\]\).*/\1/p' 2>/dev/null)
 					fi
 					
-					# logger "luci.bandix: parsed - mac=$mac start=$start_time end=$end_time days=$days tx=$wide_tx_rate_limit rx=$wide_rx_rate_limit"
+					# logger "luci.bandix: parsed - mac=$mac start=$start_time end=$end_time days=$days tx=$wan_tx_rate_limit rx=$wan_rx_rate_limit"
 					
 					# 验证参数
-					if [ -n "$mac" ] && [ -n "$start_time" ] && [ -n "$end_time" ] && [ -n "$days" ] && [ -n "$wide_tx_rate_limit" ] && [ -n "$wide_rx_rate_limit" ]; then
+					if [ -n "$mac" ] && [ -n "$start_time" ] && [ -n "$end_time" ] && [ -n "$days" ] && [ -n "$wan_tx_rate_limit" ] && [ -n "$wan_rx_rate_limit" ]; then
 						# 调用定时限速设置函数
-						set_schedule_limit "$mac" "$start_time" "$end_time" "$days" "$wide_tx_rate_limit" "$wide_rx_rate_limit"
+						set_schedule_limit "$mac" "$start_time" "$end_time" "$days" "$wan_tx_rate_limit" "$wan_rx_rate_limit"
 					else
 						# logger "luci.bandix: setScheduleLimit 参数缺失或无效"
 						make_error "Missing or invalid parameters"
