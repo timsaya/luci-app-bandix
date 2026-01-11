@@ -59,6 +59,9 @@ msgstr "LAN トラフィック"
 msgid "WAN Traffic"
 msgstr "WAN トラフィック"
 
+msgid "Network Type"
+msgstr "ネットワークタイプ"
+
 msgid "Rate Limit"
 msgstr "速度制限"
 
@@ -126,7 +129,7 @@ msgid "Saving..."
 msgstr "保存中..."
 
 msgid "Rate limiting only applies to WAN traffic."
-msgstr "速度制限は WAN トラフィックにのみ適用されます。"
+msgstr "速度制限は WAN トラフィックにのみ適用されます。一部のLAN内部トラフィックは、ハードウェアスイッチングアクセラレーションにより監視されない場合があります。"
 
 msgid "Tip: Enter 0 for unlimited"
 msgstr "ヒント：0を入力すると無制限になります"

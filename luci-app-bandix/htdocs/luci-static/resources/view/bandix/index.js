@@ -2597,7 +2597,7 @@ return view.extend({
             }, [
                 E('div', { 'style': 'display: flex; align-items: center; gap: 8px;' }, [
                     E('span', { 'style': 'font-size: 1rem;' }, '⚠'),
-                    E('span', {}, _('Rate limiting only applies to WAN traffic.'))
+                    E('span', {}, _('Rate limiting only applies to WAN traffic. Some LAN internal traffic may not be monitored due to hardware switching acceleration.'))
                 ]),
                 E('div', { 'class': 'bandix-badge', 'id': 'device-count' }, _('Online Devices') + ': 0 / 0')
             ]),
@@ -2653,9 +2653,10 @@ return view.extend({
                                 'value': 'simple',
                                 'class': 'cbi-input-radio',
                                 'id': 'bandix_device_mode_simple',
+                                'style': 'height: auto',
                                 'checked': (localStorage.getItem('bandix_device_mode') !== 'detailed') ? 'checked' : null
                             }),
-                            E('label', { 'for': 'bandix_device_mode_simple', 'style': 'cursor: pointer; user-select: none;' }, _('Simple Mode'))
+                            E('label', { 'for': 'bandix_device_mode_simple', 'style': 'cursor: pointer; user-select: none; font-size: 0.875rem;' }, _('Simple Mode'))
                         ]),
                         E('div', { 'class': 'device-mode-item' }, [
                             E('input', {
@@ -2664,9 +2665,10 @@ return view.extend({
                                 'value': 'detailed',
                                 'class': 'cbi-input-radio',
                                 'id': 'bandix_device_mode_detailed',
+                                'style': 'height: auto',
                                 'checked': (localStorage.getItem('bandix_device_mode') === 'detailed') ? 'checked' : null
                             }),
-                            E('label', { 'for': 'bandix_device_mode_detailed', 'style': 'cursor: pointer; user-select: none;' }, _('Detailed Mode'))
+                            E('label', { 'for': 'bandix_device_mode_detailed', 'style': 'cursor: pointer; user-select: none; font-size: 0.875rem;' }, _('Detailed Mode'))
                         ])
                     ])
                 ]),
@@ -6374,7 +6376,7 @@ return view.extend({
                         tooltipContent +=
                             // WAN Traffic Section
                             '<div class="traffic-increments-tooltip-section">' +
-                                '<div class="traffic-increments-tooltip-section-title">WAN Traffic</div>' +
+                                '<div class="traffic-increments-tooltip-section-title">' + _('WAN Traffic') + '</div>' +
 
                                 // 用量数据（大字体，带颜色）
                                 '<div class="ht-kpis">' +
@@ -6390,21 +6392,21 @@ return view.extend({
 
                                 // 速度统计分组
                                 '<div class="ht-divider"></div>' +
-                                '<div class="ht-section-title">Upload Statistics</div>' +
-                                '<div class="ht-row"><span class="ht-key">Average</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_avg || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-section-title">' + _('Upload Statistics') + '</div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_avg || 0, speedUnit) + '</span></div>' +
                                 '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_p95 || 0, speedUnit) + '</span></div>' +
-                                '<div class="ht-row"><span class="ht-key">Max</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_max || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_max || 0, speedUnit) + '</span></div>' +
 
-                                '<div class="ht-section-title" style="margin-top: 8px;">Download Statistics</div>' +
-                                '<div class="ht-row"><span class="ht-key">Average</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_avg || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-section-title" style="margin-top: 8px;">' + _('Download Statistics') + '</div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_avg || 0, speedUnit) + '</span></div>' +
                                 '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_p95 || 0, speedUnit) + '</span></div>' +
-                                '<div class="ht-row"><span class="ht-key">Max</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_max || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_max || 0, speedUnit) + '</span></div>' +
                             '</div>';
                     } else if (networkType === 'lan') {
                         tooltipContent +=
                             // LAN Traffic Section
                             '<div class="traffic-increments-tooltip-section">' +
-                                '<div class="traffic-increments-tooltip-section-title">LAN Traffic</div>' +
+                                '<div class="traffic-increments-tooltip-section-title">' + _('LAN Traffic') + '</div>' +
 
                                 // 用量数据（大字体，带颜色）
                                 '<div class="ht-kpis">' +
@@ -6420,22 +6422,22 @@ return view.extend({
 
                                 // 速度统计分组
                                 '<div class="ht-divider"></div>' +
-                                '<div class="ht-section-title">Upload Statistics</div>' +
-                                '<div class="ht-row"><span class="ht-key">Average</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_avg || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-section-title">' + _('Upload Statistics') + '</div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_avg || 0, speedUnit) + '</span></div>' +
                                 '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_p95 || 0, speedUnit) + '</span></div>' +
-                                '<div class="ht-row"><span class="ht-key">Max</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_max || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_max || 0, speedUnit) + '</span></div>' +
 
-                                '<div class="ht-section-title" style="margin-top: 8px;">Download Statistics</div>' +
-                                '<div class="ht-row"><span class="ht-key">Average</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_avg || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-section-title" style="margin-top: 8px;">' + _('Download Statistics') + '</div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_avg || 0, speedUnit) + '</span></div>' +
                                 '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_p95 || 0, speedUnit) + '</span></div>' +
-                                '<div class="ht-row"><span class="ht-key">Max</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_max || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_max || 0, speedUnit) + '</span></div>' +
                             '</div>';
                     } else {
                         // networkType === 'all' 或其他情况，显示所有section
                         tooltipContent +=
                             // WAN Traffic Section
                             '<div class="traffic-increments-tooltip-section">' +
-                                '<div class="traffic-increments-tooltip-section-title">WAN Traffic</div>' +
+                                '<div class="traffic-increments-tooltip-section-title">' + _('WAN Traffic') + '</div>' +
 
                                 // 用量数据（大字体，带颜色）
                                 '<div class="ht-kpis">' +
@@ -6451,20 +6453,20 @@ return view.extend({
 
                                 // 速度统计分组
                                 '<div class="ht-divider"></div>' +
-                                '<div class="ht-section-title">Upload Statistics</div>' +
-                                '<div class="ht-row"><span class="ht-key">Average</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_avg || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-section-title">' + _('Upload Statistics') + '</div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_avg || 0, speedUnit) + '</span></div>' +
                                 '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_p95 || 0, speedUnit) + '</span></div>' +
-                                '<div class="ht-row"><span class="ht-key">Max</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_max || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_max || 0, speedUnit) + '</span></div>' +
 
-                                '<div class="ht-section-title" style="margin-top: 8px;">Download Statistics</div>' +
-                                '<div class="ht-row"><span class="ht-key">Average</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_avg || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-section-title" style="margin-top: 8px;">' + _('Download Statistics') + '</div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_avg || 0, speedUnit) + '</span></div>' +
                                 '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_p95 || 0, speedUnit) + '</span></div>' +
-                                '<div class="ht-row"><span class="ht-key">Max</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_max || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_max || 0, speedUnit) + '</span></div>' +
                             '</div>' +
 
                             // LAN Traffic Section
                             '<div class="traffic-increments-tooltip-section">' +
-                                '<div class="traffic-increments-tooltip-section-title">LAN Traffic</div>' +
+                                '<div class="traffic-increments-tooltip-section-title">' + _('LAN Traffic') + '</div>' +
 
                                 // 用量数据（大字体，带颜色）
                                 '<div class="ht-kpis">' +
@@ -6480,15 +6482,15 @@ return view.extend({
 
                                 // 速度统计分组
                                 '<div class="ht-divider"></div>' +
-                                '<div class="ht-section-title">Upload Statistics</div>' +
-                                '<div class="ht-row"><span class="ht-key">Average</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_avg || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-section-title">' + _('Upload Statistics') + '</div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_avg || 0, speedUnit) + '</span></div>' +
                                 '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_p95 || 0, speedUnit) + '</span></div>' +
-                                '<div class="ht-row"><span class="ht-key">Max</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_max || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_max || 0, speedUnit) + '</span></div>' +
 
-                                '<div class="ht-section-title" style="margin-top: 8px;">Download Statistics</div>' +
-                                '<div class="ht-row"><span class="ht-key">Average</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_avg || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-section-title" style="margin-top: 8px;">' + _('Download Statistics') + '</div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_avg || 0, speedUnit) + '</span></div>' +
                                 '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_p95 || 0, speedUnit) + '</span></div>' +
-                                '<div class="ht-row"><span class="ht-key">Max</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_max || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_max || 0, speedUnit) + '</span></div>' +
                             '</div>';
                     }
 

@@ -59,6 +59,9 @@ msgstr "Ruch LAN"
 msgid "WAN Traffic"
 msgstr "Ruch WAN"
 
+msgid "Network Type"
+msgstr "Typ Sieci"
+
 msgid "Rate Limit"
 msgstr "Limit prędkości"
 
@@ -126,7 +129,7 @@ msgid "Saving..."
 msgstr "Zapisywanie..."
 
 msgid "Rate limiting only applies to WAN traffic."
-msgstr "Ograniczenie prędkości dotyczy tylko ruchu WAN."
+msgstr "Ograniczenie prędkości dotyczy tylko ruchu WAN. Niektóre wewnętrzne ruchu LAN mogą nie być monitorowane z powodu przyspieszenia przełączania sprzętowego."
 
 msgid "Tip: Enter 0 for unlimited"
 msgstr "Wskazówka: Wprowadź 0 dla bez limitu"

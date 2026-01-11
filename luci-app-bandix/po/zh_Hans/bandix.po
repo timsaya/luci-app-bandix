@@ -59,6 +59,9 @@ msgstr "LAN 流量"
 msgid "WAN Traffic"
 msgstr "WAN 流量"
 
+msgid "Network Type"
+msgstr "网络类型"
+
 msgid "Rate Limit"
 msgstr "限速设置"
 
@@ -126,7 +129,7 @@ msgid "Saving..."
 msgstr "保存中..."
 
 msgid "Rate limiting only applies to WAN traffic."
-msgstr "限速功能仅对 WAN 流量生效。"
+msgstr "限速功能仅对 WAN 流量生效。某些 LAN 内部流量可能因硬件交换加速未被监控。"
 
 msgid "Tip: Enter 0 for unlimited"
 msgstr "提示：输入 0 表示无限制"

@@ -59,6 +59,9 @@ msgstr "Lalu lintas LAN"
 msgid "WAN Traffic"
 msgstr "Lalu lintas WAN"
 
+msgid "Network Type"
+msgstr "Jenis Jaringan"
+
 msgid "Rate Limit"
 msgstr "Batas kecepatan"
 
@@ -126,7 +129,7 @@ msgid "Saving..."
 msgstr "Menyimpan..."
 
 msgid "Rate limiting only applies to WAN traffic."
-msgstr "Pembatasan kecepatan hanya berlaku untuk lalu lintas WAN."
+msgstr "Pembatasan kecepatan hanya berlaku untuk lalu lintas WAN. Beberapa lalu lintas internal LAN mungkin tidak dipantau karena akselerasi switching perangkat keras."
 
 msgid "Tip: Enter 0 for unlimited"
 msgstr "Tip: Masukkan 0 untuk tidak terbatas"

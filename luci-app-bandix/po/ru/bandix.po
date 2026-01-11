@@ -59,6 +59,9 @@ msgstr "Трафик LAN"
 msgid "WAN Traffic"
 msgstr "Трафик WAN"
 
+msgid "Network Type"
+msgstr "Тип Сети"
+
 msgid "Rate Limit"
 msgstr "Ограничение скорости"
 
@@ -126,7 +129,7 @@ msgid "Saving..."
 msgstr "Сохранение..."
 
 msgid "Rate limiting only applies to WAN traffic."
-msgstr "限速功能仅对 WAN 流量生效。"
+msgstr "Ограничение скорости применяется только к трафику WAN. Некоторые внутренние трафики LAN могут не отслеживаться из-за аппаратного ускорения коммутации."
 
 msgid "Tip: Enter 0 for unlimited"
 msgstr "提示：输入 0 表示无限制"
