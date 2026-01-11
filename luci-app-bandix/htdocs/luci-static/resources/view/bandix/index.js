@@ -193,7 +193,7 @@ var callCheckUpdate = rpc.declare({
 var callGetTrafficUsageRanking = rpc.declare({
     object: 'luci.bandix',
     method: 'getTrafficUsageRanking',
-    params: ['start_ms', 'end_ms']
+    params: ['start_ms', 'end_ms', 'network_type']
 });
 
 // Increments 接口参数：
@@ -204,7 +204,7 @@ var callGetTrafficUsageRanking = rpc.declare({
 var callGetTrafficUsageIncrements = rpc.declare({
     object: 'luci.bandix',
     method: 'getTrafficUsageIncrements',
-    params: ['start_ms', 'end_ms', 'aggregation', 'mac']
+    params: ['start_ms', 'end_ms', 'aggregation', 'mac', 'network_type']
 });
 
 return view.extend({
@@ -309,29 +309,22 @@ return view.extend({
             
             .device-mode-group {
                 display: inline-flex;
-                border-radius: 4px;
-                overflow: hidden;
+                align-items: center;
+                gap: 12px;
             }
-            
-            .device-mode-btn {
-                border: none;
-                padding: 0 12px;
-                font-size: 0.8125rem;
-                line-height: 1.8;
-                cursor: pointer;
-                user-select: none;
-                transition: all 0.15s ease;
-                white-space: nowrap;
-                height: 28px;
+
+            .device-mode-group .device-mode-item {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
             }
-            
-            .device-mode-btn:hover:not(.active) {
-                opacity: 0.7;
+
+            .device-mode-group .cbi-input-radio {
+                margin: 0;
             }
-            
-            .device-mode-btn.active {
-                background-color: #3b82f6;
-                color: white;
+
+            .device-mode-group .device-mode-item label {
+                margin: 0;
             }
             
             .bandix-badge {
@@ -1614,7 +1607,23 @@ return view.extend({
 				flex: 1;
 				min-width: 160px;
 			}
-			
+
+			.usage-ranking-network-type-wrapper {
+				display: flex;
+				flex-direction: column;
+				gap: 6px;
+				flex: 0 0 auto;
+				min-width: 140px;
+			}
+
+			.usage-ranking-network-label {
+				font-size: 0.8125rem;
+				font-weight: 500;
+				opacity: 0.7;
+				color: inherit;
+			}
+
+
 			.usage-ranking-date-label {
 				font-size: 0.8125rem;
 				font-weight: 500;
@@ -1629,46 +1638,6 @@ return view.extend({
 				flex-wrap: wrap;
 			}
 			
-			.usage-ranking-preset-btn {
-				padding: 6px 12px;
-				background-color: rgba(0, 0, 0, 0.05);
-				color: #374151;
-				border: 1px solid rgba(0, 0, 0, 0.1);
-				border-radius: 4px;
-				cursor: pointer;
-				font-size: 0.8125rem;
-				font-weight: 500;
-				transition: all 0.2s ease;
-			}
-			
-			.usage-ranking-preset-btn:hover {
-				background-color: rgba(0, 0, 0, 0.08);
-				border-color: rgba(0, 0, 0, 0.2);
-			}
-			
-			.usage-ranking-preset-btn.active {
-				background-color: #3b82f6;
-				color: white;
-				border-color: #3b82f6;
-			}
-			
-			@media (prefers-color-scheme: dark) {
-				.usage-ranking-preset-btn {
-					background-color: rgba(255, 255, 255, 0.05);
-					color: #d1d5db;
-					border-color: rgba(255, 255, 255, 0.1);
-				}
-				
-				.usage-ranking-preset-btn:hover {
-					background-color: rgba(255, 255, 255, 0.08);
-					border-color: rgba(255, 255, 255, 0.15);
-				}
-				
-				.usage-ranking-preset-btn.active {
-					background-color: #2563eb;
-					border-color: #2563eb;
-				}
-			}
 			
 			.usage-ranking-custom-range {
 				display: flex;
@@ -1681,49 +1650,6 @@ return view.extend({
 				position: relative;
 			}
 			
-			.usage-ranking-date-input {
-				width: 100%;
-				padding: 10px 40px 10px 12px;
-				border: 1px solid rgba(0, 0, 0, 0.15);
-				border-radius: 6px;
-				background-color: rgba(255, 255, 255, 0.9);
-				font-size: 0.875rem;
-				color: inherit;
-				cursor: pointer;
-				transition: all 0.2s ease;
-				font-family: inherit;
-			}
-			
-			.usage-ranking-date-input:hover {
-				border-color: #3b82f6;
-				background-color: rgba(255, 255, 255, 1);
-			}
-			
-			.usage-ranking-date-input:focus {
-				outline: none;
-				border-color: #3b82f6;
-				background-color: rgba(255, 255, 255, 1);
-				box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-			}
-			
-			@media (prefers-color-scheme: dark) {
-				.usage-ranking-date-input {
-					background-color: rgba(255, 255, 255, 0.1);
-					border-color: rgba(255, 255, 255, 0.2);
-					color: inherit;
-				}
-				
-				.usage-ranking-date-input:hover {
-					border-color: #60a5fa;
-					background-color: rgba(255, 255, 255, 0.15);
-				}
-				
-				.usage-ranking-date-input:focus {
-					border-color: #60a5fa;
-					background-color: rgba(255, 255, 255, 0.15);
-					box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-				}
-			}
 			
 			.usage-ranking-date-separator {
 				font-size: 1.25rem;
@@ -1737,39 +1663,14 @@ return view.extend({
 				gap: 8px;
 				margin-left: auto;
 			}
-			
-			.usage-ranking-query-btn {
-				padding: 8px 16px;
-				background-color: #3b82f6;
-				color: white;
-				border: none;
-				border-radius: 4px;
-				cursor: pointer;
-				font-size: 0.875rem;
-				font-weight: 500;
-				transition: all 0.2s ease;
+
+			/* 查询按钮 loading 状态样式（避免与 LuCI/主题的 .loading 冲突） */
+			.usage-ranking-query-btn.bandix-loading {
 				position: relative;
-			}
-			
-			.usage-ranking-query-btn:hover:not(:disabled) {
-				background-color: #2563eb;
-			}
-			
-			.usage-ranking-query-btn:active:not(:disabled) {
-				background-color: #1d4ed8;
-			}
-			
-			.usage-ranking-query-btn:disabled {
-				background-color: #9ca3af;
-				cursor: not-allowed;
 				opacity: 0.7;
 			}
-			
-			.usage-ranking-query-btn.loading {
-				color: transparent;
-			}
-			
-			.usage-ranking-query-btn.loading::after {
+
+			.usage-ranking-query-btn.bandix-loading::after {
 				content: '';
 				position: absolute;
 				width: 14px;
@@ -1778,29 +1679,23 @@ return view.extend({
 				left: 50%;
 				margin-left: -7px;
 				margin-top: -7px;
-				border: 2px solid rgba(255, 255, 255, 0.3);
-				border-top-color: white;
+				border: 2px solid rgba(59, 130, 246, 0.3);
+				border-top-color: #3b82f6;
 				border-radius: 50%;
-				animation: spin 0.6s linear infinite;
+				animation: spin 1s linear infinite;
 			}
-			
-			@keyframes spin {
-				to { transform: rotate(360deg); }
+
+			.usage-ranking-query-btn.bandix-loading span {
+				opacity: 0;
 			}
-			
+
 			@media (prefers-color-scheme: dark) {
-				.usage-ranking-query-btn {
-					background-color: #2563eb;
-				}
-				
-				.usage-ranking-query-btn:hover:not(:disabled) {
-					background-color: #1d4ed8;
-				}
-				
-				.usage-ranking-query-btn:disabled {
-					background-color: #6b7280;
+				.usage-ranking-query-btn.bandix-loading::after {
+					border-color: rgba(96, 165, 250, 0.3);
+					border-top-color: #60a5fa;
 				}
 			}
+			
 			
 			.usage-ranking-query-reset {
 				padding: 8px 12px;
@@ -2182,46 +2077,6 @@ return view.extend({
 				}
 			}
 			
-			.traffic-increments-preset-btn {
-				padding: 6px 12px;
-				background-color: rgba(0, 0, 0, 0.05);
-				color: #374151;
-				border: 1px solid rgba(0, 0, 0, 0.1);
-				border-radius: 4px;
-				cursor: pointer;
-				font-size: 0.8125rem;
-				font-weight: 500;
-				transition: all 0.2s ease;
-			}
-			
-			.traffic-increments-preset-btn:hover {
-				background-color: rgba(0, 0, 0, 0.08);
-				border-color: rgba(0, 0, 0, 0.2);
-			}
-			
-			.traffic-increments-preset-btn.active {
-				background-color: #3b82f6;
-				color: white;
-				border-color: #3b82f6;
-			}
-			
-			@media (prefers-color-scheme: dark) {
-				.traffic-increments-preset-btn {
-					background-color: rgba(255, 255, 255, 0.05);
-					color: #d1d5db;
-					border-color: rgba(255, 255, 255, 0.1);
-				}
-				
-				.traffic-increments-preset-btn:hover {
-					background-color: rgba(255, 255, 255, 0.08);
-					border-color: rgba(255, 255, 255, 0.15);
-				}
-				
-				.traffic-increments-preset-btn.active {
-					background-color: #2563eb;
-					border-color: #2563eb;
-				}
-			}
 			
 			.traffic-increments-chart {
 				position: relative;
@@ -2234,42 +2089,90 @@ return view.extend({
 				position: absolute;
 				background-color: rgba(0, 0, 0, 0.9);
 				color: white;
-				padding: 8px 12px;
+				padding: 12px;
 				border-radius: 6px;
 				font-size: 0.8125rem;
 				pointer-events: none;
 				z-index: 1000;
 				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 				display: none;
-				white-space: nowrap;
+				min-width: 280px;
+				max-width: 400px;
 			}
-			
+
 			.traffic-increments-tooltip-title {
 				font-weight: 600;
-				margin-bottom: 4px;
+				margin-bottom: 8px;
 				border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 				padding-bottom: 4px;
+				font-size: 0.875rem;
 			}
-			
+
+			.traffic-increments-tooltip-section {
+				margin-bottom: 8px;
+			}
+
+			.traffic-increments-tooltip-section:last-child {
+				margin-bottom: 0;
+			}
+
+			.traffic-increments-tooltip-section-title {
+				font-weight: 600;
+				font-size: 0.75rem;
+				text-transform: uppercase;
+				letter-spacing: 0.5px;
+				margin-bottom: 4px;
+				color: rgba(255, 255, 255, 0.8);
+				border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+				padding-bottom: 2px;
+			}
+
 			.traffic-increments-tooltip-item {
 				display: flex;
 				align-items: center;
+				justify-content: space-between;
+				gap: 8px;
+				margin-bottom: 2px;
+				font-size: 0.75rem;
+			}
+
+			.traffic-increments-tooltip-item:last-child {
+				margin-bottom: 0;
+			}
+
+			.traffic-increments-tooltip-item-label {
+				display: flex;
+				align-items: center;
 				gap: 6px;
-				margin-top: 4px;
+				flex: 1;
 			}
-			
+
+			.traffic-increments-tooltip-item-value {
+				font-weight: 500;
+				text-align: right;
+			}
+
 			.traffic-increments-tooltip-dot {
-				width: 8px;
-				height: 8px;
+				width: 6px;
+				height: 6px;
 				border-radius: 50%;
+				flex-shrink: 0;
 			}
-			
+
 			.traffic-increments-tooltip-dot.rx {
 				background-color: ${BANDIX_COLOR_DOWNLOAD};
 			}
-			
+
 			.traffic-increments-tooltip-dot.tx {
 				background-color: ${BANDIX_COLOR_UPLOAD};
+			}
+
+			.traffic-increments-tooltip-dot.wan {
+				background-color: #8b5cf6;
+			}
+
+			.traffic-increments-tooltip-dot.lan {
+				background-color: #10b981;
 			}
 			
 			@media (prefers-color-scheme: dark) {
@@ -2287,9 +2190,14 @@ return view.extend({
 					border: 1px solid rgba(0, 0, 0, 0.1);
 					box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 				}
-				
+
 				.traffic-increments-tooltip-title {
 					border-bottom-color: rgba(0, 0, 0, 0.1);
+				}
+
+				.traffic-increments-tooltip-section-title {
+					color: rgba(0, 0, 0, 0.6);
+					border-bottom-color: rgba(0, 0, 0, 0.05);
 				}
 			}
 			
@@ -2412,44 +2320,21 @@ return view.extend({
 					font-size: 0.75rem;
 				}
 				
-				.usage-ranking-date-input {
-					padding: 8px 36px 8px 10px;
-					font-size: 0.8125rem;
-				}
-				
 				.usage-ranking-date-separator {
 					display: none;
 				}
-				
+
 				/* 快捷按钮 */
 				.usage-ranking-query-presets {
 					gap: 6px;
 					margin-bottom: 10px;
 				}
-				
-				.usage-ranking-preset-btn {
-					padding: 5px 10px;
-					font-size: 0.75rem;
-				}
-				
-				.traffic-increments-preset-btn {
-					padding: 5px 10px;
-					font-size: 0.75rem;
-				}
-				
+
 				/* 查询操作按钮 */
 				.usage-ranking-query-actions {
 					width: 100%;
 					margin-left: 0;
 					justify-content: stretch;
-				}
-				
-				.usage-ranking-query-btn,
-				.usage-ranking-reset-btn,
-				.usage-ranking-query-reset {
-					flex: 1;
-					padding: 10px 16px;
-					font-size: 0.8125rem;
 				}
 				
 				/* 设备列表项 - 垂直布局 */
@@ -2712,14 +2597,28 @@ return view.extend({
                 E('h3', { 'class': 'history-header', 'style': 'display: flex; align-items: center; justify-content: space-between;' }, [
                     E('span', {}, _('Device List')),
                     E('div', { 'class': 'device-mode-group' }, [
-                        E('button', {
-                            'class': 'device-mode-btn' + (localStorage.getItem('bandix_device_mode') !== 'detailed' ? ' active' : ''),
-                            'data-mode': 'simple'
-                        }, _('Simple Mode')),
-                        E('button', {
-                            'class': 'device-mode-btn' + (localStorage.getItem('bandix_device_mode') === 'detailed' ? ' active' : ''),
-                            'data-mode': 'detailed'
-                        }, _('Detailed Mode'))
+                        E('div', { 'class': 'device-mode-item' }, [
+                            E('input', {
+                                'type': 'radio',
+                                'name': 'bandix_device_mode',
+                                'value': 'simple',
+                                'class': 'cbi-input-radio',
+                                'id': 'bandix_device_mode_simple',
+                                'checked': (localStorage.getItem('bandix_device_mode') !== 'detailed') ? 'checked' : null
+                            }),
+                            E('label', { 'for': 'bandix_device_mode_simple', 'style': 'cursor: pointer; user-select: none;' }, _('Simple Mode'))
+                        ]),
+                        E('div', { 'class': 'device-mode-item' }, [
+                            E('input', {
+                                'type': 'radio',
+                                'name': 'bandix_device_mode',
+                                'value': 'detailed',
+                                'class': 'cbi-input-radio',
+                                'id': 'bandix_device_mode_detailed',
+                                'checked': (localStorage.getItem('bandix_device_mode') === 'detailed') ? 'checked' : null
+                            }),
+                            E('label', { 'for': 'bandix_device_mode_detailed', 'style': 'cursor: pointer; user-select: none;' }, _('Detailed Mode'))
+                        ])
                     ])
                 ]),
                 E('div', { 'id': 'traffic-status' }, [
@@ -2762,7 +2661,7 @@ return view.extend({
                                             E('input', {
                                                 'type': 'date',
                                                 'id': 'usage-ranking-start-date',
-                                                'class': 'usage-ranking-date-input'
+                                                'class': 'cbi-input-date'
                                             })
                                         ])
                                     ]),
@@ -2773,31 +2672,42 @@ return view.extend({
                                             E('input', {
                                                 'type': 'date',
                                                 'id': 'usage-ranking-end-date',
-                                                'class': 'usage-ranking-date-input'
+                                                'class': 'cbi-input-date'
                                             })
+                                        ])
+                                    ]),
+                                    E('div', { 'class': 'usage-ranking-network-type-wrapper' }, [
+                                        E('label', { 'class': 'usage-ranking-network-label' }, _('Network Type')),
+                                        E('select', {
+                                            'class': 'cbi-input-select',
+                                            'id': 'usage-ranking-network-type'
+                                        }, [
+                                            E('option', { 'value': 'wan' }, _('WAN Traffic')),
+                                            E('option', { 'value': 'lan' }, _('LAN Traffic')),
+                                            E('option', { 'value': 'all' }, _('Total'))
                                         ])
                                     ]),
                                     E('div', { 'class': 'usage-ranking-query-actions' }, [
                                         E('button', {
-                                            'class': 'usage-ranking-query-btn',
+                                            'class': 'cbi-button cbi-button-action usage-ranking-query-btn',
                                             'id': 'usage-ranking-query-btn'
-                                        }, _('Query')),
+                                        }, E('span', {}, _('Query'))),
                                         E('button', {
-                                            'class': 'usage-ranking-query-reset',
+                                            'class': 'cbi-button cbi-button-reset',
                                             'id': 'usage-ranking-reset-btn'
                                         }, _('Reset'))
                                     ])
                                 ]),
                                 E('div', { 'class': 'usage-ranking-query-presets' }, [
-                                    E('button', { 'class': 'usage-ranking-preset-btn', 'data-preset': 'today' }, _('Today')),
-                                    E('button', { 'class': 'usage-ranking-preset-btn', 'data-preset': 'thisweek' }, _('This Week')),
-                                    E('button', { 'class': 'usage-ranking-preset-btn', 'data-preset': 'lastweek' }, _('Last Week')),
-                                    E('button', { 'class': 'usage-ranking-preset-btn', 'data-preset': 'thismonth' }, _('This Month')),
-                                    E('button', { 'class': 'usage-ranking-preset-btn', 'data-preset': 'lastmonth' }, _('Last Month')),
-                                    E('button', { 'class': 'usage-ranking-preset-btn', 'data-preset': '7days' }, _('Last 7 Days')),
-                                    E('button', { 'class': 'usage-ranking-preset-btn', 'data-preset': '30days' }, _('Last 30 Days')),
-                                    E('button', { 'class': 'usage-ranking-preset-btn', 'data-preset': '90days' }, _('Last 90 Days')),
-                                    E('button', { 'class': 'usage-ranking-preset-btn active', 'data-preset': '1year' }, _('Last Year'))
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': 'today' }, _('Today')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': 'thisweek' }, _('This Week')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': 'lastweek' }, _('Last Week')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': 'thismonth' }, _('This Month')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': 'lastmonth' }, _('Last Month')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': '7days' }, _('Last 7 Days')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': '30days' }, _('Last 30 Days')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': '90days' }, _('Last 90 Days')),
+                                    E('button', { 'class': 'cbi-button cbi-button-positive', 'data-preset': '1year' }, _('Last Year'))
                                 ]),
                                 E('div', { 'class': 'usage-ranking-timeline', 'id': 'usage-ranking-timeline' }, [
                                     E('div', { 'class': 'usage-ranking-timeline-range', 'id': 'usage-ranking-timeline-range' })
@@ -2824,7 +2734,7 @@ return view.extend({
                                             E('input', {
                                                 'type': 'date',
                                                 'id': 'traffic-increments-start-date',
-                                                'class': 'usage-ranking-date-input'
+                                                'class': 'cbi-input-date'
                                             })
                                         ])
                                     ]),
@@ -2835,31 +2745,45 @@ return view.extend({
                                             E('input', {
                                                 'type': 'date',
                                                 'id': 'traffic-increments-end-date',
-                                                'class': 'usage-ranking-date-input'
+                                                'class': 'cbi-input-date'
                                             })
+                                        ])
+                                    ]),
+                                    E('div', { 'class': 'usage-ranking-network-type-wrapper' }, [
+                                        E('label', { 'class': 'usage-ranking-network-label' }, _('Network Type')),
+                                        E('select', {
+                                            'class': 'cbi-input-select',
+                                            'id': 'traffic-increments-network-type'
+                                        }, [
+                                            E('option', { 'value': 'wan' }, _('WAN Traffic')),
+                                            E('option', { 'value': 'lan' }, _('LAN Traffic')),
+                                            E('option', { 'value': 'all' }, _('Total'))
                                         ])
                                     ]),
                                     E('div', { 'class': 'usage-ranking-query-actions' }, [
                                         E('button', {
-                                            'class': 'usage-ranking-query-btn',
+                                            'class': 'cbi-button cbi-button-action usage-ranking-query-btn',
                                             'id': 'traffic-increments-query-btn'
-                                        }, _('Query')),
+                                        }, E('span', {}, _('Query'))),
                                         E('button', {
-                                            'class': 'usage-ranking-query-reset',
+                                            'class': 'cbi-button cbi-button-reset',
                                             'id': 'traffic-increments-reset-btn'
                                         }, _('Reset'))
                                     ])
                                 ]),
                                 E('div', { 'class': 'usage-ranking-query-presets' }, [
-                                    E('button', { 'class': 'traffic-increments-preset-btn', 'data-preset': 'today' }, _('Today')),
-                                    E('button', { 'class': 'traffic-increments-preset-btn', 'data-preset': 'thisweek' }, _('This Week')),
-                                    E('button', { 'class': 'traffic-increments-preset-btn', 'data-preset': 'lastweek' }, _('Last Week')),
-                                    E('button', { 'class': 'traffic-increments-preset-btn', 'data-preset': 'thismonth' }, _('This Month')),
-                                    E('button', { 'class': 'traffic-increments-preset-btn', 'data-preset': 'lastmonth' }, _('Last Month')),
-                                    E('button', { 'class': 'traffic-increments-preset-btn', 'data-preset': '7days' }, _('Last 7 Days')),
-                                    E('button', { 'class': 'traffic-increments-preset-btn', 'data-preset': '30days' }, _('Last 30 Days')),
-                                    E('button', { 'class': 'traffic-increments-preset-btn', 'data-preset': '90days' }, _('Last 90 Days')),
-                                    E('button', { 'class': 'traffic-increments-preset-btn active', 'data-preset': '1year' }, _('Last Year'))
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': 'today' }, _('Today')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': 'thisweek' }, _('This Week')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': 'lastweek' }, _('Last Week')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': 'thismonth' }, _('This Month')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': 'lastmonth' }, _('Last Month')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': '7days' }, _('Last 7 Days')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': '30days' }, _('Last 30 Days')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': '90days' }, _('Last 90 Days')),
+                                    E('button', { 'class': 'cbi-button cbi-button-positive', 'data-preset': '1year' }, _('Last Year'))
+                                ]),
+                                E('div', { 'class': 'usage-ranking-timeline', 'id': 'traffic-increments-timeline' }, [
+                                    E('div', { 'class': 'usage-ranking-timeline-range', 'id': 'traffic-increments-timeline-range' })
                                 ])
                             ]),
                             E('div', { 'class': 'traffic-increments-filters' }, [
@@ -2939,28 +2863,10 @@ return view.extend({
             return lines.join('');
         }
 
-        // 设备信息模式切换
-        var deviceModeButtons = view.querySelectorAll('.device-mode-btn');
-
-        deviceModeButtons.forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                var newMode = this.getAttribute('data-mode');
-
-                // 如果已经是当前模式，不做任何操作
-                if (this.classList.contains('active')) {
-                    return;
-                }
-
-                // 保存到 localStorage
-                localStorage.setItem('bandix_device_mode', newMode);
-
-                // 更新按钮状态
-                deviceModeButtons.forEach(function (b) {
-                    b.classList.remove('active');
-                });
-                this.classList.add('active');
-
-                // 刷新设备列表以应用新的显示模式
+        var deviceModeRadios = view.querySelectorAll('input[name="bandix_device_mode"]');
+        deviceModeRadios.forEach(function (radio) {
+            radio.addEventListener('change', function () {
+                localStorage.setItem('bandix_device_mode', this.value);
                 updateDeviceData();
             });
         });
@@ -3882,8 +3788,7 @@ return view.extend({
             return { up: 'total_tx_rate', down: 'total_rx_rate' };
         }
 
-        // 当前选择的时间范围
-        var currentTimeRange = localStorage.getItem('bandix_time_range') || 'realtime';
+        // 历史图表使用实时数据
 
         function fetchMetricsData(mac) {
             // 通过 ubus RPC 获取，避免跨域与鉴权问题
@@ -4215,12 +4120,7 @@ return view.extend({
             // 标题：聚合数据显示完整日期时间，实时数据只显示时间
             if (isAggregated) {
                 lines.push('<div class="ht-title">' + msToFullDateTimeLabel(point.ts_ms) + '</div>');
-                var rangeLabel = currentTimeRange === 'day' ? _('Daily') :
-                    currentTimeRange === 'week' ? _('Weekly') :
-                        currentTimeRange === 'month' ? _('Monthly') : '';
-                if (rangeLabel) {
-                    lines.push('<div style="font-size: 0.75rem; opacity: 0.6; margin-bottom: 4px;">' + rangeLabel + ' ' + _('Statistics') + '</div>');
-                }
+                // 注意：当前版本只支持实时数据，不显示聚合统计标签
             } else {
                 lines.push('<div class="ht-title">' + msToTimeLabel(point.ts_ms) + '</div>');
             }
@@ -4297,12 +4197,12 @@ return view.extend({
                 // 累计：区分LAN 流量与公网
                 lines.push('<div class="ht-divider"></div>');
                 lines.push('<div class="ht-section-title">' + _('Cumulative') + '</div>');
-                row(_('Total Uploaded'), bytesValue('total_tx_bytes'));
-                row(_('Total Downloaded'), bytesValue('total_rx_bytes'));
                 row(_('LAN Uploaded'), bytesValue('lan_tx_bytes'));
                 row(_('LAN Downloaded'), bytesValue('lan_rx_bytes'));
                 row(_('WAN Uploaded'), bytesValue('wan_tx_bytes'));
                 row(_('WAN Downloaded'), bytesValue('wan_rx_bytes'));
+                row(_('Total Uploaded'), bytesValue('total_tx_bytes'));
+                row(_('Total Downloaded'), bytesValue('total_rx_bytes'));
             }
 
             return lines.join('');
@@ -5070,38 +4970,7 @@ return view.extend({
             // 初始化缩放倍率显示
             updateZoomLevelDisplay();
 
-
-            // 恢复之前选择的时间范围
-            var savedRange = localStorage.getItem('bandix_time_range') || 'realtime';
-
-            // 移动端强制使用 realtime
-            var screenWidth = window.innerWidth || document.documentElement.clientWidth;
-            var isMobileScreen = screenWidth <= 768;
-            if (isMobileScreen) {
-                savedRange = 'realtime';
-                currentTimeRange = 'realtime';
-                localStorage.setItem('bandix_time_range', 'realtime');
-            } else {
-                currentTimeRange = savedRange;
-            }
-
-            tabButtons.forEach(function (btn) {
-                if (btn.getAttribute('data-range') === savedRange) {
-                    btn.classList.add('active');
-                    // 触发一次点击以应用选项禁用逻辑
-                    if (savedRange !== 'realtime' && typeSel) {
-                        var lanOption = typeSel.querySelector('option[value="lan"]');
-                        var totalOption = typeSel.querySelector('option[value="total"]');
-                        if (lanOption) lanOption.disabled = true;
-                        if (totalOption) totalOption.disabled = true;
-                        if (typeSel.value === 'lan' || typeSel.value === 'total') {
-                            typeSel.value = 'wan';
-                        }
-                    }
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
+            // 历史图表始终显示实时数据
 
             function onFilterChange() {
                 refreshHistory();
@@ -5148,13 +5017,17 @@ return view.extend({
 
                 var stats = result;
                 if (!stats || !stats.devices) {
-                    trafficDiv.innerHTML = '<div class="error">' + _('Unable to fetch data') + '</div>';
+                    if (trafficDiv) {
+                        trafficDiv.innerHTML = '<div class="error">' + _('Unable to fetch data') + '</div>';
+                    }
                     return;
                 }
 
                 // 更新设备计数
-                var onlineCount = stats.devices.filter(d => isDeviceOnline(d)).length;
-                deviceCountDiv.textContent = _('Online Devices') + ': ' + onlineCount + ' / ' + stats.devices.length;
+                if (deviceCountDiv) {
+                    var onlineCount = stats.devices.filter(d => isDeviceOnline(d)).length;
+                    deviceCountDiv.textContent = _('Online Devices') + ': ' + onlineCount + ' / ' + stats.devices.length;
+                }
 
                 // 计算统计数据（包含所有设备）
                 var totalLanUp = stats.devices.reduce((sum, d) => sum + (d.lan_tx_bytes || 0), 0);
@@ -5881,16 +5754,18 @@ return view.extend({
             // 准备查询参数
             var startMs = null;
             var endMs = null;
+            var networkTypeSelect = document.getElementById('usage-ranking-network-type');
+            var networkType = networkTypeSelect ? networkTypeSelect.value : 'wan';
             if (customRange && customRange.start_ms && customRange.end_ms) {
                 startMs = customRange.start_ms;
                 endMs = customRange.end_ms;
-                console.log('Querying with custom range:', { start_ms: startMs, end_ms: endMs });
+                console.log('Querying with custom range:', { start_ms: startMs, end_ms: endMs, network_type: networkType });
             } else {
-                console.log('Querying with default range (no params)');
+                console.log('Querying with default range (no params), network_type:', networkType);
             }
-            
+
             // 获取设备用量排行
-            callGetTrafficUsageRanking(startMs, endMs).then(function (result) {
+            callGetTrafficUsageRanking(startMs, endMs, networkType).then(function (result) {
                 console.log('Query result:', result);
                 if (!result || !result.rankings) {
                     return;
@@ -5938,6 +5813,40 @@ return view.extend({
 
         }
         
+        function normalizeTrafficIncrementItem(item) {
+            if (!item) return null;
+
+            var tsMs = item.ts_ms;
+            if (!tsMs && item.start_ts_ms) tsMs = item.start_ts_ms;
+            if (!tsMs && item.end_ts_ms) tsMs = item.end_ts_ms;
+
+            var rxBytes = (item.rx_bytes !== undefined && item.rx_bytes !== null) ? item.rx_bytes : null;
+            var txBytes = (item.tx_bytes !== undefined && item.tx_bytes !== null) ? item.tx_bytes : null;
+            var totalBytes = (item.total_bytes !== undefined && item.total_bytes !== null) ? item.total_bytes : null;
+
+            if (rxBytes === null) {
+                rxBytes = (item.wan_rx_bytes_inc || 0) + (item.lan_rx_bytes_inc || 0);
+            }
+            if (txBytes === null) {
+                txBytes = (item.wan_tx_bytes_inc || 0) + (item.lan_tx_bytes_inc || 0);
+            }
+            if (totalBytes === null) {
+                totalBytes = rxBytes + txBytes;
+            }
+
+            return Object.assign({}, item, {
+                ts_ms: tsMs || 0,
+                rx_bytes: rxBytes || 0,
+                tx_bytes: txBytes || 0,
+                total_bytes: totalBytes || 0
+            });
+        }
+
+        function normalizeTrafficIncrementsList(increments) {
+            if (!Array.isArray(increments)) return [];
+            return increments.map(normalizeTrafficIncrementItem).filter(function (x) { return x; });
+        }
+
         // 更新时间序列增量数据（使用 Traffic Timeline 自己的时间范围）
         function updateTrafficIncrements(startMs, endMs, aggregation, mac, callback) {
             // 如果没有传入时间范围，使用独立的时间范围变量
@@ -5951,16 +5860,21 @@ return view.extend({
             // 获取筛选条件
             var aggregationSelect = document.getElementById('traffic-increments-aggregation');
             var macSelect = document.getElementById('traffic-increments-mac');
+            var networkTypeSelect = document.getElementById('traffic-increments-network-type');
             
             var selectedAggregation = aggregation || (aggregationSelect ? aggregationSelect.value : 'hourly');
             var selectedMac = mac || (macSelect ? macSelect.value : 'all');
+            var selectedNetworkType = networkTypeSelect ? networkTypeSelect.value : 'all';
             
             // 如果选择的是 "all"，传递 null 使用默认值
             if (selectedMac === 'all') {
                 selectedMac = null;
             }
+            if (!selectedNetworkType) {
+                selectedNetworkType = null;
+            }
             
-            callGetTrafficUsageIncrements(startMs, endMs, selectedAggregation, selectedMac).then(function (result) {
+            callGetTrafficUsageIncrements(startMs, endMs, selectedAggregation, selectedMac, selectedNetworkType).then(function (result) {
                 if (!result || !result.increments) {
                     var container = document.getElementById('traffic-increments-container');
                     if (container) {
@@ -5970,6 +5884,8 @@ return view.extend({
                     if (callback) callback();
                     return;
                 }
+
+                var normalizedIncrements = normalizeTrafficIncrementsList(result.increments);
                 
                 // 更新时间范围显示（包含上下行流量和总流量）
                 var timeRangeEl = document.getElementById('traffic-increments-timerange');
@@ -5998,7 +5914,7 @@ return view.extend({
                     return;
                 }
 
-                if (result.increments.length === 0) {
+                if (normalizedIncrements.length === 0) {
                     container.innerHTML = '<div class="loading-state">' + _('No data') + '</div>';
                     // 调用回调函数以移除 loading 状态
                     if (callback) callback();
@@ -6048,10 +5964,10 @@ return view.extend({
                 // 绘制图表
                 setTimeout(function () {
                     var aggregation = result.aggregation || 'hourly';
-                    drawIncrementsChart(canvas, result.increments, aggregation);
+                    drawIncrementsChart(canvas, normalizedIncrements, aggregation);
                     
                     // 添加鼠标悬浮事件
-                    setupChartTooltip(canvas, tooltip, result.increments, aggregation);
+                    setupChartTooltip(canvas, tooltip, normalizedIncrements, aggregation);
                     
                     // 调用回调函数
                     if (callback) callback();
@@ -6249,7 +6165,7 @@ return view.extend({
                     var x = padding.left + barWidth * (index + 0.5);
                     var date = new Date(item.ts_ms);
                     var timeStr;
-                    
+
                     if (isDaily) {
                         // 按天聚合：只显示日期
                         var year = date.getFullYear();
@@ -6257,12 +6173,16 @@ return view.extend({
                         var day = date.getDate().toString().padStart(2, '0');
                         timeStr = month + '/' + day;
                     } else {
-                        // 按小时聚合：显示时间
-                        var hours = date.getHours();
-                        var minutes = date.getMinutes();
-                        timeStr = (hours < 10 ? '0' : '') + hours + ':' + (minutes < 10 ? '0' : '') + minutes;
+                        // 按小时聚合：显示整点小时
+                        // 使用 start_ts_ms 来确定这个时间段代表哪个小时
+                        var startTs = item.start_ts_ms || item.ts_ms;
+                        var startDate = new Date(startTs);
+
+                        // 使用开始时间的整点小时
+                        var hour = startDate.getHours();
+                        timeStr = (hour < 10 ? '0' : '') + hour + ':00';
                     }
-                    
+
                     ctx.fillText(timeStr, x, height - padding.bottom + 20);
                 }
             });
@@ -6286,6 +6206,31 @@ return view.extend({
                     var hours = date.getHours().toString().padStart(2, '0');
                     var minutes = date.getMinutes().toString().padStart(2, '0');
                     return year + '/' + month + '/' + day + ' ' + hours + ':' + minutes;
+                }
+            };
+
+            var formatTimeRange = function(startTsMs, endTsMs, isDaily) {
+                var startTime = formatTime(startTsMs, isDaily);
+                var endTime = formatTime(endTsMs, isDaily);
+
+                if (isDaily) {
+                    return startTime + ' - ' + endTime;
+                } else {
+                    // 如果是同一日期，只显示一次日期
+                    var startDate = new Date(startTsMs);
+                    var endDate = new Date(endTsMs);
+                    if (startDate.toDateString() === endDate.toDateString()) {
+                        var year = startDate.getFullYear();
+                        var month = (startDate.getMonth() + 1).toString().padStart(2, '0');
+                        var day = startDate.getDate().toString().padStart(2, '0');
+                        var startTimeOnly = startDate.getHours().toString().padStart(2, '0') + ':' +
+                                          startDate.getMinutes().toString().padStart(2, '0');
+                        var endTimeOnly = endDate.getHours().toString().padStart(2, '0') + ':' +
+                                        endDate.getMinutes().toString().padStart(2, '0');
+                        return year + '/' + month + '/' + day + ' ' + startTimeOnly + ' - ' + endTimeOnly;
+                    } else {
+                        return startTime + ' - ' + endTime;
+                    }
                 }
             };
             
@@ -6321,20 +6266,159 @@ return view.extend({
                 
                 if (barIndex >= 0 && barIndex < increments.length) {
                     var item = increments[barIndex];
-                    var timeStr = formatTime(item.ts_ms, isDaily);
-                    
-                    tooltip.innerHTML = 
+                    var timeStr = formatTimeRange(item.start_ts_ms || item.ts_ms, item.end_ts_ms || item.ts_ms, isDaily);
+
+                    // Get speed unit from UCI config
+                    var speedUnit = uci.get('bandix', 'traffic', 'speed_unit') || 'bytes';
+
+                    tooltip.innerHTML =
                         '<div class="traffic-increments-tooltip-title">' + timeStr + '</div>' +
-                        '<div class="traffic-increments-tooltip-item">' +
-                            '<span class="traffic-increments-tooltip-dot tx"></span>' +
-                            '<span>' + _('Upload') + ': ' + formatSize(item.tx_bytes || 0) + '</span>' +
+
+                        // WAN Traffic Section
+                        '<div class="traffic-increments-tooltip-section">' +
+                            '<div class="traffic-increments-tooltip-section-title">WAN Traffic</div>' +
+                            '<div class="traffic-increments-tooltip-item">' +
+                                '<span class="traffic-increments-tooltip-item-label">' +
+                                    '<span class="traffic-increments-tooltip-dot wan"></span>' +
+                                    '<span>WAN Upload</span>' +
+                                '</span>' +
+                                '<span class="traffic-increments-tooltip-item-value">' + formatSize(item.wan_tx_bytes_inc || 0) + '</span>' +
+                            '</div>' +
+                            '<div class="traffic-increments-tooltip-item">' +
+                                '<span class="traffic-increments-tooltip-item-label">' +
+                                    '<span class="traffic-increments-tooltip-dot wan"></span>' +
+                                    '<span>WAN Download</span>' +
+                                '</span>' +
+                                '<span class="traffic-increments-tooltip-item-value">' + formatSize(item.wan_rx_bytes_inc || 0) + '</span>' +
+                            '</div>' +
+                            '<div class="traffic-increments-tooltip-item">' +
+                                '<span class="traffic-increments-tooltip-item-label">' +
+                                    '<span class="traffic-increments-tooltip-dot wan"></span>' +
+                                    '<span>WAN Upload Rate (Avg)</span>' +
+                                '</span>' +
+                                '<span class="traffic-increments-tooltip-item-value">' + formatByterate(item.wan_tx_rate_avg || 0, speedUnit) + '</span>' +
+                            '</div>' +
+                            '<div class="traffic-increments-tooltip-item">' +
+                                '<span class="traffic-increments-tooltip-item-label">' +
+                                    '<span class="traffic-increments-tooltip-dot wan"></span>' +
+                                    '<span>WAN Download Rate (Avg)</span>' +
+                                '</span>' +
+                                '<span class="traffic-increments-tooltip-item-value">' + formatByterate(item.wan_rx_rate_avg || 0, speedUnit) + '</span>' +
+                            '</div>' +
+                            '<div class="traffic-increments-tooltip-item">' +
+                                '<span class="traffic-increments-tooltip-item-label">' +
+                                    '<span class="traffic-increments-tooltip-dot wan"></span>' +
+                                    '<span>WAN Upload Rate (P95)</span>' +
+                                '</span>' +
+                                '<span class="traffic-increments-tooltip-item-value">' + formatByterate(item.wan_tx_rate_p95 || 0, speedUnit) + '</span>' +
+                            '</div>' +
+                            '<div class="traffic-increments-tooltip-item">' +
+                                '<span class="traffic-increments-tooltip-item-label">' +
+                                    '<span class="traffic-increments-tooltip-dot wan"></span>' +
+                                    '<span>WAN Download Rate (P95)</span>' +
+                                '</span>' +
+                                '<span class="traffic-increments-tooltip-item-value">' + formatByterate(item.wan_rx_rate_p95 || 0, speedUnit) + '</span>' +
+                            '</div>' +
+                            '<div class="traffic-increments-tooltip-item">' +
+                                '<span class="traffic-increments-tooltip-item-label">' +
+                                    '<span class="traffic-increments-tooltip-dot wan"></span>' +
+                                    '<span>WAN Upload Rate (Max)</span>' +
+                                '</span>' +
+                                '<span class="traffic-increments-tooltip-item-value">' + formatByterate(item.wan_tx_rate_max || 0, speedUnit) + '</span>' +
+                            '</div>' +
+                            '<div class="traffic-increments-tooltip-item">' +
+                                '<span class="traffic-increments-tooltip-item-label">' +
+                                    '<span class="traffic-increments-tooltip-dot wan"></span>' +
+                                    '<span>WAN Download Rate (Max)</span>' +
+                                '</span>' +
+                                '<span class="traffic-increments-tooltip-item-value">' + formatByterate(item.wan_rx_rate_max || 0, speedUnit) + '</span>' +
+                            '</div>' +
                         '</div>' +
-                        '<div class="traffic-increments-tooltip-item">' +
-                            '<span class="traffic-increments-tooltip-dot rx"></span>' +
-                            '<span>' + _('Download') + ': ' + formatSize(item.rx_bytes || 0) + '</span>' +
+
+                        // LAN Traffic Section
+                        '<div class="traffic-increments-tooltip-section">' +
+                            '<div class="traffic-increments-tooltip-section-title">LAN Traffic</div>' +
+                            '<div class="traffic-increments-tooltip-item">' +
+                                '<span class="traffic-increments-tooltip-item-label">' +
+                                    '<span class="traffic-increments-tooltip-dot lan"></span>' +
+                                    '<span>LAN Upload</span>' +
+                                '</span>' +
+                                '<span class="traffic-increments-tooltip-item-value">' + formatSize(item.lan_tx_bytes_inc || 0) + '</span>' +
+                            '</div>' +
+                            '<div class="traffic-increments-tooltip-item">' +
+                                '<span class="traffic-increments-tooltip-item-label">' +
+                                    '<span class="traffic-increments-tooltip-dot lan"></span>' +
+                                    '<span>LAN Download</span>' +
+                                '</span>' +
+                                '<span class="traffic-increments-tooltip-item-value">' + formatSize(item.lan_rx_bytes_inc || 0) + '</span>' +
+                            '</div>' +
+                            '<div class="traffic-increments-tooltip-item">' +
+                                '<span class="traffic-increments-tooltip-item-label">' +
+                                    '<span class="traffic-increments-tooltip-dot lan"></span>' +
+                                    '<span>LAN Upload Rate (Avg)</span>' +
+                                '</span>' +
+                                '<span class="traffic-increments-tooltip-item-value">' + formatByterate(item.lan_tx_rate_avg || 0, speedUnit) + '</span>' +
+                            '</div>' +
+                            '<div class="traffic-increments-tooltip-item">' +
+                                '<span class="traffic-increments-tooltip-item-label">' +
+                                    '<span class="traffic-increments-tooltip-dot lan"></span>' +
+                                    '<span>LAN Download Rate (Avg)</span>' +
+                                '</span>' +
+                                '<span class="traffic-increments-tooltip-item-value">' + formatByterate(item.lan_rx_rate_avg || 0, speedUnit) + '</span>' +
+                            '</div>' +
+                            '<div class="traffic-increments-tooltip-item">' +
+                                '<span class="traffic-increments-tooltip-item-label">' +
+                                    '<span class="traffic-increments-tooltip-dot lan"></span>' +
+                                    '<span>LAN Upload Rate (P95)</span>' +
+                                '</span>' +
+                                '<span class="traffic-increments-tooltip-item-value">' + formatByterate(item.lan_tx_rate_p95 || 0, speedUnit) + '</span>' +
+                            '</div>' +
+                            '<div class="traffic-increments-tooltip-item">' +
+                                '<span class="traffic-increments-tooltip-item-label">' +
+                                    '<span class="traffic-increments-tooltip-dot lan"></span>' +
+                                    '<span>LAN Download Rate (P95)</span>' +
+                                '</span>' +
+                                '<span class="traffic-increments-tooltip-item-value">' + formatByterate(item.lan_rx_rate_p95 || 0, speedUnit) + '</span>' +
+                            '</div>' +
+                            '<div class="traffic-increments-tooltip-item">' +
+                                '<span class="traffic-increments-tooltip-item-label">' +
+                                    '<span class="traffic-increments-tooltip-dot lan"></span>' +
+                                    '<span>LAN Upload Rate (Max)</span>' +
+                                '</span>' +
+                                '<span class="traffic-increments-tooltip-item-value">' + formatByterate(item.lan_tx_rate_max || 0, speedUnit) + '</span>' +
+                            '</div>' +
+                            '<div class="traffic-increments-tooltip-item">' +
+                                '<span class="traffic-increments-tooltip-item-label">' +
+                                    '<span class="traffic-increments-tooltip-dot lan"></span>' +
+                                    '<span>LAN Download Rate (Max)</span>' +
+                                '</span>' +
+                                '<span class="traffic-increments-tooltip-item-value">' + formatByterate(item.lan_rx_rate_max || 0, speedUnit) + '</span>' +
+                            '</div>' +
                         '</div>' +
-                        '<div class="traffic-increments-tooltip-item">' +
-                            '<span>' + _('Total') + ': ' + formatSize(item.total_bytes || 0) + '</span>' +
+
+                        // Total Traffic Section
+                        '<div class="traffic-increments-tooltip-section">' +
+                            '<div class="traffic-increments-tooltip-section-title">Total Traffic</div>' +
+                            '<div class="traffic-increments-tooltip-item">' +
+                                '<span class="traffic-increments-tooltip-item-label">' +
+                                    '<span class="traffic-increments-tooltip-dot tx"></span>' +
+                                    '<span>Total Upload</span>' +
+                                '</span>' +
+                                '<span class="traffic-increments-tooltip-item-value">' + formatSize(item.tx_bytes || 0) + '</span>' +
+                            '</div>' +
+                            '<div class="traffic-increments-tooltip-item">' +
+                                '<span class="traffic-increments-tooltip-item-label">' +
+                                    '<span class="traffic-increments-tooltip-dot rx"></span>' +
+                                    '<span>Total Download</span>' +
+                                '</span>' +
+                                '<span class="traffic-increments-tooltip-item-value">' + formatSize(item.rx_bytes || 0) + '</span>' +
+                            '</div>' +
+                            '<div class="traffic-increments-tooltip-item">' +
+                                '<span class="traffic-increments-tooltip-item-label">' +
+                                    '<span>Total Combined</span>' +
+                                '</span>' +
+                                '<span class="traffic-increments-tooltip-item-value">' + formatSize(item.total_bytes || 0) + '</span>' +
+                            '</div>' +
                         '</div>';
                     
                     tooltip.style.display = 'block';
@@ -6342,11 +6426,11 @@ return view.extend({
                     var tooltipY = e.clientY - rect.top - 10;
                     
                     // 确保 tooltip 不超出画布边界
-                    if (tooltipX + 200 > rect.width) {
-                        tooltipX = e.clientX - rect.left - 200;
+                    if (tooltipX + 320 > rect.width) {
+                        tooltipX = e.clientX - rect.left - 320;
                     }
-                    if (tooltipY + 100 > rect.height) {
-                        tooltipY = e.clientY - rect.top - 100;
+                    if (tooltipY + 400 > rect.height) {
+                        tooltipY = e.clientY - rect.top - 400;
                     }
                     
                     tooltip.style.left = tooltipX + 'px';
@@ -6383,13 +6467,15 @@ return view.extend({
         
         // 初始化时间范围查询功能
         setTimeout(function() {
-            var presetBtns = document.querySelectorAll('.usage-ranking-preset-btn');
             var startDateInput = document.getElementById('usage-ranking-start-date');
             var endDateInput = document.getElementById('usage-ranking-end-date');
             var queryBtn = document.getElementById('usage-ranking-query-btn');
             var resetBtn = document.getElementById('usage-ranking-reset-btn');
+            var networkTypeSelect = document.getElementById('usage-ranking-network-type');
             var timeline = document.getElementById('usage-ranking-timeline');
             var timelineRange = document.getElementById('usage-ranking-timeline-range');
+			var sectionEl = startDateInput ? (startDateInput.closest('.traffic-stats-section') || document) : document;
+            var presetBtns = sectionEl.querySelectorAll('.usage-ranking-query-presets .cbi-button[data-preset]');
             
             if (!presetBtns.length || !startDateInput || !endDateInput || !queryBtn || !resetBtn) {
                 console.error('Time range query elements not found');
@@ -6436,11 +6522,11 @@ return view.extend({
                 
                 // 更新快捷按钮状态
                 presetBtns.forEach(function(btn) {
-                    btn.classList.remove('active');
+                    btn.className = 'cbi-button cbi-button-neutral';
                 });
                 if (preset) {
-                    var presetBtn = document.querySelector('.usage-ranking-preset-btn[data-preset="' + preset + '"]');
-                    if (presetBtn) presetBtn.classList.add('active');
+                    var presetBtn = sectionEl.querySelector('.usage-ranking-query-presets .cbi-button[data-preset="' + preset + '"]');
+                    if (presetBtn) presetBtn.className = 'cbi-button cbi-button-positive';
                 }
                 
                 // 更新时间轴
@@ -6450,39 +6536,47 @@ return view.extend({
             var queryData = function() {
                 var startDate = startDateInput.value;
                 var endDate = endDateInput.value;
-                
+
                 if (!startDate || !endDate) {
                     alert(_('Please select both start and end dates'));
                     return;
                 }
-                
+
                 var startMs = new Date(startDate + 'T00:00:00').getTime();
                 var endMs = new Date(endDate + 'T23:59:59').getTime();
-                
+
                 if (startMs > endMs) {
                     alert(_('Start date must be earlier than end date'));
                     return;
                 }
-                
+
                 usageRankingCustomRange = {
                     start_ms: startMs,
                     end_ms: endMs
                 };
-                
-                // 设置 loading 状态
+
+                // 设置 loading 状态（使用 bandix-loading，避免与主题的 loading 冲突导致尺寸变化）
                 if (queryBtn) {
                     queryBtn.disabled = true;
-                    queryBtn.classList.add('loading');
+                    queryBtn.classList.add('bandix-loading');
                 }
-                
+
                 console.log('Querying with range:', usageRankingCustomRange);
-                updateTrafficStatistics(usageRankingCustomRange, function() {
-                    // 查询完成后移除 loading 状态
+
+                // 确保无论成功还是失败，都会移除 loading 状态
+                var removeLoading = function() {
                     if (queryBtn) {
                         queryBtn.disabled = false;
-                        queryBtn.classList.remove('loading');
+                        queryBtn.classList.remove('bandix-loading');
                     }
-                });
+                };
+
+                try {
+                    updateTrafficStatistics(usageRankingCustomRange, removeLoading);
+                } catch (error) {
+                    console.error('Query failed:', error);
+                    removeLoading();
+                }
             };
             
             // 快捷选项按钮事件
@@ -6562,6 +6656,29 @@ return view.extend({
             if (queryBtn) {
                 queryBtn.addEventListener('click', queryData);
             }
+
+            // 网络类型切换后自动查询（与 Traffic Timeline 行为一致）
+            if (networkTypeSelect) {
+                networkTypeSelect.addEventListener('change', function () {
+                    if (queryBtn) {
+                        queryBtn.disabled = true;
+                        queryBtn.classList.add('bandix-loading');
+                    }
+
+                    var removeLoading = function () {
+                        if (queryBtn) {
+                            queryBtn.disabled = false;
+                            queryBtn.classList.remove('bandix-loading');
+                        }
+                    };
+
+                    try {
+                        updateTrafficStatistics(usageRankingCustomRange, removeLoading);
+                    } catch (e) {
+                        removeLoading();
+                    }
+                });
+            }
             
             // 重置按钮
             if (resetBtn) {
@@ -6593,6 +6710,7 @@ return view.extend({
         setTimeout(function() {
             var aggregationSelect = document.getElementById('traffic-increments-aggregation');
             var macSelect = document.getElementById('traffic-increments-mac');
+            var networkTypeSelect = document.getElementById('traffic-increments-network-type');
             
             if (aggregationSelect) {
                 aggregationSelect.addEventListener('change', function() {
@@ -6607,15 +6725,24 @@ return view.extend({
                     updateTrafficIncrements();
                 });
             }
+
+            if (networkTypeSelect) {
+                networkTypeSelect.addEventListener('change', function() {
+                    updateTrafficIncrements();
+                });
+            }
         }, 600);
         
         // 初始化 Traffic Timeline 时间范围选择功能
         setTimeout(function() {
-            var presetBtns = document.querySelectorAll('.traffic-increments-preset-btn');
             var startDateInput = document.getElementById('traffic-increments-start-date');
             var endDateInput = document.getElementById('traffic-increments-end-date');
             var queryBtn = document.getElementById('traffic-increments-query-btn');
             var resetBtn = document.getElementById('traffic-increments-reset-btn');
+			var sectionEl = startDateInput ? (startDateInput.closest('.traffic-stats-section') || document) : document;
+            var presetBtns = sectionEl.querySelectorAll('.usage-ranking-query-presets .cbi-button[data-preset]');
+            var timeline = document.getElementById('traffic-increments-timeline');
+            var timelineRange = document.getElementById('traffic-increments-timeline-range');
             
             if (!presetBtns.length || !startDateInput || !endDateInput || !queryBtn || !resetBtn) {
                 console.error('Traffic Timeline time range query elements not found');
@@ -6637,6 +6764,23 @@ return view.extend({
             var todayStr = formatDateInput(today);
             startDateInput.max = todayStr;
             endDateInput.max = todayStr;
+
+            var updateTimeline = function(startDate, endDate) {
+                if (!timeline || !timelineRange || !startDate || !endDate) return;
+                
+                var startMs = new Date(startDate + 'T00:00:00').getTime();
+                var endMs = new Date(endDate + 'T23:59:59').getTime();
+                
+                var oneYearAgoMs = todayMs - 365 * 24 * 60 * 60 * 1000;
+                var totalRange = todayMs - oneYearAgoMs;
+                var selectedRange = endMs - startMs;
+                
+                var leftPercent = Math.max(0, ((startMs - oneYearAgoMs) / totalRange) * 100);
+                var widthPercent = Math.min(100, (selectedRange / totalRange) * 100);
+                
+                timelineRange.style.left = leftPercent + '%';
+                timelineRange.style.width = widthPercent + '%';
+            };
             
             var setDateRange = function(startDate, endDate, preset) {
                 startDateInput.value = formatDateInput(new Date(startDate));
@@ -6644,50 +6788,60 @@ return view.extend({
                 
                 // 更新快捷按钮状态
                 presetBtns.forEach(function(btn) {
-                    btn.classList.remove('active');
+                    btn.className = 'cbi-button cbi-button-neutral';
                 });
                 if (preset) {
-                    var presetBtn = document.querySelector('.traffic-increments-preset-btn[data-preset="' + preset + '"]');
-                    if (presetBtn) presetBtn.classList.add('active');
+                    var presetBtn = sectionEl.querySelector('.usage-ranking-query-presets .cbi-button[data-preset="' + preset + '"]');
+                    if (presetBtn) presetBtn.className = 'cbi-button cbi-button-positive';
                 }
+
+                updateTimeline(startDateInput.value, endDateInput.value);
             };
             
             var queryData = function() {
                 var startDate = startDateInput.value;
                 var endDate = endDateInput.value;
-                
+
                 if (!startDate || !endDate) {
                     alert(_('Please select both start and end dates'));
                     return;
                 }
-                
+
                 var startMs = new Date(startDate + 'T00:00:00').getTime();
                 var endMs = new Date(endDate + 'T23:59:59').getTime();
-                
+
                 if (startMs > endMs) {
                     alert(_('Start date must be earlier than end date'));
                     return;
                 }
-                
+
                 trafficIncrementsCustomRange = {
                     start_ms: startMs,
                     end_ms: endMs
                 };
-                
-                // 设置 loading 状态
+
+                // 设置 loading 状态（使用 bandix-loading，避免与主题的 loading 冲突导致尺寸变化）
                 if (queryBtn) {
                     queryBtn.disabled = true;
-                    queryBtn.classList.add('loading');
+                    queryBtn.classList.add('bandix-loading');
                 }
-                
+
                 console.log('Traffic Timeline querying with range:', trafficIncrementsCustomRange);
-                updateTrafficIncrements(startMs, endMs, null, null, function() {
-                    // 查询完成后移除 loading 状态
+
+                // 确保无论成功还是失败，都会移除 loading 状态
+                var removeLoading = function() {
                     if (queryBtn) {
                         queryBtn.disabled = false;
-                        queryBtn.classList.remove('loading');
+                        queryBtn.classList.remove('bandix-loading');
                     }
-                });
+                };
+
+                try {
+                    updateTrafficIncrements(startMs, endMs, null, null, removeLoading);
+                } catch (error) {
+                    console.error('Traffic Timeline query failed:', error);
+                    removeLoading();
+                }
             };
             
             // 快捷选项按钮事件
@@ -6766,6 +6920,14 @@ return view.extend({
             // 初始化：默认选择最近一年
             var oneYearAgo = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
             setDateRange(oneYearAgo, today, '1year');
+
+            startDateInput.addEventListener('change', function() {
+                updateTimeline(this.value, endDateInput.value);
+            });
+            
+            endDateInput.addEventListener('change', function() {
+                updateTimeline(startDateInput.value, this.value);
+            });
             
             // 设置初始时间范围并自动加载数据（不显示 loading）
             var startMs = oneYearAgo.getTime();

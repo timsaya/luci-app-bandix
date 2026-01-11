@@ -250,7 +250,8 @@ get_dns_stats() {
 get_traffic_usage_ranking() {
 	local start_ms="$1"
 	local end_ms="$2"
-	
+	local network_type="$3"
+
 	# 构建查询参数（只添加非空且有效的参数）
 	local query_params=""
 	# 检查 start_ms 是否有效（非空且不是 "null" 或 "undefined"）
@@ -261,7 +262,11 @@ get_traffic_usage_ranking() {
 	if [ -n "$end_ms" ] && [ "$end_ms" != "null" ] && [ "$end_ms" != "undefined" ]; then
 		query_params="${query_params}end_ms=$end_ms&"
 	fi
-	
+	# 检查 network_type 是否有效
+	if [ -n "$network_type" ] && [ "$network_type" != "null" ] && [ "$network_type" != "undefined" ]; then
+		query_params="${query_params}network_type=$network_type&"
+	fi
+
 	# 移除末尾的 &
 	query_params=$(echo "$query_params" | sed 's/&$//')
 	
@@ -293,6 +298,7 @@ get_traffic_usage_increments() {
 	local end_ms="$2"
 	local aggregation="$3"
 	local mac="$4"
+	local network_type="$5"
 	
 	# 构建查询参数（只添加非空且有效的参数）
 	local query_params=""
@@ -311,6 +317,10 @@ get_traffic_usage_increments() {
 	# 检查 mac 是否有效
 	if [ -n "$mac" ] && [ "$mac" != "null" ] && [ "$mac" != "undefined" ]; then
 		query_params="${query_params}mac=$(printf '%s' "$mac" | sed 's/ /%20/g')&"
+	fi
+	# 检查 network_type 是否有效
+	if [ -n "$network_type" ] && [ "$network_type" != "null" ] && [ "$network_type" != "undefined" ]; then
+		query_params="${query_params}network_type=$network_type&"
 	fi
 	
 	# 移除末尾的 &
@@ -973,16 +983,18 @@ case "$1" in
 	json_add_object "getDnsStats"
 	json_close_object
 		
-	json_add_object "getTrafficUsageRanking"
-	json_add_int "start_ms"
-	json_add_int "end_ms"
-	json_close_object
+		json_add_object "getTrafficUsageRanking"
+		json_add_int "start_ms"
+		json_add_int "end_ms"
+		json_add_string "network_type"
+		json_close_object
 		
 	json_add_object "getTrafficUsageIncrements"
 	json_add_int "start_ms"
 	json_add_int "end_ms"
 	json_add_string "aggregation"
 	json_add_string "mac"
+	json_add_string "network_type"
 	json_close_object
 		
 	json_add_object "getScheduleLimits"
@@ -1132,6 +1144,7 @@ case "$1" in
 			getTrafficUsageRanking)
 				start_ms=""
 				end_ms=""
+				network_type=""
 				input=""
 				if read -t 1 -r input; then
 					:
@@ -1141,17 +1154,21 @@ case "$1" in
 					[ -z "$start_ms" ] && start_ms="$(echo "$input" | jsonfilter -e '$.start_ms' 2>/dev/null)"
 					end_ms="$(echo "$input" | jsonfilter -e '$[1]' 2>/dev/null)"
 					[ -z "$end_ms" ] && end_ms="$(echo "$input" | jsonfilter -e '$.end_ms' 2>/dev/null)"
+					network_type="$(echo "$input" | jsonfilter -e '$[2]' 2>/dev/null)"
+					[ -z "$network_type" ] && network_type="$(echo "$input" | jsonfilter -e '$.network_type' 2>/dev/null)"
 				else
 					[ -n "$3" ] && start_ms="$3"
 					[ -n "$4" ] && end_ms="$4"
+					[ -n "$5" ] && network_type="$5"
 				fi
-				get_traffic_usage_ranking "$start_ms" "$end_ms"
+				get_traffic_usage_ranking "$start_ms" "$end_ms" "$network_type"
 				;;
 			getTrafficUsageIncrements)
 				start_ms=""
 				end_ms=""
 				aggregation=""
 				mac=""
+				network_type=""
 				input=""
 				if read -t 1 -r input; then
 					:
@@ -1165,13 +1182,16 @@ case "$1" in
 					[ -z "$aggregation" ] && aggregation="$(echo "$input" | jsonfilter -e '$.aggregation' 2>/dev/null)"
 					mac="$(echo "$input" | jsonfilter -e '$[3]' 2>/dev/null)"
 					[ -z "$mac" ] && mac="$(echo "$input" | jsonfilter -e '$.mac' 2>/dev/null)"
+					network_type="$(echo "$input" | jsonfilter -e '$[4]' 2>/dev/null)"
+					[ -z "$network_type" ] && network_type="$(echo "$input" | jsonfilter -e '$.network_type' 2>/dev/null)"
 				else
 					[ -n "$3" ] && start_ms="$3"
 					[ -n "$4" ] && end_ms="$4"
 					[ -n "$5" ] && aggregation="$5"
 					[ -n "$6" ] && mac="$6"
+					[ -n "$7" ] && network_type="$7"
 				fi
-				get_traffic_usage_increments "$start_ms" "$end_ms" "$aggregation" "$mac"
+				get_traffic_usage_increments "$start_ms" "$end_ms" "$aggregation" "$mac" "$network_type"
 				;;
 			getScheduleLimits)
 				# logger "luci.bandix: getScheduleLimits called"
