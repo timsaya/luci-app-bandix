@@ -1037,14 +1037,11 @@ msgstr "Veuillez vider manuellement le cache du navigateur après la mise à jou
 msgid "Traffic Statistics"
 msgstr "Statistiques de Trafic"
 
-msgid "Traffic Statistics (WAN Only)"
-msgstr "Statistiques de Trafic (WAN uniquement)"
+msgid "Traffic Statistics"
+msgstr "Statistiques de Trafic"
 
 msgid "Device Usage Ranking"
 msgstr "Classement d'Utilisation des Appareils"
-
-msgid "(Data has 1 hour delay)"
-msgstr "(Les données ont 1 heure de retard)"
 
 msgid "Start Date"
 msgstr "Date de Début"

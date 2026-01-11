@@ -1044,14 +1044,11 @@ msgstr "有更新，点击前往设置"
 msgid "Traffic Statistics"
 msgstr "流量统计"
 
-msgid "Traffic Statistics (WAN Only)"
-msgstr "流量统计（仅WAN）"
+msgid "Traffic Statistics"
+msgstr "流量统计"
 
 msgid "Device Usage Ranking"
 msgstr "设备用量排行"
-
-msgid "(Data has 1 hour delay)"
-msgstr "（数据有1小时延迟）"
 
 msgid "Start Date"
 msgstr "开始日期"

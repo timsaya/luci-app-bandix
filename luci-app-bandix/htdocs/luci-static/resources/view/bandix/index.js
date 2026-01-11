@@ -9,7 +9,7 @@
 var BANDIX_COLOR_UPLOAD = '#f97316';     // 橙色 - 上传/上行
 var BANDIX_COLOR_DOWNLOAD = '#06b6d4';   // 青色 - 下载/下行
 
-// 暗色模式检测已改为使用 CSS 媒体查询 @media (prefers-color-scheme: dark)
+// 暗色模式：以 LuCI 页面实际主题为准（不依赖浏览器 prefers-color-scheme）
 
 // 检测主题类型：返回 'wide'（宽主题，如 Argon）或 'narrow'（窄主题，如 Bootstrap）
 function getThemeType() {
@@ -43,6 +43,87 @@ function getThemeType() {
 
     // 默认是窄主题（Bootstrap 等）
     return 'narrow';
+}
+
+function parseRgbColor(color) {
+    if (!color) return null;
+    var m = color.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\d.]+))?\s*\)/i);
+    if (!m) return null;
+    return {
+        r: parseInt(m[1]),
+        g: parseInt(m[2]),
+        b: parseInt(m[3]),
+        a: m[4] != null ? parseFloat(m[4]) : 1
+    };
+}
+
+function isDarkRgb(rgb) {
+    if (!rgb) return false;
+    var lum = 0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b;
+    return lum < 140;
+}
+
+function getLuCiColorScheme() {
+    try {
+        var cbiSection = document.querySelector('.cbi-section');
+        var targetElement = cbiSection || document.querySelector('.main') || document.body;
+        var style = window.getComputedStyle(targetElement);
+        var bg = style.backgroundColor;
+
+        if (!bg || bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent') {
+            var allCbiSections = document.querySelectorAll('.cbi-section');
+            for (var i = 0; i < allCbiSections.length; i++) {
+                var s = window.getComputedStyle(allCbiSections[i]);
+                var sectionBg = s.backgroundColor;
+                if (sectionBg && sectionBg !== 'rgba(0, 0, 0, 0)' && sectionBg !== 'transparent') {
+                    bg = sectionBg;
+                    break;
+                }
+            }
+        }
+
+        return isDarkRgb(parseRgbColor(bg)) ? 'dark' : 'light';
+    } catch (e) {
+        return 'light';
+    }
+}
+
+function transformPrefersDarkBlocks(cssText, enableDark) {
+    var token = '@media (prefers-color-scheme: dark)';
+    var out = '';
+    var i = 0;
+
+    while (i < cssText.length) {
+        var idx = cssText.indexOf(token, i);
+        if (idx < 0) {
+            out += cssText.slice(i);
+            break;
+        }
+
+        out += cssText.slice(i, idx);
+
+        var braceIdx = cssText.indexOf('{', idx + token.length);
+        if (braceIdx < 0) {
+            out += cssText.slice(idx);
+            break;
+        }
+
+        var depth = 1;
+        var j = braceIdx + 1;
+        while (j < cssText.length && depth > 0) {
+            var ch = cssText[j];
+            if (ch === '{') depth++;
+            else if (ch === '}') depth--;
+            j++;
+        }
+
+        var inner = cssText.slice(braceIdx + 1, j - 1);
+        if (enableDark) out += inner;
+
+        i = j;
+    }
+
+    return out;
 }
 
 function formatSize(bytes) {
@@ -222,8 +303,9 @@ return view.extend({
     render: function (data) {
 
         // 生成样式字符串的函数
-        function generateStyles() {
-            return `
+        function generateStyles(colorScheme) {
+            var scheme = colorScheme || getLuCiColorScheme();
+            var css = `
             .bandix-container {
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             }
@@ -1459,6 +1541,18 @@ return view.extend({
 			.history-tooltip .ht-kpi.up .ht-k-value { color: ${BANDIX_COLOR_UPLOAD}; }
 			.history-tooltip .ht-divider { height: 1px; background-color: currentColor; opacity: 0.3; margin: 8px 0; }
 			.history-tooltip .ht-section-title { font-weight: 600; font-size: 0.75rem; opacity: 0.7; margin: 4px 0 6px 0; }
+
+			/* Traffic Timeline Tooltip - 使用与 History Tooltip 相同的样式 */
+			.traffic-increments-tooltip .ht-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 2px; margin-bottom: 6px; }
+			.traffic-increments-tooltip .ht-kpi .ht-k-label { opacity: 0.7; font-size: 0.75rem; }
+			.traffic-increments-tooltip .ht-kpi .ht-k-value { font-size: 1rem; font-weight: 700; }
+			.traffic-increments-tooltip .ht-kpi.down .ht-k-value { color: ${BANDIX_COLOR_DOWNLOAD}; }
+			.traffic-increments-tooltip .ht-kpi.up .ht-k-value { color: ${BANDIX_COLOR_UPLOAD}; }
+			.traffic-increments-tooltip .ht-divider { height: 1px; background-color: currentColor; opacity: 0.3; margin: 8px 0; }
+			.traffic-increments-tooltip .ht-section-title { font-weight: 600; font-size: 0.75rem; opacity: 0.7; margin: 4px 0 6px 0; }
+			.traffic-increments-tooltip .ht-row { display: flex; justify-content: space-between; gap: 12px; }
+			.traffic-increments-tooltip .ht-key { opacity: 0.7; }
+			.traffic-increments-tooltip .ht-val { }
 			
 			/* Schedule Rules Tooltip */
 			.schedule-rules-tooltip {
@@ -2026,42 +2120,8 @@ return view.extend({
 				white-space: nowrap;
 			}
 			
-			.traffic-increments-filter-select {
-				padding: 6px 10px;
-				border: 1px solid rgba(0, 0, 0, 0.15);
-				border-radius: 4px;
-				background-color: rgba(255, 255, 255, 0.9);
-				font-size: 0.875rem;
-				cursor: pointer;
-				transition: all 0.2s ease;
+			.traffic-increments-filters .cbi-input-select {
 				min-width: 120px;
-			}
-			
-			.traffic-increments-filter-select:hover {
-				border-color: #3b82f6;
-			}
-			
-			.traffic-increments-filter-select:focus {
-				outline: none;
-				border-color: #3b82f6;
-				box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-			}
-			
-			@media (prefers-color-scheme: dark) {
-				.traffic-increments-filter-select {
-					background-color: rgba(255, 255, 255, 0.1);
-					border-color: rgba(255, 255, 255, 0.2);
-					color: inherit;
-				}
-				
-				.traffic-increments-filter-select:hover {
-					border-color: #60a5fa;
-				}
-				
-				.traffic-increments-filter-select:focus {
-					border-color: #60a5fa;
-					box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-				}
 			}
 			
 			.traffic-increments-query {
@@ -2090,6 +2150,7 @@ return view.extend({
 				background-color: rgba(0, 0, 0, 0.9);
 				color: white;
 				padding: 12px;
+				border: 1px solid rgba(255, 255, 255, 0.2);
 				border-radius: 6px;
 				font-size: 0.8125rem;
 				pointer-events: none;
@@ -2098,6 +2159,13 @@ return view.extend({
 				display: none;
 				min-width: 280px;
 				max-width: 400px;
+			}
+
+			@media (prefers-color-scheme: dark) {
+				.traffic-increments-tooltip {
+					border-color: rgba(255, 255, 255, 0.3);
+					box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+				}
 			}
 
 			.traffic-increments-tooltip-title {
@@ -2175,31 +2243,6 @@ return view.extend({
 				background-color: #10b981;
 			}
 			
-			@media (prefers-color-scheme: dark) {
-				.traffic-increments-tooltip {
-					background-color: rgba(30, 30, 30, 0.95);
-					border: 1px solid rgba(255, 255, 255, 0.1);
-					color: white;
-				}
-			}
-			
-			@media (prefers-color-scheme: light) {
-				.traffic-increments-tooltip {
-					background-color: rgba(255, 255, 255, 0.95);
-					color: rgba(0, 0, 0, 0.9);
-					border: 1px solid rgba(0, 0, 0, 0.1);
-					box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-				}
-
-				.traffic-increments-tooltip-title {
-					border-bottom-color: rgba(0, 0, 0, 0.1);
-				}
-
-				.traffic-increments-tooltip-section-title {
-					color: rgba(0, 0, 0, 0.6);
-					border-bottom-color: rgba(0, 0, 0, 0.05);
-				}
-			}
 			
 			.traffic-increments-summary {
 				display: grid;
@@ -2472,7 +2515,7 @@ return view.extend({
 					font-size: 0.75rem;
 				}
 				
-				.traffic-increments-filter-select {
+				.traffic-increments-filters .cbi-input-select {
 					width: 100%;
 					min-width: auto;
 					padding: 8px 10px;
@@ -2518,11 +2561,17 @@ return view.extend({
 			}
 
         `;
+            return transformPrefersDarkBlocks(css, scheme === 'dark');
         }
 
         // 添加现代化样式
-        var style = E('style', {}, generateStyles());
+        var initialScheme = getLuCiColorScheme();
+        document.documentElement.setAttribute('data-bandix-theme', initialScheme);
 
+        var oldStyle = document.getElementById('bandix-styles');
+        if (oldStyle && oldStyle.parentNode) oldStyle.parentNode.removeChild(oldStyle);
+
+        var style = E('style', { 'id': 'bandix-styles', 'data-bandix-scheme': initialScheme }, generateStyles(initialScheme));
         document.head.appendChild(style);
 
         var view = E('div', { 'class': 'bandix-container' }, [
@@ -2640,7 +2689,7 @@ return view.extend({
             // 统计区域
             E('div', { 'class': 'cbi-section' }, [
                 E('h3', { 'class': 'traffic-stats-header' }, [
-                    E('span', {}, _('Traffic Statistics (WAN Only)'))
+                    E('span', {}, _('Traffic Statistics'))
                 ]),
                 E('div', { 'id': 'traffic-statistics' }, [
                     E('div', { 'class': 'traffic-stats-container' }, [
@@ -2648,8 +2697,7 @@ return view.extend({
                         E('div', { 'class': 'traffic-stats-section' }, [
                             E('div', { 'class': 'usage-ranking-header' }, [
                                 E('h4', { 'class': 'usage-ranking-title' }, [
-                                    E('span', {}, _('Device Usage Ranking')),
-                                    E('span', { 'style': 'font-size: 0.75rem; font-weight: 400; opacity: 0.6; margin-left: 12px;' }, _('(Data has 1 hour delay)'))
+                                    E('span', {}, _('Device Usage Ranking'))
                                 ]),
                                 E('span', { 'class': 'usage-ranking-timerange', 'id': 'usage-ranking-timerange' }, '')
                             ]),
@@ -2721,8 +2769,7 @@ return view.extend({
                         E('div', { 'class': 'traffic-stats-section' }, [
                             E('div', { 'class': 'usage-ranking-header' }, [
                                 E('h4', { 'class': 'usage-ranking-title' }, [
-                                    E('span', {}, _('Traffic Timeline')),
-                                    E('span', { 'style': 'font-size: 0.75rem; font-weight: 400; opacity: 0.6; margin-left: 12px;' }, _('(Data has 1 hour delay)'))
+                                    E('span', {}, _('Traffic Timeline'))
                                 ]),
                                 E('span', { 'class': 'usage-ranking-timerange', 'id': 'traffic-increments-timerange' }, '')
                             ]),
@@ -2789,14 +2836,14 @@ return view.extend({
                             E('div', { 'class': 'traffic-increments-filters' }, [
                                 E('div', { 'class': 'traffic-increments-filter-group' }, [
                                     E('label', { 'class': 'traffic-increments-filter-label' }, _('Aggregation:')),
-                                    E('select', { 'class': 'traffic-increments-filter-select', 'id': 'traffic-increments-aggregation' }, [
+										E('select', { 'class': 'cbi-input-select', 'id': 'traffic-increments-aggregation' }, [
                                         E('option', { 'value': 'hourly' }, _('Hourly')),
                                         E('option', { 'value': 'daily' }, _('Daily'))
                                     ])
                                 ]),
                                 E('div', { 'class': 'traffic-increments-filter-group' }, [
                                     E('label', { 'class': 'traffic-increments-filter-label' }, _('Device:')),
-                                    E('select', { 'class': 'traffic-increments-filter-select', 'id': 'traffic-increments-mac' }, [
+										E('select', { 'class': 'cbi-input-select', 'id': 'traffic-increments-mac' }, [
                                         E('option', { 'value': 'all' }, _('All Devices'))
                                     ])
                                 ])
@@ -5931,12 +5978,12 @@ return view.extend({
                 // 创建图例
                 var legend = E('div', { 'class': 'traffic-stats-legend' }, [
                     E('div', { 'class': 'traffic-stats-legend-item' }, [
-                        E('span', { 'class': 'traffic-stats-legend-dot rx' }),
-                        E('span', {}, _('Download'))
-                    ]),
-                    E('div', { 'class': 'traffic-stats-legend-item' }, [
                         E('span', { 'class': 'traffic-stats-legend-dot tx' }),
                         E('span', {}, _('Upload'))
+                    ]),
+                    E('div', { 'class': 'traffic-stats-legend-item' }, [
+                        E('span', { 'class': 'traffic-stats-legend-dot rx' }),
+                        E('span', {}, _('Download'))
                     ])
                 ]);
 
@@ -5967,7 +6014,7 @@ return view.extend({
                     drawIncrementsChart(canvas, normalizedIncrements, aggregation);
                     
                     // 添加鼠标悬浮事件
-                    setupChartTooltip(canvas, tooltip, normalizedIncrements, aggregation);
+                    setupChartTooltip(canvas, tooltip, normalizedIncrements, aggregation, selectedNetworkType);
                     
                     // 调用回调函数
                     if (callback) callback();
@@ -6041,13 +6088,6 @@ return view.extend({
             var width = cssWidth;
             var height = cssHeight;
 
-            var padding = { top: 20, right: 20, bottom: 40, left: 80 };
-            var chartWidth = width - padding.left - padding.right;
-            var chartHeight = height - padding.top - padding.bottom;
-
-            // 清空画布
-            ctx.clearRect(0, 0, width, height);
-
             // 计算最大值
             var maxValue = 0;
             increments.forEach(function (item) {
@@ -6062,21 +6102,30 @@ return view.extend({
                 return;
             }
 
-            // 设置样式
-            var isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            ctx.fillStyle = isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)';
-            ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.3)';
+            // 动态测量Y轴最大标签宽度，增大左边距
+            var fontSize = 12;
+            ctx.font = fontSize + 'px sans-serif';
+            var maxLabelText = formatSize(maxValue);
+            var zeroLabelText = formatSize(0);
+            var maxLabelWidth = Math.max(ctx.measureText(maxLabelText).width, ctx.measureText(zeroLabelText).width);
+
+            var padding = { top: 20, right: 20, bottom: 40, left: 80 };
+            padding.left = Math.max(padding.left, Math.ceil(maxLabelWidth) + 30); // 确保右侧时间不被裁剪
+            var chartWidth = width - padding.left - padding.right;
+            var chartHeight = height - padding.top - padding.bottom;
+
+            // 清空画布
+            ctx.clearRect(0, 0, width, height);
+
+            // 轴与网格样式：对齐 Realtime Traffic Trends
+            var axisTextColor = '#9ca3af';
+            var gridColor = 'rgba(148,163,184,0.08)';
             ctx.font = '12px sans-serif';
 
-            // 绘制坐标轴
-            ctx.beginPath();
-            ctx.moveTo(padding.left, padding.top);
-            ctx.lineTo(padding.left, height - padding.bottom);
-            ctx.lineTo(width - padding.right, height - padding.bottom);
-            ctx.stroke();
-
             // 绘制网格线和标签
-            var gridLines = 5;
+            var gridLines = 4;
+            ctx.strokeStyle = gridColor;
+            ctx.lineWidth = 0.8;
             for (var i = 0; i <= gridLines; i++) {
                 var y = padding.top + (chartHeight / gridLines) * i;
                 var value = maxValue * (1 - i / gridLines);
@@ -6084,12 +6133,13 @@ return view.extend({
                 ctx.beginPath();
                 ctx.moveTo(padding.left, y);
                 ctx.lineTo(width - padding.right, y);
-                ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
                 ctx.stroke();
 
-                ctx.fillStyle = isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)';
+                ctx.fillStyle = axisTextColor;
                 ctx.textAlign = 'right';
-                ctx.fillText(formatSize(value), padding.left - 12, y + 4);
+                ctx.textBaseline = 'middle';
+                var yLabelY = (i === gridLines) ? y - 4 : y;
+                ctx.fillText(formatSize(value), padding.left - 8, yLabelY);
             }
 
             // 绘制堆叠柱状图
@@ -6097,35 +6147,45 @@ return view.extend({
             var barDisplayWidth = barWidth * 0.7; // 柱子显示宽度（留出间距）
             
             var baseY = height - padding.bottom;
+
+            function px(v) { return Math.round(v); }
+            function pxStroke(v) { return Math.round(v) + 0.5; }
             
             increments.forEach(function (item, index) {
                 var barX = padding.left + barWidth * index + (barWidth - barDisplayWidth) / 2;
                 var rxHeight = chartHeight * ((item.rx_bytes || 0) / maxValue);
                 var txHeight = chartHeight * ((item.tx_bytes || 0) / maxValue);
                 var totalHeight = rxHeight + txHeight;
+
+                var x = px(barX);
+                var w = Math.max(1, px(barDisplayWidth));
+                var totalH = px(totalHeight);
+                var rxH = px(rxHeight);
+                var txH = px(txHeight);
+                var yBase = px(baseY);
                 
                 // 绘制 RX 柱子（下载，青色）- 底部
-                if (rxHeight > 0) {
-                    var rxY = baseY - totalHeight;
+                if (rxH > 0) {
+                    var rxY = yBase - rxH;
                     ctx.fillStyle = BANDIX_COLOR_DOWNLOAD;
-                    ctx.fillRect(barX, rxY, barDisplayWidth, rxHeight);
+                    ctx.fillRect(x, rxY, w, rxH);
 
                     // 添加边框
                     ctx.strokeStyle = '#0891b2';
                     ctx.lineWidth = 1;
-                    ctx.strokeRect(barX, rxY, barDisplayWidth, rxHeight);
+                    ctx.strokeRect(pxStroke(x), pxStroke(rxY), w, rxH);
                 }
 
                 // 绘制 TX 柱子（上传，橙色）- 堆叠在 RX 上面
-                if (txHeight > 0) {
-                    var txY = baseY - totalHeight + rxHeight;
+                if (txH > 0) {
+                    var txY = yBase - totalH;
                     ctx.fillStyle = BANDIX_COLOR_UPLOAD;
-                    ctx.fillRect(barX, txY, barDisplayWidth, txHeight);
+                    ctx.fillRect(x, txY, w, txH);
 
                     // 添加边框
                     ctx.strokeStyle = '#ea580c';
                     ctx.lineWidth = 1;
-                    ctx.strokeRect(barX, txY, barDisplayWidth, txHeight);
+                    ctx.strokeRect(pxStroke(x), pxStroke(txY), w, txH);
                 }
             });
             
@@ -6134,15 +6194,16 @@ return view.extend({
             increments.forEach(function (item, index) {
                 var barX = padding.left + barWidth * index + (barWidth - barDisplayWidth) / 2;
                 canvas.barPositions.push({
-                    x: barX,
-                    width: barDisplayWidth,
+                    x: px(barX),
+                    width: Math.max(1, px(barDisplayWidth)),
                     index: index,
                     item: item
                 });
             });
+            canvas.__bandixIncrements = { increments: increments, aggregation: aggregation };
 
             // 绘制时间标签
-            ctx.fillStyle = isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)';
+            ctx.fillStyle = axisTextColor;
             ctx.textAlign = 'center';
             var isMobile = window.innerWidth <= 768;
             var labelStep = Math.max(1, Math.floor(increments.length / 6));
@@ -6212,7 +6273,7 @@ return view.extend({
         }
         
         // 设置图表 tooltip
-        function setupChartTooltip(canvas, tooltip, increments, aggregation) {
+        function setupChartTooltip(canvas, tooltip, increments, aggregation, networkType) {
             if (!canvas || !tooltip || !increments || increments.length === 0) return;
             
             var formatTime = function(tsMs, isDaily) {
@@ -6306,168 +6367,162 @@ return view.extend({
                     // Get speed unit from UCI config
                     var speedUnit = uci.get('bandix', 'traffic', 'speed_unit') || 'bytes';
 
-                    tooltip.innerHTML =
-                        '<div class="traffic-increments-tooltip-title">' + timeStr + '</div>' +
+                    var tooltipContent = '<div class="traffic-increments-tooltip-title">' + timeStr + '</div>';
 
-                        // WAN Traffic Section
-                        '<div class="traffic-increments-tooltip-section">' +
-                            '<div class="traffic-increments-tooltip-section-title">WAN Traffic</div>' +
-                            '<div class="traffic-increments-tooltip-item">' +
-                                '<span class="traffic-increments-tooltip-item-label">' +
-                                    '<span class="traffic-increments-tooltip-dot wan"></span>' +
-                                    '<span>WAN Upload</span>' +
-                                '</span>' +
-                                '<span class="traffic-increments-tooltip-item-value">' + formatSize(item.wan_tx_bytes_inc || 0) + '</span>' +
-                            '</div>' +
-                            '<div class="traffic-increments-tooltip-item">' +
-                                '<span class="traffic-increments-tooltip-item-label">' +
-                                    '<span class="traffic-increments-tooltip-dot wan"></span>' +
-                                    '<span>WAN Download</span>' +
-                                '</span>' +
-                                '<span class="traffic-increments-tooltip-item-value">' + formatSize(item.wan_rx_bytes_inc || 0) + '</span>' +
-                            '</div>' +
-                            '<div class="traffic-increments-tooltip-item">' +
-                                '<span class="traffic-increments-tooltip-item-label">' +
-                                    '<span class="traffic-increments-tooltip-dot wan"></span>' +
-                                    '<span>WAN Upload Rate (Avg)</span>' +
-                                '</span>' +
-                                '<span class="traffic-increments-tooltip-item-value">' + formatByterate(item.wan_tx_rate_avg || 0, speedUnit) + '</span>' +
-                            '</div>' +
-                            '<div class="traffic-increments-tooltip-item">' +
-                                '<span class="traffic-increments-tooltip-item-label">' +
-                                    '<span class="traffic-increments-tooltip-dot wan"></span>' +
-                                    '<span>WAN Download Rate (Avg)</span>' +
-                                '</span>' +
-                                '<span class="traffic-increments-tooltip-item-value">' + formatByterate(item.wan_rx_rate_avg || 0, speedUnit) + '</span>' +
-                            '</div>' +
-                            '<div class="traffic-increments-tooltip-item">' +
-                                '<span class="traffic-increments-tooltip-item-label">' +
-                                    '<span class="traffic-increments-tooltip-dot wan"></span>' +
-                                    '<span>WAN Upload Rate (P95)</span>' +
-                                '</span>' +
-                                '<span class="traffic-increments-tooltip-item-value">' + formatByterate(item.wan_tx_rate_p95 || 0, speedUnit) + '</span>' +
-                            '</div>' +
-                            '<div class="traffic-increments-tooltip-item">' +
-                                '<span class="traffic-increments-tooltip-item-label">' +
-                                    '<span class="traffic-increments-tooltip-dot wan"></span>' +
-                                    '<span>WAN Download Rate (P95)</span>' +
-                                '</span>' +
-                                '<span class="traffic-increments-tooltip-item-value">' + formatByterate(item.wan_rx_rate_p95 || 0, speedUnit) + '</span>' +
-                            '</div>' +
-                            '<div class="traffic-increments-tooltip-item">' +
-                                '<span class="traffic-increments-tooltip-item-label">' +
-                                    '<span class="traffic-increments-tooltip-dot wan"></span>' +
-                                    '<span>WAN Upload Rate (Max)</span>' +
-                                '</span>' +
-                                '<span class="traffic-increments-tooltip-item-value">' + formatByterate(item.wan_tx_rate_max || 0, speedUnit) + '</span>' +
-                            '</div>' +
-                            '<div class="traffic-increments-tooltip-item">' +
-                                '<span class="traffic-increments-tooltip-item-label">' +
-                                    '<span class="traffic-increments-tooltip-dot wan"></span>' +
-                                    '<span>WAN Download Rate (Max)</span>' +
-                                '</span>' +
-                                '<span class="traffic-increments-tooltip-item-value">' + formatByterate(item.wan_rx_rate_max || 0, speedUnit) + '</span>' +
-                            '</div>' +
-                        '</div>' +
+                    // 根据网络类型显示相应的section
+                    if (networkType === 'wan') {
+                        tooltipContent +=
+                            // WAN Traffic Section
+                            '<div class="traffic-increments-tooltip-section">' +
+                                '<div class="traffic-increments-tooltip-section-title">WAN Traffic</div>' +
 
-                        // LAN Traffic Section
-                        '<div class="traffic-increments-tooltip-section">' +
-                            '<div class="traffic-increments-tooltip-section-title">LAN Traffic</div>' +
-                            '<div class="traffic-increments-tooltip-item">' +
-                                '<span class="traffic-increments-tooltip-item-label">' +
-                                    '<span class="traffic-increments-tooltip-dot lan"></span>' +
-                                    '<span>LAN Upload</span>' +
-                                '</span>' +
-                                '<span class="traffic-increments-tooltip-item-value">' + formatSize(item.lan_tx_bytes_inc || 0) + '</span>' +
-                            '</div>' +
-                            '<div class="traffic-increments-tooltip-item">' +
-                                '<span class="traffic-increments-tooltip-item-label">' +
-                                    '<span class="traffic-increments-tooltip-dot lan"></span>' +
-                                    '<span>LAN Download</span>' +
-                                '</span>' +
-                                '<span class="traffic-increments-tooltip-item-value">' + formatSize(item.lan_rx_bytes_inc || 0) + '</span>' +
-                            '</div>' +
-                            '<div class="traffic-increments-tooltip-item">' +
-                                '<span class="traffic-increments-tooltip-item-label">' +
-                                    '<span class="traffic-increments-tooltip-dot lan"></span>' +
-                                    '<span>LAN Upload Rate (Avg)</span>' +
-                                '</span>' +
-                                '<span class="traffic-increments-tooltip-item-value">' + formatByterate(item.lan_tx_rate_avg || 0, speedUnit) + '</span>' +
-                            '</div>' +
-                            '<div class="traffic-increments-tooltip-item">' +
-                                '<span class="traffic-increments-tooltip-item-label">' +
-                                    '<span class="traffic-increments-tooltip-dot lan"></span>' +
-                                    '<span>LAN Download Rate (Avg)</span>' +
-                                '</span>' +
-                                '<span class="traffic-increments-tooltip-item-value">' + formatByterate(item.lan_rx_rate_avg || 0, speedUnit) + '</span>' +
-                            '</div>' +
-                            '<div class="traffic-increments-tooltip-item">' +
-                                '<span class="traffic-increments-tooltip-item-label">' +
-                                    '<span class="traffic-increments-tooltip-dot lan"></span>' +
-                                    '<span>LAN Upload Rate (P95)</span>' +
-                                '</span>' +
-                                '<span class="traffic-increments-tooltip-item-value">' + formatByterate(item.lan_tx_rate_p95 || 0, speedUnit) + '</span>' +
-                            '</div>' +
-                            '<div class="traffic-increments-tooltip-item">' +
-                                '<span class="traffic-increments-tooltip-item-label">' +
-                                    '<span class="traffic-increments-tooltip-dot lan"></span>' +
-                                    '<span>LAN Download Rate (P95)</span>' +
-                                '</span>' +
-                                '<span class="traffic-increments-tooltip-item-value">' + formatByterate(item.lan_rx_rate_p95 || 0, speedUnit) + '</span>' +
-                            '</div>' +
-                            '<div class="traffic-increments-tooltip-item">' +
-                                '<span class="traffic-increments-tooltip-item-label">' +
-                                    '<span class="traffic-increments-tooltip-dot lan"></span>' +
-                                    '<span>LAN Upload Rate (Max)</span>' +
-                                '</span>' +
-                                '<span class="traffic-increments-tooltip-item-value">' + formatByterate(item.lan_tx_rate_max || 0, speedUnit) + '</span>' +
-                            '</div>' +
-                            '<div class="traffic-increments-tooltip-item">' +
-                                '<span class="traffic-increments-tooltip-item-label">' +
-                                    '<span class="traffic-increments-tooltip-dot lan"></span>' +
-                                    '<span>LAN Download Rate (Max)</span>' +
-                                '</span>' +
-                                '<span class="traffic-increments-tooltip-item-value">' + formatByterate(item.lan_rx_rate_max || 0, speedUnit) + '</span>' +
-                            '</div>' +
-                        '</div>' +
+                                // 用量数据（大字体，带颜色）
+                                '<div class="ht-kpis">' +
+                                '<div class="ht-kpi up">' +
+                                '<div class="ht-k-label">WAN Upload</div>' +
+                                '<div class="ht-k-value">' + formatSize(item.wan_tx_bytes_inc || 0) + '</div>' +
+                                '</div>' +
+                                '<div class="ht-kpi down">' +
+                                '<div class="ht-k-label">WAN Download</div>' +
+                                '<div class="ht-k-value">' + formatSize(item.wan_rx_bytes_inc || 0) + '</div>' +
+                                '</div>' +
+                                '</div>' +
 
-                        // Total Traffic Section
-                        '<div class="traffic-increments-tooltip-section">' +
-                            '<div class="traffic-increments-tooltip-section-title">Total Traffic</div>' +
-                            '<div class="traffic-increments-tooltip-item">' +
-                                '<span class="traffic-increments-tooltip-item-label">' +
-                                    '<span class="traffic-increments-tooltip-dot tx"></span>' +
-                                    '<span>Total Upload</span>' +
-                                '</span>' +
-                                '<span class="traffic-increments-tooltip-item-value">' + formatSize(item.tx_bytes || 0) + '</span>' +
+                                // 速度统计分组
+                                '<div class="ht-divider"></div>' +
+                                '<div class="ht-section-title">Upload Statistics</div>' +
+                                '<div class="ht-row"><span class="ht-key">Average</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_avg || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_p95 || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">Max</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_max || 0, speedUnit) + '</span></div>' +
+
+                                '<div class="ht-section-title" style="margin-top: 8px;">Download Statistics</div>' +
+                                '<div class="ht-row"><span class="ht-key">Average</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_avg || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_p95 || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">Max</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_max || 0, speedUnit) + '</span></div>' +
+                            '</div>';
+                    } else if (networkType === 'lan') {
+                        tooltipContent +=
+                            // LAN Traffic Section
+                            '<div class="traffic-increments-tooltip-section">' +
+                                '<div class="traffic-increments-tooltip-section-title">LAN Traffic</div>' +
+
+                                // 用量数据（大字体，带颜色）
+                                '<div class="ht-kpis">' +
+                                '<div class="ht-kpi up">' +
+                                '<div class="ht-k-label">LAN Upload</div>' +
+                                '<div class="ht-k-value">' + formatSize(item.lan_tx_bytes_inc || 0) + '</div>' +
+                                '</div>' +
+                                '<div class="ht-kpi down">' +
+                                '<div class="ht-k-label">LAN Download</div>' +
+                                '<div class="ht-k-value">' + formatSize(item.lan_rx_bytes_inc || 0) + '</div>' +
+                                '</div>' +
+                                '</div>' +
+
+                                // 速度统计分组
+                                '<div class="ht-divider"></div>' +
+                                '<div class="ht-section-title">Upload Statistics</div>' +
+                                '<div class="ht-row"><span class="ht-key">Average</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_avg || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_p95 || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">Max</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_max || 0, speedUnit) + '</span></div>' +
+
+                                '<div class="ht-section-title" style="margin-top: 8px;">Download Statistics</div>' +
+                                '<div class="ht-row"><span class="ht-key">Average</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_avg || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_p95 || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">Max</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_max || 0, speedUnit) + '</span></div>' +
+                            '</div>';
+                    } else {
+                        // networkType === 'all' 或其他情况，显示所有section
+                        tooltipContent +=
+                            // WAN Traffic Section
+                            '<div class="traffic-increments-tooltip-section">' +
+                                '<div class="traffic-increments-tooltip-section-title">WAN Traffic</div>' +
+
+                                // 用量数据（大字体，带颜色）
+                                '<div class="ht-kpis">' +
+                                '<div class="ht-kpi up">' +
+                                '<div class="ht-k-label">WAN Upload</div>' +
+                                '<div class="ht-k-value">' + formatSize(item.wan_tx_bytes_inc || 0) + '</div>' +
+                                '</div>' +
+                                '<div class="ht-kpi down">' +
+                                '<div class="ht-k-label">WAN Download</div>' +
+                                '<div class="ht-k-value">' + formatSize(item.wan_rx_bytes_inc || 0) + '</div>' +
+                                '</div>' +
+                                '</div>' +
+
+                                // 速度统计分组
+                                '<div class="ht-divider"></div>' +
+                                '<div class="ht-section-title">Upload Statistics</div>' +
+                                '<div class="ht-row"><span class="ht-key">Average</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_avg || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_p95 || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">Max</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_max || 0, speedUnit) + '</span></div>' +
+
+                                '<div class="ht-section-title" style="margin-top: 8px;">Download Statistics</div>' +
+                                '<div class="ht-row"><span class="ht-key">Average</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_avg || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_p95 || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">Max</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_max || 0, speedUnit) + '</span></div>' +
                             '</div>' +
-                            '<div class="traffic-increments-tooltip-item">' +
-                                '<span class="traffic-increments-tooltip-item-label">' +
-                                    '<span class="traffic-increments-tooltip-dot rx"></span>' +
-                                    '<span>Total Download</span>' +
-                                '</span>' +
-                                '<span class="traffic-increments-tooltip-item-value">' + formatSize(item.rx_bytes || 0) + '</span>' +
-                            '</div>' +
-                            '<div class="traffic-increments-tooltip-item">' +
-                                '<span class="traffic-increments-tooltip-item-label">' +
-                                    '<span>Total Combined</span>' +
-                                '</span>' +
-                                '<span class="traffic-increments-tooltip-item-value">' + formatSize(item.total_bytes || 0) + '</span>' +
-                            '</div>' +
-                        '</div>';
-                    
+
+                            // LAN Traffic Section
+                            '<div class="traffic-increments-tooltip-section">' +
+                                '<div class="traffic-increments-tooltip-section-title">LAN Traffic</div>' +
+
+                                // 用量数据（大字体，带颜色）
+                                '<div class="ht-kpis">' +
+                                '<div class="ht-kpi up">' +
+                                '<div class="ht-k-label">LAN Upload</div>' +
+                                '<div class="ht-k-value">' + formatSize(item.lan_tx_bytes_inc || 0) + '</div>' +
+                                '</div>' +
+                                '<div class="ht-kpi down">' +
+                                '<div class="ht-k-label">LAN Download</div>' +
+                                '<div class="ht-k-value">' + formatSize(item.lan_rx_bytes_inc || 0) + '</div>' +
+                                '</div>' +
+                                '</div>' +
+
+                                // 速度统计分组
+                                '<div class="ht-divider"></div>' +
+                                '<div class="ht-section-title">Upload Statistics</div>' +
+                                '<div class="ht-row"><span class="ht-key">Average</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_avg || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_p95 || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">Max</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_max || 0, speedUnit) + '</span></div>' +
+
+                                '<div class="ht-section-title" style="margin-top: 8px;">Download Statistics</div>' +
+                                '<div class="ht-row"><span class="ht-key">Average</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_avg || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_p95 || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">Max</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_max || 0, speedUnit) + '</span></div>' +
+                            '</div>';
+                    }
+
+                    tooltip.innerHTML = tooltipContent;
+
                     tooltip.style.display = 'block';
+
+                    // 强制重新计算布局以获取正确的尺寸
+                    tooltip.offsetHeight; // 触发重新计算
+
+                    // 获取tooltip的实际尺寸
+                    var tooltipWidth = tooltip.offsetWidth || 280;
+                    var tooltipHeight = tooltip.offsetHeight || 200;
+
                     var tooltipX = e.clientX - rect.left + 20;
                     var tooltipY = e.clientY - rect.top - 20;
 
                     // 确保 tooltip 不超出画布边界
-                    if (tooltipX + 320 > rect.width) {
-                        tooltipX = e.clientX - rect.left - 340;
+                    if (tooltipX + tooltipWidth > rect.width) {
+                        tooltipX = e.clientX - rect.left - tooltipWidth - 20;
                     }
-                    if (tooltipY + 400 > rect.height) {
-                        tooltipY = e.clientY - rect.top - 420;
+                    if (tooltipY + tooltipHeight > rect.height) {
+                        tooltipY = e.clientY - rect.top - tooltipHeight - 20;
                     }
-                    
+
+                    // 确保tooltip不会超出左侧边界
+                    if (tooltipX < 0) {
+                        tooltipX = 10;
+                    }
+                    // 确保tooltip不会超出顶部边界
+                    if (tooltipY < 0) {
+                        tooltipY = 10;
+                    }
+
                     tooltip.style.left = tooltipX + 'px';
                     tooltip.style.top = tooltipY + 'px';
                 } else {
@@ -7047,6 +7102,21 @@ return view.extend({
         // 自动适应主题背景色和文字颜色的函数（仅应用于弹窗和 tooltip）
         function applyThemeColors() {
             try {
+                var prevScheme = document.documentElement.getAttribute('data-bandix-theme');
+                var scheme = getLuCiColorScheme();
+                document.documentElement.setAttribute('data-bandix-theme', scheme);
+                var styleEl = document.getElementById('bandix-styles');
+                if (styleEl && styleEl.textContent && styleEl.getAttribute('data-bandix-scheme') !== scheme) {
+                    styleEl.textContent = generateStyles(scheme);
+                    styleEl.setAttribute('data-bandix-scheme', scheme);
+                }
+                if (prevScheme && prevScheme !== scheme) {
+                    var incCanvas = document.getElementById('traffic-increments-chart-canvas');
+                    if (incCanvas && incCanvas.__bandixIncrements && incCanvas.__bandixIncrements.increments) {
+                        drawIncrementsChart(incCanvas, incCanvas.__bandixIncrements.increments, incCanvas.__bandixIncrements.aggregation);
+                    }
+                }
+
                 // 优先从 cbi-section 获取颜色
                 var cbiSection = document.querySelector('.cbi-section');
                 var targetElement = cbiSection || document.querySelector('.main') || document.body;
@@ -7090,7 +7160,7 @@ return view.extend({
                     }
 
                     // 应用到 tooltip（包括所有 tooltip 实例）
-                    var tooltips = document.querySelectorAll('.history-tooltip');
+                    var tooltips = document.querySelectorAll('.history-tooltip, .traffic-increments-tooltip');
                     tooltips.forEach(function (tooltip) {
                         var rgbaMatch = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
                         if (rgbaMatch) {
@@ -7118,7 +7188,7 @@ return view.extend({
                     }
 
                     // 应用到 tooltip 的文字颜色
-                    var tooltips = document.querySelectorAll('.history-tooltip');
+                    var tooltips = document.querySelectorAll('.history-tooltip, .traffic-increments-tooltip');
                     tooltips.forEach(function (tooltip) {
                         tooltip.style.color = textColor;
                     });

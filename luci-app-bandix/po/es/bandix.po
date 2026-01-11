@@ -1037,14 +1037,11 @@ msgstr "Por favor, borre manualmente la caché del navegador después de actuali
 msgid "Traffic Statistics"
 msgstr "Estadísticas de Tráfico"
 
-msgid "Traffic Statistics (WAN Only)"
-msgstr "Estadísticas de Tráfico (Solo WAN)"
+msgid "Traffic Statistics"
+msgstr "Estadísticas de Tráfico"
 
 msgid "Device Usage Ranking"
 msgstr "Clasificación de Uso de Dispositivos"
-
-msgid "(Data has 1 hour delay)"
-msgstr "(Los datos tienen 1 hora de retraso)"
 
 msgid "Start Date"
 msgstr "Fecha de Inicio"

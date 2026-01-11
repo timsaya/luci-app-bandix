@@ -1037,14 +1037,11 @@ msgstr "กรุณาล้างแคชเบราว์เซอร์ด
 msgid "Traffic Statistics"
 msgstr "สถิติการรับส่งข้อมูล"
 
-msgid "Traffic Statistics (WAN Only)"
-msgstr "สถิติการรับส่งข้อมูล (เฉพาะ WAN)"
+msgid "Traffic Statistics"
+msgstr "สถิติการรับส่งข้อมูล"
 
 msgid "Device Usage Ranking"
 msgstr "อันดับการใช้งานอุปกรณ์"
-
-msgid "(Data has 1 hour delay)"
-msgstr "(ข้อมูลล่าช้า 1 ชั่วโมง)"
 
 msgid "Start Date"
 msgstr "วันที่เริ่มต้น"

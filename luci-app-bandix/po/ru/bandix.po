@@ -1037,14 +1037,11 @@ msgstr "Пожалуйста, вручную очистите кеш брауз�
 msgid "Traffic Statistics"
 msgstr "Статистика трафика"
 
-msgid "Traffic Statistics (WAN Only)"
-msgstr "Статистика трафика (только WAN)"
+msgid "Traffic Statistics"
+msgstr "Статистика трафика"
 
 msgid "Device Usage Ranking"
 msgstr "Рейтинг использования устройств"
-
-msgid "(Data has 1 hour delay)"
-msgstr "(Данные имеют задержку 1 час)"
 
 msgid "Start Date"
 msgstr "Дата начала"

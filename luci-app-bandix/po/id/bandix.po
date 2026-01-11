@@ -1037,14 +1037,11 @@ msgstr "Harap hapus cache browser secara manual setelah memperbarui."
 msgid "Traffic Statistics"
 msgstr "Statistik Lalu Lintas"
 
-msgid "Traffic Statistics (WAN Only)"
-msgstr "Statistik Lalu Lintas (Hanya WAN)"
+msgid "Traffic Statistics"
+msgstr "Statistik Lalu Lintas"
 
 msgid "Device Usage Ranking"
 msgstr "Peringkat Penggunaan Perangkat"
-
-msgid "(Data has 1 hour delay)"
-msgstr "(Data memiliki penundaan 1 jam)"
 
 msgid "Start Date"
 msgstr "Tanggal Mulai"

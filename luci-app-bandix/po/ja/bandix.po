@@ -1037,14 +1037,11 @@ msgstr "更新後、ブラウザのキャッシュを手動でクリアしてく
 msgid "Traffic Statistics"
 msgstr "トラフィック統計"
 
-msgid "Traffic Statistics (WAN Only)"
-msgstr "トラフィック統計（WANのみ）"
+msgid "Traffic Statistics"
+msgstr "トラフィック統計"
 
 msgid "Device Usage Ranking"
 msgstr "デバイス使用量ランキング"
-
-msgid "(Data has 1 hour delay)"
-msgstr "（データは1時間遅延）"
 
 msgid "Start Date"
 msgstr "開始日"

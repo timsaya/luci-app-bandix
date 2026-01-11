@@ -1037,14 +1037,11 @@ msgstr "更新後請手動清空瀏覽器快取。"
 msgid "Traffic Statistics"
 msgstr "流量統計"
 
-msgid "Traffic Statistics (WAN Only)"
-msgstr "流量統計（僅WAN）"
+msgid "Traffic Statistics"
+msgstr "流量統計"
 
 msgid "Device Usage Ranking"
 msgstr "設備用量排行"
-
-msgid "(Data has 1 hour delay)"
-msgstr "（資料有1小時延遲）"
 
 msgid "Start Date"
 msgstr "開始日期"
