@@ -4827,7 +4827,7 @@ return view.extend({
                     tooltip.style.top = '-9999px';
                     var tw = tooltip.offsetWidth || 0;
                     var th = tooltip.offsetHeight || 0;
-                    var padding = 12;
+                    var padding = 20;
                     var maxX = (typeof window !== 'undefined' ? window.innerWidth : document.documentElement.clientWidth) - 4;
                     var maxY = (typeof window !== 'undefined' ? window.innerHeight : document.documentElement.clientHeight) - 4;
                     var cx = evt.clientX;
@@ -6186,6 +6186,29 @@ return view.extend({
                     ctx.fillText(timeStr, x, height - padding.bottom + 20);
                 }
             });
+
+            // 如果存在 hoverIndex，则绘制垂直虚线（鼠标对着的柱子）
+            // 移动端不绘制虚线
+            try {
+                if (isMobile) return; // 移动端不绘制悬浮虚线
+
+                var hoverIndex = canvas.__bandixIncrementsHoverIndex;
+                if (typeof hoverIndex === 'number' && hoverIndex >= 0 && hoverIndex < increments.length) {
+                    var barX = padding.left + barWidth * hoverIndex + (barWidth - barDisplayWidth) / 2;
+                    var hoverX = barX + barDisplayWidth / 2; // 虚线在柱子中心
+
+                    ctx.save();
+                    ctx.strokeStyle = 'rgba(156,163,175,0.9)';
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([6, 4]);
+                    ctx.beginPath();
+                    ctx.moveTo(hoverX, padding.top);
+                    ctx.lineTo(hoverX, height - padding.bottom);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    ctx.restore();
+                }
+            } catch (e) { /* 安全兜底 */ }
         }
         
         // 设置图表 tooltip
@@ -6246,8 +6269,11 @@ return view.extend({
                 var y = e.clientY - rect.top;
                 
                 // 检查鼠标是否在图表区域内
-                if (x < padding.left || x > rect.width - padding.right || 
+                if (x < padding.left || x > rect.width - padding.right ||
                     y < padding.top || y > rect.height - padding.bottom) {
+                    // 清除悬浮索引并重新绘制图表以清除虚线
+                    delete canvas.__bandixIncrementsHoverIndex;
+                    drawIncrementsChart(canvas, increments, aggregation);
                     tooltip.style.display = 'none';
                     return;
                 }
@@ -6265,6 +6291,15 @@ return view.extend({
                 }
                 
                 if (barIndex >= 0 && barIndex < increments.length) {
+                    // 设置悬浮索引，用于绘制垂直虚线
+                    var prevHoverIndex = canvas.__bandixIncrementsHoverIndex;
+                    canvas.__bandixIncrementsHoverIndex = barIndex;
+
+                    // 只有当 hoverIndex 发生变化时才重新绘制
+                    if (prevHoverIndex !== barIndex) {
+                        drawIncrementsChart(canvas, increments, aggregation);
+                    }
+
                     var item = increments[barIndex];
                     var timeStr = formatTimeRange(item.start_ts_ms || item.ts_ms, item.end_ts_ms || item.ts_ms, isDaily);
 
@@ -6422,25 +6457,30 @@ return view.extend({
                         '</div>';
                     
                     tooltip.style.display = 'block';
-                    var tooltipX = e.clientX - rect.left + 10;
-                    var tooltipY = e.clientY - rect.top - 10;
-                    
+                    var tooltipX = e.clientX - rect.left + 20;
+                    var tooltipY = e.clientY - rect.top - 20;
+
                     // 确保 tooltip 不超出画布边界
                     if (tooltipX + 320 > rect.width) {
-                        tooltipX = e.clientX - rect.left - 320;
+                        tooltipX = e.clientX - rect.left - 340;
                     }
                     if (tooltipY + 400 > rect.height) {
-                        tooltipY = e.clientY - rect.top - 400;
+                        tooltipY = e.clientY - rect.top - 420;
                     }
                     
                     tooltip.style.left = tooltipX + 'px';
                     tooltip.style.top = tooltipY + 'px';
                 } else {
+                    // 清除悬浮索引
+                    delete canvas.__bandixIncrementsHoverIndex;
                     tooltip.style.display = 'none';
                 }
             });
             
             canvas.addEventListener('mouseleave', function() {
+                // 清除悬浮索引并重新绘制图表以清除虚线
+                delete canvas.__bandixIncrementsHoverIndex;
+                drawIncrementsChart(canvas, increments, aggregation);
                 tooltip.style.display = 'none';
             });
         }
