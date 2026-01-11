@@ -1112,3 +1112,24 @@ msgstr "按小时"
 
 msgid "Device:"
 msgstr "设备："
+
+msgid "Global Rate Limit"
+msgstr "全局限速"
+
+msgid "When enabled, all devices will be rate limited. Devices in the list are exempt (whitelist)."
+msgstr "启用后，所有设备都会限速；列表内设备为白名单，不受限速。"
+
+msgid "Exempt Devices (Whitelist)"
+msgstr "豁免设备（白名单）"
+
+msgid "Remove this device from the list?"
+msgstr "从列表中移除此设备？"
+
+msgid "Default Rate Limit"
+msgstr "默认限速"
+
+msgid "Wireless"
+msgstr "无线"
+
+msgid "Wired"
+msgstr "有线"

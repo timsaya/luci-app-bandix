@@ -289,6 +289,41 @@ var callGetTrafficUsageIncrements = rpc.declare({
     params: ['start_ms', 'end_ms', 'aggregation', 'mac', 'network_type']
 });
 
+// 限速白名单 RPC
+var callGetRateLimitWhitelist = rpc.declare({
+    object: 'luci.bandix',
+    method: 'getRateLimitWhitelist',
+    expect: {}
+});
+
+var callSetRateLimitWhitelistEnabled = rpc.declare({
+    object: 'luci.bandix',
+    method: 'setRateLimitWhitelistEnabled',
+    params: ['enabled'],
+    expect: {}
+});
+
+var callAddRateLimitWhitelist = rpc.declare({
+    object: 'luci.bandix',
+    method: 'addRateLimitWhitelist',
+    params: ['mac'],
+    expect: {}
+});
+
+var callDeleteRateLimitWhitelist = rpc.declare({
+    object: 'luci.bandix',
+    method: 'deleteRateLimitWhitelist',
+    params: ['mac'],
+    expect: {}
+});
+
+var callSetDefaultRateLimit = rpc.declare({
+    object: 'luci.bandix',
+    method: 'setDefaultRateLimit',
+    params: ['wan_rx_rate_limit', 'wan_tx_rate_limit'],
+    expect: {}
+});
+
 return view.extend({
     load: function () {
         return Promise.all([
@@ -629,6 +664,12 @@ return view.extend({
                 align-items: center;
                 gap: 8px;
             }
+
+            .device-connection-type {
+                font-size: 0.75rem;
+                opacity: 1.0;
+                cursor: help;
+            }
             
             .device-status {
                 width: 8px;
@@ -875,6 +916,10 @@ return view.extend({
                 visibility: hidden;
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
+
+            #confirm-dialog-bandix_modal {
+                z-index: 1105;
+            }
             
             .bandix_modal-overlay.show {
                 background-color: rgba(0, 0, 0, 0.5);
@@ -923,6 +968,126 @@ return view.extend({
                 display: flex;
                 gap: 10px;
                 justify-content: flex-end;
+            }
+
+            /* 白名单弹窗样式 */
+            .whitelist_modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1002;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .whitelist_modal-overlay.show {
+                background-color: rgba(0, 0, 0, 0.5);
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .whitelist_modal {
+                max-width: 560px;
+                width: 92%;
+                max-height: 90vh;
+                overflow-y: auto;
+                opacity: 0;
+                transition: opacity 0.2s ease;
+                background-color: rgba(255, 255, 255, 0.98);
+                color: #1f2937;
+                border-radius: 8px;
+            }
+
+            .whitelist_modal-overlay.show .whitelist_modal {
+                opacity: 1;
+            }
+
+            @media (prefers-color-scheme: dark) {
+                .whitelist_modal {
+                    background-color: rgba(30, 30, 30, 0.98);
+                    color: #e5e7eb;
+                }
+            }
+
+            .whitelist_modal-header {
+                padding: 16px 20px 0 20px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+            }
+
+            .whitelist_modal-title {
+                font-size: 1.1rem;
+                font-weight: 600;
+                margin: 0;
+            }
+
+            .whitelist_modal-body {
+                padding: 16px 20px;
+            }
+
+            .whitelist_modal-footer {
+                padding: 0 20px 18px 20px;
+                display: flex;
+                gap: 10px;
+                justify-content: flex-end;
+            }
+
+            .whitelist_modal-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                margin-bottom: 12px;
+            }
+
+            .whitelist_modal-list {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                margin-top: 8px;
+            }
+
+            .whitelist_modal-item {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 10px;
+                padding: 8px 10px;
+                border: 1px solid rgba(0, 0, 0, 0.12);
+                border-radius: 8px;
+            }
+
+            @media (prefers-color-scheme: dark) {
+                .whitelist_modal-item {
+                    border-color: rgba(255, 255, 255, 0.15);
+                }
+            }
+
+            .whitelist_modal-mac {
+                font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+                font-size: 0.875rem;
+            }
+
+            .whitelist_modal-hint {
+                font-size: 0.75rem;
+                opacity: 0.7;
+                margin-top: 6px;
+            }
+
+            .whitelist_modal-error {
+                font-size: 0.8125rem;
+                color: #ef4444;
+                margin-top: 10px;
+                display: none;
             }
             
             .form-group {
@@ -2695,6 +2860,10 @@ return view.extend({
                                 E('option', { 'value': 'simple', 'selected': (localStorage.getItem('bandix_device_mode') !== 'detailed') ? 'selected' : null }, _('Simple Mode')),
                                 E('option', { 'value': 'detailed', 'selected': (localStorage.getItem('bandix_device_mode') === 'detailed') ? 'selected' : null }, _('Detailed Mode'))
                             ])
+                        ]),
+                        E('div', { 'class': 'device-group' }, [
+                            E('span', { 'class': 'device-group-label' }, _('Global Rate Limit')),
+                            E('span', { 'class': 'bandix-badge', 'id': 'bandix_whitelist_badge', 'style': 'cursor: pointer; user-select: none;' }, _('Loading...'))
                         ])
                     ])
                 ]),
@@ -2959,6 +3128,13 @@ return view.extend({
             });
         }
 
+        var whitelistBadge = view.querySelector('#bandix_whitelist_badge');
+        if (whitelistBadge) {
+            whitelistBadge.addEventListener('click', function () {
+                showWhitelistModal();
+            });
+        }
+
         // 创建限速设置模态框
         var bandix_modal = E('div', { 'class': 'bandix_modal-overlay', 'id': 'rate-limit-bandix_modal' }, [
             E('div', { 'class': 'bandix_modal' }, [
@@ -3071,6 +3247,77 @@ return view.extend({
 
         document.body.appendChild(confirmDialog);
 
+        // 创建白名单管理弹窗
+        var whitelistModal = E('div', { 'class': 'whitelist_modal-overlay', 'id': 'whitelist_modal' }, [
+            E('div', { 'class': 'whitelist_modal' }, [
+                E('div', { 'class': 'whitelist_modal-header' }, [
+                    E('h3', { 'class': 'whitelist_modal-title' }, _('Global Rate Limit'))
+                ]),
+                E('div', { 'class': 'whitelist_modal-body' }, [
+                    E('div', { 'class': 'whitelist_modal-row' }, [
+                        E('div', {}, [
+                            E('div', { 'style': 'font-weight: 600;' }, _('Enabled')),
+                            E('div', { 'class': 'whitelist_modal-hint' }, _('When enabled, all devices will be rate limited. Devices in the list are exempt (whitelist).'))
+                        ]),
+                        E('input', { 'type': 'checkbox', 'id': 'whitelist_enabled_checkbox' })
+                    ]),
+                    E('div', { 'style': 'margin-top: 14px; font-weight: 600;' }, _('Default Rate Limit')),
+                    E('div', { 'class': 'form-group', 'style': 'margin-top: 12px;' }, [
+                        E('label', { 'class': 'form-label' }, _('Upload Limit')),
+                        E('div', { 'style': 'display: flex; gap: 8px;' }, [
+                            E('input', { 'type': 'number', 'min': '0', 'step': '0.01', 'class': 'form-input', 'id': 'whitelist_default_wan_tx', 'placeholder': '0', 'style': 'flex: 1;' }),
+                            E('select', { 'class': 'cbi-input-select', 'id': 'whitelist_default_wan_tx_unit', 'style': 'width: 110px; flex-shrink: 0;' }, [
+                                E('option', { 'value': '1024' }, 'KB/s'),
+                                E('option', { 'value': '1048576' }, 'MB/s'),
+                                E('option', { 'value': '1073741824' }, 'GB/s'),
+                                E('option', { 'value': '125' }, 'Kbps'),
+                                E('option', { 'value': '125000' }, 'Mbps'),
+                                E('option', { 'value': '125000000' }, 'Gbps')
+                            ])
+                        ]),
+                        E('div', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-top: 4px;' }, _('Tip: Enter 0 for unlimited'))
+                    ]),
+                    E('div', { 'class': 'form-group', 'style': 'margin-top: 12px;' }, [
+                        E('label', { 'class': 'form-label' }, _('Download Limit')),
+                        E('div', { 'style': 'display: flex; gap: 8px;' }, [
+                            E('input', { 'type': 'number', 'min': '0', 'step': '0.01', 'class': 'form-input', 'id': 'whitelist_default_wan_rx', 'placeholder': '0', 'style': 'flex: 1;' }),
+                            E('select', { 'class': 'cbi-input-select', 'id': 'whitelist_default_wan_rx_unit', 'style': 'width: 110px; flex-shrink: 0;' }, [
+                                E('option', { 'value': '1024' }, 'KB/s'),
+                                E('option', { 'value': '1048576' }, 'MB/s'),
+                                E('option', { 'value': '1073741824' }, 'GB/s'),
+                                E('option', { 'value': '125' }, 'Kbps'),
+                                E('option', { 'value': '125000' }, 'Mbps'),
+                                E('option', { 'value': '125000000' }, 'Gbps')
+                            ])
+                        ]),
+                        E('div', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-top: 4px;' }, _('Tip: Enter 0 for unlimited'))
+                    ]),
+                    E('div', { 'style': 'display: flex; justify-content: flex-end; margin-top: 8px;' }, [
+                        E('button', { 'class': 'cbi-button cbi-button-action', 'id': 'whitelist_default_save_btn' }, _('Save'))
+                    ]),
+                    E('div', { 'style': 'margin-top: 8px; font-weight: 600;' }, _('Exempt Devices (Whitelist)')),
+                    E('div', { 'class': 'whitelist_modal-list', 'id': 'whitelist_macs_list' }, [
+                        E('div', { 'style': 'text-align: center; opacity: 0.7; padding: 12px 0;' }, _('Loading...'))
+                    ]),
+                    E('div', { 'style': 'margin-top: 14px;' }, [
+                        E('div', { 'class': 'whitelist_modal-row', 'style': 'justify-content: flex-start;' }, [
+                            E('select', { 'class': 'cbi-input-select', 'id': 'whitelist_device_select', 'style': 'width: 200px; flex-shrink: 0;' }, [
+                                E('option', { 'value': '' }, _('Select Device'))
+                            ]),
+                            E('input', { 'type': 'text', 'class': 'form-input', 'id': 'whitelist_add_mac_input', 'placeholder': 'aa:bb:cc:dd:ee:ff', 'style': 'flex: 1;' }),
+                            E('button', { 'class': 'cbi-button cbi-button-positive', 'id': 'whitelist_add_mac_btn', 'style': 'flex-shrink: 0;' }, _('Add'))
+                        ]),
+                        E('div', { 'class': 'whitelist_modal-error', 'id': 'whitelist_modal_error' }, '')
+                    ])
+                ]),
+                E('div', { 'class': 'whitelist_modal-footer' }, [
+                    E('button', { 'class': 'cbi-button cbi-button-reset', 'id': 'whitelist_modal_close' }, _('Close'))
+                ])
+            ])
+        ]);
+
+        document.body.appendChild(whitelistModal);
+
         // 确认对话框相关变量
         var confirmDialogCallback = null;
 
@@ -3137,6 +3384,295 @@ return view.extend({
             if (e.target === this) {
                 hideConfirmDialog();
             }
+        });
+
+        function parseWhitelistState(res) {
+            if (!res) return { enabled: false, macs: [] };
+            if (res.success === false || res.error) {
+                throw new Error(res.error || _('Failed to load whitelist'));
+            }
+            if (res.status && res.status !== 'success') {
+                throw new Error(res.error || _('Failed to load whitelist'));
+            }
+            var data = res.data ? res.data : res;
+            return {
+                enabled: !!data.enabled,
+                macs: Array.isArray(data.macs) ? data.macs : [],
+                default_wan_rx_rate_limit: data.default_wan_rx_rate_limit,
+                default_wan_tx_rate_limit: data.default_wan_tx_rate_limit
+            };
+        }
+
+        function pickUnit(bytes) {
+            var n = parseFloat(bytes);
+            if (isNaN(n) || n < 0) return { value: '', unit: '1024' };
+            if (n === 0) return { value: 0, unit: '1024' };
+
+            if (n >= 125000000 && Math.abs(n / 125000000 - Math.round(n / 125000000)) < 1e-9) return { value: Math.round(n / 125000000), unit: '125000000' };
+            if (n >= 125000 && Math.abs(n / 125000 - Math.round(n / 125000)) < 1e-9) return { value: Math.round(n / 125000), unit: '125000' };
+            if (n >= 125 && Math.abs(n / 125 - Math.round(n / 125)) < 1e-9) return { value: Math.round(n / 125), unit: '125' };
+
+            if (n >= 1073741824) return { value: +(n / 1073741824).toFixed(2), unit: '1073741824' };
+            if (n >= 1048576) return { value: +(n / 1048576).toFixed(2), unit: '1048576' };
+            return { value: +(n / 1024).toFixed(2), unit: '1024' };
+        }
+
+        function unitToBytes(valStr, unitStr) {
+            var v = parseFloat((valStr || '').trim());
+            var u = parseFloat(unitStr);
+            if (isNaN(v) || v < 0 || isNaN(u) || u <= 0) return null;
+            return Math.round(v * u);
+        }
+
+        function getDeviceLabel(d) {
+            var name = d && (d.hostname || d.name) ? (d.hostname || d.name) : '';
+            var ip = d && d.ip ? d.ip : '';
+            var mac = d && d.mac ? d.mac : '';
+            var left = name || ip || mac || '';
+            var right = mac && left !== mac ? (' ' + mac) : '';
+            return (left + right).trim();
+        }
+
+        function populateWhitelistDeviceSelect() {
+            var sel = document.getElementById('whitelist_device_select');
+            if (!sel) return;
+
+            var keep = sel.value;
+            sel.innerHTML = '';
+            sel.appendChild(E('option', { 'value': '' }, _('Select Device')));
+
+            var devices = [];
+            try { devices = (latestDevices && latestDevices.length) ? latestDevices : []; } catch (e) { devices = []; }
+            if (!devices.length) {
+                sel.value = '';
+                return;
+            }
+
+            devices.slice().sort(function (a, b) {
+                return getDeviceLabel(a).localeCompare(getDeviceLabel(b));
+            }).forEach(function (d) {
+                if (!d || !d.mac) return;
+                sel.appendChild(E('option', { 'value': d.mac }, getDeviceLabel(d)));
+            });
+
+            sel.value = keep;
+        }
+
+        function setWhitelistError(msg) {
+            var el = document.getElementById('whitelist_modal_error');
+            if (!el) return;
+            if (msg) {
+                el.textContent = msg;
+                el.style.display = 'block';
+            } else {
+                el.textContent = '';
+                el.style.display = 'none';
+            }
+        }
+
+        function updateWhitelistBadge(state) {
+            var badge = view.querySelector('#bandix_whitelist_badge');
+            if (!badge) return;
+            if (!state) {
+                badge.textContent = _('Unavailable');
+                badge.style.backgroundColor = '';
+                return;
+            }
+            var text = state.enabled ? _('Enabled') : _('Disabled');
+            var count = (state.macs && state.macs.length) ? state.macs.length : 0;
+            badge.textContent = text + ' (' + count + ')';
+            badge.style.backgroundColor = state.enabled ? '#10b981' : '#6b7280';
+            badge.style.color = '#fff';
+        }
+
+        function renderWhitelistList(macs) {
+            var listEl = document.getElementById('whitelist_macs_list');
+            if (!listEl) return;
+            listEl.innerHTML = '';
+
+            if (!macs || macs.length === 0) {
+                listEl.appendChild(E('div', { 'style': 'text-align: center; opacity: 0.7; padding: 12px 0;' }, _('No devices')));
+                return;
+            }
+
+            var deviceMap = {};
+            try {
+                (latestDevices || []).forEach(function (d) {
+                    if (d && d.mac) deviceMap[d.mac] = d;
+                });
+            } catch (e) { deviceMap = {}; }
+
+            macs.slice().sort().forEach(function (mac) {
+                var d = deviceMap[mac];
+                var hostname = d && d.hostname ? d.hostname : '';
+                var ip = d && d.ip ? d.ip : '';
+                var title = hostname || ip || mac;
+
+                var item = E('div', { 'class': 'whitelist_modal-item' }, [
+                    E('div', { 'style': 'display: flex; flex-direction: column; gap: 2px;' }, [
+                        E('div', { 'style': 'font-weight: 600;' }, title),
+                        E('div', { 'style': 'font-size: 0.75rem; opacity: 0.7;' }, [
+                            ip ? (ip + ' · ') : '',
+                            E('span', { 'class': 'whitelist_modal-mac' }, mac)
+                        ])
+                    ]),
+                    E('button', { 'class': 'cbi-button cbi-button-negative', 'style': 'padding: 4px 10px;' }, _('Delete'))
+                ]);
+
+                item.querySelector('button').addEventListener('click', function () {
+                    showConfirmDialog(
+                        _('Delete'),
+                        _('Remove this device from the list?'),
+                        function () {
+                            callDeleteRateLimitWhitelist(mac).then(function () {
+                                return loadWhitelistModal();
+                            }).then(function () {
+                                return refreshWhitelistStatus();
+                            }).catch(function (e) {
+                                setWhitelistError(e && e.message ? e.message : _('Failed'));
+                            });
+                        }
+                    );
+                });
+
+                listEl.appendChild(item);
+            });
+        }
+
+        function loadWhitelistModal() {
+            setWhitelistError('');
+            var listEl = document.getElementById('whitelist_macs_list');
+            if (listEl) listEl.innerHTML = '<div style="text-align: center; opacity: 0.7; padding: 12px 0;">' + _('Loading...') + '</div>';
+
+            return callGetRateLimitWhitelist().then(function (res) {
+                var state = parseWhitelistState(res);
+                var checkbox = document.getElementById('whitelist_enabled_checkbox');
+                if (checkbox) checkbox.checked = !!state.enabled;
+                var rxEl = document.getElementById('whitelist_default_wan_rx');
+                var txEl = document.getElementById('whitelist_default_wan_tx');
+                var rxUnitEl = document.getElementById('whitelist_default_wan_rx_unit');
+                var txUnitEl = document.getElementById('whitelist_default_wan_tx_unit');
+                var rxPicked = pickUnit(state.default_wan_rx_rate_limit);
+                var txPicked = pickUnit(state.default_wan_tx_rate_limit);
+                if (rxEl) rxEl.value = (rxPicked.value !== '') ? String(rxPicked.value) : '';
+                if (txEl) txEl.value = (txPicked.value !== '') ? String(txPicked.value) : '';
+                if (rxUnitEl) rxUnitEl.value = rxPicked.unit;
+                if (txUnitEl) txUnitEl.value = txPicked.unit;
+                renderWhitelistList(state.macs);
+                return state;
+            }).catch(function (e) {
+                var msg = (e && e.message) ? e.message : _('Failed to load whitelist');
+                setWhitelistError(msg);
+                if (listEl) listEl.innerHTML = '<div style="text-align: center; opacity: 0.7; padding: 12px 0;">' + _('Failed') + '</div>';
+                return null;
+            });
+        }
+
+        function refreshWhitelistStatus() {
+            return callGetRateLimitWhitelist().then(function (res) {
+                var state = parseWhitelistState(res);
+                updateWhitelistBadge(state);
+                return state;
+            }).catch(function () {
+                updateWhitelistBadge(null);
+                return null;
+            });
+        }
+
+        function showWhitelistModal() {
+            whitelistModal.classList.add('show');
+            populateWhitelistDeviceSelect();
+            try {
+                var sel = document.getElementById('whitelist_device_select');
+                if (sel && !sel.__bandixBound) {
+                    sel.addEventListener('change', function () {
+                        var macInput = document.getElementById('whitelist_add_mac_input');
+                        if (macInput && this.value) macInput.value = this.value;
+                    });
+                    sel.__bandixBound = true;
+                }
+            } catch (e) { }
+            loadWhitelistModal();
+        }
+
+        function hideWhitelistModal() {
+            whitelistModal.classList.remove('show');
+            setWhitelistError('');
+        }
+
+        document.getElementById('whitelist_modal_close').addEventListener('click', hideWhitelistModal);
+
+        document.getElementById('whitelist_enabled_checkbox').addEventListener('change', function () {
+            var checkbox = this;
+            checkbox.disabled = true;
+            setWhitelistError('');
+            callSetRateLimitWhitelistEnabled(checkbox.checked ? 1 : 0).then(function () {
+                return loadWhitelistModal();
+            }).then(function () {
+                return refreshWhitelistStatus();
+            }).catch(function (e) {
+                setWhitelistError(e && e.message ? e.message : _('Failed'));
+            }).finally(function () {
+                checkbox.disabled = false;
+            });
+        });
+
+        document.getElementById('whitelist_add_mac_btn').addEventListener('click', function () {
+            var input = document.getElementById('whitelist_add_mac_input');
+            if (!input) return;
+            var sel = document.getElementById('whitelist_device_select');
+            var mac = (input.value || '').trim();
+            if (!mac && sel && sel.value) mac = sel.value;
+            var macRe = /^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$/;
+            if (!macRe.test(mac)) {
+                setWhitelistError(_('Invalid MAC address'));
+                return;
+            }
+
+            var btn = this;
+            btn.disabled = true;
+            setWhitelistError('');
+
+            callAddRateLimitWhitelist(mac).then(function () {
+                input.value = '';
+                if (sel) sel.value = '';
+                return loadWhitelistModal();
+            }).then(function () {
+                return refreshWhitelistStatus();
+            }).catch(function (e) {
+                setWhitelistError(e && e.message ? e.message : _('Failed'));
+            }).finally(function () {
+                btn.disabled = false;
+            });
+        });
+
+        document.getElementById('whitelist_default_save_btn').addEventListener('click', function () {
+            var rxEl = document.getElementById('whitelist_default_wan_rx');
+            var txEl = document.getElementById('whitelist_default_wan_tx');
+            var rxUnitEl = document.getElementById('whitelist_default_wan_rx_unit');
+            var txUnitEl = document.getElementById('whitelist_default_wan_tx_unit');
+            if (!rxEl || !txEl || !rxUnitEl || !txUnitEl) return;
+
+            var rxBytes = unitToBytes(rxEl.value, rxUnitEl.value);
+            var txBytes = unitToBytes(txEl.value, txUnitEl.value);
+            if (rxBytes == null || txBytes == null) {
+                setWhitelistError(_('Invalid value'));
+                return;
+            }
+
+            var btn = this;
+            btn.disabled = true;
+            setWhitelistError('');
+
+            callSetDefaultRateLimit(rxBytes, txBytes).then(function () {
+                return loadWhitelistModal();
+            }).then(function () {
+                return refreshWhitelistStatus();
+            }).catch(function (e) {
+                setWhitelistError(e && e.message ? e.message : _('Failed'));
+            }).finally(function () {
+                btn.disabled = false;
+            });
         });
 
         // 日期选择按钮事件处理（添加规则模态框）
@@ -5365,7 +5901,13 @@ return view.extend({
                             }),
                             device.hostname || '-'
                         ]),
-                        E('div', { 'class': 'device-ip' }, device.ip)
+                        E('div', { 'class': 'device-ip' }, [
+                            device.connection_type ? E('span', {
+                                'class': 'device-connection-type',
+                                'title': device.connection_type === 'wifi' ? _('Wireless') : _('Wired')
+                            }, device.connection_type === 'wifi' ? '📶' : '🔌') : '',
+                            device.ip
+                        ])
                     ];
 
                     // 详细模式下显示更多信息
@@ -5618,7 +6160,13 @@ return view.extend({
                                 E('span', { 'class': 'device-status ' + (isOnline ? 'online' : 'offline') }),
                                 E('div', {}, [
                                     E('div', { 'style': 'font-weight: 600;' }, device.hostname || '-'),
-                                    E('div', { 'class': 'device-card-ip' }, device.ip)
+                                    E('div', { 'class': 'device-card-ip' }, [
+                                        device.connection_type ? E('span', {
+                                            'class': 'device-connection-type',
+                                            'title': device.connection_type === 'wifi' ? _('Wireless') : _('Wired')
+                                        }, device.connection_type === 'wifi' ? '📶' : '🔌') : '',
+                                        device.ip
+                                    ])
                                 ])
                             ]),
                             E('div', { 'class': 'device-card-action' }, [
@@ -6643,6 +7191,7 @@ return view.extend({
 
         // 立即执行一次，不等待轮询
         updateDeviceData();
+        refreshWhitelistStatus();
         fetchAllScheduleRules();
         updateTrafficStatistics();
         

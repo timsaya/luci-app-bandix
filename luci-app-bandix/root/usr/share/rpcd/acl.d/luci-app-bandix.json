@@ -23,7 +23,8 @@
 					"checkUpdate",
 					"installUpdate",
 					"getTrafficUsageRanking",
-					"getTrafficUsageIncrements"
+					"getTrafficUsageIncrements",
+					"getRateLimitWhitelist"
 				]
 			},
 			"uci": [
@@ -52,7 +53,13 @@
 					"checkUpdate",
 					"installUpdate",
 					"getTrafficUsageRanking",
-					"getTrafficUsageIncrements"
+					"getTrafficUsageIncrements",
+					"getRateLimitWhitelist",
+					"getRateLimitWhitelistEnabled",
+					"setRateLimitWhitelistEnabled",
+					"addRateLimitWhitelist",
+					"deleteRateLimitWhitelist",
+					"setDefaultRateLimit"
 				]
 			},
 			"uci": [
