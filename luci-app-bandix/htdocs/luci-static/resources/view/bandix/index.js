@@ -5883,8 +5883,20 @@ return view.extend({
                     timeRangeEl.textContent = timeRangeText;
                 }
                 
-                // 更新设备下拉框
-                updateDeviceSelectForIncrements(result.rankings || []);
+                // 更新设备下拉框 - 获取完整的设备列表
+                if (typeof latestDevices !== 'undefined' && latestDevices.length > 0) {
+                    updateDeviceSelectForIncrements(latestDevices);
+                } else {
+                    // 如果还没有设备数据，先获取设备数据
+                    callStatus().then(function(deviceResult) {
+                        if (deviceResult && deviceResult.devices) {
+                            latestDevices = deviceResult.devices;
+                            updateDeviceSelectForIncrements(latestDevices);
+                        }
+                    }).catch(function(err) {
+                        console.error('Failed to load device list for timeline:', err);
+                    });
+                }
                 
                 renderUsageRanking(usageRankingData, usageRankingShowAll);
                 
@@ -6075,25 +6087,56 @@ return view.extend({
         }
         
         // 更新设备下拉框
-        function updateDeviceSelectForIncrements(rankings) {
+        function updateDeviceSelectForIncrements(devices) {
             var macSelect = document.getElementById('traffic-increments-mac');
             if (!macSelect) return;
-            
+
             // 保存当前选中的值
             var currentValue = macSelect.value;
-            
+
             // 清空现有选项（保留 "All Devices"）
             macSelect.innerHTML = '';
             macSelect.appendChild(E('option', { 'value': 'all' }, _('All Devices')));
-            
+
+            // 对设备列表进行排序：在线设备在前，离线设备在后，然后按IP地址从小到大排序
+            var sortedDevices = devices.slice().sort(function (a, b) {
+                var aOnline = isDeviceOnline(a);
+                var bOnline = isDeviceOnline(b);
+
+                // 首先按在线状态排序：在线设备在前
+                if (aOnline && !bOnline) return -1;
+                if (!aOnline && bOnline) return 1;
+
+                // 在线状态相同时，按IP地址排序
+                var aIp = a.ip || '';
+                var bIp = b.ip || '';
+
+                // 将IP地址转换为数字进行比较
+                var aIpParts = aIp.split('.').map(function (part) { return parseInt(part) || 0; });
+                var bIpParts = bIp.split('.').map(function (part) { return parseInt(part) || 0; });
+
+                // 逐段比较IP地址
+                for (var i = 0; i < 4; i++) {
+                    var aPart = aIpParts[i] || 0;
+                    var bPart = bIpParts[i] || 0;
+                    if (aPart !== bPart) {
+                        return aPart - bPart;
+                    }
+                }
+
+                // IP地址相同时，按MAC地址排序
+                return (a.mac || '').localeCompare(b.mac || '');
+            });
+
             // 添加设备选项
-            rankings.forEach(function(item) {
-                if (item.mac && item.hostname) {
-                    var option = E('option', { 'value': item.mac }, item.hostname + ' (' + item.mac + ')');
+            sortedDevices.forEach(function(device) {
+                if (device.mac) {
+                    var label = (device.hostname || device.ip || device.mac || '-') + (device.ip ? ' (' + device.ip + ')' : '') + (device.mac ? ' [' + device.mac + ']' : '');
+                    var option = E('option', { 'value': device.mac }, label);
                     macSelect.appendChild(option);
                 }
             });
-            
+
             // 恢复之前选中的值（如果还在列表中）
             if (currentValue && currentValue !== 'all') {
                 var optionExists = false;
