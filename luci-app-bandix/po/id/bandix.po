@@ -371,6 +371,24 @@ msgstr "Filter jenis"
 msgid "All"
 msgstr "Semua"
 
+msgid "Period"
+msgstr "Periode"
+
+msgid "Display Mode"
+msgstr "Mode Tampilan"
+
+msgid "This Year"
+msgstr "Tahun Ini"
+
+msgid "Week"
+msgstr "Minggu Ini"
+
+msgid "Month"
+msgstr "Bulan Ini"
+
+msgid "Year"
+msgstr "Tahun Ini"
+
 msgid "Queries Only"
 msgstr "Hanya kueri"
 

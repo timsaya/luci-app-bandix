@@ -215,6 +215,7 @@ function filterLanIPv6(ipv6Addresses) {
 var callStatus = rpc.declare({
     object: 'luci.bandix',
     method: 'getStatus',
+    params: ['period'],
     expect: {}
 });
 
@@ -393,6 +394,33 @@ return view.extend({
                 display: inline-flex;
                 align-items: center;
                 gap: 12px;
+            }
+
+            .device-toolbar {
+                display: inline-flex;
+                align-items: center;
+                justify-content: flex-end;
+                gap: 16px;
+                flex-wrap: wrap;
+            }
+
+            .device-toolbar .device-group {
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                padding-left: 12px;
+                border-left: 1px solid rgba(107, 114, 128, 0.35);
+            }
+
+            .device-toolbar .device-group:first-child {
+                padding-left: 0;
+                border-left: none;
+            }
+
+            .device-toolbar .device-group-label {
+                font-size: 0.75rem;
+                opacity: 0.7;
+                white-space: nowrap;
             }
 
             .device-mode-group .device-mode-item {
@@ -2645,30 +2673,100 @@ return view.extend({
             E('div', { 'class': 'cbi-section' }, [
                 E('h3', { 'class': 'history-header', 'style': 'display: flex; align-items: center; justify-content: space-between;' }, [
                     E('span', {}, _('Device List')),
-                    E('div', { 'class': 'device-mode-group' }, [
-                        E('div', { 'class': 'device-mode-item' }, [
-                            E('input', {
-                                'type': 'radio',
-                                'name': 'bandix_device_mode',
-                                'value': 'simple',
-                                'class': 'cbi-input-radio',
-                                'id': 'bandix_device_mode_simple',
-                                'style': 'height: auto',
-                                'checked': (localStorage.getItem('bandix_device_mode') !== 'detailed') ? 'checked' : null
-                            }),
-                            E('label', { 'for': 'bandix_device_mode_simple', 'style': 'cursor: pointer; user-select: none; font-size: 0.875rem;' }, _('Simple Mode'))
+                    E('div', { 'class': 'device-toolbar' }, [
+                        E('div', { 'class': 'device-group' }, [
+                            E('span', { 'class': 'device-group-label' }, _('Period')),
+                            E('div', { 'class': 'device-mode-group' }, [
+                                E('div', { 'class': 'device-mode-item' }, [
+                                    E('input', {
+                                        'type': 'radio',
+                                        'name': 'bandix_device_period',
+                                        'value': 'all',
+                                        'class': 'cbi-input-radio',
+                                        'id': 'bandix_device_period_all',
+                                        'style': 'height: auto',
+                                        'checked': ((localStorage.getItem('bandix_device_period') || 'all') === 'all') ? 'checked' : null
+                                    }),
+                                    E('label', { 'for': 'bandix_device_period_all', 'style': 'cursor: pointer; user-select: none; font-size: 0.875rem;' }, _('All'))
+                                ]),
+                                E('div', { 'class': 'device-mode-item' }, [
+                                    E('input', {
+                                        'type': 'radio',
+                                        'name': 'bandix_device_period',
+                                        'value': 'today',
+                                        'class': 'cbi-input-radio',
+                                        'id': 'bandix_device_period_today',
+                                        'style': 'height: auto',
+                                        'checked': ((localStorage.getItem('bandix_device_period') || 'all') === 'today') ? 'checked' : null
+                                    }),
+                                    E('label', { 'for': 'bandix_device_period_today', 'style': 'cursor: pointer; user-select: none; font-size: 0.875rem;' }, _('Today'))
+                                ]),
+                                E('div', { 'class': 'device-mode-item' }, [
+                                    E('input', {
+                                        'type': 'radio',
+                                        'name': 'bandix_device_period',
+                                        'value': 'week',
+                                        'class': 'cbi-input-radio',
+                                        'id': 'bandix_device_period_week',
+                                        'style': 'height: auto',
+                                        'checked': ((localStorage.getItem('bandix_device_period') || 'all') === 'week') ? 'checked' : null
+                                    }),
+                                    E('label', { 'for': 'bandix_device_period_week', 'style': 'cursor: pointer; user-select: none; font-size: 0.875rem;' }, _('This Week'))
+                                ]),
+                                E('div', { 'class': 'device-mode-item' }, [
+                                    E('input', {
+                                        'type': 'radio',
+                                        'name': 'bandix_device_period',
+                                        'value': 'month',
+                                        'class': 'cbi-input-radio',
+                                        'id': 'bandix_device_period_month',
+                                        'style': 'height: auto',
+                                        'checked': ((localStorage.getItem('bandix_device_period') || 'all') === 'month') ? 'checked' : null
+                                    }),
+                                    E('label', { 'for': 'bandix_device_period_month', 'style': 'cursor: pointer; user-select: none; font-size: 0.875rem;' }, _('This Month'))
+                                ]),
+                                E('div', { 'class': 'device-mode-item' }, [
+                                    E('input', {
+                                        'type': 'radio',
+                                        'name': 'bandix_device_period',
+                                        'value': 'year',
+                                        'class': 'cbi-input-radio',
+                                        'id': 'bandix_device_period_year',
+                                        'style': 'height: auto',
+                                        'checked': ((localStorage.getItem('bandix_device_period') || 'all') === 'year') ? 'checked' : null
+                                    }),
+                                    E('label', { 'for': 'bandix_device_period_year', 'style': 'cursor: pointer; user-select: none; font-size: 0.875rem;' }, _('This Year'))
+                                ])
+                            ])
                         ]),
-                        E('div', { 'class': 'device-mode-item' }, [
-                            E('input', {
-                                'type': 'radio',
-                                'name': 'bandix_device_mode',
-                                'value': 'detailed',
-                                'class': 'cbi-input-radio',
-                                'id': 'bandix_device_mode_detailed',
-                                'style': 'height: auto',
-                                'checked': (localStorage.getItem('bandix_device_mode') === 'detailed') ? 'checked' : null
-                            }),
-                            E('label', { 'for': 'bandix_device_mode_detailed', 'style': 'cursor: pointer; user-select: none; font-size: 0.875rem;' }, _('Detailed Mode'))
+                        E('div', { 'class': 'device-group' }, [
+                            E('span', { 'class': 'device-group-label' }, _('Display Mode')),
+                            E('div', { 'class': 'device-mode-group' }, [
+                                E('div', { 'class': 'device-mode-item' }, [
+                                    E('input', {
+                                        'type': 'radio',
+                                        'name': 'bandix_device_mode',
+                                        'value': 'simple',
+                                        'class': 'cbi-input-radio',
+                                        'id': 'bandix_device_mode_simple',
+                                        'style': 'height: auto',
+                                        'checked': (localStorage.getItem('bandix_device_mode') !== 'detailed') ? 'checked' : null
+                                    }),
+                                    E('label', { 'for': 'bandix_device_mode_simple', 'style': 'cursor: pointer; user-select: none; font-size: 0.875rem;' }, _('Simple Mode'))
+                                ]),
+                                E('div', { 'class': 'device-mode-item' }, [
+                                    E('input', {
+                                        'type': 'radio',
+                                        'name': 'bandix_device_mode',
+                                        'value': 'detailed',
+                                        'class': 'cbi-input-radio',
+                                        'id': 'bandix_device_mode_detailed',
+                                        'style': 'height: auto',
+                                        'checked': (localStorage.getItem('bandix_device_mode') === 'detailed') ? 'checked' : null
+                                    }),
+                                    E('label', { 'for': 'bandix_device_mode_detailed', 'style': 'cursor: pointer; user-select: none; font-size: 0.875rem;' }, _('Detailed Mode'))
+                                ])
+                            ])
                         ])
                     ])
                 ]),
@@ -2916,6 +3014,14 @@ return view.extend({
         deviceModeRadios.forEach(function (radio) {
             radio.addEventListener('change', function () {
                 localStorage.setItem('bandix_device_mode', this.value);
+                updateDeviceData();
+            });
+        });
+
+        var devicePeriodRadios = view.querySelectorAll('input[name="bandix_device_period"]');
+        devicePeriodRadios.forEach(function (radio) {
+            radio.addEventListener('change', function () {
+                localStorage.setItem('bandix_device_period', this.value);
                 updateDeviceData();
             });
         });
@@ -5054,8 +5160,10 @@ return view.extend({
 
         // 定义更新设备数据的函数
         function updateDeviceData() {
+            var devicePeriod = localStorage.getItem('bandix_device_period') || 'all';
+            if (!/^(today|week|month|year|all)$/.test(devicePeriod)) devicePeriod = 'all';
             return Promise.all([
-                callStatus(),
+                callStatus(devicePeriod),
                 fetchAllScheduleRules()
             ]).then(function (results) {
                 var result = results[0];

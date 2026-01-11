@@ -369,7 +369,25 @@ msgid "Type Filter"
 msgstr "类型过滤"
 
 msgid "All"
-msgstr "全部"
+msgstr "Все"
+
+msgid "Period"
+msgstr "Период"
+
+msgid "Display Mode"
+msgstr "Режим Отображения"
+
+msgid "This Year"
+msgstr "Этот Год"
+
+msgid "Week"
+msgstr "Эта Неделя"
+
+msgid "Month"
+msgstr "Этот Месяц"
+
+msgid "Year"
+msgstr "Этот Год"
 
 msgid "Queries Only"
 msgstr "仅查询"

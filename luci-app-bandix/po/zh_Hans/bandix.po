@@ -371,6 +371,21 @@ msgstr "类型过滤"
 msgid "All"
 msgstr "全部"
 
+msgid "Period"
+msgstr "周期"
+
+msgid "Display Mode"
+msgstr "显示模式"
+
+msgid "Week"
+msgstr "本周"
+
+msgid "Month"
+msgstr "本月"
+
+msgid "Year"
+msgstr "本年"
+
 msgid "Queries Only"
 msgstr "仅查询"
 
@@ -1073,6 +1088,9 @@ msgstr "上周"
 
 msgid "This Month"
 msgstr "本月"
+
+msgid "This Year"
+msgstr "本年"
 
 msgid "Last Month"
 msgstr "上月"

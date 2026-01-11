@@ -49,7 +49,17 @@ escape_json_string() {
 
 # 获取设备状态
 get_device_status() {
-	local api_result=$(curl -s --connect-timeout 2 --max-time 5 "$BANDIX_DEVICES_API" 2>/dev/null)
+	local period="$1"
+	local url="$BANDIX_DEVICES_API"
+	case "$period" in
+		today|week|month|year|all|'')
+			;;
+		*)
+			period="all"
+			;;
+	esac
+	[ -n "$period" ] && url="${url}?period=${period}"
+	local api_result=$(curl -s --connect-timeout 2 --max-time 5 "$url" 2>/dev/null)
 	
 	# 检查API调用是否成功
 	if [ $? -ne 0 ] || [ -z "$api_result" ]; then
@@ -956,6 +966,7 @@ case "$1" in
 	list)
 		json_init
 		json_add_object "getStatus"
+		json_add_string "period"
 		json_close_object
 		
 		json_add_object "getMetrics"
@@ -1042,7 +1053,18 @@ case "$1" in
 	call)
 		case "$2" in
 			getStatus)
-				get_device_status
+				period=""
+				input=""
+				if read -t 1 -r input; then
+					:
+				fi
+				if [ -n "$input" ]; then
+					period="$(echo "$input" | jsonfilter -e '$[0]' 2>/dev/null)"
+					[ -z "$period" ] && period="$(echo "$input" | jsonfilter -e '$.period' 2>/dev/null)"
+				else
+					[ -n "$3" ] && period="$3"
+				fi
+				get_device_status "$period"
 				;;
 			getMetrics)
 				# logger "luci.bandix: getMetrics called"

@@ -371,6 +371,24 @@ msgstr "タイプフィルター"
 msgid "All"
 msgstr "すべて"
 
+msgid "Period"
+msgstr "期間"
+
+msgid "Display Mode"
+msgstr "表示モード"
+
+msgid "This Year"
+msgstr "今年"
+
+msgid "Week"
+msgstr "今週"
+
+msgid "Month"
+msgstr "今月"
+
+msgid "Year"
+msgstr "今年"
+
 msgid "Queries Only"
 msgstr "クエリのみ"
 

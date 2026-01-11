@@ -371,6 +371,24 @@ msgstr "Filtr typu"
 msgid "All"
 msgstr "Wszystkie"
 
+msgid "Period"
+msgstr "Okres"
+
+msgid "Display Mode"
+msgstr "Tryb Wyświetlania"
+
+msgid "This Year"
+msgstr "Ten Rok"
+
+msgid "Week"
+msgstr "Ten Tydzień"
+
+msgid "Month"
+msgstr "Ten Miesiąc"
+
+msgid "Year"
+msgstr "Ten Rok"
+
 msgid "Queries Only"
 msgstr "Tylko zapytania"
 

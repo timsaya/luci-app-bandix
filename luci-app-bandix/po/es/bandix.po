@@ -371,6 +371,24 @@ msgstr "Filtro de tipo"
 msgid "All"
 msgstr "Todos"
 
+msgid "Period"
+msgstr "Período"
+
+msgid "Display Mode"
+msgstr "Modo de Visualización"
+
+msgid "This Year"
+msgstr "Este Año"
+
+msgid "Week"
+msgstr "Esta Semana"
+
+msgid "Month"
+msgstr "Este Mes"
+
+msgid "Year"
+msgstr "Este Año"
+
 msgid "Queries Only"
 msgstr "Solo consultas"
 

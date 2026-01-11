@@ -371,6 +371,24 @@ msgstr "กรองประเภท"
 msgid "All"
 msgstr "ทั้งหมด"
 
+msgid "Period"
+msgstr "ช่วงเวลา"
+
+msgid "Display Mode"
+msgstr "โหมดการแสดงผล"
+
+msgid "This Year"
+msgstr "ปีนี้"
+
+msgid "Week"
+msgstr "สัปดาห์นี้"
+
+msgid "Month"
+msgstr "เดือนนี้"
+
+msgid "Year"
+msgstr "ปีนี้"
+
 msgid "Queries Only"
 msgstr "สอบถามเท่านั้น"
 
