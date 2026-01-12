@@ -14,6 +14,8 @@ LuCI Bandix is developed based on the LuCI framework, offering network traffic m
 
 **Note**: This application is primarily designed for home users and simple network environments. It is not recommended for complex network architectures (such as VLAN) or enterprise-level deployments.
 
+**Important**: Hardware flow offloading must be disabled for accurate traffic monitoring. Please disable hardware flow offloading in OpenWrt before using this application.
+
 ## Installation
 
 
