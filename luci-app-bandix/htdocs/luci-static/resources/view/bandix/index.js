@@ -212,10 +212,48 @@ function filterLanIPv6(ipv6Addresses) {
     return lanAddresses.slice(0, 2);
 }
 
+function getTimeRangeForPeriod(period) {
+    if (period === 'all') {
+        return { start_ms: null, end_ms: null };
+    }
+    
+    var now = new Date();
+    var startDate;
+    var endDate;
+    
+    switch (period) {
+        case 'today':
+            startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+            endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+            break;
+        case 'week':
+            var day = now.getDay();
+            var diff = day === 0 ? 6 : day - 1;
+            startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - diff, 0, 0, 0, 0);
+            endDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + 6, 23, 59, 59, 999);
+            break;
+        case 'month':
+            startDate = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+            endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+            break;
+        case 'year':
+            startDate = new Date(now.getFullYear(), 0, 1, 0, 0, 0, 0);
+            endDate = new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999);
+            break;
+        default:
+            return { start_ms: null, end_ms: null };
+    }
+    
+    return {
+        start_ms: startDate.getTime(),
+        end_ms: endDate.getTime()
+    };
+}
+
 var callStatus = rpc.declare({
     object: 'luci.bandix',
     method: 'getStatus',
-    params: ['period'],
+    params: ['start_ms', 'end_ms'],
     expect: {}
 });
 
@@ -5631,8 +5669,11 @@ return view.extend({
         function updateDeviceData() {
             var devicePeriod = localStorage.getItem('bandix_device_period') || 'all';
             if (!/^(today|week|month|year|all)$/.test(devicePeriod)) devicePeriod = 'all';
+            
+            var timeRange = getTimeRangeForPeriod(devicePeriod);
+            
             return Promise.all([
-                callStatus(devicePeriod),
+                (devicePeriod === 'all') ? callStatus() : callStatus(timeRange.start_ms, timeRange.end_ms),
                 fetchAllScheduleRules()
             ]).then(function (results) {
                 var result = results[0];
@@ -5905,7 +5946,7 @@ return view.extend({
                             device.connection_type ? E('span', {
                                 'class': 'device-connection-type',
                                 'title': device.connection_type === 'wifi' ? _('Wireless') : _('Wired')
-                            }, device.connection_type === 'wifi' ? '📶' : '🔌') : '',
+                            }, device.connection_type === 'wifi' ? '📶' : '🔗') : '',
                             device.ip
                         ])
                     ];
@@ -6164,7 +6205,7 @@ return view.extend({
                                         device.connection_type ? E('span', {
                                             'class': 'device-connection-type',
                                             'title': device.connection_type === 'wifi' ? _('Wireless') : _('Wired')
-                                        }, device.connection_type === 'wifi' ? '📶' : '🔌') : '',
+                                        }, device.connection_type === 'wifi' ? '📶' : '🔗') : '',
                                         device.ip
                                     ])
                                 ])

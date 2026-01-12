@@ -135,16 +135,20 @@ set_default_rate_limit() {
 
 # 获取设备状态
 get_device_status() {
-	local period="$1"
 	local url="$BANDIX_DEVICES_API"
-	case "$period" in
-		today|week|month|year|all|'')
-			;;
-		*)
-			period="all"
-			;;
-	esac
-	[ -n "$period" ] && url="${url}?period=${period}"
+	local start_ms="$1"
+	local end_ms="$2"
+
+	local query_params=""
+	if [ -n "$start_ms" ] && [ "$start_ms" != "null" ] && [ "$start_ms" != "undefined" ]; then
+		query_params="${query_params}start_ms=$start_ms&"
+	fi
+	if [ -n "$end_ms" ] && [ "$end_ms" != "null" ] && [ "$end_ms" != "undefined" ]; then
+		query_params="${query_params}end_ms=$end_ms&"
+	fi
+	query_params=$(echo "$query_params" | sed 's/&$//')
+	[ -n "$query_params" ] && url="${url}?${query_params}"
+
 	local api_result=$(curl -s --connect-timeout 2 --max-time 5 "$url" 2>/dev/null)
 	
 	# 检查API调用是否成功
@@ -1052,7 +1056,8 @@ case "$1" in
 	list)
 		json_init
 		json_add_object "getStatus"
-		json_add_string "period"
+		json_add_int "start_ms"
+		json_add_int "end_ms"
 		json_close_object
 		
 		json_add_object "getMetrics"
@@ -1159,18 +1164,22 @@ case "$1" in
 	call)
 		case "$2" in
 			getStatus)
-				period=""
+				start_ms=""
+				end_ms=""
 				input=""
 				if read -t 1 -r input; then
 					:
 				fi
 				if [ -n "$input" ]; then
-					period="$(echo "$input" | jsonfilter -e '$[0]' 2>/dev/null)"
-					[ -z "$period" ] && period="$(echo "$input" | jsonfilter -e '$.period' 2>/dev/null)"
+					start_ms="$(echo "$input" | jsonfilter -e '$[0]' 2>/dev/null)"
+					[ -z "$start_ms" ] && start_ms="$(echo "$input" | jsonfilter -e '$.start_ms' 2>/dev/null)"
+					end_ms="$(echo "$input" | jsonfilter -e '$[1]' 2>/dev/null)"
+					[ -z "$end_ms" ] && end_ms="$(echo "$input" | jsonfilter -e '$.end_ms' 2>/dev/null)"
 				else
-					[ -n "$3" ] && period="$3"
+					[ -n "$3" ] && start_ms="$3"
+					[ -n "$4" ] && end_ms="$4"
 				fi
-				get_device_status "$period"
+				get_device_status "$start_ms" "$end_ms"
 				;;
 			getMetrics)
 				# logger "luci.bandix: getMetrics called"
