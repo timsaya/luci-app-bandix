@@ -2,17 +2,18 @@
 
 ## 项目概述
 
-Bandix 是一个基于 eBPF 技术的网络流量监控工具，使用 Rust 语言开发。它能够实时监控局域网内设备的网络流量、连接状态和 DNS 查询，并提供 Web API 和命令行界面进行数据访问。
+Bandix 是一个基于 eBPF 技术的网络流量监控工具，使用 Rust 语言开发。它采用模块化架构设计，能够实时监控局域网内设备的网络流量、连接状态和 DNS 查询，并提供 Web API 和命令行界面进行数据访问。
 
 ## 主要特性
 
 - **基于 eBPF 技术**：高效监控网络流量，无需修改内核代码
-- **多模块监控**：支持流量监控、连接统计和 DNS 监控
+- **模块化架构**：支持独立的流量监控、连接统计和 DNS 监控模块，可按需启用
+- **统一设备管理**：集中的设备发现、状态跟踪和信息管理
 - **双模式界面**：支持终端和 Web 接口显示
-- **详细流量统计**：实时显示各 IP 的上传/下载速率和总流量
-- **多级数据存储**：分层采样，支持日/周/月统计指标（平均值、最大值、最小值、分位数）
+- **实时流量统计**：显示各设备的上传/下载速率和总流量
+- **分层数据存储**：实时数据（1秒采样）和长期统计（1小时采样，365天保留）
 - **连接统计**：按设备监控 TCP/UDP 连接及状态跟踪
-- **MAC 地址识别**：自动关联 IP 地址与 MAC 地址
+- **MAC-IP关联**：自动关联 IP 地址与 MAC 地址
 - **定时速率限制**：为设备设置基于时间的速率限制
 - **主机名绑定**：自定义设备主机名映射
 - **高性能**：使用 Rust 和 eBPF 确保监控对系统性能影响最小
@@ -71,31 +72,15 @@ flowchart TB
 
 ### 工作原理说明
 
-**1. 数据捕获（内核空间）**
-- 网络数据包经过网络接口时，被 TC (Traffic Control) Hook 拦截
-- eBPF 程序在内核中直接处理数据包，无需拷贝到用户空间
-- eBPF 程序执行统计、过滤、速率限制等操作
+**数据捕获**：网络数据包被 TC Hook 拦截，eBPF 程序在内核中直接处理数据包，执行统计、过滤、速率限制等操作。
 
-**2. 数据传递（内核↔用户空间）**
-- eBPF Maps 作为内核和用户空间的共享内存，存储统计数据
-- RingBuf 用于高效传递 DNS 数据包（零拷贝）
-- HashMap Maps 用于存储流量统计和速率限制配置
+**数据传递**：eBPF Maps 和 RingBuf 作为内核与用户空间的共享内存，实现高效数据传递。
 
-**3. 数据处理（用户空间）**
-- 用户空间程序定期轮询 eBPF Maps 读取统计数据
-- 对原始数据进行解析、聚合、计算速率等处理
-- 将处理后的数据存储到内存缓存和持久化存储
+**数据处理**：用户空间程序定期轮询读取统计数据，进行解析、聚合和速率计算。
 
-**4. 数据展示（用户界面）**
-- Web API 提供 RESTful 接口访问统计数据
-- 支持实时查询和历史数据查询
-- 命令行界面提供实时监控显示
+**数据展示**：通过 Web API 和命令行界面提供实时监控和历史数据查询。
 
-**核心技术优势**
-- **零拷贝**：eBPF 在内核中直接处理，最小化数据拷贝
-- **高性能**：内核级处理，延迟极低
-- **低开销**：无需修改内核代码，动态加载/卸载
-- **安全可靠**：eBPF 程序经过内核验证器检查
+**核心优势**：零拷贝、高性能、低开销、安全可靠的 eBPF 技术实现。
 
 ## 项目架构
 
@@ -112,6 +97,7 @@ graph TB
         MAIN[主程序<br/>main.rs]
         CMD[命令处理<br/>command.rs]
         MONITOR[监控管理器<br/>MonitorManager]
+        DEVICE[设备管理器<br/>DeviceManager]
     end
 
     subgraph "业务模块层"
@@ -121,9 +107,8 @@ graph TB
     end
 
     subgraph "数据存储层"
-        RING[环形缓冲区<br/>RealtimeRingManager]
-        MULTI[多级采样存储<br/>MultiLevelRingManager]
-        CACHE[内存缓存<br/>HashMap缓存]
+        REALTIME[实时环形存储<br/>RealtimeRingManager<br/>1秒采样]
+        LONGTERM[长期统计存储<br/>LongTermRingManager<br/>1小时采样]
     end
 
     subgraph "eBPF层"
@@ -141,13 +126,14 @@ graph TB
     WEB --> CMD
     CMD --> MAIN
     MAIN --> MONITOR
+    MONITOR --> DEVICE
     MONITOR --> TRAFFIC
     MONITOR --> DNS
     MONITOR --> CONN
 
-    TRAFFIC --> RING
-    TRAFFIC --> MULTI
-    TRAFFIC --> CACHE
+    TRAFFIC --> REALTIME
+    TRAFFIC --> LONGTERM
+    TRAFFIC --> DEVICE
 
     TRAFFIC --> SHARED
     DNS --> SHARED
@@ -168,16 +154,22 @@ graph TB
 #### 2. 命令处理 (command.rs)
 - 参数验证和解析
 - 模块上下文创建
-- 共享资源初始化（主机名绑定、eBPF程序）
+- 共享资源初始化（主机名绑定、eBPF程序、设备管理器）
 - 服务启动和关闭处理
 
-#### 3. 监控管理器 (MonitorManager)
+#### 3. 设备管理器 (DeviceManager)
+- 统一管理局域网设备发现和状态跟踪
+- 维护设备信息（MAC、IP、主机名、在线状态）
+- 定期刷新邻居表和设备状态
+- 提供设备流量统计和状态查询接口
+
+#### 4. 监控管理器 (MonitorManager)
 - 统一管理所有监控模块
 - 模块生命周期管理（初始化、启动、停止）
-- API 路由注册
+- API 路由注册和模块协调
 
-#### 4. 业务模块
-- **流量监控模块**：处理网络流量统计、速率限制
+#### 5. 业务模块
+- **流量监控模块**：处理网络流量统计、速率限制、数据存储
 - **DNS监控模块**：捕获和分析 DNS 查询/响应
 - **连接统计模块**：统计 TCP/UDP 连接状态
 
@@ -269,51 +261,49 @@ graph TD
 graph TB
     subgraph "数据源"
         EBPF_MAPS[eBPF Maps<br/>MAC_TRAFFIC, DNS_DATA等]
-        RING_FILES[环形文件存储<br/>.ring files]
         CONFIG_FILES[配置文件<br/>hostname_bindings.json<br/>rate_limits.json]
     end
 
     subgraph "数据处理层"
-        MAP_READER[Map读取器<br/>HashMap Maps/RingBuf]
-        PARSER[数据解析器<br/>TrafficParser/DnsParser]
-        AGGREGATOR[数据聚合器<br/>RealtimeRingManager]
+        MONITOR[监控模块<br/>TrafficMonitor/DnsMonitor<br/>ConnectionMonitor]
+        DEVICE_MGR[设备管理器<br/>DeviceManager]
+        STORAGE[存储管理器<br/>RealtimeRingManager<br/>LongTermRingManager]
     end
 
     subgraph "数据存储层"
-        MEMORY_CACHE[内存缓存<br/>HashMap<String, Stats>]
+        MEMORY_CACHE[内存缓存<br/>实时统计数据]
         RING_BUFFER[环形缓冲区<br/>1秒采样数据]
-        MULTI_LEVEL[多级采样存储<br/>日/周/月统计]
+        LONG_TERM[长期统计存储<br/>1小时采样，365天]
         PERSISTENT[持久化存储<br/>磁盘文件]
     end
 
     subgraph "数据消费层"
         WEB_API[Web API接口<br/>RESTful API]
-        CLI_OUTPUT[命令行输出<br/>表格显示]
-        METRICS[指标计算<br/>平均值/分位数等]
+        CLI_OUTPUT[命令行输出<br/>实时显示]
+        METRICS[指标计算<br/>统计分析]
     end
 
-    subgraph "数据流向"
-        EBPF_MAPS --> MAP_READER
-        RING_FILES --> AGGREGATOR
-        CONFIG_FILES --> PARSER
+    EBPF_MAPS --> MONITOR
+    CONFIG_FILES --> MONITOR
 
-        MAP_READER --> PARSER
-        PARSER --> AGGREGATOR
-        AGGREGATOR --> MEMORY_CACHE
-        AGGREGATOR --> RING_BUFFER
-        AGGREGATOR --> MULTI_LEVEL
+    MONITOR --> DEVICE_MGR
+    MONITOR --> STORAGE
+    DEVICE_MGR --> STORAGE
 
-        RING_BUFFER --> PERSISTENT
-        MULTI_LEVEL --> PERSISTENT
+    STORAGE --> MEMORY_CACHE
+    STORAGE --> RING_BUFFER
+    STORAGE --> LONG_TERM
 
-        MEMORY_CACHE --> WEB_API
-        MEMORY_CACHE --> CLI_OUTPUT
-        RING_BUFFER --> METRICS
-        MULTI_LEVEL --> METRICS
+    RING_BUFFER --> PERSISTENT
+    LONG_TERM --> PERSISTENT
 
-        METRICS --> WEB_API
-        METRICS --> CLI_OUTPUT
-    end
+    MEMORY_CACHE --> WEB_API
+    MEMORY_CACHE --> CLI_OUTPUT
+    RING_BUFFER --> METRICS
+    LONG_TERM --> METRICS
+
+    METRICS --> WEB_API
+    METRICS --> CLI_OUTPUT
 ```
 
 ### Web API 架构图
@@ -370,66 +360,6 @@ graph TB
     CONN_API -.-> CONN_ENDPOINTS
 ```
 
-### 存储架构图
-
-```mermaid
-flowchart TB
-    subgraph DATA["📊 数据结构"]
-        MAC_STATS[MAC统计<br/>MacTrafficStats]
-        BASELINE[基线数据<br/>BaselineTotals]
-        RATE_LIMITS[速率限制<br/>ScheduledRateLimit]
-        HOSTNAME[主机名绑定<br/>HashMap]
-        DNS_RECORDS[DNS记录<br/>DnsQueryRecord]
-        CONN_STATS[连接统计<br/>ConnectionStats]
-    end
-
-    subgraph IMPL["🔧 存储实现"]
-        HASHMAP[HashMap缓存<br/>内存HashMap]
-        RING_MGR[RealtimeRingManager<br/>实时环形缓冲]
-        MULTI_MGR[MultiLevelRingManager<br/>多级采样管理]
-        FILE_STORAGE[文件存储<br/>JSON/文本格式]
-    end
-
-    subgraph STORE["💾 存储类型"]
-        MEMORY[内存存储<br/>实时数据缓存]
-        RING[环形缓冲区<br/>1秒采样数据]
-        MULTI_LEVEL[多级采样<br/>日/周/月统计]
-        PERSISTENT[持久化存储<br/>磁盘文件]
-    end
-
-    subgraph FLOW["🔄 数据流"]
-        EBPF_DATA[eBPF数据源]
-        RINGBUF_DATA[RingBuf数据源]
-        CONNTRACK_DATA[连接跟踪数据]
-    end
-
-    EBPF_DATA --> RING_MGR
-    RINGBUF_DATA --> HASHMAP
-    CONNTRACK_DATA --> HASHMAP
-
-    MAC_STATS --> HASHMAP
-    BASELINE --> HASHMAP
-    RATE_LIMITS --> HASHMAP
-    HOSTNAME --> HASHMAP
-    DNS_RECORDS --> HASHMAP
-    CONN_STATS --> HASHMAP
-
-    HASHMAP --> MEMORY
-    RING_MGR --> RING
-    MULTI_MGR --> MULTI_LEVEL
-    FILE_STORAGE --> PERSISTENT
-
-    RING_MGR --> MULTI_MGR
-    RING_MGR --> HASHMAP
-    MULTI_MGR --> FILE_STORAGE
-    HASHMAP --> FILE_STORAGE
-
-    style HASHMAP fill:#ffd93d
-    style RING_MGR fill:#6bcf7f
-    style MULTI_MGR fill:#4d96ff
-    style FILE_STORAGE fill:#ff6b6b
-```
-
 ## 模块详细设计
 
 ### 1. 流量监控模块 (traffic/)
@@ -446,35 +376,38 @@ graph TD
     subgraph "用户空间"
         TRAFFIC_MONITOR[TrafficMonitor<br/>监控主循环<br/>每秒轮询]
         TRAFFIC_PARSER[流量数据解析<br/>从eBPF Maps读取<br/>MAC_TRAFFIC等]
-        RING_MANAGER[环形缓冲管理<br/>RealtimeRingManager]
-        MULTI_MANAGER[多级采样管理<br/>MultiLevelRingManager]
+        REALTIME_MGR[实时环形管理器<br/>RealtimeRingManager<br/>1秒采样]
+        LONGTERM_MGR[长期统计管理器<br/>LongTermRingManager<br/>1小时采样]
         RATE_LIMITER[速率限制器<br/>ScheduledRateLimit]
+        DEVICE_MGR[设备管理器<br/>DeviceManager]
     end
 
     subgraph "数据存储"
-        REALTIME_DATA[实时数据<br/>1秒采样]
-        HISTORICAL_DATA[历史数据<br/>日/周/月统计]
-        BASELINE_DATA[基线数据<br/>累计流量]
+        REALTIME_DATA[实时数据<br/>内存环形缓冲]
+        LONGTERM_DATA[长期统计数据<br/>文件持久化]
+        DEVICE_STATS[设备统计<br/>内存缓存]
     end
 
     TRAFFIC_INGRESS --> TRAFFIC_MAPS
     TRAFFIC_EGRESS --> TRAFFIC_MAPS
     TRAFFIC_MAPS --> TRAFFIC_PARSER
     TRAFFIC_PARSER --> TRAFFIC_MONITOR
-    TRAFFIC_MONITOR --> RING_MANAGER
-    TRAFFIC_MONITOR --> MULTI_MANAGER
+    TRAFFIC_MONITOR --> REALTIME_MGR
+    TRAFFIC_MONITOR --> LONGTERM_MGR
     TRAFFIC_MONITOR --> RATE_LIMITER
+    TRAFFIC_MONITOR --> DEVICE_MGR
 
-    RING_MANAGER --> REALTIME_DATA
-    MULTI_MANAGER --> HISTORICAL_DATA
-    TRAFFIC_MONITOR --> BASELINE_DATA
+    REALTIME_MGR --> REALTIME_DATA
+    LONGTERM_MGR --> LONGTERM_DATA
+    DEVICE_MGR --> DEVICE_STATS
 ```
 
 #### 核心功能
 - **实时流量统计**：监控每个设备的上传/下载字节数和速率
-- **速率限制**：基于时间调度的流量限制
-- **多级采样**：1秒实时数据 + 日/周/月聚合统计
-- **MAC-IP关联**：自动关联MAC地址和IP地址
+- **速率限制**：基于时间调度的流量限制，支持白名单机制
+- **分层数据存储**：1秒实时数据 + 1小时长期统计（365天保留）
+- **MAC-IP关联**：通过设备管理器自动关联MAC地址和IP地址
+- **设备状态跟踪**：监控设备在线/离线状态和最后活动时间
 
 ### 2. DNS监控模块 (dns/)
 

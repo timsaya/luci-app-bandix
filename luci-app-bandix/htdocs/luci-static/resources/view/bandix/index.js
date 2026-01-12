@@ -5,7 +5,11 @@
 'require rpc';
 'require poll';
 
-// 暗色模式检测已改为使用 CSS 媒体查询 @media (prefers-color-scheme: dark)
+// 颜色常量定义
+var BANDIX_COLOR_UPLOAD = '#f97316';     // 橙色 - 上传/上行
+var BANDIX_COLOR_DOWNLOAD = '#06b6d4';   // 青色 - 下载/下行
+
+// 暗色模式：以 LuCI 页面实际主题为准（不依赖浏览器 prefers-color-scheme）
 
 // 检测主题类型：返回 'wide'（宽主题，如 Argon）或 'narrow'（窄主题，如 Bootstrap）
 function getThemeType() {
@@ -39,6 +43,87 @@ function getThemeType() {
 
     // 默认是窄主题（Bootstrap 等）
     return 'narrow';
+}
+
+function parseRgbColor(color) {
+    if (!color) return null;
+    var m = color.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\d.]+))?\s*\)/i);
+    if (!m) return null;
+    return {
+        r: parseInt(m[1]),
+        g: parseInt(m[2]),
+        b: parseInt(m[3]),
+        a: m[4] != null ? parseFloat(m[4]) : 1
+    };
+}
+
+function isDarkRgb(rgb) {
+    if (!rgb) return false;
+    var lum = 0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b;
+    return lum < 140;
+}
+
+function getLuCiColorScheme() {
+    try {
+        var cbiSection = document.querySelector('.cbi-section');
+        var targetElement = cbiSection || document.querySelector('.main') || document.body;
+        var style = window.getComputedStyle(targetElement);
+        var bg = style.backgroundColor;
+
+        if (!bg || bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent') {
+            var allCbiSections = document.querySelectorAll('.cbi-section');
+            for (var i = 0; i < allCbiSections.length; i++) {
+                var s = window.getComputedStyle(allCbiSections[i]);
+                var sectionBg = s.backgroundColor;
+                if (sectionBg && sectionBg !== 'rgba(0, 0, 0, 0)' && sectionBg !== 'transparent') {
+                    bg = sectionBg;
+                    break;
+                }
+            }
+        }
+
+        return isDarkRgb(parseRgbColor(bg)) ? 'dark' : 'light';
+    } catch (e) {
+        return 'light';
+    }
+}
+
+function transformPrefersDarkBlocks(cssText, enableDark) {
+    var token = '@media (prefers-color-scheme: dark)';
+    var out = '';
+    var i = 0;
+
+    while (i < cssText.length) {
+        var idx = cssText.indexOf(token, i);
+        if (idx < 0) {
+            out += cssText.slice(i);
+            break;
+        }
+
+        out += cssText.slice(i, idx);
+
+        var braceIdx = cssText.indexOf('{', idx + token.length);
+        if (braceIdx < 0) {
+            out += cssText.slice(idx);
+            break;
+        }
+
+        var depth = 1;
+        var j = braceIdx + 1;
+        while (j < cssText.length && depth > 0) {
+            var ch = cssText[j];
+            if (ch === '{') depth++;
+            else if (ch === '}') depth--;
+            j++;
+        }
+
+        var inner = cssText.slice(braceIdx + 1, j - 1);
+        if (enableDark) out += inner;
+
+        i = j;
+    }
+
+    return out;
 }
 
 function formatSize(bytes) {
@@ -127,9 +212,48 @@ function filterLanIPv6(ipv6Addresses) {
     return lanAddresses.slice(0, 2);
 }
 
+function getTimeRangeForPeriod(period) {
+    if (period === 'all') {
+        return { start_ms: null, end_ms: null };
+    }
+    
+    var now = new Date();
+    var startDate;
+    var endDate;
+    
+    switch (period) {
+        case 'today':
+            startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+            endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+            break;
+        case 'week':
+            var day = now.getDay();
+            var diff = day === 0 ? 6 : day - 1;
+            startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - diff, 0, 0, 0, 0);
+            endDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + 6, 23, 59, 59, 999);
+            break;
+        case 'month':
+            startDate = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+            endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+            break;
+        case 'year':
+            startDate = new Date(now.getFullYear(), 0, 1, 0, 0, 0, 0);
+            endDate = new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999);
+            break;
+        default:
+            return { start_ms: null, end_ms: null };
+    }
+    
+    return {
+        start_ms: startDate.getTime(),
+        end_ms: endDate.getTime()
+    };
+}
+
 var callStatus = rpc.declare({
     object: 'luci.bandix',
     method: 'getStatus',
+    params: ['start_ms', 'end_ms'],
     expect: {}
 });
 
@@ -148,27 +272,6 @@ var callGetMetrics = rpc.declare({
     expect: {}
 });
 
-var callGetMetricsDay = rpc.declare({
-    object: 'luci.bandix',
-    method: 'getMetricsDay',
-    params: ['mac'],
-    expect: {}
-});
-
-var callGetMetricsWeek = rpc.declare({
-    object: 'luci.bandix',
-    method: 'getMetricsWeek',
-    params: ['mac'],
-    expect: {}
-});
-
-var callGetMetricsMonth = rpc.declare({
-    object: 'luci.bandix',
-    method: 'getMetricsMonth',
-    params: ['mac'],
-    expect: {}
-});
-
 // 定时限速 RPC
 var callGetScheduleLimits = rpc.declare({
     object: 'luci.bandix',
@@ -179,7 +282,7 @@ var callGetScheduleLimits = rpc.declare({
 var callSetScheduleLimit = rpc.declare({
     object: 'luci.bandix',
     method: 'setScheduleLimit',
-    params: ['mac', 'start_time', 'end_time', 'days', 'wide_tx_rate_limit', 'wide_rx_rate_limit'],
+    params: ['mac', 'start_time', 'end_time', 'days', 'wan_tx_rate_limit', 'wan_rx_rate_limit'],
     expect: { success: true }
 });
 
@@ -210,7 +313,7 @@ var callCheckUpdate = rpc.declare({
 var callGetTrafficUsageRanking = rpc.declare({
     object: 'luci.bandix',
     method: 'getTrafficUsageRanking',
-    params: ['start_ms', 'end_ms']
+    params: ['start_ms', 'end_ms', 'network_type']
 });
 
 // Increments 接口参数：
@@ -221,7 +324,42 @@ var callGetTrafficUsageRanking = rpc.declare({
 var callGetTrafficUsageIncrements = rpc.declare({
     object: 'luci.bandix',
     method: 'getTrafficUsageIncrements',
-    params: ['start_ms', 'end_ms', 'aggregation', 'mac']
+    params: ['start_ms', 'end_ms', 'aggregation', 'mac', 'network_type']
+});
+
+// 限速白名单 RPC
+var callGetRateLimitWhitelist = rpc.declare({
+    object: 'luci.bandix',
+    method: 'getRateLimitWhitelist',
+    expect: {}
+});
+
+var callSetRateLimitWhitelistEnabled = rpc.declare({
+    object: 'luci.bandix',
+    method: 'setRateLimitWhitelistEnabled',
+    params: ['enabled'],
+    expect: {}
+});
+
+var callAddRateLimitWhitelist = rpc.declare({
+    object: 'luci.bandix',
+    method: 'addRateLimitWhitelist',
+    params: ['mac'],
+    expect: {}
+});
+
+var callDeleteRateLimitWhitelist = rpc.declare({
+    object: 'luci.bandix',
+    method: 'deleteRateLimitWhitelist',
+    params: ['mac'],
+    expect: {}
+});
+
+var callSetDefaultRateLimit = rpc.declare({
+    object: 'luci.bandix',
+    method: 'setDefaultRateLimit',
+    params: ['wan_rx_rate_limit', 'wan_tx_rate_limit'],
+    expect: {}
 });
 
 return view.extend({
@@ -238,8 +376,10 @@ return view.extend({
 
     render: function (data) {
 
-        // 添加现代化样式
-        var style = E('style', {}, `
+        // 生成样式字符串的函数
+        function generateStyles(colorScheme) {
+            var scheme = colorScheme || getLuCiColorScheme();
+            var css = `
             .bandix-container {
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             }
@@ -325,29 +465,54 @@ return view.extend({
             
             .device-mode-group {
                 display: inline-flex;
-                border-radius: 4px;
-                overflow: hidden;
+                align-items: center;
+                gap: 12px;
             }
-            
-            .device-mode-btn {
-                border: none;
-                padding: 0 12px;
-                font-size: 0.8125rem;
-                line-height: 1.8;
-                cursor: pointer;
-                user-select: none;
-                transition: all 0.15s ease;
-                white-space: nowrap;
-                height: 28px;
+
+            .device-toolbar {
+                display: inline-flex;
+                align-items: center;
+                justify-content: flex-end;
+                gap: 16px;
+                flex-wrap: wrap;
             }
-            
-            .device-mode-btn:hover:not(.active) {
+
+            .device-toolbar .device-group {
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                padding-left: 12px;
+                border-left: 1px solid rgba(107, 114, 128, 0.35);
+            }
+
+            .device-toolbar .device-group:first-child {
+                padding-left: 0;
+                border-left: none;
+            }
+
+            .device-toolbar .device-group-label {
+                font-size: 0.75rem;
                 opacity: 0.7;
+                white-space: nowrap;
             }
-            
-            .device-mode-btn.active {
-                background-color: #3b82f6;
-                color: white;
+
+            .device-toolbar .cbi-input-select {
+                height: auto;
+                font-size: 0.875rem;
+            }
+
+            .device-mode-group .device-mode-item {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .device-mode-group .cbi-input-radio {
+                margin: 0;
+            }
+
+            .device-mode-group .device-mode-item label {
+                margin: 0;
             }
             
             .bandix-badge {
@@ -537,6 +702,12 @@ return view.extend({
                 align-items: center;
                 gap: 8px;
             }
+
+            .device-connection-type {
+                font-size: 0.75rem;
+                opacity: 1.0;
+                cursor: help;
+            }
             
             .device-status {
                 width: 8px;
@@ -610,11 +781,11 @@ return view.extend({
             }
             
             .traffic-icon.upload {
-                color: #f97316;
+                color: ${BANDIX_COLOR_UPLOAD};
             }
-            
+
             .traffic-icon.download {
-                color: #06b6d4;
+                color: ${BANDIX_COLOR_DOWNLOAD};
             }
             
             .traffic-speed {
@@ -689,6 +860,7 @@ return view.extend({
                 border-radius: 8px;
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
                 transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+                margin: 0 0 0 0 !important;
             }
             
             .stats-grid .cbi-section:hover {
@@ -767,7 +939,7 @@ return view.extend({
             }
             
             /* 模态框样式 */
-            .modal-overlay {
+            .bandix_modal-overlay {
                 position: fixed;
                 top: 0;
                 left: 0;
@@ -782,14 +954,18 @@ return view.extend({
                 visibility: hidden;
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
+
+            #confirm-dialog-bandix_modal {
+                z-index: 1105;
+            }
             
-            .modal-overlay.show {
+            .bandix_modal-overlay.show {
                 background-color: rgba(0, 0, 0, 0.5);
                 opacity: 1;
                 visibility: visible;
             }
             
-            .modal {
+            .bandix_modal {
                 max-width: 500px;
                 width: 90%;
                 max-height: 90vh;
@@ -800,36 +976,156 @@ return view.extend({
                 color: #1f2937;
             }
             
-            .modal-overlay.show .modal {
+            .bandix_modal-overlay.show .bandix_modal {
                 opacity: 1;
             }
             
             @media (prefers-color-scheme: dark) {
-                .modal {
+                .bandix_modal {
                     background-color: rgba(30, 30, 30, 0.98);
                     color: #e5e7eb;
                 }
             }
             
-            .modal-header {
+            .bandix_modal-header {
                 padding: 20px;
             }
             
-            .modal-title {
+            .bandix_modal-title {
                 font-size: 1.25rem;
                 font-weight: 600;
                 margin: 0;
             }
             
-            .modal-body {
+            .bandix_modal-body {
                 padding: 20px;
             }
             
-            .modal-footer {
+            .bandix_modal-footer {
                 padding: 16px 20px 20px 20px;
                 display: flex;
                 gap: 10px;
                 justify-content: flex-end;
+            }
+
+            /* 白名单弹窗样式 */
+            .whitelist_modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1002;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .whitelist_modal-overlay.show {
+                background-color: rgba(0, 0, 0, 0.5);
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .whitelist_modal {
+                max-width: 560px;
+                width: 92%;
+                max-height: 90vh;
+                overflow-y: auto;
+                opacity: 0;
+                transition: opacity 0.2s ease;
+                background-color: rgba(255, 255, 255, 0.98);
+                color: #1f2937;
+                border-radius: 8px;
+            }
+
+            .whitelist_modal-overlay.show .whitelist_modal {
+                opacity: 1;
+            }
+
+            @media (prefers-color-scheme: dark) {
+                .whitelist_modal {
+                    background-color: rgba(30, 30, 30, 0.98);
+                    color: #e5e7eb;
+                }
+            }
+
+            .whitelist_modal-header {
+                padding: 16px 20px 0 20px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+            }
+
+            .whitelist_modal-title {
+                font-size: 1.1rem;
+                font-weight: 600;
+                margin: 0;
+            }
+
+            .whitelist_modal-body {
+                padding: 16px 20px;
+            }
+
+            .whitelist_modal-footer {
+                padding: 0 20px 18px 20px;
+                display: flex;
+                gap: 10px;
+                justify-content: flex-end;
+            }
+
+            .whitelist_modal-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                margin-bottom: 12px;
+            }
+
+            .whitelist_modal-list {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                margin-top: 8px;
+            }
+
+            .whitelist_modal-item {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 10px;
+                padding: 8px 10px;
+                border: 1px solid rgba(0, 0, 0, 0.12);
+                border-radius: 8px;
+            }
+
+            @media (prefers-color-scheme: dark) {
+                .whitelist_modal-item {
+                    border-color: rgba(255, 255, 255, 0.15);
+                }
+            }
+
+            .whitelist_modal-mac {
+                font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+                font-size: 0.875rem;
+            }
+
+            .whitelist_modal-hint {
+                font-size: 0.75rem;
+                opacity: 0.7;
+                margin-top: 6px;
+            }
+
+            .whitelist_modal-error {
+                font-size: 0.8125rem;
+                color: #ef4444;
+                margin-top: 10px;
+                display: none;
             }
             
             .form-group {
@@ -857,19 +1153,19 @@ return view.extend({
             }
             
             /* Tab 切换样式 */
-            .modal-tabs {
+            .bandix_modal-tabs {
                 display: flex;
                 border-bottom: 1px solid rgba(0, 0, 0, 0.1);
                 margin-bottom: 20px;
             }
             
             @media (prefers-color-scheme: dark) {
-                .modal-tabs {
+                .bandix_modal-tabs {
                     border-bottom-color: rgba(255, 255, 255, 0.15);
                 }
             }
             
-            .modal-tab {
+            .bandix_modal-tab {
                 flex: 1;
                 padding: 12px 16px;
                 text-align: center;
@@ -884,34 +1180,34 @@ return view.extend({
             }
             
             @media (prefers-color-scheme: dark) {
-                .modal-tab {
+                .bandix_modal-tab {
                     color: rgba(255, 255, 255, 0.6);
                 }
             }
             
-            .modal-tab:hover {
+            .bandix_modal-tab:hover {
                 color: rgba(0, 0, 0, 0.8);
                 background-color: rgba(0, 0, 0, 0.02);
             }
             
             @media (prefers-color-scheme: dark) {
-                .modal-tab:hover {
+                .bandix_modal-tab:hover {
                     color: rgba(255, 255, 255, 0.8);
                     background-color: rgba(255, 255, 255, 0.05);
                 }
             }
             
-            .modal-tab.active {
+            .bandix_modal-tab.active {
                 color: #3b82f6;
                 border-bottom-color: #3b82f6;
                 font-weight: 600;
             }
             
-            .modal-tab-content {
+            .bandix_modal-tab-content {
                 display: none;
             }
             
-            .modal-tab-content.active {
+            .bandix_modal-tab-content.active {
                 display: block;
             }
             
@@ -1099,7 +1395,7 @@ return view.extend({
                 width: 90%;
             }
             
-            .confirm-dialog .modal-body {
+            .confirm-dialog .bandix_modal-body {
                 padding: 24px;
             }
             
@@ -1135,94 +1431,11 @@ return view.extend({
                 justify-content: space-between;
                 margin-bottom: 16px;
             }
-            .history-header-left {
-                display: flex;
-                align-items: center;
-                gap: 16px;
-            }
-            .history-tabs {
-                display: inline-flex;
-                background-color: rgba(0, 0, 0, 0.04);
-                border-radius: 8px;
-                padding: 3px;
-                gap: 2px;
-            }
-            @media (prefers-color-scheme: dark) {
-                .history-tabs {
-                    background-color: rgba(255, 255, 255, 0.08);
-                }
-            }
-            .history-tab {
-                padding: 6px 16px;
-                text-align: center;
-                cursor: pointer;
-                border: none;
-                background: transparent;
-                font-size: 0.8125rem;
-                font-weight: 500;
-                color: rgba(0, 0, 0, 0.65);
-                transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-                border-radius: 6px;
-                white-space: nowrap;
-                position: relative;
-            }
-            @media (prefers-color-scheme: dark) {
-                .history-tab {
-                    color: rgba(255, 255, 255, 0.65);
-                }
-            }
-            .history-tab:hover:not(.active) {
-                color: rgba(0, 0, 0, 0.85);
-                background-color: rgba(0, 0, 0, 0.06);
-            }
-            @media (prefers-color-scheme: dark) {
-                .history-tab:hover:not(.active) {
-                    color: rgba(255, 255, 255, 0.85);
-                    background-color: rgba(255, 255, 255, 0.12);
-                }
-            }
-            .history-tab.active {
-                background-color: #ffffff;
-                color: #3b82f6;
-                font-weight: 600;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
-            }
-            @media (prefers-color-scheme: dark) {
-                .history-tab.active {
-                    background-color: rgba(59, 130, 246, 0.15);
-                    color: #60a5fa;
-                    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
-                }
-            }
             @media (max-width: 768px) {
                 .history-header {
                     flex-direction: column;
                     align-items: flex-start;
                     gap: 12px;
-                }
-                .history-header-left {
-                    width: 100%;
-                    flex-direction: column;
-                    align-items: flex-start;
-                    gap: 12px;
-                }
-                .history-tabs {
-                    width: 100%;
-                    padding: 2px;
-                }
-                .history-tab {
-                    flex: 1;
-                    padding: 8px 6px;
-                    font-size: 0.75rem;
-                }
-                /* 移动端隐藏 Realtime tab */
-                .history-tab[data-range="realtime"] {
-                    display: none !important;
-                }
-                .history-tab[data-range="day"],
-                .history-tab[data-range="week"],
-                .history-tab[data-range="month"] {
-                    display: none !important;
                 }
             }
             .history-controls {
@@ -1249,8 +1462,8 @@ return view.extend({
             }
             .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.875rem; }
             .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-            .legend-up { background-color: #f97316; }
-            .legend-down { background-color: #06b6d4; }
+            .legend-up { background-color: ${BANDIX_COLOR_UPLOAD}; }
+            .legend-down { background-color: ${BANDIX_COLOR_DOWNLOAD}; }
             #history-canvas { width: 100%; height: 200px; display: block; } /* 变窄的高度 */
             
             /* 移动端优化 */
@@ -1560,10 +1773,22 @@ return view.extend({
 			.history-tooltip .ht-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 2px; margin-bottom: 6px; }
 			.history-tooltip .ht-kpi .ht-k-label { opacity: 0.7; font-size: 0.75rem; }
 			.history-tooltip .ht-kpi .ht-k-value { font-size: 1rem; font-weight: 700; }
-			.history-tooltip .ht-kpi.down .ht-k-value { color: #06b6d4; }
-			.history-tooltip .ht-kpi.up .ht-k-value { color: #f97316; }
+			.history-tooltip .ht-kpi.down .ht-k-value { color: ${BANDIX_COLOR_DOWNLOAD}; }
+			.history-tooltip .ht-kpi.up .ht-k-value { color: ${BANDIX_COLOR_UPLOAD}; }
 			.history-tooltip .ht-divider { height: 1px; background-color: currentColor; opacity: 0.3; margin: 8px 0; }
 			.history-tooltip .ht-section-title { font-weight: 600; font-size: 0.75rem; opacity: 0.7; margin: 4px 0 6px 0; }
+
+			/* Traffic Timeline Tooltip - 使用与 History Tooltip 相同的样式 */
+			.traffic-increments-tooltip .ht-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 2px; margin-bottom: 6px; }
+			.traffic-increments-tooltip .ht-kpi .ht-k-label { opacity: 0.7; font-size: 0.75rem; }
+			.traffic-increments-tooltip .ht-kpi .ht-k-value { font-size: 1rem; font-weight: 700; }
+			.traffic-increments-tooltip .ht-kpi.down .ht-k-value { color: ${BANDIX_COLOR_DOWNLOAD}; }
+			.traffic-increments-tooltip .ht-kpi.up .ht-k-value { color: ${BANDIX_COLOR_UPLOAD}; }
+			.traffic-increments-tooltip .ht-divider { height: 1px; background-color: currentColor; opacity: 0.3; margin: 8px 0; }
+			.traffic-increments-tooltip .ht-section-title { font-weight: 600; font-size: 0.75rem; opacity: 0.7; margin: 4px 0 6px 0; }
+			.traffic-increments-tooltip .ht-row { display: flex; justify-content: space-between; gap: 12px; }
+			.traffic-increments-tooltip .ht-key { opacity: 0.7; }
+			.traffic-increments-tooltip .ht-val { }
 			
 			/* Schedule Rules Tooltip */
 			.schedule-rules-tooltip {
@@ -1712,7 +1937,23 @@ return view.extend({
 				flex: 1;
 				min-width: 160px;
 			}
-			
+
+			.usage-ranking-network-type-wrapper {
+				display: flex;
+				flex-direction: column;
+				gap: 6px;
+				flex: 0 0 auto;
+				min-width: 140px;
+			}
+
+			.usage-ranking-network-label {
+				font-size: 0.8125rem;
+				font-weight: 500;
+				opacity: 0.7;
+				color: inherit;
+			}
+
+
 			.usage-ranking-date-label {
 				font-size: 0.8125rem;
 				font-weight: 500;
@@ -1727,46 +1968,6 @@ return view.extend({
 				flex-wrap: wrap;
 			}
 			
-			.usage-ranking-preset-btn {
-				padding: 6px 12px;
-				background-color: rgba(0, 0, 0, 0.05);
-				color: #374151;
-				border: 1px solid rgba(0, 0, 0, 0.1);
-				border-radius: 4px;
-				cursor: pointer;
-				font-size: 0.8125rem;
-				font-weight: 500;
-				transition: all 0.2s ease;
-			}
-			
-			.usage-ranking-preset-btn:hover {
-				background-color: rgba(0, 0, 0, 0.08);
-				border-color: rgba(0, 0, 0, 0.2);
-			}
-			
-			.usage-ranking-preset-btn.active {
-				background-color: #3b82f6;
-				color: white;
-				border-color: #3b82f6;
-			}
-			
-			@media (prefers-color-scheme: dark) {
-				.usage-ranking-preset-btn {
-					background-color: rgba(255, 255, 255, 0.05);
-					color: #d1d5db;
-					border-color: rgba(255, 255, 255, 0.1);
-				}
-				
-				.usage-ranking-preset-btn:hover {
-					background-color: rgba(255, 255, 255, 0.08);
-					border-color: rgba(255, 255, 255, 0.15);
-				}
-				
-				.usage-ranking-preset-btn.active {
-					background-color: #2563eb;
-					border-color: #2563eb;
-				}
-			}
 			
 			.usage-ranking-custom-range {
 				display: flex;
@@ -1779,49 +1980,6 @@ return view.extend({
 				position: relative;
 			}
 			
-			.usage-ranking-date-input {
-				width: 100%;
-				padding: 10px 40px 10px 12px;
-				border: 1px solid rgba(0, 0, 0, 0.15);
-				border-radius: 6px;
-				background-color: rgba(255, 255, 255, 0.9);
-				font-size: 0.875rem;
-				color: inherit;
-				cursor: pointer;
-				transition: all 0.2s ease;
-				font-family: inherit;
-			}
-			
-			.usage-ranking-date-input:hover {
-				border-color: #3b82f6;
-				background-color: rgba(255, 255, 255, 1);
-			}
-			
-			.usage-ranking-date-input:focus {
-				outline: none;
-				border-color: #3b82f6;
-				background-color: rgba(255, 255, 255, 1);
-				box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-			}
-			
-			@media (prefers-color-scheme: dark) {
-				.usage-ranking-date-input {
-					background-color: rgba(255, 255, 255, 0.1);
-					border-color: rgba(255, 255, 255, 0.2);
-					color: inherit;
-				}
-				
-				.usage-ranking-date-input:hover {
-					border-color: #60a5fa;
-					background-color: rgba(255, 255, 255, 0.15);
-				}
-				
-				.usage-ranking-date-input:focus {
-					border-color: #60a5fa;
-					background-color: rgba(255, 255, 255, 0.15);
-					box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-				}
-			}
 			
 			.usage-ranking-date-separator {
 				font-size: 1.25rem;
@@ -1835,39 +1993,14 @@ return view.extend({
 				gap: 8px;
 				margin-left: auto;
 			}
-			
-			.usage-ranking-query-btn {
-				padding: 8px 16px;
-				background-color: #3b82f6;
-				color: white;
-				border: none;
-				border-radius: 4px;
-				cursor: pointer;
-				font-size: 0.875rem;
-				font-weight: 500;
-				transition: all 0.2s ease;
+
+			/* 查询按钮 loading 状态样式（避免与 LuCI/主题的 .loading 冲突） */
+			.usage-ranking-query-btn.bandix-loading {
 				position: relative;
-			}
-			
-			.usage-ranking-query-btn:hover:not(:disabled) {
-				background-color: #2563eb;
-			}
-			
-			.usage-ranking-query-btn:active:not(:disabled) {
-				background-color: #1d4ed8;
-			}
-			
-			.usage-ranking-query-btn:disabled {
-				background-color: #9ca3af;
-				cursor: not-allowed;
 				opacity: 0.7;
 			}
-			
-			.usage-ranking-query-btn.loading {
-				color: transparent;
-			}
-			
-			.usage-ranking-query-btn.loading::after {
+
+			.usage-ranking-query-btn.bandix-loading::after {
 				content: '';
 				position: absolute;
 				width: 14px;
@@ -1876,29 +2009,23 @@ return view.extend({
 				left: 50%;
 				margin-left: -7px;
 				margin-top: -7px;
-				border: 2px solid rgba(255, 255, 255, 0.3);
-				border-top-color: white;
+				border: 2px solid rgba(59, 130, 246, 0.3);
+				border-top-color: #3b82f6;
 				border-radius: 50%;
-				animation: spin 0.6s linear infinite;
+				animation: spin 1s linear infinite;
 			}
-			
-			@keyframes spin {
-				to { transform: rotate(360deg); }
+
+			.usage-ranking-query-btn.bandix-loading span {
+				opacity: 0;
 			}
-			
+
 			@media (prefers-color-scheme: dark) {
-				.usage-ranking-query-btn {
-					background-color: #2563eb;
-				}
-				
-				.usage-ranking-query-btn:hover:not(:disabled) {
-					background-color: #1d4ed8;
-				}
-				
-				.usage-ranking-query-btn:disabled {
-					background-color: #6b7280;
+				.usage-ranking-query-btn.bandix-loading::after {
+					border-color: rgba(96, 165, 250, 0.3);
+					border-top-color: #60a5fa;
 				}
 			}
+			
 			
 			.usage-ranking-query-reset {
 				padding: 8px 12px;
@@ -2172,11 +2299,11 @@ return view.extend({
 			}
 			
 			.usage-ranking-traffic-item.rx {
-				color: #06b6d4;
+				color: ${BANDIX_COLOR_DOWNLOAD};
 			}
 			
 			.usage-ranking-traffic-item.tx {
-				color: #f97316;
+				color: ${BANDIX_COLOR_UPLOAD};
 			}
 			
 			.usage-ranking-traffic-item.total {
@@ -2229,42 +2356,8 @@ return view.extend({
 				white-space: nowrap;
 			}
 			
-			.traffic-increments-filter-select {
-				padding: 6px 10px;
-				border: 1px solid rgba(0, 0, 0, 0.15);
-				border-radius: 4px;
-				background-color: rgba(255, 255, 255, 0.9);
-				font-size: 0.875rem;
-				cursor: pointer;
-				transition: all 0.2s ease;
+			.traffic-increments-filters .cbi-input-select {
 				min-width: 120px;
-			}
-			
-			.traffic-increments-filter-select:hover {
-				border-color: #3b82f6;
-			}
-			
-			.traffic-increments-filter-select:focus {
-				outline: none;
-				border-color: #3b82f6;
-				box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-			}
-			
-			@media (prefers-color-scheme: dark) {
-				.traffic-increments-filter-select {
-					background-color: rgba(255, 255, 255, 0.1);
-					border-color: rgba(255, 255, 255, 0.2);
-					color: inherit;
-				}
-				
-				.traffic-increments-filter-select:hover {
-					border-color: #60a5fa;
-				}
-				
-				.traffic-increments-filter-select:focus {
-					border-color: #60a5fa;
-					box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-				}
 			}
 			
 			.traffic-increments-query {
@@ -2280,46 +2373,6 @@ return view.extend({
 				}
 			}
 			
-			.traffic-increments-preset-btn {
-				padding: 6px 12px;
-				background-color: rgba(0, 0, 0, 0.05);
-				color: #374151;
-				border: 1px solid rgba(0, 0, 0, 0.1);
-				border-radius: 4px;
-				cursor: pointer;
-				font-size: 0.8125rem;
-				font-weight: 500;
-				transition: all 0.2s ease;
-			}
-			
-			.traffic-increments-preset-btn:hover {
-				background-color: rgba(0, 0, 0, 0.08);
-				border-color: rgba(0, 0, 0, 0.2);
-			}
-			
-			.traffic-increments-preset-btn.active {
-				background-color: #3b82f6;
-				color: white;
-				border-color: #3b82f6;
-			}
-			
-			@media (prefers-color-scheme: dark) {
-				.traffic-increments-preset-btn {
-					background-color: rgba(255, 255, 255, 0.05);
-					color: #d1d5db;
-					border-color: rgba(255, 255, 255, 0.1);
-				}
-				
-				.traffic-increments-preset-btn:hover {
-					background-color: rgba(255, 255, 255, 0.08);
-					border-color: rgba(255, 255, 255, 0.15);
-				}
-				
-				.traffic-increments-preset-btn.active {
-					background-color: #2563eb;
-					border-color: #2563eb;
-				}
-			}
 			
 			.traffic-increments-chart {
 				position: relative;
@@ -2332,64 +2385,100 @@ return view.extend({
 				position: absolute;
 				background-color: rgba(0, 0, 0, 0.9);
 				color: white;
-				padding: 8px 12px;
+				padding: 12px;
+				border: 1px solid rgba(255, 255, 255, 0.2);
 				border-radius: 6px;
 				font-size: 0.8125rem;
 				pointer-events: none;
 				z-index: 1000;
 				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 				display: none;
-				white-space: nowrap;
+				min-width: 280px;
+				max-width: 400px;
 			}
-			
+
+			@media (prefers-color-scheme: dark) {
+				.traffic-increments-tooltip {
+					border-color: rgba(255, 255, 255, 0.3);
+					box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+				}
+			}
+
 			.traffic-increments-tooltip-title {
 				font-weight: 600;
-				margin-bottom: 4px;
+				margin-bottom: 8px;
 				border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 				padding-bottom: 4px;
+				font-size: 0.875rem;
 			}
-			
+
+			.traffic-increments-tooltip-section {
+				margin-bottom: 8px;
+			}
+
+			.traffic-increments-tooltip-section:last-child {
+				margin-bottom: 0;
+			}
+
+			.traffic-increments-tooltip-section-title {
+				font-weight: 600;
+				font-size: 0.75rem;
+				text-transform: uppercase;
+				letter-spacing: 0.5px;
+				margin-bottom: 4px;
+				color: rgba(255, 255, 255, 0.8);
+				border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+				padding-bottom: 2px;
+			}
+
 			.traffic-increments-tooltip-item {
 				display: flex;
 				align-items: center;
+				justify-content: space-between;
+				gap: 8px;
+				margin-bottom: 2px;
+				font-size: 0.75rem;
+			}
+
+			.traffic-increments-tooltip-item:last-child {
+				margin-bottom: 0;
+			}
+
+			.traffic-increments-tooltip-item-label {
+				display: flex;
+				align-items: center;
 				gap: 6px;
-				margin-top: 4px;
+				flex: 1;
 			}
-			
+
+			.traffic-increments-tooltip-item-value {
+				font-weight: 500;
+				text-align: right;
+			}
+
 			.traffic-increments-tooltip-dot {
-				width: 8px;
-				height: 8px;
+				width: 6px;
+				height: 6px;
 				border-radius: 50%;
+				flex-shrink: 0;
 			}
-			
+
 			.traffic-increments-tooltip-dot.rx {
-				background-color: #06b6d4;
+				background-color: ${BANDIX_COLOR_DOWNLOAD};
 			}
-			
+
 			.traffic-increments-tooltip-dot.tx {
-				background-color: #f97316;
+				background-color: ${BANDIX_COLOR_UPLOAD};
+			}
+
+			.traffic-increments-tooltip-dot.wan {
+				background-color: #8b5cf6;
+			}
+
+			.traffic-increments-tooltip-dot.lan {
+				background-color: #10b981;
 			}
 			
-			@media (prefers-color-scheme: dark) {
-				.traffic-increments-tooltip {
-					background-color: rgba(30, 30, 30, 0.95);
-					border: 1px solid rgba(255, 255, 255, 0.1);
-					color: white;
-				}
-			}
-			
-			@media (prefers-color-scheme: light) {
-				.traffic-increments-tooltip {
-					background-color: rgba(255, 255, 255, 0.95);
-					color: rgba(0, 0, 0, 0.9);
-					border: 1px solid rgba(0, 0, 0, 0.1);
-					box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-				}
-				
-				.traffic-increments-tooltip-title {
-					border-bottom-color: rgba(0, 0, 0, 0.1);
-				}
-			}
 			
 			.traffic-increments-summary {
 				display: grid;
@@ -2455,11 +2544,11 @@ return view.extend({
 			}
 			
 			.traffic-stats-legend-dot.rx {
-				background-color: #06b6d4;
+				background-color: ${BANDIX_COLOR_DOWNLOAD};
 			}
 			
 			.traffic-stats-legend-dot.tx {
-				background-color: #f97316;
+				background-color: ${BANDIX_COLOR_UPLOAD};
 			}
 			
 			/* 移动端响应式样式 */
@@ -2510,44 +2599,21 @@ return view.extend({
 					font-size: 0.75rem;
 				}
 				
-				.usage-ranking-date-input {
-					padding: 8px 36px 8px 10px;
-					font-size: 0.8125rem;
-				}
-				
 				.usage-ranking-date-separator {
 					display: none;
 				}
-				
+
 				/* 快捷按钮 */
 				.usage-ranking-query-presets {
 					gap: 6px;
 					margin-bottom: 10px;
 				}
-				
-				.usage-ranking-preset-btn {
-					padding: 5px 10px;
-					font-size: 0.75rem;
-				}
-				
-				.traffic-increments-preset-btn {
-					padding: 5px 10px;
-					font-size: 0.75rem;
-				}
-				
+
 				/* 查询操作按钮 */
 				.usage-ranking-query-actions {
 					width: 100%;
 					margin-left: 0;
 					justify-content: stretch;
-				}
-				
-				.usage-ranking-query-btn,
-				.usage-ranking-reset-btn,
-				.usage-ranking-query-reset {
-					flex: 1;
-					padding: 10px 16px;
-					font-size: 0.8125rem;
 				}
 				
 				/* 设备列表项 - 垂直布局 */
@@ -2685,7 +2751,7 @@ return view.extend({
 					font-size: 0.75rem;
 				}
 				
-				.traffic-increments-filter-select {
+				.traffic-increments-filters .cbi-input-select {
 					width: 100%;
 					min-width: auto;
 					padding: 8px 10px;
@@ -2729,9 +2795,19 @@ return view.extend({
 					display: none;
 				}
 			}
-			
-        `);
 
+        `;
+            return transformPrefersDarkBlocks(css, scheme === 'dark');
+        }
+
+        // 添加现代化样式
+        var initialScheme = getLuCiColorScheme();
+        document.documentElement.setAttribute('data-bandix-theme', initialScheme);
+
+        var oldStyle = document.getElementById('bandix-styles');
+        if (oldStyle && oldStyle.parentNode) oldStyle.parentNode.removeChild(oldStyle);
+
+        var style = E('style', { 'id': 'bandix-styles', 'data-bandix-scheme': initialScheme }, generateStyles(initialScheme));
         document.head.appendChild(style);
 
         var view = E('div', { 'class': 'bandix-container' }, [
@@ -2757,7 +2833,7 @@ return view.extend({
             }, [
                 E('div', { 'style': 'display: flex; align-items: center; gap: 8px;' }, [
                     E('span', { 'style': 'font-size: 1rem;' }, '⚠'),
-                    E('span', {}, _('Rate limiting only applies to WAN traffic.'))
+                    E('span', {}, _('Rate limiting only applies to WAN traffic. Some LAN internal traffic may not be monitored due to hardware switching acceleration.'))
                 ]),
                 E('div', { 'class': 'bandix-badge', 'id': 'device-count' }, _('Online Devices') + ': 0 / 0')
             ]),
@@ -2765,19 +2841,10 @@ return view.extend({
             // 统计卡片
             E('div', { 'class': 'stats-grid', 'id': 'stats-grid' }),
 
-            // 历史趋势卡片（带时间范围 tab 切换）
+            // 实时流量趋势
             E('div', { 'class': 'cbi-section', 'id': 'history-card' }, [
-                E('div', { 'class': 'history-header' }, [
-                    E('div', { 'class': 'history-header-left' }, [
-                        // E('h3', { 'style': 'margin: 0; font-size: 1rem; font-weight: 600;' }, _('Traffic History')),
-                        // 时间范围 Tab 切换
-                        E('div', { 'class': 'history-tabs' }, [
-                            E('button', { 'class': 'history-tab active', 'data-range': 'realtime', 'id': 'history-tab-realtime' }, _('Realtime')),
-                            E('button', { 'class': 'history-tab', 'data-range': 'day', 'id': 'history-tab-day' }, _('Last 24 Hours')),
-                            E('button', { 'class': 'history-tab', 'data-range': 'week', 'id': 'history-tab-week' }, _('Last 7 Days')),
-                            E('button', { 'class': 'history-tab', 'data-range': 'month', 'id': 'history-tab-month' }, _('Last 30 Days'))
-                        ])
-                    ]),
+                E('h3', { 'style': 'display: flex; align-items: center; justify-content: space-between;' }, [
+                    E('span', {}, _('Realtime Traffic Trends')),
                     E('div', { 'class': 'history-legend' }, [
                         E('div', { 'class': 'legend-item' }, [
                             E('span', { 'class': 'legend-dot legend-up' }),
@@ -2814,15 +2881,28 @@ return view.extend({
             E('div', { 'class': 'cbi-section' }, [
                 E('h3', { 'class': 'history-header', 'style': 'display: flex; align-items: center; justify-content: space-between;' }, [
                     E('span', {}, _('Device List')),
-                    E('div', { 'class': 'device-mode-group' }, [
-                        E('button', {
-                            'class': 'device-mode-btn' + (localStorage.getItem('bandix_device_mode') !== 'detailed' ? ' active' : ''),
-                            'data-mode': 'simple'
-                        }, _('Simple Mode')),
-                        E('button', {
-                            'class': 'device-mode-btn' + (localStorage.getItem('bandix_device_mode') === 'detailed' ? ' active' : ''),
-                            'data-mode': 'detailed'
-                        }, _('Detailed Mode'))
+                    E('div', { 'class': 'device-toolbar' }, [
+                        E('div', { 'class': 'device-group' }, [
+                            E('span', { 'class': 'device-group-label' }, _('Period')),
+                            E('select', { 'class': 'cbi-input-select', 'id': 'bandix_device_period_select' }, [
+                                E('option', { 'value': 'all', 'selected': ((localStorage.getItem('bandix_device_period') || 'all') === 'all') ? 'selected' : null }, _('All')),
+                                E('option', { 'value': 'today', 'selected': ((localStorage.getItem('bandix_device_period') || 'all') === 'today') ? 'selected' : null }, _('Today')),
+                                E('option', { 'value': 'week', 'selected': ((localStorage.getItem('bandix_device_period') || 'all') === 'week') ? 'selected' : null }, _('This Week')),
+                                E('option', { 'value': 'month', 'selected': ((localStorage.getItem('bandix_device_period') || 'all') === 'month') ? 'selected' : null }, _('This Month')),
+                                E('option', { 'value': 'year', 'selected': ((localStorage.getItem('bandix_device_period') || 'all') === 'year') ? 'selected' : null }, _('This Year'))
+                            ])
+                        ]),
+                        E('div', { 'class': 'device-group' }, [
+                            E('span', { 'class': 'device-group-label' }, _('Display Mode')),
+                            E('select', { 'class': 'cbi-input-select', 'id': 'bandix_device_mode_select' }, [
+                                E('option', { 'value': 'simple', 'selected': (localStorage.getItem('bandix_device_mode') !== 'detailed') ? 'selected' : null }, _('Simple Mode')),
+                                E('option', { 'value': 'detailed', 'selected': (localStorage.getItem('bandix_device_mode') === 'detailed') ? 'selected' : null }, _('Detailed Mode'))
+                            ])
+                        ]),
+                        E('div', { 'class': 'device-group' }, [
+                            E('span', { 'class': 'device-group-label' }, _('Global Rate Limit')),
+                            E('span', { 'class': 'bandix-badge', 'id': 'bandix_whitelist_badge', 'style': 'cursor: pointer; user-select: none;' }, _('Loading...'))
+                        ])
                     ])
                 ]),
                 E('div', { 'id': 'traffic-status' }, [
@@ -2844,7 +2924,7 @@ return view.extend({
             // 统计区域
             E('div', { 'class': 'cbi-section' }, [
                 E('h3', { 'class': 'traffic-stats-header' }, [
-                    E('span', {}, _('Traffic Statistics (WAN Only)'))
+                    E('span', {}, _('Traffic Statistics'))
                 ]),
                 E('div', { 'id': 'traffic-statistics' }, [
                     E('div', { 'class': 'traffic-stats-container' }, [
@@ -2852,8 +2932,7 @@ return view.extend({
                         E('div', { 'class': 'traffic-stats-section' }, [
                             E('div', { 'class': 'usage-ranking-header' }, [
                                 E('h4', { 'class': 'usage-ranking-title' }, [
-                                    E('span', {}, _('Device Usage Ranking')),
-                                    E('span', { 'style': 'font-size: 0.75rem; font-weight: 400; opacity: 0.6; margin-left: 12px;' }, _('(Data has 1 hour delay)'))
+                                    E('span', {}, _('Device Usage Ranking'))
                                 ]),
                                 E('span', { 'class': 'usage-ranking-timerange', 'id': 'usage-ranking-timerange' }, '')
                             ]),
@@ -2865,7 +2944,7 @@ return view.extend({
                                             E('input', {
                                                 'type': 'date',
                                                 'id': 'usage-ranking-start-date',
-                                                'class': 'usage-ranking-date-input'
+                                                'class': 'cbi-input-date'
                                             })
                                         ])
                                     ]),
@@ -2876,31 +2955,42 @@ return view.extend({
                                             E('input', {
                                                 'type': 'date',
                                                 'id': 'usage-ranking-end-date',
-                                                'class': 'usage-ranking-date-input'
+                                                'class': 'cbi-input-date'
                                             })
+                                        ])
+                                    ]),
+                                    E('div', { 'class': 'usage-ranking-network-type-wrapper' }, [
+                                        E('label', { 'class': 'usage-ranking-network-label' }, _('Network Type')),
+                                        E('select', {
+                                            'class': 'cbi-input-select',
+                                            'id': 'usage-ranking-network-type'
+                                        }, [
+                                            E('option', { 'value': 'wan' }, _('WAN Traffic')),
+                                            E('option', { 'value': 'lan' }, _('LAN Traffic')),
+                                            E('option', { 'value': 'all' }, _('Total'))
                                         ])
                                     ]),
                                     E('div', { 'class': 'usage-ranking-query-actions' }, [
                                         E('button', {
-                                            'class': 'usage-ranking-query-btn',
+                                            'class': 'cbi-button cbi-button-action usage-ranking-query-btn',
                                             'id': 'usage-ranking-query-btn'
-                                        }, _('Query')),
+                                        }, E('span', {}, _('Query'))),
                                         E('button', {
-                                            'class': 'usage-ranking-query-reset',
+                                            'class': 'cbi-button cbi-button-reset',
                                             'id': 'usage-ranking-reset-btn'
                                         }, _('Reset'))
                                     ])
                                 ]),
                                 E('div', { 'class': 'usage-ranking-query-presets' }, [
-                                    E('button', { 'class': 'usage-ranking-preset-btn', 'data-preset': 'today' }, _('Today')),
-                                    E('button', { 'class': 'usage-ranking-preset-btn', 'data-preset': 'thisweek' }, _('This Week')),
-                                    E('button', { 'class': 'usage-ranking-preset-btn', 'data-preset': 'lastweek' }, _('Last Week')),
-                                    E('button', { 'class': 'usage-ranking-preset-btn', 'data-preset': 'thismonth' }, _('This Month')),
-                                    E('button', { 'class': 'usage-ranking-preset-btn', 'data-preset': 'lastmonth' }, _('Last Month')),
-                                    E('button', { 'class': 'usage-ranking-preset-btn', 'data-preset': '7days' }, _('Last 7 Days')),
-                                    E('button', { 'class': 'usage-ranking-preset-btn', 'data-preset': '30days' }, _('Last 30 Days')),
-                                    E('button', { 'class': 'usage-ranking-preset-btn', 'data-preset': '90days' }, _('Last 90 Days')),
-                                    E('button', { 'class': 'usage-ranking-preset-btn active', 'data-preset': '1year' }, _('Last Year'))
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': 'today' }, _('Today')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': 'thisweek' }, _('This Week')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': 'lastweek' }, _('Last Week')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': 'thismonth' }, _('This Month')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': 'lastmonth' }, _('Last Month')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': '7days' }, _('Last 7 Days')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': '30days' }, _('Last 30 Days')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': '90days' }, _('Last 90 Days')),
+                                    E('button', { 'class': 'cbi-button cbi-button-positive', 'data-preset': '1year' }, _('Last Year'))
                                 ]),
                                 E('div', { 'class': 'usage-ranking-timeline', 'id': 'usage-ranking-timeline' }, [
                                     E('div', { 'class': 'usage-ranking-timeline-range', 'id': 'usage-ranking-timeline-range' })
@@ -2914,8 +3004,7 @@ return view.extend({
                         E('div', { 'class': 'traffic-stats-section' }, [
                             E('div', { 'class': 'usage-ranking-header' }, [
                                 E('h4', { 'class': 'usage-ranking-title' }, [
-                                    E('span', {}, _('Traffic Timeline')),
-                                    E('span', { 'style': 'font-size: 0.75rem; font-weight: 400; opacity: 0.6; margin-left: 12px;' }, _('(Data has 1 hour delay)'))
+                                    E('span', {}, _('Traffic Timeline'))
                                 ]),
                                 E('span', { 'class': 'usage-ranking-timerange', 'id': 'traffic-increments-timerange' }, '')
                             ]),
@@ -2927,7 +3016,7 @@ return view.extend({
                                             E('input', {
                                                 'type': 'date',
                                                 'id': 'traffic-increments-start-date',
-                                                'class': 'usage-ranking-date-input'
+                                                'class': 'cbi-input-date'
                                             })
                                         ])
                                     ]),
@@ -2938,44 +3027,58 @@ return view.extend({
                                             E('input', {
                                                 'type': 'date',
                                                 'id': 'traffic-increments-end-date',
-                                                'class': 'usage-ranking-date-input'
+                                                'class': 'cbi-input-date'
                                             })
+                                        ])
+                                    ]),
+                                    E('div', { 'class': 'usage-ranking-network-type-wrapper' }, [
+                                        E('label', { 'class': 'usage-ranking-network-label' }, _('Network Type')),
+                                        E('select', {
+                                            'class': 'cbi-input-select',
+                                            'id': 'traffic-increments-network-type'
+                                        }, [
+                                            E('option', { 'value': 'wan' }, _('WAN Traffic')),
+                                            E('option', { 'value': 'lan' }, _('LAN Traffic')),
+                                            E('option', { 'value': 'all' }, _('Total'))
                                         ])
                                     ]),
                                     E('div', { 'class': 'usage-ranking-query-actions' }, [
                                         E('button', {
-                                            'class': 'usage-ranking-query-btn',
+                                            'class': 'cbi-button cbi-button-action usage-ranking-query-btn',
                                             'id': 'traffic-increments-query-btn'
-                                        }, _('Query')),
+                                        }, E('span', {}, _('Query'))),
                                         E('button', {
-                                            'class': 'usage-ranking-query-reset',
+                                            'class': 'cbi-button cbi-button-reset',
                                             'id': 'traffic-increments-reset-btn'
                                         }, _('Reset'))
                                     ])
                                 ]),
                                 E('div', { 'class': 'usage-ranking-query-presets' }, [
-                                    E('button', { 'class': 'traffic-increments-preset-btn', 'data-preset': 'today' }, _('Today')),
-                                    E('button', { 'class': 'traffic-increments-preset-btn', 'data-preset': 'thisweek' }, _('This Week')),
-                                    E('button', { 'class': 'traffic-increments-preset-btn', 'data-preset': 'lastweek' }, _('Last Week')),
-                                    E('button', { 'class': 'traffic-increments-preset-btn', 'data-preset': 'thismonth' }, _('This Month')),
-                                    E('button', { 'class': 'traffic-increments-preset-btn', 'data-preset': 'lastmonth' }, _('Last Month')),
-                                    E('button', { 'class': 'traffic-increments-preset-btn', 'data-preset': '7days' }, _('Last 7 Days')),
-                                    E('button', { 'class': 'traffic-increments-preset-btn', 'data-preset': '30days' }, _('Last 30 Days')),
-                                    E('button', { 'class': 'traffic-increments-preset-btn', 'data-preset': '90days' }, _('Last 90 Days')),
-                                    E('button', { 'class': 'traffic-increments-preset-btn active', 'data-preset': '1year' }, _('Last Year'))
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': 'today' }, _('Today')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': 'thisweek' }, _('This Week')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': 'lastweek' }, _('Last Week')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': 'thismonth' }, _('This Month')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': 'lastmonth' }, _('Last Month')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': '7days' }, _('Last 7 Days')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': '30days' }, _('Last 30 Days')),
+                                    E('button', { 'class': 'cbi-button cbi-button-neutral', 'data-preset': '90days' }, _('Last 90 Days')),
+                                    E('button', { 'class': 'cbi-button cbi-button-positive', 'data-preset': '1year' }, _('Last Year'))
+                                ]),
+                                E('div', { 'class': 'usage-ranking-timeline', 'id': 'traffic-increments-timeline' }, [
+                                    E('div', { 'class': 'usage-ranking-timeline-range', 'id': 'traffic-increments-timeline-range' })
                                 ])
                             ]),
                             E('div', { 'class': 'traffic-increments-filters' }, [
                                 E('div', { 'class': 'traffic-increments-filter-group' }, [
                                     E('label', { 'class': 'traffic-increments-filter-label' }, _('Aggregation:')),
-                                    E('select', { 'class': 'traffic-increments-filter-select', 'id': 'traffic-increments-aggregation' }, [
+										E('select', { 'class': 'cbi-input-select', 'id': 'traffic-increments-aggregation' }, [
                                         E('option', { 'value': 'hourly' }, _('Hourly')),
                                         E('option', { 'value': 'daily' }, _('Daily'))
                                     ])
                                 ]),
                                 E('div', { 'class': 'traffic-increments-filter-group' }, [
                                     E('label', { 'class': 'traffic-increments-filter-label' }, _('Device:')),
-                                    E('select', { 'class': 'traffic-increments-filter-select', 'id': 'traffic-increments-mac' }, [
+										E('select', { 'class': 'cbi-input-select', 'id': 'traffic-increments-mac' }, [
                                         E('option', { 'value': 'all' }, _('All Devices'))
                                     ])
                                 ])
@@ -3018,15 +3121,15 @@ return view.extend({
                 };
                 var daysText = days.length > 0 ? days.map(function (d) { return dayNames[d] || d; }).join(', ') : '-';
 
-                var uploadLimit = rule.wide_tx_rate_limit || 0;
-                var downloadLimit = rule.wide_rx_rate_limit || 0;
+                var uploadLimit = rule.wan_tx_rate_limit || 0;
+                var downloadLimit = rule.wan_rx_rate_limit || 0;
 
                 // 使用 isRuleActive 函数检查规则是否激活
                 var isActive = isRuleActive(rule);
 
                 // 箭头固定颜色（橙色和青色），样式与 WAN 字段一致
-                var uploadLimitText = '<span class="srt-arrow" style="color: #f97316;">↑</span>' + (uploadLimit > 0 ? formatByterate(uploadLimit, speedUnit) : _('Unlimited'));
-                var downloadLimitText = '<span class="srt-arrow" style="color: #06b6d4;">↓</span>' + (downloadLimit > 0 ? formatByterate(downloadLimit, speedUnit) : _('Unlimited'));
+                var uploadLimitText = '<span class="srt-arrow" style="color: ' + BANDIX_COLOR_UPLOAD + ';">↑</span>' + (uploadLimit > 0 ? formatByterate(uploadLimit, speedUnit) : _('Unlimited'));
+                var downloadLimitText = '<span class="srt-arrow" style="color: ' + BANDIX_COLOR_DOWNLOAD + ';">↓</span>' + (downloadLimit > 0 ? formatByterate(downloadLimit, speedUnit) : _('Unlimited'));
 
                 var activeMark = isActive ? '<span style="color: #10b981; margin-right: 4px;">●</span>' : '';
 
@@ -3042,40 +3145,42 @@ return view.extend({
             return lines.join('');
         }
 
-        // 设备信息模式切换
-        var deviceModeButtons = view.querySelectorAll('.device-mode-btn');
+        var devicePeriodInit = localStorage.getItem('bandix_device_period');
+        if (!devicePeriodInit || !/^(today|week|month|year|all)$/.test(devicePeriodInit)) {
+            localStorage.setItem('bandix_device_period', 'all');
+        }
 
-        deviceModeButtons.forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                var newMode = this.getAttribute('data-mode');
-
-                // 如果已经是当前模式，不做任何操作
-                if (this.classList.contains('active')) {
-                    return;
-                }
-
-                // 保存到 localStorage
-                localStorage.setItem('bandix_device_mode', newMode);
-
-                // 更新按钮状态
-                deviceModeButtons.forEach(function (b) {
-                    b.classList.remove('active');
-                });
-                this.classList.add('active');
-
-                // 刷新设备列表以应用新的显示模式
+        var deviceModeSelect = view.querySelector('#bandix_device_mode_select');
+        if (deviceModeSelect) {
+            deviceModeSelect.addEventListener('change', function () {
+                localStorage.setItem('bandix_device_mode', this.value);
                 updateDeviceData();
             });
-        });
+        }
+
+        var devicePeriodSelect = view.querySelector('#bandix_device_period_select');
+        if (devicePeriodSelect) {
+            devicePeriodSelect.addEventListener('change', function () {
+                localStorage.setItem('bandix_device_period', this.value);
+                updateDeviceData();
+            });
+        }
+
+        var whitelistBadge = view.querySelector('#bandix_whitelist_badge');
+        if (whitelistBadge) {
+            whitelistBadge.addEventListener('click', function () {
+                showWhitelistModal();
+            });
+        }
 
         // 创建限速设置模态框
-        var modal = E('div', { 'class': 'modal-overlay', 'id': 'rate-limit-modal' }, [
-            E('div', { 'class': 'modal' }, [
-                // E('div', { 'class': 'modal-header' }, [
-                //     E('h3', { 'class': 'modal-title' }, _('Device Settings'))
+        var bandix_modal = E('div', { 'class': 'bandix_modal-overlay', 'id': 'rate-limit-bandix_modal' }, [
+            E('div', { 'class': 'bandix_modal' }, [
+                // E('div', { 'class': 'bandix_modal-header' }, [
+                //     E('h3', { 'class': 'bandix_modal-title' }, _('Device Settings'))
                 // ]),
-                E('div', { 'class': 'modal-body' }, [
-                    E('div', { 'class': 'device-summary', 'id': 'modal-device-summary' }),
+                E('div', { 'class': 'bandix_modal-body' }, [
+                    E('div', { 'class': 'device-summary', 'id': 'bandix_modal-device-summary' }),
                     E('div', { 'class': 'form-group' }, [
                         E('label', { 'class': 'form-label' }, _('Hostname')),
                         E('div', { 'style': 'display: flex; gap: 8px; align-items: center;' }, [
@@ -3103,21 +3208,21 @@ return view.extend({
                         E('div', { 'class': 'schedule-rules-list', 'id': 'schedule-rules-list' })
                     ])
                 ]),
-                E('div', { 'class': 'modal-footer' }, [
-                    E('button', { 'class': 'cbi-button cbi-button-reset', 'id': 'modal-close' }, _('Close'))
+                E('div', { 'class': 'bandix_modal-footer' }, [
+                    E('button', { 'class': 'cbi-button cbi-button-reset', 'id': 'bandix_modal-close' }, _('Close'))
                 ])
             ])
         ]);
 
-        document.body.appendChild(modal);
+        document.body.appendChild(bandix_modal);
 
         // 创建添加规则模态框
-        var addRuleModal = E('div', { 'class': 'modal-overlay', 'id': 'add-rule-modal' }, [
-            E('div', { 'class': 'modal' }, [
-                E('div', { 'class': 'modal-header' }, [
-                    E('h3', { 'class': 'modal-title' }, _('Add Schedule Rule'))
+        var addRuleModal = E('div', { 'class': 'bandix_modal-overlay', 'id': 'add-rule-bandix_modal' }, [
+            E('div', { 'class': 'bandix_modal' }, [
+                E('div', { 'class': 'bandix_modal-header' }, [
+                    E('h3', { 'class': 'bandix_modal-title' }, _('Add Schedule Rule'))
                 ]),
-                E('div', { 'class': 'modal-body' }, [
+                E('div', { 'class': 'bandix_modal-body' }, [
                     E('div', { 'class': 'form-group' }, [
                         E('label', { 'class': 'form-label' }, _('Time Slot')),
                         E('div', { 'class': 'schedule-time-row' }, [
@@ -3155,7 +3260,7 @@ return view.extend({
                         E('div', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-top: 4px;' }, _('Tip: Enter 0 for unlimited'))
                     ])
                 ]),
-                E('div', { 'class': 'modal-footer' }, [
+                E('div', { 'class': 'bandix_modal-footer' }, [
                     E('button', { 'class': 'cbi-button cbi-button-reset', 'id': 'add-rule-cancel' }, _('Cancel')),
                     E('button', { 'class': 'cbi-button cbi-button-positive', 'id': 'add-rule-save' }, _('Add'))
                 ])
@@ -3165,9 +3270,9 @@ return view.extend({
         document.body.appendChild(addRuleModal);
 
         // 创建确认对话框
-        var confirmDialog = E('div', { 'class': 'modal-overlay', 'id': 'confirm-dialog-modal' }, [
-            E('div', { 'class': 'modal confirm-dialog' }, [
-                E('div', { 'class': 'modal-body' }, [
+        var confirmDialog = E('div', { 'class': 'bandix_modal-overlay', 'id': 'confirm-dialog-bandix_modal' }, [
+            E('div', { 'class': 'bandix_modal confirm-dialog' }, [
+                E('div', { 'class': 'bandix_modal-body' }, [
                     E('div', { 'class': 'confirm-dialog-title', 'id': 'confirm-dialog-title' }, _('Confirm')),
                     E('div', { 'class': 'confirm-dialog-message', 'id': 'confirm-dialog-message' }, ''),
                     E('div', { 'class': 'confirm-dialog-footer' }, [
@@ -3179,6 +3284,77 @@ return view.extend({
         ]);
 
         document.body.appendChild(confirmDialog);
+
+        // 创建白名单管理弹窗
+        var whitelistModal = E('div', { 'class': 'whitelist_modal-overlay', 'id': 'whitelist_modal' }, [
+            E('div', { 'class': 'whitelist_modal' }, [
+                E('div', { 'class': 'whitelist_modal-header' }, [
+                    E('h3', { 'class': 'whitelist_modal-title' }, _('Global Rate Limit'))
+                ]),
+                E('div', { 'class': 'whitelist_modal-body' }, [
+                    E('div', { 'class': 'whitelist_modal-row' }, [
+                        E('div', {}, [
+                            E('div', { 'style': 'font-weight: 600;' }, _('Enabled')),
+                            E('div', { 'class': 'whitelist_modal-hint' }, _('When enabled, all devices will be rate limited. Devices in the list are exempt (whitelist).'))
+                        ]),
+                        E('input', { 'type': 'checkbox', 'id': 'whitelist_enabled_checkbox' })
+                    ]),
+                    E('div', { 'style': 'margin-top: 14px; font-weight: 600;' }, _('Default Rate Limit')),
+                    E('div', { 'class': 'form-group', 'style': 'margin-top: 12px;' }, [
+                        E('label', { 'class': 'form-label' }, _('Upload Limit')),
+                        E('div', { 'style': 'display: flex; gap: 8px;' }, [
+                            E('input', { 'type': 'number', 'min': '0', 'step': '0.01', 'class': 'form-input', 'id': 'whitelist_default_wan_tx', 'placeholder': '0', 'style': 'flex: 1;' }),
+                            E('select', { 'class': 'cbi-input-select', 'id': 'whitelist_default_wan_tx_unit', 'style': 'width: 110px; flex-shrink: 0;' }, [
+                                E('option', { 'value': '1024' }, 'KB/s'),
+                                E('option', { 'value': '1048576' }, 'MB/s'),
+                                E('option', { 'value': '1073741824' }, 'GB/s'),
+                                E('option', { 'value': '125' }, 'Kbps'),
+                                E('option', { 'value': '125000' }, 'Mbps'),
+                                E('option', { 'value': '125000000' }, 'Gbps')
+                            ])
+                        ]),
+                        E('div', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-top: 4px;' }, _('Tip: Enter 0 for unlimited'))
+                    ]),
+                    E('div', { 'class': 'form-group', 'style': 'margin-top: 12px;' }, [
+                        E('label', { 'class': 'form-label' }, _('Download Limit')),
+                        E('div', { 'style': 'display: flex; gap: 8px;' }, [
+                            E('input', { 'type': 'number', 'min': '0', 'step': '0.01', 'class': 'form-input', 'id': 'whitelist_default_wan_rx', 'placeholder': '0', 'style': 'flex: 1;' }),
+                            E('select', { 'class': 'cbi-input-select', 'id': 'whitelist_default_wan_rx_unit', 'style': 'width: 110px; flex-shrink: 0;' }, [
+                                E('option', { 'value': '1024' }, 'KB/s'),
+                                E('option', { 'value': '1048576' }, 'MB/s'),
+                                E('option', { 'value': '1073741824' }, 'GB/s'),
+                                E('option', { 'value': '125' }, 'Kbps'),
+                                E('option', { 'value': '125000' }, 'Mbps'),
+                                E('option', { 'value': '125000000' }, 'Gbps')
+                            ])
+                        ]),
+                        E('div', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-top: 4px;' }, _('Tip: Enter 0 for unlimited'))
+                    ]),
+                    E('div', { 'style': 'display: flex; justify-content: flex-end; margin-top: 8px;' }, [
+                        E('button', { 'class': 'cbi-button cbi-button-action', 'id': 'whitelist_default_save_btn' }, _('Save'))
+                    ]),
+                    E('div', { 'style': 'margin-top: 8px; font-weight: 600;' }, _('Exempt Devices (Whitelist)')),
+                    E('div', { 'class': 'whitelist_modal-list', 'id': 'whitelist_macs_list' }, [
+                        E('div', { 'style': 'text-align: center; opacity: 0.7; padding: 12px 0;' }, _('Loading...'))
+                    ]),
+                    E('div', { 'style': 'margin-top: 14px;' }, [
+                        E('div', { 'class': 'whitelist_modal-row', 'style': 'justify-content: flex-start;' }, [
+                            E('select', { 'class': 'cbi-input-select', 'id': 'whitelist_device_select', 'style': 'width: 200px; flex-shrink: 0;' }, [
+                                E('option', { 'value': '' }, _('Select Device'))
+                            ]),
+                            E('input', { 'type': 'text', 'class': 'form-input', 'id': 'whitelist_add_mac_input', 'placeholder': 'aa:bb:cc:dd:ee:ff', 'style': 'flex: 1;' }),
+                            E('button', { 'class': 'cbi-button cbi-button-positive', 'id': 'whitelist_add_mac_btn', 'style': 'flex-shrink: 0;' }, _('Add'))
+                        ]),
+                        E('div', { 'class': 'whitelist_modal-error', 'id': 'whitelist_modal_error' }, '')
+                    ])
+                ]),
+                E('div', { 'class': 'whitelist_modal-footer' }, [
+                    E('button', { 'class': 'cbi-button cbi-button-reset', 'id': 'whitelist_modal_close' }, _('Close'))
+                ])
+            ])
+        ]);
+
+        document.body.appendChild(whitelistModal);
 
         // 确认对话框相关变量
         var confirmDialogCallback = null;
@@ -3197,7 +3373,7 @@ return view.extend({
                 var bgColor = computedStyle.backgroundColor;
                 var textColor = computedStyle.color;
 
-                var modalElement = confirmDialog.querySelector('.modal');
+                var bandix_modalElement = confirmDialog.querySelector('.bandix_modal');
 
                 if (bgColor && bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent') {
                     var rgbaMatch = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
@@ -3208,17 +3384,17 @@ return view.extend({
                         var alpha = rgbaMatch[4] ? parseFloat(rgbaMatch[4]) : 1;
 
                         if (alpha < 0.95) {
-                            modalElement.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
+                            bandix_modalElement.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
                         } else {
-                            modalElement.style.backgroundColor = bgColor;
+                            bandix_modalElement.style.backgroundColor = bgColor;
                         }
                     } else {
-                        modalElement.style.backgroundColor = bgColor;
+                        bandix_modalElement.style.backgroundColor = bgColor;
                     }
                 }
 
                 if (textColor && textColor !== 'rgba(0, 0, 0, 0)') {
-                    modalElement.style.color = textColor;
+                    bandix_modalElement.style.color = textColor;
                 }
             } catch (e) { }
 
@@ -3248,6 +3424,295 @@ return view.extend({
             }
         });
 
+        function parseWhitelistState(res) {
+            if (!res) return { enabled: false, macs: [] };
+            if (res.success === false || res.error) {
+                throw new Error(res.error || _('Failed to load whitelist'));
+            }
+            if (res.status && res.status !== 'success') {
+                throw new Error(res.error || _('Failed to load whitelist'));
+            }
+            var data = res.data ? res.data : res;
+            return {
+                enabled: !!data.enabled,
+                macs: Array.isArray(data.macs) ? data.macs : [],
+                default_wan_rx_rate_limit: data.default_wan_rx_rate_limit,
+                default_wan_tx_rate_limit: data.default_wan_tx_rate_limit
+            };
+        }
+
+        function pickUnit(bytes) {
+            var n = parseFloat(bytes);
+            if (isNaN(n) || n < 0) return { value: '', unit: '1024' };
+            if (n === 0) return { value: 0, unit: '1024' };
+
+            if (n >= 125000000 && Math.abs(n / 125000000 - Math.round(n / 125000000)) < 1e-9) return { value: Math.round(n / 125000000), unit: '125000000' };
+            if (n >= 125000 && Math.abs(n / 125000 - Math.round(n / 125000)) < 1e-9) return { value: Math.round(n / 125000), unit: '125000' };
+            if (n >= 125 && Math.abs(n / 125 - Math.round(n / 125)) < 1e-9) return { value: Math.round(n / 125), unit: '125' };
+
+            if (n >= 1073741824) return { value: +(n / 1073741824).toFixed(2), unit: '1073741824' };
+            if (n >= 1048576) return { value: +(n / 1048576).toFixed(2), unit: '1048576' };
+            return { value: +(n / 1024).toFixed(2), unit: '1024' };
+        }
+
+        function unitToBytes(valStr, unitStr) {
+            var v = parseFloat((valStr || '').trim());
+            var u = parseFloat(unitStr);
+            if (isNaN(v) || v < 0 || isNaN(u) || u <= 0) return null;
+            return Math.round(v * u);
+        }
+
+        function getDeviceLabel(d) {
+            var name = d && (d.hostname || d.name) ? (d.hostname || d.name) : '';
+            var ip = d && d.ip ? d.ip : '';
+            var mac = d && d.mac ? d.mac : '';
+            var left = name || ip || mac || '';
+            var right = mac && left !== mac ? (' ' + mac) : '';
+            return (left + right).trim();
+        }
+
+        function populateWhitelistDeviceSelect() {
+            var sel = document.getElementById('whitelist_device_select');
+            if (!sel) return;
+
+            var keep = sel.value;
+            sel.innerHTML = '';
+            sel.appendChild(E('option', { 'value': '' }, _('Select Device')));
+
+            var devices = [];
+            try { devices = (latestDevices && latestDevices.length) ? latestDevices : []; } catch (e) { devices = []; }
+            if (!devices.length) {
+                sel.value = '';
+                return;
+            }
+
+            devices.slice().sort(function (a, b) {
+                return getDeviceLabel(a).localeCompare(getDeviceLabel(b));
+            }).forEach(function (d) {
+                if (!d || !d.mac) return;
+                sel.appendChild(E('option', { 'value': d.mac }, getDeviceLabel(d)));
+            });
+
+            sel.value = keep;
+        }
+
+        function setWhitelistError(msg) {
+            var el = document.getElementById('whitelist_modal_error');
+            if (!el) return;
+            if (msg) {
+                el.textContent = msg;
+                el.style.display = 'block';
+            } else {
+                el.textContent = '';
+                el.style.display = 'none';
+            }
+        }
+
+        function updateWhitelistBadge(state) {
+            var badge = view.querySelector('#bandix_whitelist_badge');
+            if (!badge) return;
+            if (!state) {
+                badge.textContent = _('Unavailable');
+                badge.style.backgroundColor = '';
+                return;
+            }
+            var text = state.enabled ? _('Enabled') : _('Disabled');
+            var count = (state.macs && state.macs.length) ? state.macs.length : 0;
+            badge.textContent = text + ' (' + count + ')';
+            badge.style.backgroundColor = state.enabled ? '#10b981' : '#6b7280';
+            badge.style.color = '#fff';
+        }
+
+        function renderWhitelistList(macs) {
+            var listEl = document.getElementById('whitelist_macs_list');
+            if (!listEl) return;
+            listEl.innerHTML = '';
+
+            if (!macs || macs.length === 0) {
+                listEl.appendChild(E('div', { 'style': 'text-align: center; opacity: 0.7; padding: 12px 0;' }, _('No devices')));
+                return;
+            }
+
+            var deviceMap = {};
+            try {
+                (latestDevices || []).forEach(function (d) {
+                    if (d && d.mac) deviceMap[d.mac] = d;
+                });
+            } catch (e) { deviceMap = {}; }
+
+            macs.slice().sort().forEach(function (mac) {
+                var d = deviceMap[mac];
+                var hostname = d && d.hostname ? d.hostname : '';
+                var ip = d && d.ip ? d.ip : '';
+                var title = hostname || ip || mac;
+
+                var item = E('div', { 'class': 'whitelist_modal-item' }, [
+                    E('div', { 'style': 'display: flex; flex-direction: column; gap: 2px;' }, [
+                        E('div', { 'style': 'font-weight: 600;' }, title),
+                        E('div', { 'style': 'font-size: 0.75rem; opacity: 0.7;' }, [
+                            ip ? (ip + ' · ') : '',
+                            E('span', { 'class': 'whitelist_modal-mac' }, mac)
+                        ])
+                    ]),
+                    E('button', { 'class': 'cbi-button cbi-button-negative', 'style': 'padding: 4px 10px;' }, _('Delete'))
+                ]);
+
+                item.querySelector('button').addEventListener('click', function () {
+                    showConfirmDialog(
+                        _('Delete'),
+                        _('Remove this device from the list?'),
+                        function () {
+                            callDeleteRateLimitWhitelist(mac).then(function () {
+                                return loadWhitelistModal();
+                            }).then(function () {
+                                return refreshWhitelistStatus();
+                            }).catch(function (e) {
+                                setWhitelistError(e && e.message ? e.message : _('Failed'));
+                            });
+                        }
+                    );
+                });
+
+                listEl.appendChild(item);
+            });
+        }
+
+        function loadWhitelistModal() {
+            setWhitelistError('');
+            var listEl = document.getElementById('whitelist_macs_list');
+            if (listEl) listEl.innerHTML = '<div style="text-align: center; opacity: 0.7; padding: 12px 0;">' + _('Loading...') + '</div>';
+
+            return callGetRateLimitWhitelist().then(function (res) {
+                var state = parseWhitelistState(res);
+                var checkbox = document.getElementById('whitelist_enabled_checkbox');
+                if (checkbox) checkbox.checked = !!state.enabled;
+                var rxEl = document.getElementById('whitelist_default_wan_rx');
+                var txEl = document.getElementById('whitelist_default_wan_tx');
+                var rxUnitEl = document.getElementById('whitelist_default_wan_rx_unit');
+                var txUnitEl = document.getElementById('whitelist_default_wan_tx_unit');
+                var rxPicked = pickUnit(state.default_wan_rx_rate_limit);
+                var txPicked = pickUnit(state.default_wan_tx_rate_limit);
+                if (rxEl) rxEl.value = (rxPicked.value !== '') ? String(rxPicked.value) : '';
+                if (txEl) txEl.value = (txPicked.value !== '') ? String(txPicked.value) : '';
+                if (rxUnitEl) rxUnitEl.value = rxPicked.unit;
+                if (txUnitEl) txUnitEl.value = txPicked.unit;
+                renderWhitelistList(state.macs);
+                return state;
+            }).catch(function (e) {
+                var msg = (e && e.message) ? e.message : _('Failed to load whitelist');
+                setWhitelistError(msg);
+                if (listEl) listEl.innerHTML = '<div style="text-align: center; opacity: 0.7; padding: 12px 0;">' + _('Failed') + '</div>';
+                return null;
+            });
+        }
+
+        function refreshWhitelistStatus() {
+            return callGetRateLimitWhitelist().then(function (res) {
+                var state = parseWhitelistState(res);
+                updateWhitelistBadge(state);
+                return state;
+            }).catch(function () {
+                updateWhitelistBadge(null);
+                return null;
+            });
+        }
+
+        function showWhitelistModal() {
+            whitelistModal.classList.add('show');
+            populateWhitelistDeviceSelect();
+            try {
+                var sel = document.getElementById('whitelist_device_select');
+                if (sel && !sel.__bandixBound) {
+                    sel.addEventListener('change', function () {
+                        var macInput = document.getElementById('whitelist_add_mac_input');
+                        if (macInput && this.value) macInput.value = this.value;
+                    });
+                    sel.__bandixBound = true;
+                }
+            } catch (e) { }
+            loadWhitelistModal();
+        }
+
+        function hideWhitelistModal() {
+            whitelistModal.classList.remove('show');
+            setWhitelistError('');
+        }
+
+        document.getElementById('whitelist_modal_close').addEventListener('click', hideWhitelistModal);
+
+        document.getElementById('whitelist_enabled_checkbox').addEventListener('change', function () {
+            var checkbox = this;
+            checkbox.disabled = true;
+            setWhitelistError('');
+            callSetRateLimitWhitelistEnabled(checkbox.checked ? 1 : 0).then(function () {
+                return loadWhitelistModal();
+            }).then(function () {
+                return refreshWhitelistStatus();
+            }).catch(function (e) {
+                setWhitelistError(e && e.message ? e.message : _('Failed'));
+            }).finally(function () {
+                checkbox.disabled = false;
+            });
+        });
+
+        document.getElementById('whitelist_add_mac_btn').addEventListener('click', function () {
+            var input = document.getElementById('whitelist_add_mac_input');
+            if (!input) return;
+            var sel = document.getElementById('whitelist_device_select');
+            var mac = (input.value || '').trim();
+            if (!mac && sel && sel.value) mac = sel.value;
+            var macRe = /^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$/;
+            if (!macRe.test(mac)) {
+                setWhitelistError(_('Invalid MAC address'));
+                return;
+            }
+
+            var btn = this;
+            btn.disabled = true;
+            setWhitelistError('');
+
+            callAddRateLimitWhitelist(mac).then(function () {
+                input.value = '';
+                if (sel) sel.value = '';
+                return loadWhitelistModal();
+            }).then(function () {
+                return refreshWhitelistStatus();
+            }).catch(function (e) {
+                setWhitelistError(e && e.message ? e.message : _('Failed'));
+            }).finally(function () {
+                btn.disabled = false;
+            });
+        });
+
+        document.getElementById('whitelist_default_save_btn').addEventListener('click', function () {
+            var rxEl = document.getElementById('whitelist_default_wan_rx');
+            var txEl = document.getElementById('whitelist_default_wan_tx');
+            var rxUnitEl = document.getElementById('whitelist_default_wan_rx_unit');
+            var txUnitEl = document.getElementById('whitelist_default_wan_tx_unit');
+            if (!rxEl || !txEl || !rxUnitEl || !txUnitEl) return;
+
+            var rxBytes = unitToBytes(rxEl.value, rxUnitEl.value);
+            var txBytes = unitToBytes(txEl.value, txUnitEl.value);
+            if (rxBytes == null || txBytes == null) {
+                setWhitelistError(_('Invalid value'));
+                return;
+            }
+
+            var btn = this;
+            btn.disabled = true;
+            setWhitelistError('');
+
+            callSetDefaultRateLimit(rxBytes, txBytes).then(function () {
+                return loadWhitelistModal();
+            }).then(function () {
+                return refreshWhitelistStatus();
+            }).catch(function (e) {
+                setWhitelistError(e && e.message ? e.message : _('Failed'));
+            }).finally(function () {
+                btn.disabled = false;
+            });
+        });
+
         // 日期选择按钮事件处理（添加规则模态框）
         var addRuleDayButtons = addRuleModal.querySelectorAll('.schedule-day-btn');
         addRuleDayButtons.forEach(function (btn) {
@@ -3260,7 +3725,7 @@ return view.extend({
         function showAddRuleModal() {
             if (!currentDevice) return;
 
-            var addRuleModalEl = document.getElementById('add-rule-modal');
+            var addRuleModalEl = document.getElementById('add-rule-bandix_modal');
             var speedUnit = uci.get('bandix', 'traffic', 'speed_unit') || 'bytes';
 
             // 动态填充单位选择器
@@ -3299,7 +3764,7 @@ return view.extend({
                 var bgColor = computedStyle.backgroundColor;
                 var textColor = computedStyle.color;
 
-                var modalElement = addRuleModalEl.querySelector('.modal');
+                var bandix_modalElement = addRuleModalEl.querySelector('.bandix_modal');
 
                 if (bgColor && bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent') {
                     var rgbaMatch = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
@@ -3310,17 +3775,17 @@ return view.extend({
                         var alpha = rgbaMatch[4] ? parseFloat(rgbaMatch[4]) : 1;
 
                         if (alpha < 0.95) {
-                            modalElement.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
+                            bandix_modalElement.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
                         } else {
-                            modalElement.style.backgroundColor = bgColor;
+                            bandix_modalElement.style.backgroundColor = bgColor;
                         }
                     } else {
-                        modalElement.style.backgroundColor = bgColor;
+                        bandix_modalElement.style.backgroundColor = bgColor;
                     }
                 }
 
                 if (textColor && textColor !== 'rgba(0, 0, 0, 0)') {
-                    modalElement.style.color = textColor;
+                    bandix_modalElement.style.color = textColor;
                 }
             } catch (e) { }
 
@@ -3330,7 +3795,7 @@ return view.extend({
 
         // 隐藏添加规则模态框
         function hideAddRuleModal() {
-            var addRuleModalEl = document.getElementById('add-rule-modal');
+            var addRuleModalEl = document.getElementById('add-rule-bandix_modal');
             addRuleModalEl.classList.remove('show');
         }
 
@@ -3384,7 +3849,7 @@ return view.extend({
             }
 
             // 重新获取日期按钮引用，确保获取最新状态
-            var addRuleModalEl = document.getElementById('add-rule-modal');
+            var addRuleModalEl = document.getElementById('add-rule-bandix_modal');
             var dayButtons = addRuleModalEl.querySelectorAll('.schedule-day-btn');
             var selectedDays = [];
             dayButtons.forEach(function (btn) {
@@ -3467,8 +3932,8 @@ return view.extend({
         // 显示模态框
         showRateLimitModal = function (device) {
             currentDevice = device;
-            var modal = document.getElementById('rate-limit-modal');
-            var deviceSummary = document.getElementById('modal-device-summary');
+            var bandix_modal = document.getElementById('rate-limit-bandix_modal');
+            var deviceSummary = document.getElementById('bandix_modal-device-summary');
             // 清空定时限速规则列表并加载
             var rulesList = document.getElementById('schedule-rules-list');
             if (rulesList) {
@@ -3499,7 +3964,7 @@ return view.extend({
                 var textColor = computedStyle.color;
 
                 // 获取模态框元素
-                var modalElement = modal.querySelector('.modal');
+                var bandix_modalElement = bandix_modal.querySelector('.bandix_modal');
 
                 // 确保背景色不透明
                 if (bgColor && bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent') {
@@ -3511,12 +3976,12 @@ return view.extend({
                         var alpha = rgbaMatch[4] ? parseFloat(rgbaMatch[4]) : 1;
 
                         if (alpha < 0.95) {
-                            modalElement.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
+                            bandix_modalElement.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
                         } else {
-                            modalElement.style.backgroundColor = bgColor;
+                            bandix_modalElement.style.backgroundColor = bgColor;
                         }
                     } else {
-                        modalElement.style.backgroundColor = bgColor;
+                        bandix_modalElement.style.backgroundColor = bgColor;
                     }
                 } else {
                     // 如果无法获取背景色，尝试从其他 cbi-section 获取
@@ -3533,12 +3998,12 @@ return view.extend({
                                 var b = parseInt(rgbaMatch[3]);
                                 var alpha = rgbaMatch[4] ? parseFloat(rgbaMatch[4]) : 1;
                                 if (alpha < 0.95) {
-                                    modalElement.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
+                                    bandix_modalElement.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
                                 } else {
-                                    modalElement.style.backgroundColor = sectionBg;
+                                    bandix_modalElement.style.backgroundColor = sectionBg;
                                 }
                             } else {
-                                modalElement.style.backgroundColor = sectionBg;
+                                bandix_modalElement.style.backgroundColor = sectionBg;
                             }
                             foundBgColor = true;
                             break;
@@ -3552,12 +4017,12 @@ return view.extend({
 
                 // 应用文字颜色
                 if (textColor && textColor !== 'rgba(0, 0, 0, 0)') {
-                    modalElement.style.color = textColor;
+                    bandix_modalElement.style.color = textColor;
                 } else {
                     if (cbiSection) {
                         var sectionTextColor = window.getComputedStyle(cbiSection).color;
                         if (sectionTextColor && sectionTextColor !== 'rgba(0, 0, 0, 0)') {
-                            modalElement.style.color = sectionTextColor;
+                            bandix_modalElement.style.color = sectionTextColor;
                         }
                     }
                 }
@@ -3567,13 +4032,13 @@ return view.extend({
             }
 
             // 显示模态框并添加动画
-            modal.classList.add('show');
+            bandix_modal.classList.add('show');
         }
 
         // 隐藏模态框
         function hideRateLimitModal() {
-            var modal = document.getElementById('rate-limit-modal');
-            modal.classList.remove('show');
+            var bandix_modal = document.getElementById('rate-limit-bandix_modal');
+            bandix_modal.classList.remove('show');
 
             // 等待动画完成后清理
             setTimeout(function () {
@@ -3652,8 +4117,8 @@ return view.extend({
 
                     var startTime = rule.time_slot && rule.time_slot.start ? rule.time_slot.start : '';
                     var endTime = rule.time_slot && rule.time_slot.end ? rule.time_slot.end : '';
-                    var uploadLimit = rule.wide_tx_rate_limit || 0;
-                    var downloadLimit = rule.wide_rx_rate_limit || 0;
+                    var uploadLimit = rule.wan_tx_rate_limit || 0;
+                    var downloadLimit = rule.wan_rx_rate_limit || 0;
 
                     var ruleItem = E('div', { 'class': 'schedule-rule-item' }, [
                         E('div', { 'class': 'schedule-rule-info' }, [
@@ -3747,7 +4212,7 @@ return view.extend({
         document.getElementById('hostname-save-btn').addEventListener('click', saveHostname);
 
         // 绑定关闭按钮事件
-        document.getElementById('modal-close').addEventListener('click', hideRateLimitModal);
+        document.getElementById('bandix_modal-close').addEventListener('click', hideRateLimitModal);
 
         // 历史趋势：状态与工具
         var latestDevices = [];
@@ -3851,8 +4316,8 @@ return view.extend({
             var downloadLimits = [];
 
             activeRules.forEach(function (rule) {
-                var uploadLimit = rule.wide_tx_rate_limit || 0;
-                var downloadLimit = rule.wide_rx_rate_limit || 0;
+                var uploadLimit = rule.wan_tx_rate_limit || 0;
+                var downloadLimit = rule.wan_rx_rate_limit || 0;
 
                 // 只收集非零的限制值
                 if (uploadLimit > 0) {
@@ -3980,47 +4445,20 @@ return view.extend({
         }
 
         function getTypeKeys(type) {
-            // 对于非实时时间范围（day/week/month），只有 WAN 数据
-            if (currentTimeRange !== 'realtime') {
-                // 所有类型都使用 WAN 数据
-                return { up: 'wide_tx_rate', down: 'wide_rx_rate' };
-            }
-
-            if (type === 'lan') return { up: 'local_tx_rate', down: 'local_rx_rate' };
-            if (type === 'wan') return { up: 'wide_tx_rate', down: 'wide_rx_rate' };
+            if (type === 'lan') return { up: 'lan_tx_rate', down: 'lan_rx_rate' };
+            if (type === 'wan') return { up: 'wan_tx_rate', down: 'wan_rx_rate' };
             return { up: 'total_tx_rate', down: 'total_rx_rate' };
         }
 
-        // 当前选择的时间范围
-        var currentTimeRange = localStorage.getItem('bandix_time_range') || 'realtime';
+        // 历史图表使用实时数据
 
         function fetchMetricsData(mac) {
-            // 根据选择的时间范围调用不同的接口
-            var range = currentTimeRange;
-            var callFunction;
-
-            switch (range) {
-                case 'day':
-                    callFunction = callGetMetricsDay;
-                    break;
-                case 'week':
-                    callFunction = callGetMetricsWeek;
-                    break;
-                case 'month':
-                    callFunction = callGetMetricsMonth;
-                    break;
-                case 'realtime':
-                default:
-                    callFunction = callGetMetrics;
-                    break;
-            }
-
             // 通过 ubus RPC 获取，避免跨域与鉴权问题
-            return callFunction(mac || '').then(function (res) { return res || { metrics: [] }; });
+            return callGetMetrics(mac || '').then(function (res) { return res || { metrics: [] }; });
         }
 
         // 将数组数组格式转换为对象数组格式（实时数据格式：13个字段）
-        // 输入格式: [[ts_ms, total_rx_rate, total_tx_rate, local_rx_rate, local_tx_rate, wide_rx_rate, wide_tx_rate, total_rx_bytes, total_tx_bytes, local_rx_bytes, local_tx_bytes, wide_rx_bytes, wide_tx_bytes], ...]
+        // 输入格式: [[ts_ms, total_rx_rate, total_tx_rate, lan_rx_rate, lan_tx_rate, wan_rx_rate, wan_tx_rate, total_rx_bytes, total_tx_bytes, lan_rx_bytes, lan_tx_bytes, wan_rx_bytes, wan_tx_bytes], ...]
         // 输出格式: [{ts_ms, total_rx_rate, total_tx_rate, ...}, ...]
         function convertMetricsArrayToObjects(metricsArray) {
             if (!Array.isArray(metricsArray)) {
@@ -4028,60 +4466,23 @@ return view.extend({
             }
 
             return metricsArray.map(function (arr) {
-                // 检查数据格式：如果是15个字段，说明是 day/week/month 格式
-                if (arr.length >= 15) {
-                    // day/week/month 格式：使用 P95 作为主要显示值
-                    return {
-                        ts_ms: arr[0] || 0,
-                        // 使用 P95 作为主要速率显示（最有价值的指标）
-                        wide_rx_rate: arr[5] || 0, // wide_rx_rate_p95
-                        wide_tx_rate: arr[11] || 0, // wide_tx_rate_p95
-                        // 保存所有统计信息供 tooltip 使用
-                        wide_rx_rate_avg: arr[1] || 0,
-                        wide_rx_rate_max: arr[2] || 0,
-                        wide_rx_rate_min: arr[3] || 0,
-                        wide_rx_rate_p90: arr[4] || 0,
-                        wide_rx_rate_p95: arr[5] || 0,
-                        wide_rx_rate_p99: arr[6] || 0,
-                        wide_tx_rate_avg: arr[7] || 0,
-                        wide_tx_rate_max: arr[8] || 0,
-                        wide_tx_rate_min: arr[9] || 0,
-                        wide_tx_rate_p90: arr[10] || 0,
-                        wide_tx_rate_p95: arr[11] || 0,
-                        wide_tx_rate_p99: arr[12] || 0,
-                        wide_rx_bytes: arr[13] || 0,
-                        wide_tx_bytes: arr[14] || 0,
-                        // 标记这是聚合数据
-                        is_aggregated: true,
-                        // 为了兼容性，设置其他字段（day/week/month 只有 WAN 数据）
-                        total_rx_rate: arr[5] || 0, // 使用 P95
-                        total_tx_rate: arr[11] || 0, // 使用 P95
-                        local_rx_rate: 0,
-                        local_tx_rate: 0,
-                        total_rx_bytes: arr[13] || 0,
-                        total_tx_bytes: arr[14] || 0,
-                        local_rx_bytes: 0,
-                        local_tx_bytes: 0
-                    };
-                } else {
-                    // 实时数据格式（13个字段）
-                    return {
-                        ts_ms: arr[0] || 0,
-                        total_rx_rate: arr[1] || 0,
-                        total_tx_rate: arr[2] || 0,
-                        local_rx_rate: arr[3] || 0,
-                        local_tx_rate: arr[4] || 0,
-                        wide_rx_rate: arr[5] || 0,
-                        wide_tx_rate: arr[6] || 0,
-                        total_rx_bytes: arr[7] || 0,
-                        total_tx_bytes: arr[8] || 0,
-                        local_rx_bytes: arr[9] || 0,
-                        local_tx_bytes: arr[10] || 0,
-                        wide_rx_bytes: arr[11] || 0,
-                        wide_tx_bytes: arr[12] || 0,
-                        is_aggregated: false
-                    };
-                }
+                // 实时数据格式（13个字段）
+                return {
+                    ts_ms: arr[0] || 0,
+                    total_rx_rate: arr[1] || 0,
+                    total_tx_rate: arr[2] || 0,
+                    lan_rx_rate: arr[3] || 0,
+                    lan_tx_rate: arr[4] || 0,
+                    wan_rx_rate: arr[5] || 0,
+                    wan_tx_rate: arr[6] || 0,
+                    total_rx_bytes: arr[7] || 0,
+                    total_tx_bytes: arr[8] || 0,
+                    lan_rx_bytes: arr[9] || 0,
+                    lan_tx_bytes: arr[10] || 0,
+                    wan_rx_bytes: arr[11] || 0,
+                    wan_tx_bytes: arr[12] || 0,
+                    is_aggregated: false
+                };
             }).filter(function (item) { return item !== null; });
         }
 
@@ -4257,8 +4658,8 @@ return view.extend({
             }
 
             // 橙色上行，青色下行，使用半透明渐变
-            drawAreaSeries(upSeries, '#f97316', 'rgba(249,115,22,0.16)', 'rgba(249,115,22,0.02)');
-            drawAreaSeries(downSeries, '#06b6d4', 'rgba(6,182,212,0.12)', 'rgba(6,182,212,0.02)');
+            drawAreaSeries(upSeries, BANDIX_COLOR_UPLOAD, 'rgba(249,115,22,0.16)', 'rgba(249,115,22,0.02)');
+            drawAreaSeries(downSeries, BANDIX_COLOR_DOWNLOAD, 'rgba(6,182,212,0.12)', 'rgba(6,182,212,0.02)');
 
             // X 轴时间标签（首尾）
             if (labels && labels.length > 0) {
@@ -4367,26 +4768,21 @@ return view.extend({
             }
 
             function rateKeysFor(type) {
-                if (type === 'lan') return { up: 'local_tx_rate', down: 'local_rx_rate' };
-                if (type === 'wan') return { up: 'wide_tx_rate', down: 'wide_rx_rate' };
+                if (type === 'lan') return { up: 'lan_tx_rate', down: 'lan_rx_rate' };
+                if (type === 'wan') return { up: 'wan_tx_rate', down: 'wan_rx_rate' };
                 return { up: 'total_tx_rate', down: 'total_rx_rate' };
             }
 
             function bytesKeysFor(type) {
-                if (type === 'lan') return { up: 'local_tx_bytes', down: 'local_rx_bytes' };
-                if (type === 'wan') return { up: 'wide_tx_bytes', down: 'wide_rx_bytes' };
+                if (type === 'lan') return { up: 'lan_tx_bytes', down: 'lan_rx_bytes' };
+                if (type === 'wan') return { up: 'wan_tx_bytes', down: 'wan_rx_bytes' };
                 return { up: 'total_tx_bytes', down: 'total_rx_bytes' };
             }
 
             // 标题：聚合数据显示完整日期时间，实时数据只显示时间
             if (isAggregated) {
                 lines.push('<div class="ht-title">' + msToFullDateTimeLabel(point.ts_ms) + '</div>');
-                var rangeLabel = currentTimeRange === 'day' ? _('Daily') :
-                    currentTimeRange === 'week' ? _('Weekly') :
-                        currentTimeRange === 'month' ? _('Monthly') : '';
-                if (rangeLabel) {
-                    lines.push('<div style="font-size: 0.75rem; opacity: 0.6; margin-bottom: 4px;">' + rangeLabel + ' ' + _('Statistics') + '</div>');
-                }
+                // 注意：当前版本只支持实时数据，不显示聚合统计标签
             } else {
                 lines.push('<div class="ht-title">' + msToTimeLabel(point.ts_ms) + '</div>');
             }
@@ -4401,11 +4797,11 @@ return view.extend({
                     '<div class="ht-kpis">' +
                     '<div class="ht-kpi up">' +
                     '<div class="ht-k-label">' + _('WAN Upload') + ' (P95)</div>' +
-                    '<div class="ht-k-value">' + formatByterate(point.wide_tx_rate_p95 || 0, speedUnit) + '</div>' +
+                    '<div class="ht-k-value">' + formatByterate(point.wan_tx_rate_p95 || 0, speedUnit) + '</div>' +
                     '</div>' +
                     '<div class="ht-kpi down">' +
                     '<div class="ht-k-label">' + _('WAN Download') + ' (P95)</div>' +
-                    '<div class="ht-k-value">' + formatByterate(point.wide_rx_rate_p95 || 0, speedUnit) + '</div>' +
+                    '<div class="ht-k-value">' + formatByterate(point.wan_rx_rate_p95 || 0, speedUnit) + '</div>' +
                     '</div>' +
                     '</div>'
                 );
@@ -4413,26 +4809,26 @@ return view.extend({
                 // 详细统计信息
                 lines.push('<div class="ht-divider"></div>');
                 lines.push('<div class="ht-section-title">' + _('Upload Statistics') + '</div>');
-                row(_('Average'), formatByterate(point.wide_tx_rate_avg || 0, speedUnit));
-                row(_('Maximum'), formatByterate(point.wide_tx_rate_max || 0, speedUnit));
-                row(_('Minimum'), formatByterate(point.wide_tx_rate_min || 0, speedUnit));
-                row('P90', formatByterate(point.wide_tx_rate_p90 || 0, speedUnit));
-                row('P95', formatByterate(point.wide_tx_rate_p95 || 0, speedUnit));
-                row('P99', formatByterate(point.wide_tx_rate_p99 || 0, speedUnit));
+                row(_('Average'), formatByterate(point.wan_tx_rate_avg || 0, speedUnit));
+                row(_('Maximum'), formatByterate(point.wan_tx_rate_max || 0, speedUnit));
+                row(_('Minimum'), formatByterate(point.wan_tx_rate_min || 0, speedUnit));
+                row('P90', formatByterate(point.wan_tx_rate_p90 || 0, speedUnit));
+                row('P95', formatByterate(point.wan_tx_rate_p95 || 0, speedUnit));
+                row('P99', formatByterate(point.wan_tx_rate_p99 || 0, speedUnit));
 
                 lines.push('<div class="ht-section-title" style="margin-top: 8px;">' + _('Download Statistics') + '</div>');
-                row(_('Average'), formatByterate(point.wide_rx_rate_avg || 0, speedUnit));
-                row(_('Maximum'), formatByterate(point.wide_rx_rate_max || 0, speedUnit));
-                row(_('Minimum'), formatByterate(point.wide_rx_rate_min || 0, speedUnit));
-                row('P90', formatByterate(point.wide_rx_rate_p90 || 0, speedUnit));
-                row('P95', formatByterate(point.wide_rx_rate_p95 || 0, speedUnit));
-                row('P99', formatByterate(point.wide_rx_rate_p99 || 0, speedUnit));
+                row(_('Average'), formatByterate(point.wan_rx_rate_avg || 0, speedUnit));
+                row(_('Maximum'), formatByterate(point.wan_rx_rate_max || 0, speedUnit));
+                row(_('Minimum'), formatByterate(point.wan_rx_rate_min || 0, speedUnit));
+                row('P90', formatByterate(point.wan_rx_rate_p90 || 0, speedUnit));
+                row('P95', formatByterate(point.wan_rx_rate_p95 || 0, speedUnit));
+                row('P99', formatByterate(point.wan_rx_rate_p99 || 0, speedUnit));
 
                 // 累计流量（只显示 WAN）
                 lines.push('<div class="ht-divider"></div>');
                 lines.push('<div class="ht-section-title">' + _('Cumulative Traffic') + '</div>');
-                row(_('WAN Uploaded'), bytesValue('wide_tx_bytes'));
-                row(_('WAN Downloaded'), bytesValue('wide_rx_bytes'));
+                row(_('WAN Uploaded'), bytesValue('wan_tx_bytes'));
+                row(_('WAN Downloaded'), bytesValue('wan_rx_bytes'));
             } else {
                 // 实时数据：显示实时速率
                 lines.push(
@@ -4463,12 +4859,12 @@ return view.extend({
                 // 累计：区分LAN 流量与公网
                 lines.push('<div class="ht-divider"></div>');
                 lines.push('<div class="ht-section-title">' + _('Cumulative') + '</div>');
+                row(_('LAN Uploaded'), bytesValue('lan_tx_bytes'));
+                row(_('LAN Downloaded'), bytesValue('lan_rx_bytes'));
+                row(_('WAN Uploaded'), bytesValue('wan_tx_bytes'));
+                row(_('WAN Downloaded'), bytesValue('wan_rx_bytes'));
                 row(_('Total Uploaded'), bytesValue('total_tx_bytes'));
                 row(_('Total Downloaded'), bytesValue('total_rx_bytes'));
-                row(_('LAN Uploaded'), bytesValue('local_tx_bytes'));
-                row(_('LAN Downloaded'), bytesValue('local_rx_bytes'));
-                row(_('WAN Uploaded'), bytesValue('wide_tx_bytes'));
-                row(_('WAN Downloaded'), bytesValue('wide_rx_bytes'));
             }
 
             return lines.join('');
@@ -4525,8 +4921,8 @@ return view.extend({
                         }
 
                         // 在线状态相同时，按LAN速度排序
-                        var aSpeed = (a.local_tx_rate || 0) + (a.local_rx_rate || 0);
-                        var bSpeed = (b.local_tx_rate || 0) + (b.local_rx_rate || 0);
+                        var aSpeed = (a.lan_tx_rate || 0) + (a.lan_rx_rate || 0);
+                        var bSpeed = (b.lan_tx_rate || 0) + (b.lan_rx_rate || 0);
                         if (aSpeed !== bSpeed) {
                             return ascending ? (aSpeed - bSpeed) : (bSpeed - aSpeed);
                         }
@@ -4546,8 +4942,8 @@ return view.extend({
                         }
 
                         // 在线状态相同时，按WAN速度排序
-                        var aSpeed = (a.wide_tx_rate || 0) + (a.wide_rx_rate || 0);
-                        var bSpeed = (b.wide_tx_rate || 0) + (b.wide_rx_rate || 0);
+                        var aSpeed = (a.wan_tx_rate || 0) + (a.wan_rx_rate || 0);
+                        var bSpeed = (b.wan_tx_rate || 0) + (b.wan_rx_rate || 0);
                         if (aSpeed !== bSpeed) {
                             return ascending ? (aSpeed - bSpeed) : (bSpeed - aSpeed);
                         }
@@ -4567,8 +4963,8 @@ return view.extend({
                         }
 
                         // 在线状态相同时，按LAN流量排序
-                        var aTraffic = (a.local_tx_bytes || 0) + (a.local_rx_bytes || 0);
-                        var bTraffic = (b.local_tx_bytes || 0) + (b.local_rx_bytes || 0);
+                        var aTraffic = (a.lan_tx_bytes || 0) + (a.lan_rx_bytes || 0);
+                        var bTraffic = (b.lan_tx_bytes || 0) + (b.lan_rx_bytes || 0);
                         if (aTraffic !== bTraffic) {
                             return ascending ? (aTraffic - bTraffic) : (bTraffic - aTraffic);
                         }
@@ -4588,8 +4984,8 @@ return view.extend({
                         }
 
                         // 在线状态相同时，按WAN流量排序
-                        var aTraffic = (a.wide_tx_bytes || 0) + (a.wide_rx_bytes || 0);
-                        var bTraffic = (b.wide_tx_bytes || 0) + (b.wide_rx_bytes || 0);
+                        var aTraffic = (a.wan_tx_bytes || 0) + (a.wan_rx_bytes || 0);
+                        var bTraffic = (b.wan_tx_bytes || 0) + (b.wan_rx_bytes || 0);
                         if (aTraffic !== bTraffic) {
                             return ascending ? (aTraffic - bTraffic) : (bTraffic - aTraffic);
                         }
@@ -5093,7 +5489,7 @@ return view.extend({
                     tooltip.style.top = '-9999px';
                     var tw = tooltip.offsetWidth || 0;
                     var th = tooltip.offsetHeight || 0;
-                    var padding = 12;
+                    var padding = 20;
                     var maxX = (typeof window !== 'undefined' ? window.innerWidth : document.documentElement.clientWidth) - 4;
                     var maxY = (typeof window !== 'undefined' ? window.innerHeight : document.documentElement.clientHeight) - 4;
                     var cx = evt.clientX;
@@ -5236,89 +5632,7 @@ return view.extend({
             // 初始化缩放倍率显示
             updateZoomLevelDisplay();
 
-            // Tab 切换事件处理
-            var tabButtons = document.querySelectorAll('.history-tab');
-
-            // 确保找到了 tab 按钮
-            if (tabButtons.length === 0) {
-                console.warn('History tab buttons not found, retrying...');
-                setTimeout(initHistoryControls, 100);
-                return;
-            }
-
-            tabButtons.forEach(function (btn) {
-                btn.addEventListener('click', function () {
-                    var range = this.getAttribute('data-range');
-
-                    // 更新当前选择的时间范围
-                    currentTimeRange = range;
-                    localStorage.setItem('bandix_time_range', range);
-
-                    // 更新 tab 状态
-                    tabButtons.forEach(function (b) {
-                        b.classList.remove('active');
-                    });
-                    this.classList.add('active');
-
-                    // 对于非实时时间范围，禁用 LAN 和 Total 选项（因为只有 WAN 数据）
-                    if (range !== 'realtime') {
-                        if (typeSel) {
-                            // 如果当前选择的是 LAN 或 Total，切换到 WAN
-                            if (typeSel.value === 'lan' || typeSel.value === 'total') {
-                                typeSel.value = 'wan';
-                            }
-                            // 禁用 LAN 和 Total 选项
-                            var lanOption = typeSel.querySelector('option[value="lan"]');
-                            var totalOption = typeSel.querySelector('option[value="total"]');
-                            if (lanOption) lanOption.disabled = true;
-                            if (totalOption) totalOption.disabled = true;
-                        }
-                    } else {
-                        // 实时模式下，启用所有选项
-                        if (typeSel) {
-                            var lanOption = typeSel.querySelector('option[value="lan"]');
-                            var totalOption = typeSel.querySelector('option[value="total"]');
-                            if (lanOption) lanOption.disabled = false;
-                            if (totalOption) totalOption.disabled = false;
-                        }
-                    }
-
-                    // 刷新历史数据
-                    refreshHistory();
-                });
-            });
-
-            // 恢复之前选择的时间范围
-            var savedRange = localStorage.getItem('bandix_time_range') || 'realtime';
-
-            // 移动端强制使用 realtime
-            var screenWidth = window.innerWidth || document.documentElement.clientWidth;
-            var isMobileScreen = screenWidth <= 768;
-            if (isMobileScreen) {
-                savedRange = 'realtime';
-                currentTimeRange = 'realtime';
-                localStorage.setItem('bandix_time_range', 'realtime');
-            } else {
-                currentTimeRange = savedRange;
-            }
-
-            tabButtons.forEach(function (btn) {
-                if (btn.getAttribute('data-range') === savedRange) {
-                    btn.classList.add('active');
-                    // 触发一次点击以应用选项禁用逻辑
-                    if (savedRange !== 'realtime' && typeSel) {
-                        var lanOption = typeSel.querySelector('option[value="lan"]');
-                        var totalOption = typeSel.querySelector('option[value="total"]');
-                        if (lanOption) lanOption.disabled = true;
-                        if (totalOption) totalOption.disabled = true;
-                        if (typeSel.value === 'lan' || typeSel.value === 'total') {
-                            typeSel.value = 'wan';
-                        }
-                    }
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
+            // 历史图表始终显示实时数据
 
             function onFilterChange() {
                 refreshHistory();
@@ -5353,8 +5667,13 @@ return view.extend({
 
         // 定义更新设备数据的函数
         function updateDeviceData() {
+            var devicePeriod = localStorage.getItem('bandix_device_period') || 'all';
+            if (!/^(today|week|month|year|all)$/.test(devicePeriod)) devicePeriod = 'all';
+            
+            var timeRange = getTimeRangeForPeriod(devicePeriod);
+            
             return Promise.all([
-                callStatus(),
+                (devicePeriod === 'all') ? callStatus() : callStatus(timeRange.start_ms, timeRange.end_ms),
                 fetchAllScheduleRules()
             ]).then(function (results) {
                 var result = results[0];
@@ -5365,23 +5684,27 @@ return view.extend({
 
                 var stats = result;
                 if (!stats || !stats.devices) {
-                    trafficDiv.innerHTML = '<div class="error">' + _('Unable to fetch data') + '</div>';
+                    if (trafficDiv) {
+                        trafficDiv.innerHTML = '<div class="error">' + _('Unable to fetch data') + '</div>';
+                    }
                     return;
                 }
 
                 // 更新设备计数
-                var onlineCount = stats.devices.filter(d => isDeviceOnline(d)).length;
-                deviceCountDiv.textContent = _('Online Devices') + ': ' + onlineCount + ' / ' + stats.devices.length;
+                if (deviceCountDiv) {
+                    var onlineCount = stats.devices.filter(d => isDeviceOnline(d)).length;
+                    deviceCountDiv.textContent = _('Online Devices') + ': ' + onlineCount + ' / ' + stats.devices.length;
+                }
 
                 // 计算统计数据（包含所有设备）
-                var totalLanUp = stats.devices.reduce((sum, d) => sum + (d.local_tx_bytes || 0), 0);
-                var totalLanDown = stats.devices.reduce((sum, d) => sum + (d.local_rx_bytes || 0), 0);
-                var totalWanUp = stats.devices.reduce((sum, d) => sum + (d.wide_tx_bytes || 0), 0);
-                var totalWanDown = stats.devices.reduce((sum, d) => sum + (d.wide_rx_bytes || 0), 0);
-                var totalLanSpeedUp = stats.devices.reduce((sum, d) => sum + (d.local_tx_rate || 0), 0);
-                var totalLanSpeedDown = stats.devices.reduce((sum, d) => sum + (d.local_rx_rate || 0), 0);
-                var totalWanSpeedUp = stats.devices.reduce((sum, d) => sum + (d.wide_tx_rate || 0), 0);
-                var totalWanSpeedDown = stats.devices.reduce((sum, d) => sum + (d.wide_rx_rate || 0), 0);
+                var totalLanUp = stats.devices.reduce((sum, d) => sum + (d.lan_tx_bytes || 0), 0);
+                var totalLanDown = stats.devices.reduce((sum, d) => sum + (d.lan_rx_bytes || 0), 0);
+                var totalWanUp = stats.devices.reduce((sum, d) => sum + (d.wan_tx_bytes || 0), 0);
+                var totalWanDown = stats.devices.reduce((sum, d) => sum + (d.wan_rx_bytes || 0), 0);
+                var totalLanSpeedUp = stats.devices.reduce((sum, d) => sum + (d.lan_tx_rate || 0), 0);
+                var totalLanSpeedDown = stats.devices.reduce((sum, d) => sum + (d.lan_rx_rate || 0), 0);
+                var totalWanSpeedUp = stats.devices.reduce((sum, d) => sum + (d.wan_tx_rate || 0), 0);
+                var totalWanSpeedDown = stats.devices.reduce((sum, d) => sum + (d.wan_rx_rate || 0), 0);
                 var totalSpeedUp = totalLanSpeedUp + totalWanSpeedUp;
                 var totalSpeedDown = totalLanSpeedDown + totalWanSpeedDown;
                 var totalUp = totalLanUp + totalWanUp;
@@ -5396,14 +5719,14 @@ return view.extend({
                     E('div', { 'style': 'display: flex; flex-direction: column; gap: 8px;' }, [
                         // 上传行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
-                            E('span', { 'style': 'color: #f97316; font-size: 0.75rem; font-weight: bold;' }, '↑'),
-                            E('span', { 'style': 'color: #f97316; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalLanSpeedUp, speedUnit)),
+                            E('span', { 'style': 'color: ' + BANDIX_COLOR_UPLOAD + '; font-size: 0.75rem; font-weight: bold;' }, '↑'),
+                            E('span', { 'style': 'color: ' + BANDIX_COLOR_UPLOAD + '; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalLanSpeedUp, speedUnit)),
                             E('span', { 'style': 'font-size: 0.75rem; color: #64748b; margin-left: 4px;' }, '(' + formatSize(totalLanUp) + ')')
                         ]),
                         // 下载行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
-                            E('span', { 'style': 'color: #06b6d4; font-size: 0.75rem; font-weight: bold;' }, '↓'),
-                            E('span', { 'style': 'color: #06b6d4; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalLanSpeedDown, speedUnit)),
+                            E('span', { 'style': 'color: ' + BANDIX_COLOR_DOWNLOAD + '; font-size: 0.75rem; font-weight: bold;' }, '↓'),
+                            E('span', { 'style': 'color: ' + BANDIX_COLOR_DOWNLOAD + '; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalLanSpeedDown, speedUnit)),
                             E('span', { 'style': 'font-size: 0.75rem; color: #64748b; margin-left: 4px;' }, '(' + formatSize(totalLanDown) + ')')
                         ])
                     ])
@@ -5415,14 +5738,14 @@ return view.extend({
                     E('div', { 'style': 'display: flex; flex-direction: column; gap: 8px;' }, [
                         // 上传行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
-                            E('span', { 'style': 'color: #f97316; font-size: 0.75rem; font-weight: bold;' }, '↑'),
-                            E('span', { 'style': 'color: #f97316; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalWanSpeedUp, speedUnit)),
+                            E('span', { 'style': 'color: ' + BANDIX_COLOR_UPLOAD + '; font-size: 0.75rem; font-weight: bold;' }, '↑'),
+                            E('span', { 'style': 'color: ' + BANDIX_COLOR_UPLOAD + '; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalWanSpeedUp, speedUnit)),
                             E('span', { 'style': 'font-size: 0.75rem; color: #64748b; margin-left: 4px;' }, '(' + formatSize(totalWanUp) + ')')
                         ]),
                         // 下载行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
-                            E('span', { 'style': 'color: #06b6d4; font-size: 0.75rem; font-weight: bold;' }, '↓'),
-                            E('span', { 'style': 'color: #06b6d4; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalWanSpeedDown, speedUnit)),
+                            E('span', { 'style': 'color: ' + BANDIX_COLOR_DOWNLOAD + '; font-size: 0.75rem; font-weight: bold;' }, '↓'),
+                            E('span', { 'style': 'color: ' + BANDIX_COLOR_DOWNLOAD + '; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalWanSpeedDown, speedUnit)),
                             E('span', { 'style': 'font-size: 0.75rem; color: #64748b; margin-left: 4px;' }, '(' + formatSize(totalWanDown) + ')')
                         ])
                     ])
@@ -5434,14 +5757,14 @@ return view.extend({
                     E('div', { 'style': 'display: flex; flex-direction: column; gap: 8px;' }, [
                         // 上传行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
-                            E('span', { 'style': 'color: #f97316; font-size: 0.75rem; font-weight: bold;' }, '↑'),
-                            E('span', { 'style': 'color: #f97316; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalSpeedUp, speedUnit)),
+                            E('span', { 'style': 'color: ' + BANDIX_COLOR_UPLOAD + '; font-size: 0.75rem; font-weight: bold;' }, '↑'),
+                            E('span', { 'style': 'color: ' + BANDIX_COLOR_UPLOAD + '; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalSpeedUp, speedUnit)),
                             E('span', { 'style': 'font-size: 0.75rem; color: #64748b; margin-left: 4px;' }, '(' + formatSize(totalUp) + ')')
                         ]),
                         // 下载行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
-                            E('span', { 'style': 'color: #06b6d4; font-size: 0.75rem; font-weight: bold;' }, '↓'),
-                            E('span', { 'style': 'color: #06b6d4; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalSpeedDown, speedUnit)),
+                            E('span', { 'style': 'color: ' + BANDIX_COLOR_DOWNLOAD + '; font-size: 0.75rem; font-weight: bold;' }, '↓'),
+                            E('span', { 'style': 'color: ' + BANDIX_COLOR_DOWNLOAD + '; font-size: 1.125rem; font-weight: 700;' }, formatByterate(totalSpeedDown, speedUnit)),
                             E('span', { 'style': 'font-size: 0.75rem; color: #64748b; margin-left: 4px;' }, '(' + formatSize(totalDown) + ')')
                         ])
                     ])
@@ -5619,7 +5942,13 @@ return view.extend({
                             }),
                             device.hostname || '-'
                         ]),
-                        E('div', { 'class': 'device-ip' }, device.ip)
+                        E('div', { 'class': 'device-ip' }, [
+                            device.connection_type ? E('span', {
+                                'class': 'device-connection-type',
+                                'title': device.connection_type === 'wifi' ? _('Wireless') : _('Wired')
+                            }, device.connection_type === 'wifi' ? '📶' : '🔗') : '',
+                            device.ip
+                        ])
                     ];
 
                     // 详细模式下显示更多信息
@@ -5660,13 +5989,13 @@ return view.extend({
                             E('div', { 'class': 'traffic-info' }, [
                                 E('div', { 'class': 'traffic-row' }, [
                                     E('span', { 'class': 'traffic-icon upload' }, '↑'),
-                                    E('span', { 'class': 'traffic-speed lan' }, formatByterate(device.local_tx_rate || 0, speedUnit)),
-                                    E('span', { 'class': 'traffic-total' }, '(' + formatSize(device.local_tx_bytes || 0) + ')')
+                                    E('span', { 'class': 'traffic-speed lan' }, formatByterate(device.lan_tx_rate || 0, speedUnit)),
+                                    E('span', { 'class': 'traffic-total' }, '(' + formatSize(device.lan_tx_bytes || 0) + ')')
                                 ]),
                                 E('div', { 'class': 'traffic-row' }, [
                                     E('span', { 'class': 'traffic-icon download' }, '↓'),
-                                    E('span', { 'class': 'traffic-speed lan' }, formatByterate(device.local_rx_rate || 0, speedUnit)),
-                                    E('span', { 'class': 'traffic-total' }, '(' + formatSize(device.local_rx_bytes || 0) + ')')
+                                    E('span', { 'class': 'traffic-speed lan' }, formatByterate(device.lan_rx_rate || 0, speedUnit)),
+                                    E('span', { 'class': 'traffic-total' }, '(' + formatSize(device.lan_rx_bytes || 0) + ')')
                                 ])
                             ])
                         ]),
@@ -5676,13 +6005,13 @@ return view.extend({
                             E('div', { 'class': 'traffic-info' }, [
                                 E('div', { 'class': 'traffic-row' }, [
                                     E('span', { 'class': 'traffic-icon upload' }, '↑'),
-                                    E('span', { 'class': 'traffic-speed wan' }, formatByterate(device.wide_tx_rate || 0, speedUnit)),
-                                    E('span', { 'class': 'traffic-total' }, '(' + formatSize(device.wide_tx_bytes || 0) + ')')
+                                    E('span', { 'class': 'traffic-speed wan' }, formatByterate(device.wan_tx_rate || 0, speedUnit)),
+                                    E('span', { 'class': 'traffic-total' }, '(' + formatSize(device.wan_tx_bytes || 0) + ')')
                                 ]),
                                 E('div', { 'class': 'traffic-row' }, [
                                     E('span', { 'class': 'traffic-icon download' }, '↓'),
-                                    E('span', { 'class': 'traffic-speed wan' }, formatByterate(device.wide_rx_rate || 0, speedUnit)),
-                                    E('span', { 'class': 'traffic-total' }, '(' + formatSize(device.wide_rx_bytes || 0) + ')')
+                                    E('span', { 'class': 'traffic-speed wan' }, formatByterate(device.wan_rx_rate || 0, speedUnit)),
+                                    E('span', { 'class': 'traffic-total' }, '(' + formatSize(device.wan_rx_bytes || 0) + ')')
                                 ])
                             ])
                         ]),
@@ -5716,13 +6045,13 @@ return view.extend({
 
                                     // 上传限速（橙色箭头）
                                     var uploadSpan = E('span', {});
-                                    uploadSpan.appendChild(E('span', { 'style': 'color: #f97316;' }, '↑'));
+                                    uploadSpan.appendChild(E('span', { 'style': 'color: ' + BANDIX_COLOR_UPLOAD + ';' }, '↑'));
                                     uploadSpan.appendChild(document.createTextNode(uploadLimit > 0 ? formatByterate(uploadLimit, speedUnit) : _('Unlimited')));
                                     limitsContainer.appendChild(uploadSpan);
 
                                     // 下载限速（青色箭头）
                                     var downloadSpan = E('span', {});
-                                    downloadSpan.appendChild(E('span', { 'style': 'color: #06b6d4;' }, '↓'));
+                                    downloadSpan.appendChild(E('span', { 'style': 'color: ' + BANDIX_COLOR_DOWNLOAD + ';' }, '↓'));
                                     downloadSpan.appendChild(document.createTextNode(downloadLimit > 0 ? formatByterate(downloadLimit, speedUnit) : _('Unlimited')));
                                     limitsContainer.appendChild(downloadSpan);
 
@@ -5872,7 +6201,13 @@ return view.extend({
                                 E('span', { 'class': 'device-status ' + (isOnline ? 'online' : 'offline') }),
                                 E('div', {}, [
                                     E('div', { 'style': 'font-weight: 600;' }, device.hostname || '-'),
-                                    E('div', { 'class': 'device-card-ip' }, device.ip)
+                                    E('div', { 'class': 'device-card-ip' }, [
+                                        device.connection_type ? E('span', {
+                                            'class': 'device-connection-type',
+                                            'title': device.connection_type === 'wifi' ? _('Wireless') : _('Wired')
+                                        }, device.connection_type === 'wifi' ? '📶' : '🔗') : '',
+                                        device.ip
+                                    ])
                                 ])
                             ]),
                             E('div', { 'class': 'device-card-action' }, [
@@ -5895,14 +6230,14 @@ return view.extend({
                                 E('div', { 'class': 'device-card-section-label' }, _('WAN Traffic')),
                                 E('div', { 'class': 'device-card-traffic' }, [
                                     E('div', { 'class': 'device-card-traffic-row' }, [
-                                        E('span', { 'style': 'color: #f97316; font-size: 0.75rem; font-weight: bold;' }, '↑'),
-                                        E('span', { 'style': 'font-weight: 600;' }, formatByterate(device.wide_tx_rate || 0, speedUnit)),
-                                        E('span', { 'style': 'font-size: 0.75rem; opacity: 0.7;' }, '(' + formatSize(device.wide_tx_bytes || 0) + ')')
+                                        E('span', { 'style': 'color: ' + BANDIX_COLOR_UPLOAD + '; font-size: 0.75rem; font-weight: bold;' }, '↑'),
+                                        E('span', { 'style': 'font-weight: 600;' }, formatByterate(device.wan_tx_rate || 0, speedUnit)),
+                                        E('span', { 'style': 'font-size: 0.75rem; opacity: 0.7;' }, '(' + formatSize(device.wan_tx_bytes || 0) + ')')
                                     ]),
                                     E('div', { 'class': 'device-card-traffic-row' }, [
-                                        E('span', { 'style': 'color: #06b6d4; font-size: 0.75rem; font-weight: bold;' }, '↓'),
-                                        E('span', { 'style': 'font-weight: 600;' }, formatByterate(device.wide_rx_rate || 0, speedUnit)),
-                                        E('span', { 'style': 'font-size: 0.75rem; opacity: 0.7;' }, '(' + formatSize(device.wide_rx_bytes || 0) + ')')
+                                        E('span', { 'style': 'color: ' + BANDIX_COLOR_DOWNLOAD + '; font-size: 0.75rem; font-weight: bold;' }, '↓'),
+                                        E('span', { 'style': 'font-weight: 600;' }, formatByterate(device.wan_rx_rate || 0, speedUnit)),
+                                        E('span', { 'style': 'font-size: 0.75rem; opacity: 0.7;' }, '(' + formatSize(device.wan_rx_bytes || 0) + ')')
                                     ])
                                 ])
                             ])
@@ -5956,14 +6291,14 @@ return view.extend({
                             E('div', { 'class': 'device-card-section-label' }, _('LAN Traffic')),
                             E('div', { 'class': 'device-card-traffic' }, [
                                 E('div', { 'class': 'device-card-traffic-row' }, [
-                                    E('span', { 'style': 'color: #f97316; font-size: 0.75rem; font-weight: bold;' }, '↑'),
-                                    E('span', { 'style': 'font-weight: 600;' }, formatByterate(device.local_tx_rate || 0, speedUnit)),
-                                    E('span', { 'style': 'font-size: 0.75rem; opacity: 0.7;' }, '(' + formatSize(device.local_tx_bytes || 0) + ')')
+                                    E('span', { 'style': 'color: ' + BANDIX_COLOR_UPLOAD + '; font-size: 0.75rem; font-weight: bold;' }, '↑'),
+                                    E('span', { 'style': 'font-weight: 600;' }, formatByterate(device.lan_tx_rate || 0, speedUnit)),
+                                    E('span', { 'style': 'font-size: 0.75rem; opacity: 0.7;' }, '(' + formatSize(device.lan_tx_bytes || 0) + ')')
                                 ]),
                                 E('div', { 'class': 'device-card-traffic-row' }, [
-                                    E('span', { 'style': 'color: #06b6d4; font-size: 0.75rem; font-weight: bold;' }, '↓'),
-                                    E('span', { 'style': 'font-weight: 600;' }, formatByterate(device.local_rx_rate || 0, speedUnit)),
-                                    E('span', { 'style': 'font-size: 0.75rem; opacity: 0.7;' }, '(' + formatSize(device.local_rx_bytes || 0) + ')')
+                                    E('span', { 'style': 'color: ' + BANDIX_COLOR_DOWNLOAD + '; font-size: 0.75rem; font-weight: bold;' }, '↓'),
+                                    E('span', { 'style': 'font-weight: 600;' }, formatByterate(device.lan_rx_rate || 0, speedUnit)),
+                                    E('span', { 'style': 'font-size: 0.75rem; opacity: 0.7;' }, '(' + formatSize(device.lan_rx_bytes || 0) + ')')
                                 ])
                             ])
                         ])
@@ -6098,16 +6433,18 @@ return view.extend({
             // 准备查询参数
             var startMs = null;
             var endMs = null;
+            var networkTypeSelect = document.getElementById('usage-ranking-network-type');
+            var networkType = networkTypeSelect ? networkTypeSelect.value : 'wan';
             if (customRange && customRange.start_ms && customRange.end_ms) {
                 startMs = customRange.start_ms;
                 endMs = customRange.end_ms;
-                console.log('Querying with custom range:', { start_ms: startMs, end_ms: endMs });
+                console.log('Querying with custom range:', { start_ms: startMs, end_ms: endMs, network_type: networkType });
             } else {
-                console.log('Querying with default range (no params)');
+                console.log('Querying with default range (no params), network_type:', networkType);
             }
-            
+
             // 获取设备用量排行
-            callGetTrafficUsageRanking(startMs, endMs).then(function (result) {
+            callGetTrafficUsageRanking(startMs, endMs, networkType).then(function (result) {
                 console.log('Query result:', result);
                 if (!result || !result.rankings) {
                     return;
@@ -6135,8 +6472,20 @@ return view.extend({
                     timeRangeEl.textContent = timeRangeText;
                 }
                 
-                // 更新设备下拉框
-                updateDeviceSelectForIncrements(result.rankings || []);
+                // 更新设备下拉框 - 获取完整的设备列表
+                if (typeof latestDevices !== 'undefined' && latestDevices.length > 0) {
+                    updateDeviceSelectForIncrements(latestDevices);
+                } else {
+                    // 如果还没有设备数据，先获取设备数据
+                    callStatus().then(function(deviceResult) {
+                        if (deviceResult && deviceResult.devices) {
+                            latestDevices = deviceResult.devices;
+                            updateDeviceSelectForIncrements(latestDevices);
+                        }
+                    }).catch(function(err) {
+                        console.error('Failed to load device list for timeline:', err);
+                    });
+                }
                 
                 renderUsageRanking(usageRankingData, usageRankingShowAll);
                 
@@ -6155,6 +6504,40 @@ return view.extend({
 
         }
         
+        function normalizeTrafficIncrementItem(item) {
+            if (!item) return null;
+
+            var tsMs = item.ts_ms;
+            if (!tsMs && item.start_ts_ms) tsMs = item.start_ts_ms;
+            if (!tsMs && item.end_ts_ms) tsMs = item.end_ts_ms;
+
+            var rxBytes = (item.rx_bytes !== undefined && item.rx_bytes !== null) ? item.rx_bytes : null;
+            var txBytes = (item.tx_bytes !== undefined && item.tx_bytes !== null) ? item.tx_bytes : null;
+            var totalBytes = (item.total_bytes !== undefined && item.total_bytes !== null) ? item.total_bytes : null;
+
+            if (rxBytes === null) {
+                rxBytes = (item.wan_rx_bytes_inc || 0) + (item.lan_rx_bytes_inc || 0);
+            }
+            if (txBytes === null) {
+                txBytes = (item.wan_tx_bytes_inc || 0) + (item.lan_tx_bytes_inc || 0);
+            }
+            if (totalBytes === null) {
+                totalBytes = rxBytes + txBytes;
+            }
+
+            return Object.assign({}, item, {
+                ts_ms: tsMs || 0,
+                rx_bytes: rxBytes || 0,
+                tx_bytes: txBytes || 0,
+                total_bytes: totalBytes || 0
+            });
+        }
+
+        function normalizeTrafficIncrementsList(increments) {
+            if (!Array.isArray(increments)) return [];
+            return increments.map(normalizeTrafficIncrementItem).filter(function (x) { return x; });
+        }
+
         // 更新时间序列增量数据（使用 Traffic Timeline 自己的时间范围）
         function updateTrafficIncrements(startMs, endMs, aggregation, mac, callback) {
             // 如果没有传入时间范围，使用独立的时间范围变量
@@ -6168,16 +6551,21 @@ return view.extend({
             // 获取筛选条件
             var aggregationSelect = document.getElementById('traffic-increments-aggregation');
             var macSelect = document.getElementById('traffic-increments-mac');
+            var networkTypeSelect = document.getElementById('traffic-increments-network-type');
             
             var selectedAggregation = aggregation || (aggregationSelect ? aggregationSelect.value : 'hourly');
             var selectedMac = mac || (macSelect ? macSelect.value : 'all');
+            var selectedNetworkType = networkTypeSelect ? networkTypeSelect.value : 'all';
             
             // 如果选择的是 "all"，传递 null 使用默认值
             if (selectedMac === 'all') {
                 selectedMac = null;
             }
+            if (!selectedNetworkType) {
+                selectedNetworkType = null;
+            }
             
-            callGetTrafficUsageIncrements(startMs, endMs, selectedAggregation, selectedMac).then(function (result) {
+            callGetTrafficUsageIncrements(startMs, endMs, selectedAggregation, selectedMac, selectedNetworkType).then(function (result) {
                 if (!result || !result.increments) {
                     var container = document.getElementById('traffic-increments-container');
                     if (container) {
@@ -6187,6 +6575,8 @@ return view.extend({
                     if (callback) callback();
                     return;
                 }
+
+                var normalizedIncrements = normalizeTrafficIncrementsList(result.increments);
                 
                 // 更新时间范围显示（包含上下行流量和总流量）
                 var timeRangeEl = document.getElementById('traffic-increments-timerange');
@@ -6215,7 +6605,7 @@ return view.extend({
                     return;
                 }
 
-                if (result.increments.length === 0) {
+                if (normalizedIncrements.length === 0) {
                     container.innerHTML = '<div class="loading-state">' + _('No data') + '</div>';
                     // 调用回调函数以移除 loading 状态
                     if (callback) callback();
@@ -6232,12 +6622,12 @@ return view.extend({
                 // 创建图例
                 var legend = E('div', { 'class': 'traffic-stats-legend' }, [
                     E('div', { 'class': 'traffic-stats-legend-item' }, [
-                        E('span', { 'class': 'traffic-stats-legend-dot rx' }),
-                        E('span', {}, _('Download'))
-                    ]),
-                    E('div', { 'class': 'traffic-stats-legend-item' }, [
                         E('span', { 'class': 'traffic-stats-legend-dot tx' }),
                         E('span', {}, _('Upload'))
+                    ]),
+                    E('div', { 'class': 'traffic-stats-legend-item' }, [
+                        E('span', { 'class': 'traffic-stats-legend-dot rx' }),
+                        E('span', {}, _('Download'))
                     ])
                 ]);
 
@@ -6265,10 +6655,10 @@ return view.extend({
                 // 绘制图表
                 setTimeout(function () {
                     var aggregation = result.aggregation || 'hourly';
-                    drawIncrementsChart(canvas, result.increments, aggregation);
+                    drawIncrementsChart(canvas, normalizedIncrements, aggregation);
                     
                     // 添加鼠标悬浮事件
-                    setupChartTooltip(canvas, tooltip, result.increments, aggregation);
+                    setupChartTooltip(canvas, tooltip, normalizedIncrements, aggregation, selectedNetworkType);
                     
                     // 调用回调函数
                     if (callback) callback();
@@ -6286,25 +6676,56 @@ return view.extend({
         }
         
         // 更新设备下拉框
-        function updateDeviceSelectForIncrements(rankings) {
+        function updateDeviceSelectForIncrements(devices) {
             var macSelect = document.getElementById('traffic-increments-mac');
             if (!macSelect) return;
-            
+
             // 保存当前选中的值
             var currentValue = macSelect.value;
-            
+
             // 清空现有选项（保留 "All Devices"）
             macSelect.innerHTML = '';
             macSelect.appendChild(E('option', { 'value': 'all' }, _('All Devices')));
-            
+
+            // 对设备列表进行排序：在线设备在前，离线设备在后，然后按IP地址从小到大排序
+            var sortedDevices = devices.slice().sort(function (a, b) {
+                var aOnline = isDeviceOnline(a);
+                var bOnline = isDeviceOnline(b);
+
+                // 首先按在线状态排序：在线设备在前
+                if (aOnline && !bOnline) return -1;
+                if (!aOnline && bOnline) return 1;
+
+                // 在线状态相同时，按IP地址排序
+                var aIp = a.ip || '';
+                var bIp = b.ip || '';
+
+                // 将IP地址转换为数字进行比较
+                var aIpParts = aIp.split('.').map(function (part) { return parseInt(part) || 0; });
+                var bIpParts = bIp.split('.').map(function (part) { return parseInt(part) || 0; });
+
+                // 逐段比较IP地址
+                for (var i = 0; i < 4; i++) {
+                    var aPart = aIpParts[i] || 0;
+                    var bPart = bIpParts[i] || 0;
+                    if (aPart !== bPart) {
+                        return aPart - bPart;
+                    }
+                }
+
+                // IP地址相同时，按MAC地址排序
+                return (a.mac || '').localeCompare(b.mac || '');
+            });
+
             // 添加设备选项
-            rankings.forEach(function(item) {
-                if (item.mac && item.hostname) {
-                    var option = E('option', { 'value': item.mac }, item.hostname + ' (' + item.mac + ')');
+            sortedDevices.forEach(function(device) {
+                if (device.mac) {
+                    var label = (device.hostname || device.ip || device.mac || '-') + (device.ip ? ' (' + device.ip + ')' : '') + (device.mac ? ' [' + device.mac + ']' : '');
+                    var option = E('option', { 'value': device.mac }, label);
                     macSelect.appendChild(option);
                 }
             });
-            
+
             // 恢复之前选中的值（如果还在列表中）
             if (currentValue && currentValue !== 'all') {
                 var optionExists = false;
@@ -6326,18 +6747,21 @@ return view.extend({
         function drawIncrementsChart(canvas, increments, aggregation) {
             if (!canvas || !increments || increments.length === 0) return;
 
+            var dpr = window.devicePixelRatio || 1;
+            var cssWidth = canvas.parentElement.offsetWidth || 600;
+            var cssHeight = 300;
+            
+            canvas.style.width = cssWidth + 'px';
+            canvas.style.height = cssHeight + 'px';
+            
+            canvas.width = Math.max(1, Math.floor(cssWidth * dpr));
+            canvas.height = Math.max(1, Math.floor(cssHeight * dpr));
+            
             var ctx = canvas.getContext('2d');
-            var width = canvas.parentElement.offsetWidth || 600;
-            var height = 300;
-            canvas.width = width;
-            canvas.height = height;
+            ctx.scale(dpr, dpr);
 
-            var padding = { top: 20, right: 20, bottom: 40, left: 80 };
-            var chartWidth = width - padding.left - padding.right;
-            var chartHeight = height - padding.top - padding.bottom;
-
-            // 清空画布
-            ctx.clearRect(0, 0, width, height);
+            var width = cssWidth;
+            var height = cssHeight;
 
             // 计算最大值
             var maxValue = 0;
@@ -6353,21 +6777,30 @@ return view.extend({
                 return;
             }
 
-            // 设置样式
-            var isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            ctx.fillStyle = isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)';
-            ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.3)';
+            // 动态测量Y轴最大标签宽度，增大左边距
+            var fontSize = 12;
+            ctx.font = fontSize + 'px sans-serif';
+            var maxLabelText = formatSize(maxValue);
+            var zeroLabelText = formatSize(0);
+            var maxLabelWidth = Math.max(ctx.measureText(maxLabelText).width, ctx.measureText(zeroLabelText).width);
+
+            var padding = { top: 20, right: 20, bottom: 40, left: 80 };
+            padding.left = Math.max(padding.left, Math.ceil(maxLabelWidth) + 30); // 确保右侧时间不被裁剪
+            var chartWidth = width - padding.left - padding.right;
+            var chartHeight = height - padding.top - padding.bottom;
+
+            // 清空画布
+            ctx.clearRect(0, 0, width, height);
+
+            // 轴与网格样式：对齐 Realtime Traffic Trends
+            var axisTextColor = '#9ca3af';
+            var gridColor = 'rgba(148,163,184,0.08)';
             ctx.font = '12px sans-serif';
 
-            // 绘制坐标轴
-            ctx.beginPath();
-            ctx.moveTo(padding.left, padding.top);
-            ctx.lineTo(padding.left, height - padding.bottom);
-            ctx.lineTo(width - padding.right, height - padding.bottom);
-            ctx.stroke();
-
             // 绘制网格线和标签
-            var gridLines = 5;
+            var gridLines = 4;
+            ctx.strokeStyle = gridColor;
+            ctx.lineWidth = 0.8;
             for (var i = 0; i <= gridLines; i++) {
                 var y = padding.top + (chartHeight / gridLines) * i;
                 var value = maxValue * (1 - i / gridLines);
@@ -6375,12 +6808,13 @@ return view.extend({
                 ctx.beginPath();
                 ctx.moveTo(padding.left, y);
                 ctx.lineTo(width - padding.right, y);
-                ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
                 ctx.stroke();
 
-                ctx.fillStyle = isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)';
+                ctx.fillStyle = axisTextColor;
                 ctx.textAlign = 'right';
-                ctx.fillText(formatSize(value), padding.left - 12, y + 4);
+                ctx.textBaseline = 'middle';
+                var yLabelY = (i === gridLines) ? y - 4 : y;
+                ctx.fillText(formatSize(value), padding.left - 8, yLabelY);
             }
 
             // 绘制堆叠柱状图
@@ -6388,35 +6822,45 @@ return view.extend({
             var barDisplayWidth = barWidth * 0.7; // 柱子显示宽度（留出间距）
             
             var baseY = height - padding.bottom;
+
+            function px(v) { return Math.round(v); }
+            function pxStroke(v) { return Math.round(v) + 0.5; }
             
             increments.forEach(function (item, index) {
                 var barX = padding.left + barWidth * index + (barWidth - barDisplayWidth) / 2;
                 var rxHeight = chartHeight * ((item.rx_bytes || 0) / maxValue);
                 var txHeight = chartHeight * ((item.tx_bytes || 0) / maxValue);
                 var totalHeight = rxHeight + txHeight;
+
+                var x = px(barX);
+                var w = Math.max(1, px(barDisplayWidth));
+                var totalH = px(totalHeight);
+                var rxH = px(rxHeight);
+                var txH = px(txHeight);
+                var yBase = px(baseY);
                 
-                // 绘制 RX 柱子（下载，蓝色）- 底部（带透明度）
-                if (rxHeight > 0) {
-                    var rxY = baseY - totalHeight;
-                    ctx.fillStyle = 'rgba(6, 182, 212, 0.7)';
-                    ctx.fillRect(barX, rxY, barDisplayWidth, rxHeight);
-                    
+                // 绘制 RX 柱子（下载，青色）- 底部
+                if (rxH > 0) {
+                    var rxY = yBase - rxH;
+                    ctx.fillStyle = BANDIX_COLOR_DOWNLOAD;
+                    ctx.fillRect(x, rxY, w, rxH);
+
                     // 添加边框
-                    ctx.strokeStyle = 'rgba(8, 145, 178, 0.8)';
+                    ctx.strokeStyle = '#0891b2';
                     ctx.lineWidth = 1;
-                    ctx.strokeRect(barX, rxY, barDisplayWidth, rxHeight);
+                    ctx.strokeRect(pxStroke(x), pxStroke(rxY), w, rxH);
                 }
-                
-                // 绘制 TX 柱子（上传，橙色）- 堆叠在 RX 上面（带透明度）
-                if (txHeight > 0) {
-                    var txY = baseY - totalHeight + rxHeight;
-                    ctx.fillStyle = 'rgba(249, 115, 22, 0.7)';
-                    ctx.fillRect(barX, txY, barDisplayWidth, txHeight);
-                    
+
+                // 绘制 TX 柱子（上传，橙色）- 堆叠在 RX 上面
+                if (txH > 0) {
+                    var txY = yBase - totalH;
+                    ctx.fillStyle = BANDIX_COLOR_UPLOAD;
+                    ctx.fillRect(x, txY, w, txH);
+
                     // 添加边框
-                    ctx.strokeStyle = 'rgba(234, 88, 12, 0.8)';
+                    ctx.strokeStyle = '#ea580c';
                     ctx.lineWidth = 1;
-                    ctx.strokeRect(barX, txY, barDisplayWidth, txHeight);
+                    ctx.strokeRect(pxStroke(x), pxStroke(txY), w, txH);
                 }
             });
             
@@ -6425,15 +6869,16 @@ return view.extend({
             increments.forEach(function (item, index) {
                 var barX = padding.left + barWidth * index + (barWidth - barDisplayWidth) / 2;
                 canvas.barPositions.push({
-                    x: barX,
-                    width: barDisplayWidth,
+                    x: px(barX),
+                    width: Math.max(1, px(barDisplayWidth)),
                     index: index,
                     item: item
                 });
             });
+            canvas.__bandixIncrements = { increments: increments, aggregation: aggregation };
 
             // 绘制时间标签
-            ctx.fillStyle = isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)';
+            ctx.fillStyle = axisTextColor;
             ctx.textAlign = 'center';
             var isMobile = window.innerWidth <= 768;
             var labelStep = Math.max(1, Math.floor(increments.length / 6));
@@ -6456,7 +6901,7 @@ return view.extend({
                     var x = padding.left + barWidth * (index + 0.5);
                     var date = new Date(item.ts_ms);
                     var timeStr;
-                    
+
                     if (isDaily) {
                         // 按天聚合：只显示日期
                         var year = date.getFullYear();
@@ -6464,19 +6909,46 @@ return view.extend({
                         var day = date.getDate().toString().padStart(2, '0');
                         timeStr = month + '/' + day;
                     } else {
-                        // 按小时聚合：显示时间
-                        var hours = date.getHours();
-                        var minutes = date.getMinutes();
-                        timeStr = (hours < 10 ? '0' : '') + hours + ':' + (minutes < 10 ? '0' : '') + minutes;
+                        // 按小时聚合：显示整点小时
+                        // 使用 start_ts_ms 来确定这个时间段代表哪个小时
+                        var startTs = item.start_ts_ms || item.ts_ms;
+                        var startDate = new Date(startTs);
+
+                        // 使用开始时间的整点小时
+                        var hour = startDate.getHours();
+                        timeStr = (hour < 10 ? '0' : '') + hour + ':00';
                     }
-                    
+
                     ctx.fillText(timeStr, x, height - padding.bottom + 20);
                 }
             });
+
+            // 如果存在 hoverIndex，则绘制垂直虚线（鼠标对着的柱子）
+            // 移动端不绘制虚线
+            try {
+                if (isMobile) return; // 移动端不绘制悬浮虚线
+
+                var hoverIndex = canvas.__bandixIncrementsHoverIndex;
+                if (typeof hoverIndex === 'number' && hoverIndex >= 0 && hoverIndex < increments.length) {
+                    var barX = padding.left + barWidth * hoverIndex + (barWidth - barDisplayWidth) / 2;
+                    var hoverX = barX + barDisplayWidth / 2; // 虚线在柱子中心
+
+                    ctx.save();
+                    ctx.strokeStyle = 'rgba(156,163,175,0.9)';
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([6, 4]);
+                    ctx.beginPath();
+                    ctx.moveTo(hoverX, padding.top);
+                    ctx.lineTo(hoverX, height - padding.bottom);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    ctx.restore();
+                }
+            } catch (e) { /* 安全兜底 */ }
         }
         
         // 设置图表 tooltip
-        function setupChartTooltip(canvas, tooltip, increments, aggregation) {
+        function setupChartTooltip(canvas, tooltip, increments, aggregation, networkType) {
             if (!canvas || !tooltip || !increments || increments.length === 0) return;
             
             var formatTime = function(tsMs, isDaily) {
@@ -6495,6 +6967,31 @@ return view.extend({
                     return year + '/' + month + '/' + day + ' ' + hours + ':' + minutes;
                 }
             };
+
+            var formatTimeRange = function(startTsMs, endTsMs, isDaily) {
+                var startTime = formatTime(startTsMs, isDaily);
+                var endTime = formatTime(endTsMs, isDaily);
+
+                if (isDaily) {
+                    return startTime + ' - ' + endTime;
+                } else {
+                    // 如果是同一日期，只显示一次日期
+                    var startDate = new Date(startTsMs);
+                    var endDate = new Date(endTsMs);
+                    if (startDate.toDateString() === endDate.toDateString()) {
+                        var year = startDate.getFullYear();
+                        var month = (startDate.getMonth() + 1).toString().padStart(2, '0');
+                        var day = startDate.getDate().toString().padStart(2, '0');
+                        var startTimeOnly = startDate.getHours().toString().padStart(2, '0') + ':' +
+                                          startDate.getMinutes().toString().padStart(2, '0');
+                        var endTimeOnly = endDate.getHours().toString().padStart(2, '0') + ':' +
+                                        endDate.getMinutes().toString().padStart(2, '0');
+                        return year + '/' + month + '/' + day + ' ' + startTimeOnly + ' - ' + endTimeOnly;
+                    } else {
+                        return startTime + ' - ' + endTime;
+                    }
+                }
+            };
             
             var isDaily = aggregation === 'daily';
             var padding = { top: 20, right: 20, bottom: 40, left: 80 };
@@ -6508,8 +7005,11 @@ return view.extend({
                 var y = e.clientY - rect.top;
                 
                 // 检查鼠标是否在图表区域内
-                if (x < padding.left || x > rect.width - padding.right || 
+                if (x < padding.left || x > rect.width - padding.right ||
                     y < padding.top || y > rect.height - padding.bottom) {
+                    // 清除悬浮索引并重新绘制图表以清除虚线
+                    delete canvas.__bandixIncrementsHoverIndex;
+                    drawIncrementsChart(canvas, increments, aggregation);
                     tooltip.style.display = 'none';
                     return;
                 }
@@ -6527,43 +7027,190 @@ return view.extend({
                 }
                 
                 if (barIndex >= 0 && barIndex < increments.length) {
+                    // 设置悬浮索引，用于绘制垂直虚线
+                    var prevHoverIndex = canvas.__bandixIncrementsHoverIndex;
+                    canvas.__bandixIncrementsHoverIndex = barIndex;
+
+                    // 只有当 hoverIndex 发生变化时才重新绘制
+                    if (prevHoverIndex !== barIndex) {
+                        drawIncrementsChart(canvas, increments, aggregation);
+                    }
+
                     var item = increments[barIndex];
-                    var timeStr = formatTime(item.ts_ms, isDaily);
-                    
-                    tooltip.innerHTML = 
-                        '<div class="traffic-increments-tooltip-title">' + timeStr + '</div>' +
-                        '<div class="traffic-increments-tooltip-item">' +
-                            '<span class="traffic-increments-tooltip-dot tx"></span>' +
-                            '<span>' + _('Upload') + ': ' + formatSize(item.tx_bytes || 0) + '</span>' +
-                        '</div>' +
-                        '<div class="traffic-increments-tooltip-item">' +
-                            '<span class="traffic-increments-tooltip-dot rx"></span>' +
-                            '<span>' + _('Download') + ': ' + formatSize(item.rx_bytes || 0) + '</span>' +
-                        '</div>' +
-                        '<div class="traffic-increments-tooltip-item">' +
-                            '<span>' + _('Total') + ': ' + formatSize(item.total_bytes || 0) + '</span>' +
-                        '</div>';
-                    
+                    var timeStr = formatTimeRange(item.start_ts_ms || item.ts_ms, item.end_ts_ms || item.ts_ms, isDaily);
+
+                    // Get speed unit from UCI config
+                    var speedUnit = uci.get('bandix', 'traffic', 'speed_unit') || 'bytes';
+
+                    var tooltipContent = '<div class="traffic-increments-tooltip-title">' + timeStr + '</div>';
+
+                    // 根据网络类型显示相应的section
+                    if (networkType === 'wan') {
+                        tooltipContent +=
+                            // WAN Traffic Section
+                            '<div class="traffic-increments-tooltip-section">' +
+                                '<div class="traffic-increments-tooltip-section-title">' + _('WAN Traffic') + '</div>' +
+
+                                // 用量数据（大字体，带颜色）
+                                '<div class="ht-kpis">' +
+                                '<div class="ht-kpi up">' +
+                                '<div class="ht-k-label">WAN Upload</div>' +
+                                '<div class="ht-k-value">' + formatSize(item.wan_tx_bytes_inc || 0) + '</div>' +
+                                '</div>' +
+                                '<div class="ht-kpi down">' +
+                                '<div class="ht-k-label">WAN Download</div>' +
+                                '<div class="ht-k-value">' + formatSize(item.wan_rx_bytes_inc || 0) + '</div>' +
+                                '</div>' +
+                                '</div>' +
+
+                                // 速度统计分组
+                                '<div class="ht-divider"></div>' +
+                                '<div class="ht-section-title">' + _('Upload Statistics') + '</div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_avg || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_p95 || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_max || 0, speedUnit) + '</span></div>' +
+
+                                '<div class="ht-section-title" style="margin-top: 8px;">' + _('Download Statistics') + '</div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_avg || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_p95 || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_max || 0, speedUnit) + '</span></div>' +
+                            '</div>';
+                    } else if (networkType === 'lan') {
+                        tooltipContent +=
+                            // LAN Traffic Section
+                            '<div class="traffic-increments-tooltip-section">' +
+                                '<div class="traffic-increments-tooltip-section-title">' + _('LAN Traffic') + '</div>' +
+
+                                // 用量数据（大字体，带颜色）
+                                '<div class="ht-kpis">' +
+                                '<div class="ht-kpi up">' +
+                                '<div class="ht-k-label">LAN Upload</div>' +
+                                '<div class="ht-k-value">' + formatSize(item.lan_tx_bytes_inc || 0) + '</div>' +
+                                '</div>' +
+                                '<div class="ht-kpi down">' +
+                                '<div class="ht-k-label">LAN Download</div>' +
+                                '<div class="ht-k-value">' + formatSize(item.lan_rx_bytes_inc || 0) + '</div>' +
+                                '</div>' +
+                                '</div>' +
+
+                                // 速度统计分组
+                                '<div class="ht-divider"></div>' +
+                                '<div class="ht-section-title">' + _('Upload Statistics') + '</div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_avg || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_p95 || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_max || 0, speedUnit) + '</span></div>' +
+
+                                '<div class="ht-section-title" style="margin-top: 8px;">' + _('Download Statistics') + '</div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_avg || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_p95 || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_max || 0, speedUnit) + '</span></div>' +
+                            '</div>';
+                    } else {
+                        // networkType === 'all' 或其他情况，显示所有section
+                        tooltipContent +=
+                            // WAN Traffic Section
+                            '<div class="traffic-increments-tooltip-section">' +
+                                '<div class="traffic-increments-tooltip-section-title">' + _('WAN Traffic') + '</div>' +
+
+                                // 用量数据（大字体，带颜色）
+                                '<div class="ht-kpis">' +
+                                '<div class="ht-kpi up">' +
+                                '<div class="ht-k-label">WAN Upload</div>' +
+                                '<div class="ht-k-value">' + formatSize(item.wan_tx_bytes_inc || 0) + '</div>' +
+                                '</div>' +
+                                '<div class="ht-kpi down">' +
+                                '<div class="ht-k-label">WAN Download</div>' +
+                                '<div class="ht-k-value">' + formatSize(item.wan_rx_bytes_inc || 0) + '</div>' +
+                                '</div>' +
+                                '</div>' +
+
+                                // 速度统计分组
+                                '<div class="ht-divider"></div>' +
+                                '<div class="ht-section-title">' + _('Upload Statistics') + '</div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_avg || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_p95 || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_max || 0, speedUnit) + '</span></div>' +
+
+                                '<div class="ht-section-title" style="margin-top: 8px;">' + _('Download Statistics') + '</div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_avg || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_p95 || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_max || 0, speedUnit) + '</span></div>' +
+                            '</div>' +
+
+                            // LAN Traffic Section
+                            '<div class="traffic-increments-tooltip-section">' +
+                                '<div class="traffic-increments-tooltip-section-title">' + _('LAN Traffic') + '</div>' +
+
+                                // 用量数据（大字体，带颜色）
+                                '<div class="ht-kpis">' +
+                                '<div class="ht-kpi up">' +
+                                '<div class="ht-k-label">LAN Upload</div>' +
+                                '<div class="ht-k-value">' + formatSize(item.lan_tx_bytes_inc || 0) + '</div>' +
+                                '</div>' +
+                                '<div class="ht-kpi down">' +
+                                '<div class="ht-k-label">LAN Download</div>' +
+                                '<div class="ht-k-value">' + formatSize(item.lan_rx_bytes_inc || 0) + '</div>' +
+                                '</div>' +
+                                '</div>' +
+
+                                // 速度统计分组
+                                '<div class="ht-divider"></div>' +
+                                '<div class="ht-section-title">' + _('Upload Statistics') + '</div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_avg || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_p95 || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_max || 0, speedUnit) + '</span></div>' +
+
+                                '<div class="ht-section-title" style="margin-top: 8px;">' + _('Download Statistics') + '</div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_avg || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_p95 || 0, speedUnit) + '</span></div>' +
+                                '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_max || 0, speedUnit) + '</span></div>' +
+                            '</div>';
+                    }
+
+                    tooltip.innerHTML = tooltipContent;
+
                     tooltip.style.display = 'block';
-                    var tooltipX = e.clientX - rect.left + 10;
-                    var tooltipY = e.clientY - rect.top - 10;
-                    
+
+                    // 强制重新计算布局以获取正确的尺寸
+                    tooltip.offsetHeight; // 触发重新计算
+
+                    // 获取tooltip的实际尺寸
+                    var tooltipWidth = tooltip.offsetWidth || 280;
+                    var tooltipHeight = tooltip.offsetHeight || 200;
+
+                    var tooltipX = e.clientX - rect.left + 20;
+                    var tooltipY = e.clientY - rect.top - 20;
+
                     // 确保 tooltip 不超出画布边界
-                    if (tooltipX + 200 > rect.width) {
-                        tooltipX = e.clientX - rect.left - 200;
+                    if (tooltipX + tooltipWidth > rect.width) {
+                        tooltipX = e.clientX - rect.left - tooltipWidth - 20;
                     }
-                    if (tooltipY + 100 > rect.height) {
-                        tooltipY = e.clientY - rect.top - 100;
+                    if (tooltipY + tooltipHeight > rect.height) {
+                        tooltipY = e.clientY - rect.top - tooltipHeight - 20;
                     }
-                    
+
+                    // 确保tooltip不会超出左侧边界
+                    if (tooltipX < 0) {
+                        tooltipX = 10;
+                    }
+                    // 确保tooltip不会超出顶部边界
+                    if (tooltipY < 0) {
+                        tooltipY = 10;
+                    }
+
                     tooltip.style.left = tooltipX + 'px';
                     tooltip.style.top = tooltipY + 'px';
                 } else {
+                    // 清除悬浮索引
+                    delete canvas.__bandixIncrementsHoverIndex;
                     tooltip.style.display = 'none';
                 }
             });
             
             canvas.addEventListener('mouseleave', function() {
+                // 清除悬浮索引并重新绘制图表以清除虚线
+                delete canvas.__bandixIncrementsHoverIndex;
+                drawIncrementsChart(canvas, increments, aggregation);
                 tooltip.style.display = 'none';
             });
         }
@@ -6585,18 +7232,21 @@ return view.extend({
 
         // 立即执行一次，不等待轮询
         updateDeviceData();
+        refreshWhitelistStatus();
         fetchAllScheduleRules();
         updateTrafficStatistics();
         
         // 初始化时间范围查询功能
         setTimeout(function() {
-            var presetBtns = document.querySelectorAll('.usage-ranking-preset-btn');
             var startDateInput = document.getElementById('usage-ranking-start-date');
             var endDateInput = document.getElementById('usage-ranking-end-date');
             var queryBtn = document.getElementById('usage-ranking-query-btn');
             var resetBtn = document.getElementById('usage-ranking-reset-btn');
+            var networkTypeSelect = document.getElementById('usage-ranking-network-type');
             var timeline = document.getElementById('usage-ranking-timeline');
             var timelineRange = document.getElementById('usage-ranking-timeline-range');
+			var sectionEl = startDateInput ? (startDateInput.closest('.traffic-stats-section') || document) : document;
+            var presetBtns = sectionEl.querySelectorAll('.usage-ranking-query-presets .cbi-button[data-preset]');
             
             if (!presetBtns.length || !startDateInput || !endDateInput || !queryBtn || !resetBtn) {
                 console.error('Time range query elements not found');
@@ -6643,11 +7293,11 @@ return view.extend({
                 
                 // 更新快捷按钮状态
                 presetBtns.forEach(function(btn) {
-                    btn.classList.remove('active');
+                    btn.className = 'cbi-button cbi-button-neutral';
                 });
                 if (preset) {
-                    var presetBtn = document.querySelector('.usage-ranking-preset-btn[data-preset="' + preset + '"]');
-                    if (presetBtn) presetBtn.classList.add('active');
+                    var presetBtn = sectionEl.querySelector('.usage-ranking-query-presets .cbi-button[data-preset="' + preset + '"]');
+                    if (presetBtn) presetBtn.className = 'cbi-button cbi-button-positive';
                 }
                 
                 // 更新时间轴
@@ -6657,39 +7307,47 @@ return view.extend({
             var queryData = function() {
                 var startDate = startDateInput.value;
                 var endDate = endDateInput.value;
-                
+
                 if (!startDate || !endDate) {
                     alert(_('Please select both start and end dates'));
                     return;
                 }
-                
+
                 var startMs = new Date(startDate + 'T00:00:00').getTime();
                 var endMs = new Date(endDate + 'T23:59:59').getTime();
-                
+
                 if (startMs > endMs) {
                     alert(_('Start date must be earlier than end date'));
                     return;
                 }
-                
+
                 usageRankingCustomRange = {
                     start_ms: startMs,
                     end_ms: endMs
                 };
-                
-                // 设置 loading 状态
+
+                // 设置 loading 状态（使用 bandix-loading，避免与主题的 loading 冲突导致尺寸变化）
                 if (queryBtn) {
                     queryBtn.disabled = true;
-                    queryBtn.classList.add('loading');
+                    queryBtn.classList.add('bandix-loading');
                 }
-                
+
                 console.log('Querying with range:', usageRankingCustomRange);
-                updateTrafficStatistics(usageRankingCustomRange, function() {
-                    // 查询完成后移除 loading 状态
+
+                // 确保无论成功还是失败，都会移除 loading 状态
+                var removeLoading = function() {
                     if (queryBtn) {
                         queryBtn.disabled = false;
-                        queryBtn.classList.remove('loading');
+                        queryBtn.classList.remove('bandix-loading');
                     }
-                });
+                };
+
+                try {
+                    updateTrafficStatistics(usageRankingCustomRange, removeLoading);
+                } catch (error) {
+                    console.error('Query failed:', error);
+                    removeLoading();
+                }
             };
             
             // 快捷选项按钮事件
@@ -6769,6 +7427,29 @@ return view.extend({
             if (queryBtn) {
                 queryBtn.addEventListener('click', queryData);
             }
+
+            // 网络类型切换后自动查询（与 Traffic Timeline 行为一致）
+            if (networkTypeSelect) {
+                networkTypeSelect.addEventListener('change', function () {
+                    if (queryBtn) {
+                        queryBtn.disabled = true;
+                        queryBtn.classList.add('bandix-loading');
+                    }
+
+                    var removeLoading = function () {
+                        if (queryBtn) {
+                            queryBtn.disabled = false;
+                            queryBtn.classList.remove('bandix-loading');
+                        }
+                    };
+
+                    try {
+                        updateTrafficStatistics(usageRankingCustomRange, removeLoading);
+                    } catch (e) {
+                        removeLoading();
+                    }
+                });
+            }
             
             // 重置按钮
             if (resetBtn) {
@@ -6800,6 +7481,7 @@ return view.extend({
         setTimeout(function() {
             var aggregationSelect = document.getElementById('traffic-increments-aggregation');
             var macSelect = document.getElementById('traffic-increments-mac');
+            var networkTypeSelect = document.getElementById('traffic-increments-network-type');
             
             if (aggregationSelect) {
                 aggregationSelect.addEventListener('change', function() {
@@ -6814,15 +7496,24 @@ return view.extend({
                     updateTrafficIncrements();
                 });
             }
+
+            if (networkTypeSelect) {
+                networkTypeSelect.addEventListener('change', function() {
+                    updateTrafficIncrements();
+                });
+            }
         }, 600);
         
         // 初始化 Traffic Timeline 时间范围选择功能
         setTimeout(function() {
-            var presetBtns = document.querySelectorAll('.traffic-increments-preset-btn');
             var startDateInput = document.getElementById('traffic-increments-start-date');
             var endDateInput = document.getElementById('traffic-increments-end-date');
             var queryBtn = document.getElementById('traffic-increments-query-btn');
             var resetBtn = document.getElementById('traffic-increments-reset-btn');
+			var sectionEl = startDateInput ? (startDateInput.closest('.traffic-stats-section') || document) : document;
+            var presetBtns = sectionEl.querySelectorAll('.usage-ranking-query-presets .cbi-button[data-preset]');
+            var timeline = document.getElementById('traffic-increments-timeline');
+            var timelineRange = document.getElementById('traffic-increments-timeline-range');
             
             if (!presetBtns.length || !startDateInput || !endDateInput || !queryBtn || !resetBtn) {
                 console.error('Traffic Timeline time range query elements not found');
@@ -6844,6 +7535,23 @@ return view.extend({
             var todayStr = formatDateInput(today);
             startDateInput.max = todayStr;
             endDateInput.max = todayStr;
+
+            var updateTimeline = function(startDate, endDate) {
+                if (!timeline || !timelineRange || !startDate || !endDate) return;
+                
+                var startMs = new Date(startDate + 'T00:00:00').getTime();
+                var endMs = new Date(endDate + 'T23:59:59').getTime();
+                
+                var oneYearAgoMs = todayMs - 365 * 24 * 60 * 60 * 1000;
+                var totalRange = todayMs - oneYearAgoMs;
+                var selectedRange = endMs - startMs;
+                
+                var leftPercent = Math.max(0, ((startMs - oneYearAgoMs) / totalRange) * 100);
+                var widthPercent = Math.min(100, (selectedRange / totalRange) * 100);
+                
+                timelineRange.style.left = leftPercent + '%';
+                timelineRange.style.width = widthPercent + '%';
+            };
             
             var setDateRange = function(startDate, endDate, preset) {
                 startDateInput.value = formatDateInput(new Date(startDate));
@@ -6851,50 +7559,60 @@ return view.extend({
                 
                 // 更新快捷按钮状态
                 presetBtns.forEach(function(btn) {
-                    btn.classList.remove('active');
+                    btn.className = 'cbi-button cbi-button-neutral';
                 });
                 if (preset) {
-                    var presetBtn = document.querySelector('.traffic-increments-preset-btn[data-preset="' + preset + '"]');
-                    if (presetBtn) presetBtn.classList.add('active');
+                    var presetBtn = sectionEl.querySelector('.usage-ranking-query-presets .cbi-button[data-preset="' + preset + '"]');
+                    if (presetBtn) presetBtn.className = 'cbi-button cbi-button-positive';
                 }
+
+                updateTimeline(startDateInput.value, endDateInput.value);
             };
             
             var queryData = function() {
                 var startDate = startDateInput.value;
                 var endDate = endDateInput.value;
-                
+
                 if (!startDate || !endDate) {
                     alert(_('Please select both start and end dates'));
                     return;
                 }
-                
+
                 var startMs = new Date(startDate + 'T00:00:00').getTime();
                 var endMs = new Date(endDate + 'T23:59:59').getTime();
-                
+
                 if (startMs > endMs) {
                     alert(_('Start date must be earlier than end date'));
                     return;
                 }
-                
+
                 trafficIncrementsCustomRange = {
                     start_ms: startMs,
                     end_ms: endMs
                 };
-                
-                // 设置 loading 状态
+
+                // 设置 loading 状态（使用 bandix-loading，避免与主题的 loading 冲突导致尺寸变化）
                 if (queryBtn) {
                     queryBtn.disabled = true;
-                    queryBtn.classList.add('loading');
+                    queryBtn.classList.add('bandix-loading');
                 }
-                
+
                 console.log('Traffic Timeline querying with range:', trafficIncrementsCustomRange);
-                updateTrafficIncrements(startMs, endMs, null, null, function() {
-                    // 查询完成后移除 loading 状态
+
+                // 确保无论成功还是失败，都会移除 loading 状态
+                var removeLoading = function() {
                     if (queryBtn) {
                         queryBtn.disabled = false;
-                        queryBtn.classList.remove('loading');
+                        queryBtn.classList.remove('bandix-loading');
                     }
-                });
+                };
+
+                try {
+                    updateTrafficIncrements(startMs, endMs, null, null, removeLoading);
+                } catch (error) {
+                    console.error('Traffic Timeline query failed:', error);
+                    removeLoading();
+                }
             };
             
             // 快捷选项按钮事件
@@ -6973,6 +7691,14 @@ return view.extend({
             // 初始化：默认选择最近一年
             var oneYearAgo = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
             setDateRange(oneYearAgo, today, '1year');
+
+            startDateInput.addEventListener('change', function() {
+                updateTimeline(this.value, endDateInput.value);
+            });
+            
+            endDateInput.addEventListener('change', function() {
+                updateTimeline(startDateInput.value, this.value);
+            });
             
             // 设置初始时间范围并自动加载数据（不显示 loading）
             var startMs = oneYearAgo.getTime();
@@ -7052,6 +7778,21 @@ return view.extend({
         // 自动适应主题背景色和文字颜色的函数（仅应用于弹窗和 tooltip）
         function applyThemeColors() {
             try {
+                var prevScheme = document.documentElement.getAttribute('data-bandix-theme');
+                var scheme = getLuCiColorScheme();
+                document.documentElement.setAttribute('data-bandix-theme', scheme);
+                var styleEl = document.getElementById('bandix-styles');
+                if (styleEl && styleEl.textContent && styleEl.getAttribute('data-bandix-scheme') !== scheme) {
+                    styleEl.textContent = generateStyles(scheme);
+                    styleEl.setAttribute('data-bandix-scheme', scheme);
+                }
+                if (prevScheme && prevScheme !== scheme) {
+                    var incCanvas = document.getElementById('traffic-increments-chart-canvas');
+                    if (incCanvas && incCanvas.__bandixIncrements && incCanvas.__bandixIncrements.increments) {
+                        drawIncrementsChart(incCanvas, incCanvas.__bandixIncrements.increments, incCanvas.__bandixIncrements.aggregation);
+                    }
+                }
+
                 // 优先从 cbi-section 获取颜色
                 var cbiSection = document.querySelector('.cbi-section');
                 var targetElement = cbiSection || document.querySelector('.main') || document.body;
@@ -7076,8 +7817,8 @@ return view.extend({
                 // 只应用到模态框和 tooltip，不修改页面其他元素
                 if (bgColor && bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent') {
                     // 应用到模态框（确保不透明）
-                    var modal = document.querySelector('.modal');
-                    if (modal) {
+                    var bandix_modal = document.querySelector('.bandix_modal');
+                    if (bandix_modal) {
                         var rgbaMatch = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
                         if (rgbaMatch) {
                             var r = parseInt(rgbaMatch[1]);
@@ -7085,17 +7826,17 @@ return view.extend({
                             var b = parseInt(rgbaMatch[3]);
                             var alpha = rgbaMatch[4] ? parseFloat(rgbaMatch[4]) : 1;
                             if (alpha < 0.95) {
-                                modal.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
+                                bandix_modal.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
                             } else {
-                                modal.style.backgroundColor = bgColor;
+                                bandix_modal.style.backgroundColor = bgColor;
                             }
                         } else {
-                            modal.style.backgroundColor = bgColor;
+                            bandix_modal.style.backgroundColor = bgColor;
                         }
                     }
 
                     // 应用到 tooltip（包括所有 tooltip 实例）
-                    var tooltips = document.querySelectorAll('.history-tooltip');
+                    var tooltips = document.querySelectorAll('.history-tooltip, .traffic-increments-tooltip');
                     tooltips.forEach(function (tooltip) {
                         var rgbaMatch = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
                         if (rgbaMatch) {
@@ -7117,13 +7858,13 @@ return view.extend({
                 // 检测文字颜色并应用（仅应用到模态框和 tooltip）
                 if (textColor && textColor !== 'rgba(0, 0, 0, 0)') {
                     // 应用到模态框的文字颜色
-                    var modal = document.querySelector('.modal');
-                    if (modal) {
-                        modal.style.color = textColor;
+                    var bandix_modal = document.querySelector('.bandix_modal');
+                    if (bandix_modal) {
+                        bandix_modal.style.color = textColor;
                     }
 
                     // 应用到 tooltip 的文字颜色
-                    var tooltips = document.querySelectorAll('.history-tooltip');
+                    var tooltips = document.querySelectorAll('.history-tooltip, .traffic-increments-tooltip');
                     tooltips.forEach(function (tooltip) {
                         tooltip.style.color = textColor;
                     });

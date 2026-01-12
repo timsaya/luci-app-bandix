@@ -59,6 +59,9 @@ msgstr "การจราจร LAN"
 msgid "WAN Traffic"
 msgstr "การจราจร WAN"
 
+msgid "Network Type"
+msgstr "ประเภทเครือข่าย"
+
 msgid "Rate Limit"
 msgstr "ขีดจำกัดอัตรา"
 
@@ -126,13 +129,16 @@ msgid "Saving..."
 msgstr "กำลังบันทึก..."
 
 msgid "Rate limiting only applies to WAN traffic."
-msgstr "การจำกัดอัตราใช้กับ WAN เท่านั้น"
+msgstr "การจำกัดอัตราใช้กับ WAN เท่านั้น การจราจรภายใน LAN บางส่วนอาจไม่ได้รับการตรวจสอบเนื่องจากการเร่งความเร็วการสลับฮาร์ดแวร์"
 
 msgid "Tip: Enter 0 for unlimited"
 msgstr "เคล็ดลับ: ใส่ 0 สำหรับไม่จำกัด"
 
 msgid "Traffic History"
 msgstr "ประวัติการจราจร"
+
+msgid "Realtime Traffic Trends"
+msgstr "แนวโน้มการจราจรแบบเรียลไทม์"
 
 msgid "Select Device"
 msgstr "เลือกอุปกรณ์"
@@ -364,6 +370,24 @@ msgstr "กรองประเภท"
 
 msgid "All"
 msgstr "ทั้งหมด"
+
+msgid "Period"
+msgstr "ช่วงเวลา"
+
+msgid "Display Mode"
+msgstr "โหมดการแสดงผล"
+
+msgid "This Year"
+msgstr "ปีนี้"
+
+msgid "Week"
+msgstr "สัปดาห์นี้"
+
+msgid "Month"
+msgstr "เดือนนี้"
+
+msgid "Year"
+msgstr "ปีนี้"
 
 msgid "Queries Only"
 msgstr "สอบถามเท่านั้น"
@@ -713,6 +737,9 @@ msgstr "2 ชั่วโมง"
 msgid "Data Directory"
 msgstr "ไดเรกทอรีข้อมูล"
 
+msgid "If you change the directory, please manually add it to the backup directory"
+msgstr "หากคุณเปลี่ยนไดเรกทอรี โปรดเพิ่มลงในไดเรกทอรีสำรองข้อมูลด้วยตนเอง"
+
 msgid "Bandix data storage directory"
 msgstr "ไดเรกทอรีจัดเก็บข้อมูล Bandix"
 
@@ -733,6 +760,9 @@ msgstr "เก็บข้อมูลประวัติ"
 
 msgid "Enable data persistence functionality, data will only be persisted to disk when this option is enabled"
 msgstr "เปิดใช้งานฟังก์ชันการเก็บข้อมูล ข้อมูลจะถูกเก็บไว้ในดิสก์เมื่อเปิดใช้งานตัวเลือกนี้เท่านั้น"
+
+msgid "Does not occupy storage space, stored only in memory"
+msgstr "ไม่ใช้พื้นที่จัดเก็บข้อมูล เก็บไว้ในหน่วยความจำเท่านั้น"
 
 msgid "Query & Response"
 msgstr "คำขอและคำตอบ"
@@ -1004,6 +1034,9 @@ msgstr "ตรวจสอบอัปเดตล้มเหลว: "
 msgid "Checking..."
 msgstr "กำลังตรวจสอบ..."
 
+msgid "Check for Updates"
+msgstr "ตรวจสอบการอัปเดต"
+
 msgid "Installing..."
 msgstr "กำลังติดตั้ง..."
 
@@ -1025,14 +1058,11 @@ msgstr "กรุณาล้างแคชเบราว์เซอร์ด
 msgid "Traffic Statistics"
 msgstr "สถิติการรับส่งข้อมูล"
 
-msgid "Traffic Statistics (WAN Only)"
-msgstr "สถิติการรับส่งข้อมูล (เฉพาะ WAN)"
+msgid "Traffic Statistics"
+msgstr "สถิติการรับส่งข้อมูล"
 
 msgid "Device Usage Ranking"
 msgstr "อันดับการใช้งานอุปกรณ์"
-
-msgid "(Data has 1 hour delay)"
-msgstr "(ข้อมูลล่าช้า 1 ชั่วโมง)"
 
 msgid "Start Date"
 msgstr "วันที่เริ่มต้น"
@@ -1075,3 +1105,21 @@ msgstr "รายชั่วโมง"
 
 msgid "Device:"
 msgstr "อุปกรณ์:"
+
+msgid "Traffic Push URL"
+msgstr ""
+
+msgid "Push traffic data to a remote HTTP endpoint (POST JSON). Leave empty to disable."
+msgstr ""
+
+msgid "Device Event Push URL"
+msgstr ""
+
+msgid "Push device online/offline events to a remote HTTP endpoint (POST JSON on state change). Leave empty to disable."
+msgstr ""
+
+msgid "Additional Subnets"
+msgstr ""
+
+msgid "Additional local subnets (comma-separated CIDR notation, e.g. '192.168.2.0/24,10.0.0.0/8'). Leave empty to use only interface subnet."
+msgstr ""

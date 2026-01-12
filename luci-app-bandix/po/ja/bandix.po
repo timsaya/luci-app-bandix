@@ -59,6 +59,9 @@ msgstr "LAN トラフィック"
 msgid "WAN Traffic"
 msgstr "WAN トラフィック"
 
+msgid "Network Type"
+msgstr "ネットワークタイプ"
+
 msgid "Rate Limit"
 msgstr "速度制限"
 
@@ -126,13 +129,16 @@ msgid "Saving..."
 msgstr "保存中..."
 
 msgid "Rate limiting only applies to WAN traffic."
-msgstr "速度制限は WAN トラフィックにのみ適用されます。"
+msgstr "速度制限は WAN トラフィックにのみ適用されます。一部のLAN内部トラフィックは、ハードウェアスイッチングアクセラレーションにより監視されない場合があります。"
 
 msgid "Tip: Enter 0 for unlimited"
 msgstr "ヒント：0を入力すると無制限になります"
 
 msgid "Traffic History"
 msgstr "トラフィック履歴"
+
+msgid "Realtime Traffic Trends"
+msgstr "リアルタイムトラフィックトレンド"
 
 msgid "Select Device"
 msgstr "デバイスを選択"
@@ -364,6 +370,24 @@ msgstr "タイプフィルター"
 
 msgid "All"
 msgstr "すべて"
+
+msgid "Period"
+msgstr "期間"
+
+msgid "Display Mode"
+msgstr "表示モード"
+
+msgid "This Year"
+msgstr "今年"
+
+msgid "Week"
+msgstr "今週"
+
+msgid "Month"
+msgstr "今月"
+
+msgid "Year"
+msgstr "今年"
 
 msgid "Queries Only"
 msgstr "クエリのみ"
@@ -713,6 +737,9 @@ msgstr "2時間"
 msgid "Data Directory"
 msgstr "データディレクトリ"
 
+msgid "If you change the directory, please manually add it to the backup directory"
+msgstr "ディレクトリを変更した場合は、手動でバックアップディレクトリに追加してください"
+
 msgid "Bandix data storage directory"
 msgstr "Bandix データストレージディレクトリ"
 
@@ -733,6 +760,9 @@ msgstr "履歴データを永続化"
 
 msgid "Enable data persistence functionality, data will only be persisted to disk when this option is enabled"
 msgstr "データ永続化機能を有効にする。このオプションが有効な場合のみデータがディスクに永続化されます"
+
+msgid "Does not occupy storage space, stored only in memory"
+msgstr "ストレージ容量を占有せず、メモリにのみ保存"
 
 msgid "Query & Response"
 msgstr "クエリとレスポンス"
@@ -1004,6 +1034,9 @@ msgstr "更新の確認に失敗しました："
 msgid "Checking..."
 msgstr "確認中..."
 
+msgid "Check for Updates"
+msgstr "更新を確認"
+
 msgid "Installing..."
 msgstr "インストール中..."
 
@@ -1025,14 +1058,11 @@ msgstr "更新後、ブラウザのキャッシュを手動でクリアしてく
 msgid "Traffic Statistics"
 msgstr "トラフィック統計"
 
-msgid "Traffic Statistics (WAN Only)"
-msgstr "トラフィック統計（WANのみ）"
+msgid "Traffic Statistics"
+msgstr "トラフィック統計"
 
 msgid "Device Usage Ranking"
 msgstr "デバイス使用量ランキング"
-
-msgid "(Data has 1 hour delay)"
-msgstr "（データは1時間遅延）"
 
 msgid "Start Date"
 msgstr "開始日"
@@ -1075,3 +1105,21 @@ msgstr "時間単位"
 
 msgid "Device:"
 msgstr "デバイス："
+
+msgid "Traffic Push URL"
+msgstr ""
+
+msgid "Push traffic data to a remote HTTP endpoint (POST JSON). Leave empty to disable."
+msgstr ""
+
+msgid "Device Event Push URL"
+msgstr ""
+
+msgid "Push device online/offline events to a remote HTTP endpoint (POST JSON on state change). Leave empty to disable."
+msgstr ""
+
+msgid "Additional Subnets"
+msgstr ""
+
+msgid "Additional local subnets (comma-separated CIDR notation, e.g. '192.168.2.0/24,10.0.0.0/8'). Leave empty to use only interface subnet."
+msgstr ""

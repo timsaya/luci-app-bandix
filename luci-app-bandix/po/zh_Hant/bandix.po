@@ -59,6 +59,9 @@ msgstr "LAN 流量"
 msgid "WAN Traffic"
 msgstr "WAN 流量"
 
+msgid "Network Type"
+msgstr "網路類型"
+
 msgid "Rate Limit"
 msgstr "限速設定"
 
@@ -126,13 +129,16 @@ msgid "Saving..."
 msgstr "儲存中..."
 
 msgid "Rate limiting only applies to WAN traffic."
-msgstr "限速功能僅對 WAN 流量生效。"
+msgstr "限速功能僅對 WAN 流量生效。某些 LAN 內部流量可能因硬件交換加速未被監控。"
 
 msgid "Tip: Enter 0 for unlimited"
 msgstr "提示：输入 0 表示無限制"
 
 msgid "Traffic History"
 msgstr "歷史流量趨勢"
+
+msgid "Realtime Traffic Trends"
+msgstr "即時流量趨勢圖"
 
 msgid "Select Device"
 msgstr "選擇設備"
@@ -364,6 +370,24 @@ msgstr "類型篩選"
 
 msgid "All"
 msgstr "全部"
+
+msgid "Period"
+msgstr "週期"
+
+msgid "Display Mode"
+msgstr "顯示模式"
+
+msgid "This Year"
+msgstr "本年"
+
+msgid "Week"
+msgstr "本週"
+
+msgid "Month"
+msgstr "本月"
+
+msgid "Year"
+msgstr "本年"
 
 msgid "Queries Only"
 msgstr "仅查詢"
@@ -713,6 +737,9 @@ msgstr "2 小時"
 msgid "Data Directory"
 msgstr "數据目录"
 
+msgid "If you change the directory, please manually add it to the backup directory"
+msgstr "如果更改了目錄，請手動添加到備份目錄"
+
 msgid "Bandix data storage directory"
 msgstr "Bandix 數据儲存目錄"
 
@@ -733,6 +760,9 @@ msgstr "持久化歷史數据"
 
 msgid "Enable data persistence functionality, data will only be persisted to disk when this option is enabled"
 msgstr "啟用數据持久化功能，只有啟用此选项后才會持久化到磁碟"
+
+msgid "Does not occupy storage space, stored only in memory"
+msgstr "不佔用存儲空間，僅存儲在內存中"
 
 msgid "Query & Response"
 msgstr "查詢與響應"
@@ -1004,6 +1034,9 @@ msgstr "檢查更新失敗："
 msgid "Checking..."
 msgstr "檢查中..."
 
+msgid "Check for Updates"
+msgstr "檢查更新"
+
 msgid "Installing..."
 msgstr "安裝中..."
 
@@ -1025,14 +1058,11 @@ msgstr "更新後請手動清空瀏覽器快取。"
 msgid "Traffic Statistics"
 msgstr "流量統計"
 
-msgid "Traffic Statistics (WAN Only)"
-msgstr "流量統計（僅WAN）"
+msgid "Traffic Statistics"
+msgstr "流量統計"
 
 msgid "Device Usage Ranking"
 msgstr "設備用量排行"
-
-msgid "(Data has 1 hour delay)"
-msgstr "（資料有1小時延遲）"
 
 msgid "Start Date"
 msgstr "開始日期"
@@ -1075,3 +1105,21 @@ msgstr "按小時"
 
 msgid "Device:"
 msgstr "設備："
+
+msgid "Traffic Push URL"
+msgstr ""
+
+msgid "Push traffic data to a remote HTTP endpoint (POST JSON). Leave empty to disable."
+msgstr ""
+
+msgid "Device Event Push URL"
+msgstr ""
+
+msgid "Push device online/offline events to a remote HTTP endpoint (POST JSON on state change). Leave empty to disable."
+msgstr ""
+
+msgid "Additional Subnets"
+msgstr ""
+
+msgid "Additional local subnets (comma-separated CIDR notation, e.g. '192.168.2.0/24,10.0.0.0/8'). Leave empty to use only interface subnet."
+msgstr ""

@@ -59,6 +59,9 @@ msgstr "Ruch LAN"
 msgid "WAN Traffic"
 msgstr "Ruch WAN"
 
+msgid "Network Type"
+msgstr "Typ Sieci"
+
 msgid "Rate Limit"
 msgstr "Limit prędkości"
 
@@ -126,13 +129,16 @@ msgid "Saving..."
 msgstr "Zapisywanie..."
 
 msgid "Rate limiting only applies to WAN traffic."
-msgstr "Ograniczenie prędkości dotyczy tylko ruchu WAN."
+msgstr "Ograniczenie prędkości dotyczy tylko ruchu WAN. Niektóre wewnętrzne ruchu LAN mogą nie być monitorowane z powodu przyspieszenia przełączania sprzętowego."
 
 msgid "Tip: Enter 0 for unlimited"
 msgstr "Wskazówka: Wprowadź 0 dla bez limitu"
 
 msgid "Traffic History"
 msgstr "Historia ruchu"
+
+msgid "Realtime Traffic Trends"
+msgstr "Trendy Ruchu w Czasie Rzeczywistym"
 
 msgid "Select Device"
 msgstr "Wybierz urządzenie"
@@ -364,6 +370,24 @@ msgstr "Filtr typu"
 
 msgid "All"
 msgstr "Wszystkie"
+
+msgid "Period"
+msgstr "Okres"
+
+msgid "Display Mode"
+msgstr "Tryb Wyświetlania"
+
+msgid "This Year"
+msgstr "Ten Rok"
+
+msgid "Week"
+msgstr "Ten Tydzień"
+
+msgid "Month"
+msgstr "Ten Miesiąc"
+
+msgid "Year"
+msgstr "Ten Rok"
 
 msgid "Queries Only"
 msgstr "Tylko zapytania"
@@ -713,6 +737,9 @@ msgstr "2 godziny"
 msgid "Data Directory"
 msgstr "Katalog danych"
 
+msgid "If you change the directory, please manually add it to the backup directory"
+msgstr "Jeśli zmienisz katalog, proszę dodać go ręcznie do katalogu kopii zapasowej"
+
 msgid "Bandix data storage directory"
 msgstr "Katalog przechowywania danych Bandix"
 
@@ -733,6 +760,9 @@ msgstr "Zachowaj dane historyczne"
 
 msgid "Enable data persistence functionality, data will only be persisted to disk when this option is enabled"
 msgstr "Włącz funkcję trwałości danych, dane będą zapisywane na dysk tylko gdy ta opcja jest włączona"
+
+msgid "Does not occupy storage space, stored only in memory"
+msgstr "Nie zajmuje miejsca na dysku, przechowywane tylko w pamięci"
 
 msgid "Query & Response"
 msgstr "Zapytanie i Odpowiedź"
@@ -1004,6 +1034,9 @@ msgstr "Nie udało się sprawdzić aktualizacji: "
 msgid "Checking..."
 msgstr "Sprawdzanie..."
 
+msgid "Check for Updates"
+msgstr "Sprawdź Aktualizacje"
+
 msgid "Installing..."
 msgstr "Instalowanie..."
 
@@ -1025,14 +1058,11 @@ msgstr "Po aktualizacji należy ręcznie wyczyścić pamięć podręczną przegl
 msgid "Traffic Statistics"
 msgstr "Statystyki ruchu"
 
-msgid "Traffic Statistics (WAN Only)"
-msgstr "Statystyki ruchu (tylko WAN)"
+msgid "Traffic Statistics"
+msgstr "Statystyki ruchu"
 
 msgid "Device Usage Ranking"
 msgstr "Ranking Użycia Urządzeń"
-
-msgid "(Data has 1 hour delay)"
-msgstr "(Dane mają 1 godzinę opóźnienia)"
 
 msgid "Start Date"
 msgstr "Data Początkowa"
@@ -1076,3 +1106,20 @@ msgstr "Co Godzinę"
 msgid "Device:"
 msgstr "Urządzenie:"
 
+msgid "Traffic Push URL"
+msgstr ""
+
+msgid "Push traffic data to a remote HTTP endpoint (POST JSON). Leave empty to disable."
+msgstr ""
+
+msgid "Device Event Push URL"
+msgstr ""
+
+msgid "Push device online/offline events to a remote HTTP endpoint (POST JSON on state change). Leave empty to disable."
+msgstr ""
+
+msgid "Additional Subnets"
+msgstr ""
+
+msgid "Additional local subnets (comma-separated CIDR notation, e.g. '192.168.2.0/24,10.0.0.0/8'). Leave empty to use only interface subnet."
+msgstr ""

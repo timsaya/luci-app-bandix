@@ -59,6 +59,9 @@ msgstr "Lalu lintas LAN"
 msgid "WAN Traffic"
 msgstr "Lalu lintas WAN"
 
+msgid "Network Type"
+msgstr "Jenis Jaringan"
+
 msgid "Rate Limit"
 msgstr "Batas kecepatan"
 
@@ -126,13 +129,16 @@ msgid "Saving..."
 msgstr "Menyimpan..."
 
 msgid "Rate limiting only applies to WAN traffic."
-msgstr "Pembatasan kecepatan hanya berlaku untuk lalu lintas WAN."
+msgstr "Pembatasan kecepatan hanya berlaku untuk lalu lintas WAN. Beberapa lalu lintas internal LAN mungkin tidak dipantau karena akselerasi switching perangkat keras."
 
 msgid "Tip: Enter 0 for unlimited"
 msgstr "Tip: Masukkan 0 untuk tidak terbatas"
 
 msgid "Traffic History"
 msgstr "Riwayat lalu lintas"
+
+msgid "Realtime Traffic Trends"
+msgstr "Tren Lalu Lintas Waktu Nyata"
 
 msgid "Select Device"
 msgstr "Pilih perangkat"
@@ -364,6 +370,24 @@ msgstr "Filter jenis"
 
 msgid "All"
 msgstr "Semua"
+
+msgid "Period"
+msgstr "Periode"
+
+msgid "Display Mode"
+msgstr "Mode Tampilan"
+
+msgid "This Year"
+msgstr "Tahun Ini"
+
+msgid "Week"
+msgstr "Minggu Ini"
+
+msgid "Month"
+msgstr "Bulan Ini"
+
+msgid "Year"
+msgstr "Tahun Ini"
 
 msgid "Queries Only"
 msgstr "Hanya kueri"
@@ -713,6 +737,9 @@ msgstr "2 jam"
 msgid "Data Directory"
 msgstr "Direktori data"
 
+msgid "If you change the directory, please manually add it to the backup directory"
+msgstr "Jika Anda mengubah direktori, silakan tambahkan secara manual ke direktori cadangan"
+
 msgid "Bandix data storage directory"
 msgstr "Direktori penyimpanan data Bandix"
 
@@ -733,6 +760,9 @@ msgstr "Simpan data riwayat"
 
 msgid "Enable data persistence functionality, data will only be persisted to disk when this option is enabled"
 msgstr "Aktifkan fungsi persistensi data, data hanya akan disimpan ke disk ketika opsi ini diaktifkan"
+
+msgid "Does not occupy storage space, stored only in memory"
+msgstr "Tidak menempati ruang penyimpanan, disimpan hanya di memori"
 
 msgid "Query & Response"
 msgstr "Kueri & Respons"
@@ -1004,6 +1034,9 @@ msgstr "Gagal memeriksa pembaruan: "
 msgid "Checking..."
 msgstr "Memeriksa..."
 
+msgid "Check for Updates"
+msgstr "Periksa Pembaruan"
+
 msgid "Installing..."
 msgstr "Menginstal..."
 
@@ -1025,14 +1058,11 @@ msgstr "Harap hapus cache browser secara manual setelah memperbarui."
 msgid "Traffic Statistics"
 msgstr "Statistik Lalu Lintas"
 
-msgid "Traffic Statistics (WAN Only)"
-msgstr "Statistik Lalu Lintas (Hanya WAN)"
+msgid "Traffic Statistics"
+msgstr "Statistik Lalu Lintas"
 
 msgid "Device Usage Ranking"
 msgstr "Peringkat Penggunaan Perangkat"
-
-msgid "(Data has 1 hour delay)"
-msgstr "(Data memiliki penundaan 1 jam)"
 
 msgid "Start Date"
 msgstr "Tanggal Mulai"
@@ -1075,3 +1105,21 @@ msgstr "Per Jam"
 
 msgid "Device:"
 msgstr "Perangkat:"
+
+msgid "Traffic Push URL"
+msgstr ""
+
+msgid "Push traffic data to a remote HTTP endpoint (POST JSON). Leave empty to disable."
+msgstr ""
+
+msgid "Device Event Push URL"
+msgstr ""
+
+msgid "Push device online/offline events to a remote HTTP endpoint (POST JSON on state change). Leave empty to disable."
+msgstr ""
+
+msgid "Additional Subnets"
+msgstr ""
+
+msgid "Additional local subnets (comma-separated CIDR notation, e.g. '192.168.2.0/24,10.0.0.0/8'). Leave empty to use only interface subnet."
+msgstr ""

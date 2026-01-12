@@ -59,6 +59,9 @@ msgstr "Трафик LAN"
 msgid "WAN Traffic"
 msgstr "Трафик WAN"
 
+msgid "Network Type"
+msgstr "Тип Сети"
+
 msgid "Rate Limit"
 msgstr "Ограничение скорости"
 
@@ -126,13 +129,16 @@ msgid "Saving..."
 msgstr "Сохранение..."
 
 msgid "Rate limiting only applies to WAN traffic."
-msgstr "限速功能仅对 WAN 流量生效。"
+msgstr "Ограничение скорости применяется только к трафику WAN. Некоторые внутренние трафики LAN могут не отслеживаться из-за аппаратного ускорения коммутации."
 
 msgid "Tip: Enter 0 for unlimited"
 msgstr "提示：输入 0 表示无限制"
 
 msgid "Traffic History"
 msgstr "История трафика"
+
+msgid "Realtime Traffic Trends"
+msgstr "Тренды Трафика в Реальном Времени"
 
 msgid "Select Device"
 msgstr "Выбрать устройство"
@@ -363,7 +369,25 @@ msgid "Type Filter"
 msgstr "类型过滤"
 
 msgid "All"
-msgstr "全部"
+msgstr "Все"
+
+msgid "Period"
+msgstr "Период"
+
+msgid "Display Mode"
+msgstr "Режим Отображения"
+
+msgid "This Year"
+msgstr "Этот Год"
+
+msgid "Week"
+msgstr "Эта Неделя"
+
+msgid "Month"
+msgstr "Этот Месяц"
+
+msgid "Year"
+msgstr "Этот Год"
 
 msgid "Queries Only"
 msgstr "仅查询"
@@ -713,6 +737,9 @@ msgstr "2 часа"
 msgid "Data Directory"
 msgstr "Каталог данных"
 
+msgid "If you change the directory, please manually add it to the backup directory"
+msgstr "Если вы измените каталог, пожалуйста, добавьте его вручную в каталог резервных копий"
+
 msgid "Bandix data storage directory"
 msgstr "Bandix 数据存储目录"
 
@@ -733,6 +760,9 @@ msgstr "Сохранять историю данных"
 
 msgid "Enable data persistence functionality, data will only be persisted to disk when this option is enabled"
 msgstr "Включить функцию постоянного хранения данных, данные будут сохраняться на диск только при включении этой опции"
+
+msgid "Does not occupy storage space, stored only in memory"
+msgstr "Не занимает дисковое пространство, хранится только в памяти"
 
 msgid "Query & Response"
 msgstr "Запрос и Ответ"
@@ -1004,6 +1034,9 @@ msgstr "Не удалось проверить обновления: "
 msgid "Checking..."
 msgstr "Проверка..."
 
+msgid "Check for Updates"
+msgstr "Проверить Обновления"
+
 msgid "Installing..."
 msgstr "Установка..."
 
@@ -1025,14 +1058,11 @@ msgstr "Пожалуйста, вручную очистите кеш брауз�
 msgid "Traffic Statistics"
 msgstr "Статистика трафика"
 
-msgid "Traffic Statistics (WAN Only)"
-msgstr "Статистика трафика (только WAN)"
+msgid "Traffic Statistics"
+msgstr "Статистика трафика"
 
 msgid "Device Usage Ranking"
 msgstr "Рейтинг использования устройств"
-
-msgid "(Data has 1 hour delay)"
-msgstr "(Данные имеют задержку 1 час)"
 
 msgid "Start Date"
 msgstr "Дата начала"
@@ -1075,3 +1105,21 @@ msgstr "По часам"
 
 msgid "Device:"
 msgstr "Устройство:"
+
+msgid "Traffic Push URL"
+msgstr ""
+
+msgid "Push traffic data to a remote HTTP endpoint (POST JSON). Leave empty to disable."
+msgstr ""
+
+msgid "Device Event Push URL"
+msgstr ""
+
+msgid "Push device online/offline events to a remote HTTP endpoint (POST JSON on state change). Leave empty to disable."
+msgstr ""
+
+msgid "Additional Subnets"
+msgstr ""
+
+msgid "Additional local subnets (comma-separated CIDR notation, e.g. '192.168.2.0/24,10.0.0.0/8'). Leave empty to use only interface subnet."
+msgstr ""

@@ -59,6 +59,9 @@ msgstr "LAN 流量"
 msgid "WAN Traffic"
 msgstr "WAN 流量"
 
+msgid "Network Type"
+msgstr "网络类型"
+
 msgid "Rate Limit"
 msgstr "限速设置"
 
@@ -126,13 +129,16 @@ msgid "Saving..."
 msgstr "保存中..."
 
 msgid "Rate limiting only applies to WAN traffic."
-msgstr "限速功能仅对 WAN 流量生效。"
+msgstr "限速功能仅对 WAN 流量生效。某些 LAN 内部流量可能因硬件交换加速未被监控。"
 
 msgid "Tip: Enter 0 for unlimited"
 msgstr "提示：输入 0 表示无限制"
 
 msgid "Traffic History"
 msgstr "历史流量趋势"
+
+msgid "Realtime Traffic Trends"
+msgstr "实时流量趋势"
 
 msgid "Select Device"
 msgstr "选择设备"
@@ -364,6 +370,21 @@ msgstr "类型过滤"
 
 msgid "All"
 msgstr "全部"
+
+msgid "Period"
+msgstr "周期"
+
+msgid "Display Mode"
+msgstr "显示模式"
+
+msgid "Week"
+msgstr "本周"
+
+msgid "Month"
+msgstr "本月"
+
+msgid "Year"
+msgstr "本年"
 
 msgid "Queries Only"
 msgstr "仅查询"
@@ -713,6 +734,9 @@ msgstr "2 小时"
 msgid "Data Directory"
 msgstr "数据目录"
 
+msgid "If you change the directory, please manually add it to the backup directory"
+msgstr "如果更改了目录，请手动添加到备份目录"
+
 msgid "Bandix data storage directory"
 msgstr "Bandix 数据存储目录"
 
@@ -732,6 +756,10 @@ msgid "Persist History Data"
 msgstr "持久化历史数据"
 
 msgid "Enable data persistence functionality, data will only be persisted to disk when this option is enabled"
+msgstr "启用数据持久化功能，只有启用此选项后才会持久化到磁盘"
+
+msgid "Does not occupy storage space, stored only in memory"
+msgstr "不占用存储空间，仅存储在内存中"
 msgstr "启用数据持久化功能，只有启用此选项后才会持久化到磁盘"
 
 msgid "Query & Response"
@@ -1004,6 +1032,9 @@ msgstr "检查更新失败："
 msgid "Checking..."
 msgstr "检查中..."
 
+msgid "Check for Updates"
+msgstr "检查更新"
+
 msgid "Installing..."
 msgstr "安装中..."
 
@@ -1031,14 +1062,11 @@ msgstr "有更新，点击前往设置"
 msgid "Traffic Statistics"
 msgstr "流量统计"
 
-msgid "Traffic Statistics (WAN Only)"
-msgstr "流量统计（仅WAN）"
+msgid "Traffic Statistics"
+msgstr "流量统计"
 
 msgid "Device Usage Ranking"
 msgstr "设备用量排行"
-
-msgid "(Data has 1 hour delay)"
-msgstr "（数据有1小时延迟）"
 
 msgid "Start Date"
 msgstr "开始日期"
@@ -1061,6 +1089,9 @@ msgstr "上周"
 msgid "This Month"
 msgstr "本月"
 
+msgid "This Year"
+msgstr "本年"
+
 msgid "Last Month"
 msgstr "上月"
 
@@ -1081,3 +1112,42 @@ msgstr "按小时"
 
 msgid "Device:"
 msgstr "设备："
+
+msgid "Global Rate Limit"
+msgstr "全局限速"
+
+msgid "When enabled, all devices will be rate limited. Devices in the list are exempt (whitelist)."
+msgstr "启用后，所有设备都会限速；列表内设备为白名单，不受限速。"
+
+msgid "Exempt Devices (Whitelist)"
+msgstr "豁免设备（白名单）"
+
+msgid "Remove this device from the list?"
+msgstr "从列表中移除此设备？"
+
+msgid "Default Rate Limit"
+msgstr "默认限速"
+
+msgid "Wireless"
+msgstr "无线"
+
+msgid "Wired"
+msgstr "有线"
+
+msgid "Traffic Push URL"
+msgstr "流量推送URL"
+
+msgid "Push traffic data to a remote HTTP endpoint (POST JSON). Leave empty to disable."
+msgstr "将流量数据推送至远程HTTP端点（POST JSON）。留空则禁用。"
+
+msgid "Device Event Push URL"
+msgstr "设备事件推送URL"
+
+msgid "Push device online/offline events to a remote HTTP endpoint (POST JSON on state change). Leave empty to disable."
+msgstr "将设备上下线事件推送至远程HTTP端点（状态变化时POST JSON）。留空则禁用。"
+
+msgid "Additional Subnets"
+msgstr "额外子网"
+
+msgid "Additional local subnets (comma-separated CIDR notation, e.g. '192.168.2.0/24,10.0.0.0/8'). Leave empty to use only interface subnet."
+msgstr "额外的本地子网（用逗号分隔的CIDR表示法，例如'192.168.2.0/24,10.0.0.0/8'）。留空则只使用接口子网。"
