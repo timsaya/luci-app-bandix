@@ -686,8 +686,23 @@ get_version() {
 # 提取主版本号（去掉修订号，如 -r1, -r2 等）
 extract_base_version() {
 	local version="$1"
-	# 去掉 -r1, -r2 等修订号后缀
 	echo "$version" | sed 's/-r[0-9]*$//'
+}
+
+compare_versions() {
+	local ver1="$1"
+	local ver2="$2"
+	
+	if [ "$ver1" = "$ver2" ]; then
+		return 1
+	fi
+	
+	local sorted=$(printf '%s\n%s\n' "$ver1" "$ver2" | sort -V | head -n1)
+	if [ "$sorted" = "$ver1" ]; then
+		return 0
+	else
+		return 1
+	fi
 }
 
 # 检测包管理器类型
@@ -813,13 +828,10 @@ check_update() {
 			done
 		fi
 		
-		# 提取主版本号进行比较（忽略修订号）
-		local current_luci_base=$(extract_base_version "$current_luci_version")
-		local latest_luci_base=$(extract_base_version "$luci_latest_version")
-		
-		# 比较主版本号
-		if [ -n "$current_luci_base" ] && [ -n "$latest_luci_base" ] && [ "$current_luci_base" != "$latest_luci_base" ]; then
-			luci_has_update="1"
+		if [ -n "$current_luci_version" ] && [ -n "$luci_latest_version" ]; then
+			if compare_versions "$current_luci_version" "$luci_latest_version"; then
+				luci_has_update="1"
+			fi
 		fi
 	fi
 	
@@ -890,13 +902,10 @@ check_update() {
 			fi
 		fi
 		
-		# 提取主版本号进行比较（忽略修订号）
-		local current_bandix_base=$(extract_base_version "$current_bandix_version")
-		local latest_bandix_base=$(extract_base_version "$bandix_latest_version")
-		
-		# 比较主版本号
-		if [ -n "$current_bandix_base" ] && [ -n "$latest_bandix_base" ] && [ "$current_bandix_base" != "$latest_bandix_base" ]; then
-			bandix_has_update="1"
+		if [ -n "$current_bandix_version" ] && [ -n "$bandix_latest_version" ]; then
+			if compare_versions "$current_bandix_version" "$bandix_latest_version"; then
+				bandix_has_update="1"
+			fi
 		fi
 	fi
 	

@@ -1133,3 +1133,21 @@ msgstr "无线"
 
 msgid "Wired"
 msgstr "有线"
+
+msgid "Traffic Push URL"
+msgstr "流量推送URL"
+
+msgid "Push traffic data to a remote HTTP endpoint (POST JSON). Leave empty to disable."
+msgstr "将流量数据推送至远程HTTP端点（POST JSON）。留空则禁用。"
+
+msgid "Device Event Push URL"
+msgstr "设备事件推送URL"
+
+msgid "Push device online/offline events to a remote HTTP endpoint (POST JSON on state change). Leave empty to disable."
+msgstr "将设备上下线事件推送至远程HTTP端点（状态变化时POST JSON）。留空则禁用。"
+
+msgid "Additional Subnets"
+msgstr "额外子网"
+
+msgid "Additional local subnets (comma-separated CIDR notation, e.g. '192.168.2.0/24,10.0.0.0/8'). Leave empty to use only interface subnet."
+msgstr "额外的本地子网（用逗号分隔的CIDR表示法，例如'192.168.2.0/24,10.0.0.0/8'）。留空则只使用接口子网。"
