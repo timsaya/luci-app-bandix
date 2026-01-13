@@ -1107,19 +1107,22 @@ msgid "Device:"
 msgstr "อุปกรณ์:"
 
 msgid "Traffic Push URL"
-msgstr ""
+msgstr "URL สำหรับส่งข้อมูลการใช้งาน"
 
 msgid "Push traffic data to a remote HTTP endpoint (POST JSON). Leave empty to disable."
-msgstr ""
+msgstr "ส่งข้อมูลการใช้งานไปยังปลายทาง HTTP ระยะไกล (POST JSON) เว้นว่างเพื่อปิดใช้งาน"
 
 msgid "Device Event Push URL"
-msgstr ""
+msgstr "URL สำหรับส่งเหตุการณ์อุปกรณ์"
 
 msgid "Push device online/offline events to a remote HTTP endpoint (POST JSON on state change). Leave empty to disable."
-msgstr ""
+msgstr "ส่งเหตุการณ์ออนไลน์/ออฟไลน์ของอุปกรณ์ไปยังปลายทาง HTTP ระยะไกล (POST JSON เมื่อสถานะเปลี่ยน) เว้นว่างเพื่อปิดใช้งาน"
 
 msgid "Additional Subnets"
-msgstr ""
+msgstr "ซับเน็ตเพิ่มเติม"
 
 msgid "Additional local subnets (comma-separated CIDR notation, e.g. '192.168.2.0/24,10.0.0.0/8'). Leave empty to use only interface subnet."
-msgstr ""
+msgstr "ซับเน็ตท้องถิ่นเพิ่มเติม (CIDR แยกด้วยจุลภาค เช่น '192.168.2.0/24,10.0.0.0/8') เว้นว่างเพื่อใช้เฉพาะซับเน็ตอินเทอร์เฟซ"
+
+msgid "No devices"
+msgstr "ไม่มีอุปกรณ์"

@@ -1107,19 +1107,22 @@ msgid "Device:"
 msgstr "Dispositivo:"
 
 msgid "Traffic Push URL"
-msgstr ""
+msgstr "URL de envío de tráfico"
 
 msgid "Push traffic data to a remote HTTP endpoint (POST JSON). Leave empty to disable."
-msgstr ""
+msgstr "Enviar datos de tráfico a un endpoint HTTP remoto (POST JSON). Dejar vacío para deshabilitar."
 
 msgid "Device Event Push URL"
-msgstr ""
+msgstr "URL de envío de eventos de dispositivo"
 
 msgid "Push device online/offline events to a remote HTTP endpoint (POST JSON on state change). Leave empty to disable."
-msgstr ""
+msgstr "Enviar eventos de conexión/desconexión de dispositivo a un endpoint HTTP remoto (POST JSON en cambio de estado). Dejar vacío para deshabilitar."
 
 msgid "Additional Subnets"
-msgstr ""
+msgstr "Subredes adicionales"
 
 msgid "Additional local subnets (comma-separated CIDR notation, e.g. '192.168.2.0/24,10.0.0.0/8'). Leave empty to use only interface subnet."
-msgstr ""
+msgstr "Subredes locales adicionales (notación CIDR separada por comas, ej. '192.168.2.0/24,10.0.0.0/8'). Dejar vacío para usar solo la subred de interfaz."
+
+msgid "No devices"
+msgstr "Sin dispositivos"

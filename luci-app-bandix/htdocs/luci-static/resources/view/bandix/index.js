@@ -2833,7 +2833,7 @@ return view.extend({
             }, [
                 E('div', { 'style': 'display: flex; align-items: center; gap: 8px;' }, [
                     E('span', { 'style': 'font-size: 1rem;' }, '⚠'),
-                    E('span', {}, _('Rate limiting only applies to WAN traffic. Some LAN internal traffic may not be monitored due to hardware switching acceleration.'))
+                    E('span', {}, _("Rate limiting only applies to WAN traffic."))
                 ]),
                 E('div', { 'class': 'bandix-badge', 'id': 'device-count' }, _('Online Devices') + ': 0 / 0')
             ]),

@@ -1107,19 +1107,22 @@ msgid "Device:"
 msgstr "設備："
 
 msgid "Traffic Push URL"
-msgstr ""
+msgstr "流量推送URL"
 
 msgid "Push traffic data to a remote HTTP endpoint (POST JSON). Leave empty to disable."
-msgstr ""
+msgstr "將流量數據推送至遠程HTTP端點（POST JSON）。留空則禁用。"
 
 msgid "Device Event Push URL"
-msgstr ""
+msgstr "設備事件推送URL"
 
 msgid "Push device online/offline events to a remote HTTP endpoint (POST JSON on state change). Leave empty to disable."
-msgstr ""
+msgstr "將設備上下線事件推送至遠程HTTP端點（狀態變化時POST JSON）。留空則禁用。"
 
 msgid "Additional Subnets"
-msgstr ""
+msgstr "額外子網"
 
 msgid "Additional local subnets (comma-separated CIDR notation, e.g. '192.168.2.0/24,10.0.0.0/8'). Leave empty to use only interface subnet."
-msgstr ""
+msgstr "額外的本地子網（用逗號分隔的CIDR表示法，例如'192.168.2.0/24,10.0.0.0/8'）。留空則只使用接口子網。"
+
+msgid "No devices"
+msgstr "無設備"
