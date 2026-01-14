@@ -158,6 +158,33 @@ function getThemeColors() {
     };
 }
 
+function getThemeType() {
+    var mediaUrlBase = L.uci.get('luci', 'main', 'mediaurlbase');
+    
+    if (!mediaUrlBase) {
+        var linkTags = document.querySelectorAll('link[rel="stylesheet"]');
+        for (var i = 0; i < linkTags.length; i++) {
+            var href = linkTags[i].getAttribute('href') || '';
+            if (href.toLowerCase().includes('argon')) {
+                return 'wide';
+            }
+        }
+        return 'narrow';
+    }
+    
+    var mediaUrlBaseLower = mediaUrlBase.toLowerCase();
+    
+    var wideThemeKeywords = ['argon', 'material', 'design', 'edge'];
+    
+    for (var i = 0; i < wideThemeKeywords.length; i++) {
+        if (mediaUrlBaseLower.includes(wideThemeKeywords[i])) {
+            return 'wide';
+        }
+    }
+    
+    return 'narrow';
+}
+
 function formatSize(bytes) {
     if (bytes === 0) return '0 B';
     const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
@@ -561,7 +588,17 @@ return view.extend({
                 font-size: 0.875rem;
             }
             
+            .bandix-alert.wide-theme {
+                background-color: rgba(251, 191, 36, 0.1);
+                border: 1px solid rgba(251, 191, 36, 0.3);
+                color: #92400e;
+            }
             
+            .theme-dark .bandix-alert.wide-theme {
+                background-color: rgba(251, 191, 36, 0.15);
+                border-color: rgba(251, 191, 36, 0.4);
+                color: #fbbf24;
+            }
             
             .bandix-alert-icon {
                 font-size: 0.875rem;
@@ -2548,7 +2585,8 @@ return view.extend({
             }
         }, 5000);
 
-        var view = E('div', { 'class': 'bandix-container' }, [
+        var themeMode = getThemeMode();
+        var view = E('div', { 'class': 'bandix-container theme-' + themeMode }, [
             // 头部
             E('div', { 'class': 'bandix-header' }, [
                 E('div', { 'class': 'bandix-title-wrapper' }, [
@@ -2567,7 +2605,7 @@ return view.extend({
 
             // 警告提示（包含在线设备数）
             E('div', {
-                'class': 'bandix-alert'
+                'class': 'bandix-alert' + (getThemeType() === 'wide' ? ' wide-theme' : '')
             }, [
                 E('div', { 'style': 'display: flex; align-items: center; gap: 8px;' }, [
                     E('span', { 'style': 'font-size: 1rem;' }, '⚠'),
