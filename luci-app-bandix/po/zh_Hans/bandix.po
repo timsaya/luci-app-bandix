@@ -760,7 +760,6 @@ msgstr "启用数据持久化功能，只有启用此选项后才会持久化到
 
 msgid "Does not occupy storage space, stored only in memory"
 msgstr "不占用存储空间，仅存储在内存中"
-msgstr "启用数据持久化功能，只有启用此选项后才会持久化到磁盘"
 
 msgid "Query & Response"
 msgstr "查询与响应"
