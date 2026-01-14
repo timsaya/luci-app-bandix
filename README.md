@@ -14,7 +14,7 @@ LuCI Bandix is developed based on the LuCI framework, offering network traffic m
 
 **Note**: This application is primarily designed for home users and simple network environments. It is not recommended for complex network architectures (such as VLAN) or enterprise-level deployments.
 
-**Important**: Hardware flow offloading must be disabled for accurate traffic monitoring. Please disable hardware flow offloading in OpenWrt before using this application.
+**Important**: Please disable hardware flow offloading and Turbo ACC in OpenWrt before using this application.
 
 ## Installation
 
@@ -93,11 +93,9 @@ The following table shows the version dependency relationship between luci-app-b
 
 | luci-app-bandix version | Required openwrt-bandix version |
 |------------------------|--------------------------------|
-| 0.6.x                  | 0.6.x                          |
-| 0.7.x                  | 0.7.x                          |
-| 0.8.x                  | 0.8.x                          |
-| 0.9.x                  | 0.9.x                          |
 | 0.10.x                 | 0.10.x                         |
+| 0.11.x                 | 0.11.x                         |
+| 0.12.x                 | 0.12.x                         |
 
 
 Please ensure you install matching versions to ensure compatibility and proper functionality.

@@ -1107,19 +1107,22 @@ msgid "Device:"
 msgstr "Устройство:"
 
 msgid "Traffic Push URL"
-msgstr ""
+msgstr "URL для отправки трафика"
 
 msgid "Push traffic data to a remote HTTP endpoint (POST JSON). Leave empty to disable."
-msgstr ""
+msgstr "Отправлять данные трафика на удаленную HTTP конечную точку (POST JSON). Оставьте пустым для отключения."
 
 msgid "Device Event Push URL"
-msgstr ""
+msgstr "URL для отправки событий устройства"
 
 msgid "Push device online/offline events to a remote HTTP endpoint (POST JSON on state change). Leave empty to disable."
-msgstr ""
+msgstr "Отправлять события подключения/отключения устройства на удаленную HTTP конечную точку (POST JSON при изменении состояния). Оставьте пустым для отключения."
 
 msgid "Additional Subnets"
-msgstr ""
+msgstr "Дополнительные подсети"
 
 msgid "Additional local subnets (comma-separated CIDR notation, e.g. '192.168.2.0/24,10.0.0.0/8'). Leave empty to use only interface subnet."
-msgstr ""
+msgstr "Дополнительные локальные подсети (CIDR нотация через запятую, напр. '192.168.2.0/24,10.0.0.0/8'). Оставьте пустым для использования только подсети интерфейса."
+
+msgid "No devices"
+msgstr "Нет устройств"
