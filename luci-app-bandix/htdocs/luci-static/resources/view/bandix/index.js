@@ -8,8 +8,48 @@
 // 颜色常量定义
 var BANDIX_COLOR_UPLOAD = '#f97316';     // 橙色 - 上传/上行
 var BANDIX_COLOR_DOWNLOAD = '#06b6d4';   // 青色 - 下载/下行
+var BANDIX_TOOLTIP_BG_LIGHT = '#ffffff'; // 浅色模式悬浮窗背景色
+var BANDIX_TOOLTIP_BG_DARK = '#333333';  // 深色模式悬浮窗背景色
 
+function getThemeMode() {
+    // 使用 uci 获取主题
+    var theme = L.uci.get('luci', 'main', 'mediaurlbase');
 
+    // 根据主题判断
+    if (theme === '/luci-static/openwrt2020' ||
+        theme === '/luci-static/material' ||
+        theme === '/luci-static/bootstrap-light') {
+        return 'light';
+    }
+
+    if (theme === '/luci-static/bootstrap-dark') {
+        return 'dark';
+    }
+
+    if (theme === '/luci-static/argon') {
+        // 获取 argon 的具体模式
+        var argonMode = L.uci.get('argon', '@global[0]', 'mode');
+        if (argonMode === 'light') {
+            return 'light';
+        }
+        if (argonMode === 'dark') {
+            return 'dark';
+        }
+        // 如果是其他值（包括auto），使用浏览器媒体查询
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        return prefersDark ? 'dark' : 'light';
+    }
+
+    if (theme === '/luci-static/bootstrap' || theme === '/luci-static/aurora') {
+        // 获取 html 标签上的 data-darkmode 属性
+        var htmlElement = document.documentElement;
+        var darkMode = htmlElement.getAttribute('data-darkmode');
+        return darkMode === 'true' ? 'dark' : 'light';
+    }
+
+    // 其他主题默认返回 light
+    return 'light';
+}
 
 function formatSize(bytes) {
     if (bytes === 0) return '0 B';
@@ -101,11 +141,11 @@ function getTimeRangeForPeriod(period) {
     if (period === 'all') {
         return { start_ms: null, end_ms: null };
     }
-    
+
     var now = new Date();
     var startDate;
     var endDate;
-    
+
     switch (period) {
         case 'today':
             startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
@@ -128,7 +168,7 @@ function getTimeRangeForPeriod(period) {
         default:
             return { start_ms: null, end_ms: null };
     }
-    
+
     return {
         start_ms: startDate.getTime(),
         end_ms: endDate.getTime()
@@ -757,7 +797,7 @@ return view.extend({
             
             
             /* 模态框样式 */
-            .bandix_modal-overlay {
+            .bandix-modal-overlay {
                 position: fixed;
                 top: 0;
                 left: 0;
@@ -777,7 +817,7 @@ return view.extend({
                 z-index: 1105;
             }
             
-            .bandix_modal-overlay.show {
+            .bandix-modal-overlay.show {
                 background-color: rgba(0, 0, 0, 0.5);
                 opacity: 1;
                 visibility: visible;
@@ -792,26 +832,26 @@ return view.extend({
                 transition: opacity 0.2s ease;
             }
             
-            .bandix_modal-overlay.show .bandix_modal {
+            .bandix-modal-overlay.show .bandix_modal {
                 opacity: 1;
             }
             
             
-            .bandix_modal-header {
+            .bandix-modal-header {
                 padding: 20px;
             }
             
-            .bandix_modal-title {
+            .bandix-modal-title {
                 font-size: 1.25rem;
                 font-weight: 600;
                 margin: 0;
             }
             
-            .bandix_modal-body {
+            .bandix-modal-body {
                 padding: 20px;
             }
             
-            .bandix_modal-footer {
+            .bandix-modal-footer {
                 padding: 16px 20px 20px 20px;
                 display: flex;
                 gap: 10px;
@@ -949,13 +989,13 @@ return view.extend({
             }
             
             /* Tab 切换样式 */
-            .bandix_modal-tabs {
+            .bandix-modal-tabs {
                 display: flex;
                 margin-bottom: 20px;
             }
             
             
-            .bandix_modal-tab {
+            .bandix-modal-tab {
                 flex: 1;
                 padding: 12px 16px;
                 text-align: center;
@@ -969,20 +1009,20 @@ return view.extend({
             }
             
             
-            .bandix_modal-tab:hover {
+            .bandix-modal-tab:hover {
                 background-color: rgba(0, 0, 0, 0.02);
             }
             
             
-            .bandix_modal-tab.active {
+            .bandix-modal-tab.active {
                 font-weight: 600;
             }
             
-            .bandix_modal-tab-content {
+            .bandix-modal-tab-content {
                 display: none;
             }
             
-            .bandix_modal-tab-content.active {
+            .bandix-modal-tab-content.active {
                 display: block;
             }
             
@@ -1143,7 +1183,7 @@ return view.extend({
                 width: 90%;
             }
             
-            .confirm-dialog .bandix_modal-body {
+            .confirm-dialog .bandix-modal-body {
                 padding: 24px;
             }
             
@@ -1471,10 +1511,10 @@ return view.extend({
                 font-size: 0.8125rem;
                 line-height: 1.5;
                 white-space: nowrap;
-                background-color: #ffffff;
+                background-color: ${scheme === 'dark' ? BANDIX_TOOLTIP_BG_DARK : BANDIX_TOOLTIP_BG_LIGHT};
                 border-radius: 6px;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                color: #1f2937;
+                color: ${scheme === 'dark' ? '#f9fafb' : '#1f2937'};
             }
             
             .history-tooltip .ht-title { font-weight: 700; margin-bottom: 6px; }
@@ -1488,7 +1528,7 @@ return view.extend({
 			.history-tooltip .ht-kpi .ht-k-value { font-size: 1rem; font-weight: 700; }
 			.history-tooltip .ht-kpi.down .ht-k-value { color: ${BANDIX_COLOR_DOWNLOAD}; }
 			.history-tooltip .ht-kpi.up .ht-k-value { color: ${BANDIX_COLOR_UPLOAD}; }
-			.history-tooltip .ht-divider { height: 1px; background-color: currentColor; opacity: 0.3; margin: 8px 0; }
+			.history-tooltip .ht-divider { height: 1px; background-color: ${scheme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'currentColor'}; opacity: ${scheme === 'dark' ? 1 : 0.3}; margin: 8px 0; }
 			.history-tooltip .ht-section-title { font-weight: 600; font-size: 0.75rem; opacity: 0.7; margin: 4px 0 6px 0; }
 
 			/* Traffic Timeline Tooltip - 使用与 History Tooltip 相同的样式 */
@@ -1497,7 +1537,7 @@ return view.extend({
 			.traffic-increments-tooltip .ht-kpi .ht-k-value { font-size: 1rem; font-weight: 700; }
 			.traffic-increments-tooltip .ht-kpi.down .ht-k-value { color: ${BANDIX_COLOR_DOWNLOAD}; }
 			.traffic-increments-tooltip .ht-kpi.up .ht-k-value { color: ${BANDIX_COLOR_UPLOAD}; }
-			.traffic-increments-tooltip .ht-divider { height: 1px; background-color: currentColor; opacity: 0.3; margin: 8px 0; }
+			.traffic-increments-tooltip .ht-divider { height: 1px; background-color: ${scheme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'currentColor'}; opacity: ${scheme === 'dark' ? 1 : 0.3}; margin: 8px 0; }
 			.traffic-increments-tooltip .ht-section-title { font-weight: 600; font-size: 0.75rem; opacity: 0.7; margin: 4px 0 6px 0; }
 			.traffic-increments-tooltip .ht-row { display: flex; justify-content: space-between; gap: 12px; }
 			.traffic-increments-tooltip .ht-key { opacity: 0.7; }
@@ -1515,10 +1555,10 @@ return view.extend({
 				pointer-events: none;
 				font-size: 0.8125rem;
 				line-height: 1.5;
-				background-color: #ffffff;
+				background-color: ${scheme === 'dark' ? BANDIX_TOOLTIP_BG_DARK : BANDIX_TOOLTIP_BG_LIGHT};
 				border-radius: 6px;
 				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-				color: #1f2937;
+				color: ${scheme === 'dark' ? '#f9fafb' : '#1f2937'};
 			}
 			
 			
@@ -1530,7 +1570,7 @@ return view.extend({
 			
 			.schedule-rules-tooltip .srt-rule-item {
 				padding: 8px 0;
-				border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+				border-bottom: 1px solid ${scheme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)'};
 			}
 			
 			
@@ -1982,8 +2022,8 @@ return view.extend({
 			
 			.traffic-increments-tooltip {
 				position: absolute;
-				background-color: #ffffff;
-				color: #1f2937;
+				background-color: ${scheme === 'dark' ? BANDIX_TOOLTIP_BG_DARK : BANDIX_TOOLTIP_BG_LIGHT};
+				color: ${scheme === 'dark' ? '#f9fafb' : '#1f2937'};
 				padding: 12px;
 				border-radius: 6px;
 				font-size: 0.8125rem;
@@ -1999,7 +2039,7 @@ return view.extend({
 			.traffic-increments-tooltip-title {
 				font-weight: 600;
 				margin-bottom: 8px;
-				border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+				border-bottom: 1px solid ${scheme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)'};
 				padding-bottom: 4px;
 				font-size: 0.875rem;
 			}
@@ -2019,8 +2059,8 @@ return view.extend({
 				text-transform: uppercase;
 				letter-spacing: 0.5px;
 				margin-bottom: 4px;
-				color: rgba(0, 0, 0, 0.7);
-				border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+				color: ${scheme === 'dark' ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)'};
+				border-bottom: 1px solid ${scheme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)'};
 				padding-bottom: 2px;
 			}
 
@@ -2384,14 +2424,45 @@ return view.extend({
             return css;
         }
 
-        // 添加现代化样式
-        var initialScheme = 'light';
+        // 添加现代化样式，获取当前主题模式
+        var initialScheme = getThemeMode();
 
         var oldStyle = document.getElementById('bandix-styles');
         if (oldStyle && oldStyle.parentNode) oldStyle.parentNode.removeChild(oldStyle);
 
         var style = E('style', { 'id': 'bandix-styles' }, generateStyles(initialScheme));
         document.head.appendChild(style);
+
+        // 创建主题更新函数
+        function updateThemeStyles() {
+            var newScheme = getThemeMode();
+            var oldStyle = document.getElementById('bandix-styles');
+            if (oldStyle) {
+                oldStyle.textContent = generateStyles(newScheme);
+            }
+        }
+
+        // 监听系统主题变化（所有主题都响应）
+        if (window.matchMedia) {
+            var colorSchemeMedia = window.matchMedia('(prefers-color-scheme: dark)');
+            colorSchemeMedia.addEventListener('change', function (e) {
+                updateThemeStyles();
+            });
+        }
+
+        // 定期检查主题配置变化（每5秒检查一次，所有主题）
+        var lastThemeMode = getThemeMode();
+        setInterval(function () {
+            try {
+                var currentThemeMode = getThemeMode();
+                if (currentThemeMode !== lastThemeMode) {
+                    lastThemeMode = currentThemeMode;
+                    updateThemeStyles();
+                }
+            } catch (e) {
+                // 静默失败
+            }
+        }, 5000);
 
         var view = E('div', { 'class': 'bandix-container' }, [
             // 头部
@@ -2654,14 +2725,14 @@ return view.extend({
                             E('div', { 'class': 'traffic-increments-filters' }, [
                                 E('div', { 'class': 'traffic-increments-filter-group' }, [
                                     E('label', { 'class': 'traffic-increments-filter-label' }, _('Aggregation:')),
-										E('select', { 'class': 'cbi-input-select', 'id': 'traffic-increments-aggregation' }, [
+                                    E('select', { 'class': 'cbi-input-select', 'id': 'traffic-increments-aggregation' }, [
                                         E('option', { 'value': 'hourly' }, _('Hourly')),
                                         E('option', { 'value': 'daily' }, _('Daily'))
                                     ])
                                 ]),
                                 E('div', { 'class': 'traffic-increments-filter-group' }, [
                                     E('label', { 'class': 'traffic-increments-filter-label' }, _('Device:')),
-										E('select', { 'class': 'cbi-input-select', 'id': 'traffic-increments-mac' }, [
+                                    E('select', { 'class': 'cbi-input-select', 'id': 'traffic-increments-mac' }, [
                                         E('option', { 'value': 'all' }, _('All Devices'))
                                     ])
                                 ])
@@ -2757,13 +2828,13 @@ return view.extend({
         }
 
         // 创建限速设置模态框
-        var bandix_modal = E('div', { 'class': 'bandix_modal-overlay', 'id': 'rate-limit-bandix_modal' }, [
-            E('div', { 'class': 'modal' }, [
-                // E('div', { 'class': 'bandix_modal-header' }, [
-                //     E('h3', { 'class': 'bandix_modal-title' }, _('Device Settings'))
+        var bandix_modal = E('div', { 'class': 'bandix-modal-overlay', 'id': 'rate-limit-bandix_modal' }, [
+            E('div', { 'class': 'modal', "aria-modal": true }, [
+                // E('div', { 'class': 'bandix-modal-header' }, [
+                //     E('h3', { 'class': 'bandix-modal-title' }, _('Device Settings'))
                 // ]),
-                E('div', { 'class': 'bandix_modal-body' }, [
-                    E('div', { 'class': 'device-summary', 'id': 'bandix_modal-device-summary' }),
+                E('div', { 'class': 'bandix-modal-body', }, [
+                    E('div', { 'class': 'device-summary', 'id': 'bandix-modal-device-summary' }),
                     E('div', { 'class': 'form-group' }, [
                         E('label', { 'class': 'form-label' }, _('Hostname')),
                         E('div', { 'style': 'display: flex; gap: 8px; align-items: center;' }, [
@@ -2791,8 +2862,8 @@ return view.extend({
                         E('div', { 'class': 'schedule-rules-list', 'id': 'schedule-rules-list' })
                     ])
                 ]),
-                E('div', { 'class': 'bandix_modal-footer' }, [
-                    E('button', { 'class': 'cbi-button cbi-button-reset', 'id': 'bandix_modal-close' }, _('Close'))
+                E('div', { 'class': 'bandix-modal-footer' }, [
+                    E('button', { 'class': 'cbi-button cbi-button-reset', 'id': 'bandix-modal-close' }, _('Close'))
                 ])
             ])
         ]);
@@ -2800,12 +2871,12 @@ return view.extend({
         document.body.appendChild(bandix_modal);
 
         // 创建添加规则模态框
-        var addRuleModal = E('div', { 'class': 'bandix_modal-overlay', 'id': 'add-rule-bandix_modal' }, [
-            E('div', { 'class': 'modal' }, [
-                E('div', { 'class': 'bandix_modal-header' }, [
-                    E('h3', { 'class': 'bandix_modal-title' }, _('Add Schedule Rule'))
+        var addRuleModal = E('div', { 'class': 'bandix-modal-overlay', 'id': 'add-rule-bandix_modal' }, [
+            E('div', { 'class': 'modal', "aria-modal": true }, [
+                E('div', { 'class': 'bandix-modal-header' }, [
+                    E('h3', { 'class': 'bandix-modal-title' }, _('Add Schedule Rule'))
                 ]),
-                E('div', { 'class': 'bandix_modal-body' }, [
+                E('div', { 'class': 'bandix-modal-body' }, [
                     E('div', { 'class': 'form-group' }, [
                         E('label', { 'class': 'form-label' }, _('Time Slot')),
                         E('div', { 'class': 'schedule-time-row' }, [
@@ -2843,7 +2914,7 @@ return view.extend({
                         E('div', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-top: 4px;' }, _('Tip: Enter 0 for unlimited'))
                     ])
                 ]),
-                E('div', { 'class': 'bandix_modal-footer' }, [
+                E('div', { 'class': 'bandix-modal-footer' }, [
                     E('button', { 'class': 'cbi-button cbi-button-reset', 'id': 'add-rule-cancel' }, _('Cancel')),
                     E('button', { 'class': 'cbi-button cbi-button-positive', 'id': 'add-rule-save' }, _('Add'))
                 ])
@@ -2853,9 +2924,9 @@ return view.extend({
         document.body.appendChild(addRuleModal);
 
         // 创建确认对话框
-        var confirmDialog = E('div', { 'class': 'bandix_modal-overlay', 'id': 'confirm-dialog-bandix_modal' }, [
-            E('div', { 'class': 'modal confirm-dialog' }, [
-                E('div', { 'class': 'bandix_modal-body' }, [
+        var confirmDialog = E('div', { 'class': 'bandix-modal-overlay', 'id': 'confirm-dialog-bandix_modal' }, [
+            E('div', { 'class': 'modal confirm-dialog', "aria-modal": true }, [
+                E('div', { 'class': 'bandix-modal-body' }, [
                     E('div', { 'class': 'confirm-dialog-title', 'id': 'confirm-dialog-title' }, _('Confirm')),
                     E('div', { 'class': 'confirm-dialog-message', 'id': 'confirm-dialog-message' }, ''),
                     E('div', { 'class': 'confirm-dialog-footer' }, [
@@ -3452,7 +3523,7 @@ return view.extend({
         showRateLimitModal = function (device) {
             currentDevice = device;
             var bandix_modal = document.getElementById('rate-limit-bandix_modal');
-            var deviceSummary = document.getElementById('bandix_modal-device-summary');
+            var deviceSummary = document.getElementById('bandix-modal-device-summary');
             // 清空定时限速规则列表并加载
             var rulesList = document.getElementById('schedule-rules-list');
             if (rulesList) {
@@ -3655,7 +3726,7 @@ return view.extend({
         document.getElementById('hostname-save-btn').addEventListener('click', saveHostname);
 
         // 绑定关闭按钮事件
-        document.getElementById('bandix_modal-close').addEventListener('click', hideRateLimitModal);
+        document.getElementById('bandix-modal-close').addEventListener('click', hideRateLimitModal);
 
         // 历史趋势：状态与工具
         var latestDevices = [];
@@ -5030,9 +5101,9 @@ return view.extend({
         function updateDeviceData() {
             var devicePeriod = localStorage.getItem('bandix_device_period') || 'all';
             if (!/^(today|week|month|year|all)$/.test(devicePeriod)) devicePeriod = 'all';
-            
+
             var timeRange = getTimeRangeForPeriod(devicePeriod);
-            
+
             return Promise.all([
                 (devicePeriod === 'all') ? callStatus() : callStatus(timeRange.start_ms, timeRange.end_ms),
                 fetchAllScheduleRules()
@@ -5665,18 +5736,18 @@ return view.extend({
         var usageRankingData = [];
         var USAGE_RANKING_DEFAULT_LIMIT = 10;
         var usageRankingCustomRange = null; // 存储自定义时间范围
-        
+
         // Traffic Timeline 独立的时间范围管理
         var trafficIncrementsCustomRange = null;
-        
+
         // 格式化时间范围显示 - 总是显示完整日期时间
         function formatTimeRange(startMs, endMs) {
             if (!startMs || !endMs) return '';
-            
+
             var startDate = new Date(startMs);
             var endDate = new Date(endMs);
-            
-            var formatDateTime = function(date) {
+
+            var formatDateTime = function (date) {
                 var year = date.getFullYear();
                 var month = (date.getMonth() + 1).toString().padStart(2, '0');
                 var day = date.getDate().toString().padStart(2, '0');
@@ -5684,10 +5755,10 @@ return view.extend({
                 var minutes = date.getMinutes().toString().padStart(2, '0');
                 return year + '/' + month + '/' + day + ' ' + hours + ':' + minutes;
             };
-            
+
             return formatDateTime(startDate) + ' - ' + formatDateTime(endDate);
         }
-        
+
         function renderUsageRanking(data, showAll) {
             var container = document.getElementById('usage-ranking-container');
             if (!container) return;
@@ -5782,7 +5853,7 @@ return view.extend({
                 }
 
                 usageRankingData = result.rankings;
-                
+
                 // 更新时间范围显示（包含上下行流量和总流量）
                 var timeRangeEl = document.getElementById('usage-ranking-timerange');
                 if (timeRangeEl && result.start_ms && result.end_ms) {
@@ -5802,24 +5873,24 @@ return view.extend({
                     }
                     timeRangeEl.textContent = timeRangeText;
                 }
-                
+
                 // 更新设备下拉框 - 获取完整的设备列表
                 if (typeof latestDevices !== 'undefined' && latestDevices.length > 0) {
                     updateDeviceSelectForIncrements(latestDevices);
                 } else {
                     // 如果还没有设备数据，先获取设备数据
-                    callStatus().then(function(deviceResult) {
+                    callStatus().then(function (deviceResult) {
                         if (deviceResult && deviceResult.devices) {
                             latestDevices = deviceResult.devices;
                             updateDeviceSelectForIncrements(latestDevices);
                         }
-                    }).catch(function(err) {
+                    }).catch(function (err) {
                         console.error('Failed to load device list for timeline:', err);
                     });
                 }
-                
+
                 renderUsageRanking(usageRankingData, usageRankingShowAll);
-                
+
                 // 调用回调函数
                 if (callback) callback();
             }).catch(function (err) {
@@ -5828,13 +5899,13 @@ return view.extend({
                 if (container) {
                     container.innerHTML = '<div class="error-state">' + _('Failed to load data') + '</div>';
                 }
-                
+
                 // 调用回调函数（即使失败也要移除 loading）
                 if (callback) callback();
             });
 
         }
-        
+
         function normalizeTrafficIncrementItem(item) {
             if (!item) return null;
 
@@ -5878,16 +5949,16 @@ return view.extend({
                     endMs = trafficIncrementsCustomRange.end_ms;
                 }
             }
-            
+
             // 获取筛选条件
             var aggregationSelect = document.getElementById('traffic-increments-aggregation');
             var macSelect = document.getElementById('traffic-increments-mac');
             var networkTypeSelect = document.getElementById('traffic-increments-network-type');
-            
+
             var selectedAggregation = aggregation || (aggregationSelect ? aggregationSelect.value : 'hourly');
             var selectedMac = mac || (macSelect ? macSelect.value : 'all');
             var selectedNetworkType = networkTypeSelect ? networkTypeSelect.value : 'all';
-            
+
             // 如果选择的是 "all"，传递 null 使用默认值
             if (selectedMac === 'all') {
                 selectedMac = null;
@@ -5895,7 +5966,7 @@ return view.extend({
             if (!selectedNetworkType) {
                 selectedNetworkType = null;
             }
-            
+
             callGetTrafficUsageIncrements(startMs, endMs, selectedAggregation, selectedMac, selectedNetworkType).then(function (result) {
                 if (!result || !result.increments) {
                     var container = document.getElementById('traffic-increments-container');
@@ -5908,7 +5979,7 @@ return view.extend({
                 }
 
                 var normalizedIncrements = normalizeTrafficIncrementsList(result.increments);
-                
+
                 // 更新时间范围显示（包含上下行流量和总流量）
                 var timeRangeEl = document.getElementById('traffic-increments-timerange');
                 if (timeRangeEl && result.start_ms && result.end_ms) {
@@ -5987,10 +6058,10 @@ return view.extend({
                 setTimeout(function () {
                     var aggregation = result.aggregation || 'hourly';
                     drawIncrementsChart(canvas, normalizedIncrements, aggregation);
-                    
+
                     // 添加鼠标悬浮事件
                     setupChartTooltip(canvas, tooltip, normalizedIncrements, aggregation, selectedNetworkType);
-                    
+
                     // 调用回调函数
                     if (callback) callback();
                 }, 100);
@@ -6000,12 +6071,12 @@ return view.extend({
                 if (container) {
                     container.innerHTML = '<div class="error-state">' + _('Failed to load data') + '</div>';
                 }
-                
+
                 // 调用回调函数（即使失败也要移除 loading）
                 if (callback) callback();
             });
         }
-        
+
         // 更新设备下拉框
         function updateDeviceSelectForIncrements(devices) {
             var macSelect = document.getElementById('traffic-increments-mac');
@@ -6049,7 +6120,7 @@ return view.extend({
             });
 
             // 添加设备选项
-            sortedDevices.forEach(function(device) {
+            sortedDevices.forEach(function (device) {
                 if (device.mac) {
                     var label = (device.hostname || device.ip || device.mac || '-') + (device.ip ? ' (' + device.ip + ')' : '') + (device.mac ? ' [' + device.mac + ']' : '');
                     var option = E('option', { 'value': device.mac }, label);
@@ -6073,7 +6144,7 @@ return view.extend({
                 }
             }
         }
-        
+
         // 绘制时间序列增量图表
         function drawIncrementsChart(canvas, increments, aggregation) {
             if (!canvas || !increments || increments.length === 0) return;
@@ -6081,13 +6152,13 @@ return view.extend({
             var dpr = window.devicePixelRatio || 1;
             var cssWidth = canvas.parentElement.offsetWidth || 600;
             var cssHeight = 300;
-            
+
             canvas.style.width = cssWidth + 'px';
             canvas.style.height = cssHeight + 'px';
-            
+
             canvas.width = Math.max(1, Math.floor(cssWidth * dpr));
             canvas.height = Math.max(1, Math.floor(cssHeight * dpr));
-            
+
             var ctx = canvas.getContext('2d');
             ctx.scale(dpr, dpr);
 
@@ -6151,12 +6222,12 @@ return view.extend({
             // 绘制堆叠柱状图
             var barWidth = chartWidth / increments.length;
             var barDisplayWidth = barWidth * 0.7; // 柱子显示宽度（留出间距）
-            
+
             var baseY = height - padding.bottom;
 
             function px(v) { return Math.round(v); }
             function pxStroke(v) { return Math.round(v) + 0.5; }
-            
+
             increments.forEach(function (item, index) {
                 var barX = padding.left + barWidth * index + (barWidth - barDisplayWidth) / 2;
                 var rxHeight = chartHeight * ((item.rx_bytes || 0) / maxValue);
@@ -6169,7 +6240,7 @@ return view.extend({
                 var rxH = px(rxHeight);
                 var txH = px(txHeight);
                 var yBase = px(baseY);
-                
+
                 // 绘制 RX 柱子（下载，青色）- 底部
                 if (rxH > 0) {
                     var rxY = yBase - rxH;
@@ -6194,7 +6265,7 @@ return view.extend({
                     ctx.strokeRect(pxStroke(x), pxStroke(txY), w, txH);
                 }
             });
-            
+
             // 保存柱子的位置信息，用于鼠标悬浮检测
             canvas.barPositions = [];
             increments.forEach(function (item, index) {
@@ -6215,10 +6286,10 @@ return view.extend({
             var labelStep = Math.max(1, Math.floor(increments.length / 6));
             var isDaily = aggregation === 'daily';
             var barWidth = chartWidth / increments.length;
-            
+
             increments.forEach(function (item, index) {
                 var shouldShowLabel = false;
-                
+
                 if (isMobile) {
                     // 移动端：只显示第一个和最后一个
                     shouldShowLabel = index === 0 || index === increments.length - 1;
@@ -6226,7 +6297,7 @@ return view.extend({
                     // 桌面端：按原来的逻辑显示
                     shouldShowLabel = index % labelStep === 0 || index === increments.length - 1;
                 }
-                
+
                 if (shouldShowLabel) {
                     // 标签居中显示在每个柱子组的中心
                     var x = padding.left + barWidth * (index + 0.5);
@@ -6277,12 +6348,12 @@ return view.extend({
                 }
             } catch (e) { /* 安全兜底 */ }
         }
-        
+
         // 设置图表 tooltip
         function setupChartTooltip(canvas, tooltip, increments, aggregation, networkType) {
             if (!canvas || !tooltip || !increments || increments.length === 0) return;
-            
-            var formatTime = function(tsMs, isDaily) {
+
+            var formatTime = function (tsMs, isDaily) {
                 var date = new Date(tsMs);
                 if (isDaily) {
                     var year = date.getFullYear();
@@ -6299,7 +6370,7 @@ return view.extend({
                 }
             };
 
-            var formatTimeRange = function(startTsMs, endTsMs, isDaily) {
+            var formatTimeRange = function (startTsMs, endTsMs, isDaily) {
                 var startTime = formatTime(startTsMs, isDaily);
                 var endTime = formatTime(endTsMs, isDaily);
 
@@ -6314,27 +6385,27 @@ return view.extend({
                         var month = (startDate.getMonth() + 1).toString().padStart(2, '0');
                         var day = startDate.getDate().toString().padStart(2, '0');
                         var startTimeOnly = startDate.getHours().toString().padStart(2, '0') + ':' +
-                                          startDate.getMinutes().toString().padStart(2, '0');
+                            startDate.getMinutes().toString().padStart(2, '0');
                         var endTimeOnly = endDate.getHours().toString().padStart(2, '0') + ':' +
-                                        endDate.getMinutes().toString().padStart(2, '0');
+                            endDate.getMinutes().toString().padStart(2, '0');
                         return year + '/' + month + '/' + day + ' ' + startTimeOnly + ' - ' + endTimeOnly;
                     } else {
                         return startTime + ' - ' + endTime;
                     }
                 }
             };
-            
+
             var isDaily = aggregation === 'daily';
             var padding = { top: 20, right: 20, bottom: 40, left: 80 };
             var chartWidth = (canvas.parentElement.offsetWidth || 600) - padding.left - padding.right;
             var barWidth = chartWidth / increments.length;
             var barDisplayWidth = barWidth * 0.7;
-            
-            canvas.addEventListener('mousemove', function(e) {
+
+            canvas.addEventListener('mousemove', function (e) {
                 var rect = canvas.getBoundingClientRect();
                 var x = e.clientX - rect.left;
                 var y = e.clientY - rect.top;
-                
+
                 // 检查鼠标是否在图表区域内
                 if (x < padding.left || x > rect.width - padding.right ||
                     y < padding.top || y > rect.height - padding.bottom) {
@@ -6344,7 +6415,7 @@ return view.extend({
                     tooltip.style.display = 'none';
                     return;
                 }
-                
+
                 // 找到对应的柱子
                 var barIndex = -1;
                 if (canvas.barPositions) {
@@ -6356,7 +6427,7 @@ return view.extend({
                         }
                     }
                 }
-                
+
                 if (barIndex >= 0 && barIndex < increments.length) {
                     // 设置悬浮索引，用于绘制垂直虚线
                     var prevHoverIndex = canvas.__bandixIncrementsHoverIndex;
@@ -6380,121 +6451,121 @@ return view.extend({
                         tooltipContent +=
                             // WAN Traffic Section
                             '<div class="traffic-increments-tooltip-section">' +
-                                '<div class="traffic-increments-tooltip-section-title">' + _('WAN Traffic') + '</div>' +
+                            '<div class="traffic-increments-tooltip-section-title">' + _('WAN Traffic') + '</div>' +
 
-                                // 用量数据（大字体，带颜色）
-                                '<div class="ht-kpis">' +
-                                '<div class="ht-kpi up">' +
-                                '<div class="ht-k-label">WAN Upload</div>' +
-                                '<div class="ht-k-value">' + formatSize(item.wan_tx_bytes_inc || 0) + '</div>' +
-                                '</div>' +
-                                '<div class="ht-kpi down">' +
-                                '<div class="ht-k-label">WAN Download</div>' +
-                                '<div class="ht-k-value">' + formatSize(item.wan_rx_bytes_inc || 0) + '</div>' +
-                                '</div>' +
-                                '</div>' +
+                            // 用量数据（大字体，带颜色）
+                            '<div class="ht-kpis">' +
+                            '<div class="ht-kpi up">' +
+                            '<div class="ht-k-label">WAN Upload</div>' +
+                            '<div class="ht-k-value">' + formatSize(item.wan_tx_bytes_inc || 0) + '</div>' +
+                            '</div>' +
+                            '<div class="ht-kpi down">' +
+                            '<div class="ht-k-label">WAN Download</div>' +
+                            '<div class="ht-k-value">' + formatSize(item.wan_rx_bytes_inc || 0) + '</div>' +
+                            '</div>' +
+                            '</div>' +
 
-                                // 速度统计分组
-                                '<div class="ht-divider"></div>' +
-                                '<div class="ht-section-title">' + _('Upload Statistics') + '</div>' +
-                                '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_avg || 0, speedUnit) + '</span></div>' +
-                                '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_p95 || 0, speedUnit) + '</span></div>' +
-                                '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_max || 0, speedUnit) + '</span></div>' +
+                            // 速度统计分组
+                            '<div class="ht-divider"></div>' +
+                            '<div class="ht-section-title">' + _('Upload Statistics') + '</div>' +
+                            '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_avg || 0, speedUnit) + '</span></div>' +
+                            '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_p95 || 0, speedUnit) + '</span></div>' +
+                            '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_max || 0, speedUnit) + '</span></div>' +
 
-                                '<div class="ht-section-title" style="margin-top: 8px;">' + _('Download Statistics') + '</div>' +
-                                '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_avg || 0, speedUnit) + '</span></div>' +
-                                '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_p95 || 0, speedUnit) + '</span></div>' +
-                                '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_max || 0, speedUnit) + '</span></div>' +
+                            '<div class="ht-section-title" style="margin-top: 8px;">' + _('Download Statistics') + '</div>' +
+                            '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_avg || 0, speedUnit) + '</span></div>' +
+                            '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_p95 || 0, speedUnit) + '</span></div>' +
+                            '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_max || 0, speedUnit) + '</span></div>' +
                             '</div>';
                     } else if (networkType === 'lan') {
                         tooltipContent +=
                             // LAN Traffic Section
                             '<div class="traffic-increments-tooltip-section">' +
-                                '<div class="traffic-increments-tooltip-section-title">' + _('LAN Traffic') + '</div>' +
+                            '<div class="traffic-increments-tooltip-section-title">' + _('LAN Traffic') + '</div>' +
 
-                                // 用量数据（大字体，带颜色）
-                                '<div class="ht-kpis">' +
-                                '<div class="ht-kpi up">' +
-                                '<div class="ht-k-label">LAN Upload</div>' +
-                                '<div class="ht-k-value">' + formatSize(item.lan_tx_bytes_inc || 0) + '</div>' +
-                                '</div>' +
-                                '<div class="ht-kpi down">' +
-                                '<div class="ht-k-label">LAN Download</div>' +
-                                '<div class="ht-k-value">' + formatSize(item.lan_rx_bytes_inc || 0) + '</div>' +
-                                '</div>' +
-                                '</div>' +
+                            // 用量数据（大字体，带颜色）
+                            '<div class="ht-kpis">' +
+                            '<div class="ht-kpi up">' +
+                            '<div class="ht-k-label">LAN Upload</div>' +
+                            '<div class="ht-k-value">' + formatSize(item.lan_tx_bytes_inc || 0) + '</div>' +
+                            '</div>' +
+                            '<div class="ht-kpi down">' +
+                            '<div class="ht-k-label">LAN Download</div>' +
+                            '<div class="ht-k-value">' + formatSize(item.lan_rx_bytes_inc || 0) + '</div>' +
+                            '</div>' +
+                            '</div>' +
 
-                                // 速度统计分组
-                                '<div class="ht-divider"></div>' +
-                                '<div class="ht-section-title">' + _('Upload Statistics') + '</div>' +
-                                '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_avg || 0, speedUnit) + '</span></div>' +
-                                '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_p95 || 0, speedUnit) + '</span></div>' +
-                                '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_max || 0, speedUnit) + '</span></div>' +
+                            // 速度统计分组
+                            '<div class="ht-divider"></div>' +
+                            '<div class="ht-section-title">' + _('Upload Statistics') + '</div>' +
+                            '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_avg || 0, speedUnit) + '</span></div>' +
+                            '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_p95 || 0, speedUnit) + '</span></div>' +
+                            '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_max || 0, speedUnit) + '</span></div>' +
 
-                                '<div class="ht-section-title" style="margin-top: 8px;">' + _('Download Statistics') + '</div>' +
-                                '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_avg || 0, speedUnit) + '</span></div>' +
-                                '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_p95 || 0, speedUnit) + '</span></div>' +
-                                '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_max || 0, speedUnit) + '</span></div>' +
+                            '<div class="ht-section-title" style="margin-top: 8px;">' + _('Download Statistics') + '</div>' +
+                            '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_avg || 0, speedUnit) + '</span></div>' +
+                            '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_p95 || 0, speedUnit) + '</span></div>' +
+                            '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_max || 0, speedUnit) + '</span></div>' +
                             '</div>';
                     } else {
                         // networkType === 'all' 或其他情况，显示所有section
                         tooltipContent +=
                             // WAN Traffic Section
                             '<div class="traffic-increments-tooltip-section">' +
-                                '<div class="traffic-increments-tooltip-section-title">' + _('WAN Traffic') + '</div>' +
+                            '<div class="traffic-increments-tooltip-section-title">' + _('WAN Traffic') + '</div>' +
 
-                                // 用量数据（大字体，带颜色）
-                                '<div class="ht-kpis">' +
-                                '<div class="ht-kpi up">' +
-                                '<div class="ht-k-label">WAN Upload</div>' +
-                                '<div class="ht-k-value">' + formatSize(item.wan_tx_bytes_inc || 0) + '</div>' +
-                                '</div>' +
-                                '<div class="ht-kpi down">' +
-                                '<div class="ht-k-label">WAN Download</div>' +
-                                '<div class="ht-k-value">' + formatSize(item.wan_rx_bytes_inc || 0) + '</div>' +
-                                '</div>' +
-                                '</div>' +
+                            // 用量数据（大字体，带颜色）
+                            '<div class="ht-kpis">' +
+                            '<div class="ht-kpi up">' +
+                            '<div class="ht-k-label">WAN Upload</div>' +
+                            '<div class="ht-k-value">' + formatSize(item.wan_tx_bytes_inc || 0) + '</div>' +
+                            '</div>' +
+                            '<div class="ht-kpi down">' +
+                            '<div class="ht-k-label">WAN Download</div>' +
+                            '<div class="ht-k-value">' + formatSize(item.wan_rx_bytes_inc || 0) + '</div>' +
+                            '</div>' +
+                            '</div>' +
 
-                                // 速度统计分组
-                                '<div class="ht-divider"></div>' +
-                                '<div class="ht-section-title">' + _('Upload Statistics') + '</div>' +
-                                '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_avg || 0, speedUnit) + '</span></div>' +
-                                '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_p95 || 0, speedUnit) + '</span></div>' +
-                                '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_max || 0, speedUnit) + '</span></div>' +
+                            // 速度统计分组
+                            '<div class="ht-divider"></div>' +
+                            '<div class="ht-section-title">' + _('Upload Statistics') + '</div>' +
+                            '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_avg || 0, speedUnit) + '</span></div>' +
+                            '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_p95 || 0, speedUnit) + '</span></div>' +
+                            '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.wan_tx_rate_max || 0, speedUnit) + '</span></div>' +
 
-                                '<div class="ht-section-title" style="margin-top: 8px;">' + _('Download Statistics') + '</div>' +
-                                '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_avg || 0, speedUnit) + '</span></div>' +
-                                '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_p95 || 0, speedUnit) + '</span></div>' +
-                                '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_max || 0, speedUnit) + '</span></div>' +
+                            '<div class="ht-section-title" style="margin-top: 8px;">' + _('Download Statistics') + '</div>' +
+                            '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_avg || 0, speedUnit) + '</span></div>' +
+                            '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_p95 || 0, speedUnit) + '</span></div>' +
+                            '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.wan_rx_rate_max || 0, speedUnit) + '</span></div>' +
                             '</div>' +
 
                             // LAN Traffic Section
                             '<div class="traffic-increments-tooltip-section">' +
-                                '<div class="traffic-increments-tooltip-section-title">' + _('LAN Traffic') + '</div>' +
+                            '<div class="traffic-increments-tooltip-section-title">' + _('LAN Traffic') + '</div>' +
 
-                                // 用量数据（大字体，带颜色）
-                                '<div class="ht-kpis">' +
-                                '<div class="ht-kpi up">' +
-                                '<div class="ht-k-label">LAN Upload</div>' +
-                                '<div class="ht-k-value">' + formatSize(item.lan_tx_bytes_inc || 0) + '</div>' +
-                                '</div>' +
-                                '<div class="ht-kpi down">' +
-                                '<div class="ht-k-label">LAN Download</div>' +
-                                '<div class="ht-k-value">' + formatSize(item.lan_rx_bytes_inc || 0) + '</div>' +
-                                '</div>' +
-                                '</div>' +
+                            // 用量数据（大字体，带颜色）
+                            '<div class="ht-kpis">' +
+                            '<div class="ht-kpi up">' +
+                            '<div class="ht-k-label">LAN Upload</div>' +
+                            '<div class="ht-k-value">' + formatSize(item.lan_tx_bytes_inc || 0) + '</div>' +
+                            '</div>' +
+                            '<div class="ht-kpi down">' +
+                            '<div class="ht-k-label">LAN Download</div>' +
+                            '<div class="ht-k-value">' + formatSize(item.lan_rx_bytes_inc || 0) + '</div>' +
+                            '</div>' +
+                            '</div>' +
 
-                                // 速度统计分组
-                                '<div class="ht-divider"></div>' +
-                                '<div class="ht-section-title">' + _('Upload Statistics') + '</div>' +
-                                '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_avg || 0, speedUnit) + '</span></div>' +
-                                '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_p95 || 0, speedUnit) + '</span></div>' +
-                                '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_max || 0, speedUnit) + '</span></div>' +
+                            // 速度统计分组
+                            '<div class="ht-divider"></div>' +
+                            '<div class="ht-section-title">' + _('Upload Statistics') + '</div>' +
+                            '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_avg || 0, speedUnit) + '</span></div>' +
+                            '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_p95 || 0, speedUnit) + '</span></div>' +
+                            '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.lan_tx_rate_max || 0, speedUnit) + '</span></div>' +
 
-                                '<div class="ht-section-title" style="margin-top: 8px;">' + _('Download Statistics') + '</div>' +
-                                '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_avg || 0, speedUnit) + '</span></div>' +
-                                '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_p95 || 0, speedUnit) + '</span></div>' +
-                                '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_max || 0, speedUnit) + '</span></div>' +
+                            '<div class="ht-section-title" style="margin-top: 8px;">' + _('Download Statistics') + '</div>' +
+                            '<div class="ht-row"><span class="ht-key">' + _('Average') + '</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_avg || 0, speedUnit) + '</span></div>' +
+                            '<div class="ht-row"><span class="ht-key">P95</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_p95 || 0, speedUnit) + '</span></div>' +
+                            '<div class="ht-row"><span class="ht-key">' + _('Maximum') + '</span><span class="ht-val">' + formatByterate(item.lan_rx_rate_max || 0, speedUnit) + '</span></div>' +
                             '</div>';
                     }
 
@@ -6537,8 +6608,8 @@ return view.extend({
                     tooltip.style.display = 'none';
                 }
             });
-            
-            canvas.addEventListener('mouseleave', function() {
+
+            canvas.addEventListener('mouseleave', function () {
                 // 清除悬浮索引并重新绘制图表以清除虚线
                 delete canvas.__bandixIncrementsHoverIndex;
                 drawIncrementsChart(canvas, increments, aggregation);
@@ -6566,9 +6637,9 @@ return view.extend({
         refreshWhitelistStatus();
         fetchAllScheduleRules();
         updateTrafficStatistics();
-        
+
         // 初始化时间范围查询功能
-        setTimeout(function() {
+        setTimeout(function () {
             var startDateInput = document.getElementById('usage-ranking-start-date');
             var endDateInput = document.getElementById('usage-ranking-end-date');
             var queryBtn = document.getElementById('usage-ranking-query-btn');
@@ -6576,66 +6647,66 @@ return view.extend({
             var networkTypeSelect = document.getElementById('usage-ranking-network-type');
             var timeline = document.getElementById('usage-ranking-timeline');
             var timelineRange = document.getElementById('usage-ranking-timeline-range');
-			var sectionEl = startDateInput ? (startDateInput.closest('.traffic-stats-section') || document) : document;
+            var sectionEl = startDateInput ? (startDateInput.closest('.traffic-stats-section') || document) : document;
             var presetBtns = sectionEl.querySelectorAll('.usage-ranking-query-presets .cbi-button[data-preset]');
-            
+
             if (!presetBtns.length || !startDateInput || !endDateInput || !queryBtn || !resetBtn) {
                 console.error('Time range query elements not found');
                 return;
             }
-            
+
             var today = new Date();
             today.setHours(0, 0, 0, 0);
             var todayMs = today.getTime();
-            
-            var formatDateInput = function(date) {
+
+            var formatDateInput = function (date) {
                 var year = date.getFullYear();
                 var month = (date.getMonth() + 1).toString().padStart(2, '0');
                 var day = date.getDate().toString().padStart(2, '0');
                 return year + '-' + month + '-' + day;
             };
-            
+
             // 设置最大日期为今天（不能选择未来）
             var todayStr = formatDateInput(today);
             startDateInput.max = todayStr;
             endDateInput.max = todayStr;
-            
-            var updateTimeline = function(startDate, endDate) {
+
+            var updateTimeline = function (startDate, endDate) {
                 if (!timeline || !timelineRange || !startDate || !endDate) return;
-                
+
                 var startMs = new Date(startDate + 'T00:00:00').getTime();
                 var endMs = new Date(endDate + 'T23:59:59').getTime();
-                
+
                 // 计算时间范围在时间轴上的位置（假设时间轴代表最近一年）
                 var oneYearAgoMs = todayMs - 365 * 24 * 60 * 60 * 1000;
                 var totalRange = todayMs - oneYearAgoMs;
                 var selectedRange = endMs - startMs;
-                
+
                 var leftPercent = Math.max(0, ((startMs - oneYearAgoMs) / totalRange) * 100);
                 var widthPercent = Math.min(100, (selectedRange / totalRange) * 100);
-                
+
                 timelineRange.style.left = leftPercent + '%';
                 timelineRange.style.width = widthPercent + '%';
             };
-            
-            var setDateRange = function(startDate, endDate, preset) {
+
+            var setDateRange = function (startDate, endDate, preset) {
                 startDateInput.value = formatDateInput(new Date(startDate));
                 endDateInput.value = formatDateInput(new Date(endDate));
-                
+
                 // 更新快捷按钮状态
-                presetBtns.forEach(function(btn) {
+                presetBtns.forEach(function (btn) {
                     btn.className = 'cbi-button cbi-button-neutral';
                 });
                 if (preset) {
                     var presetBtn = sectionEl.querySelector('.usage-ranking-query-presets .cbi-button[data-preset="' + preset + '"]');
                     if (presetBtn) presetBtn.className = 'cbi-button cbi-button-positive';
                 }
-                
+
                 // 更新时间轴
                 updateTimeline(startDateInput.value, endDateInput.value);
             };
-            
-            var queryData = function() {
+
+            var queryData = function () {
                 var startDate = startDateInput.value;
                 var endDate = endDateInput.value;
 
@@ -6666,7 +6737,7 @@ return view.extend({
                 console.log('Querying with range:', usageRankingCustomRange);
 
                 // 确保无论成功还是失败，都会移除 loading 状态
-                var removeLoading = function() {
+                var removeLoading = function () {
                     if (queryBtn) {
                         queryBtn.disabled = false;
                         queryBtn.classList.remove('bandix-loading');
@@ -6680,14 +6751,14 @@ return view.extend({
                     removeLoading();
                 }
             };
-            
+
             // 快捷选项按钮事件
-            presetBtns.forEach(function(btn) {
-                btn.addEventListener('click', function() {
+            presetBtns.forEach(function (btn) {
+                btn.addEventListener('click', function () {
                     var preset = this.getAttribute('data-preset');
                     var startDate, endDate;
-                    
-                    switch(preset) {
+
+                    switch (preset) {
                         case 'today':
                             startDate = new Date(today);
                             endDate = new Date(today);
@@ -6739,21 +6810,21 @@ return view.extend({
                             endDate = new Date(today);
                             break;
                     }
-                    
+
                     setDateRange(startDate, endDate, preset);
                     queryData();
                 });
             });
-            
+
             // 日期输入变化事件
-            startDateInput.addEventListener('change', function() {
+            startDateInput.addEventListener('change', function () {
                 updateTimeline(this.value, endDateInput.value);
             });
-            
-            endDateInput.addEventListener('change', function() {
+
+            endDateInput.addEventListener('change', function () {
                 updateTimeline(startDateInput.value, this.value);
             });
-            
+
             // 查询按钮
             if (queryBtn) {
                 queryBtn.addEventListener('click', queryData);
@@ -6781,20 +6852,20 @@ return view.extend({
                     }
                 });
             }
-            
+
             // 重置按钮
             if (resetBtn) {
-                resetBtn.addEventListener('click', function() {
+                resetBtn.addEventListener('click', function () {
                     var oneYearAgo = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
                     setDateRange(oneYearAgo, today, '1year');
                     queryData();
                 });
             }
-            
+
             // 初始化：默认选择最近一年
             var oneYearAgo = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
             setDateRange(oneYearAgo, today, '1year');
-            
+
             // 设置初始时间范围并自动加载数据（结束时间为当天的 23:59:59）
             var startMs = oneYearAgo.getTime();
             var endToday = new Date(today);
@@ -6807,89 +6878,89 @@ return view.extend({
             // 使用初始时间范围重新加载数据
             updateTrafficStatistics(usageRankingCustomRange);
         }, 500);
-        
+
         // 初始化时间序列筛选条件
-        setTimeout(function() {
+        setTimeout(function () {
             var aggregationSelect = document.getElementById('traffic-increments-aggregation');
             var macSelect = document.getElementById('traffic-increments-mac');
             var networkTypeSelect = document.getElementById('traffic-increments-network-type');
-            
+
             if (aggregationSelect) {
-                aggregationSelect.addEventListener('change', function() {
+                aggregationSelect.addEventListener('change', function () {
                     // 使用 Traffic Timeline 自己的时间范围
                     updateTrafficIncrements();
                 });
             }
-            
+
             if (macSelect) {
-                macSelect.addEventListener('change', function() {
+                macSelect.addEventListener('change', function () {
                     // 使用 Traffic Timeline 自己的时间范围
                     updateTrafficIncrements();
                 });
             }
 
             if (networkTypeSelect) {
-                networkTypeSelect.addEventListener('change', function() {
+                networkTypeSelect.addEventListener('change', function () {
                     updateTrafficIncrements();
                 });
             }
         }, 600);
-        
+
         // 初始化 Traffic Timeline 时间范围选择功能
-        setTimeout(function() {
+        setTimeout(function () {
             var startDateInput = document.getElementById('traffic-increments-start-date');
             var endDateInput = document.getElementById('traffic-increments-end-date');
             var queryBtn = document.getElementById('traffic-increments-query-btn');
             var resetBtn = document.getElementById('traffic-increments-reset-btn');
-			var sectionEl = startDateInput ? (startDateInput.closest('.traffic-stats-section') || document) : document;
+            var sectionEl = startDateInput ? (startDateInput.closest('.traffic-stats-section') || document) : document;
             var presetBtns = sectionEl.querySelectorAll('.usage-ranking-query-presets .cbi-button[data-preset]');
             var timeline = document.getElementById('traffic-increments-timeline');
             var timelineRange = document.getElementById('traffic-increments-timeline-range');
-            
+
             if (!presetBtns.length || !startDateInput || !endDateInput || !queryBtn || !resetBtn) {
                 console.error('Traffic Timeline time range query elements not found');
                 return;
             }
-            
+
             var today = new Date();
             today.setHours(0, 0, 0, 0);
             var todayMs = today.getTime();
-            
-            var formatDateInput = function(date) {
+
+            var formatDateInput = function (date) {
                 var year = date.getFullYear();
                 var month = (date.getMonth() + 1).toString().padStart(2, '0');
                 var day = date.getDate().toString().padStart(2, '0');
                 return year + '-' + month + '-' + day;
             };
-            
+
             // 设置最大日期为今天（不能选择未来）
             var todayStr = formatDateInput(today);
             startDateInput.max = todayStr;
             endDateInput.max = todayStr;
 
-            var updateTimeline = function(startDate, endDate) {
+            var updateTimeline = function (startDate, endDate) {
                 if (!timeline || !timelineRange || !startDate || !endDate) return;
-                
+
                 var startMs = new Date(startDate + 'T00:00:00').getTime();
                 var endMs = new Date(endDate + 'T23:59:59').getTime();
-                
+
                 var oneYearAgoMs = todayMs - 365 * 24 * 60 * 60 * 1000;
                 var totalRange = todayMs - oneYearAgoMs;
                 var selectedRange = endMs - startMs;
-                
+
                 var leftPercent = Math.max(0, ((startMs - oneYearAgoMs) / totalRange) * 100);
                 var widthPercent = Math.min(100, (selectedRange / totalRange) * 100);
-                
+
                 timelineRange.style.left = leftPercent + '%';
                 timelineRange.style.width = widthPercent + '%';
             };
-            
-            var setDateRange = function(startDate, endDate, preset) {
+
+            var setDateRange = function (startDate, endDate, preset) {
                 startDateInput.value = formatDateInput(new Date(startDate));
                 endDateInput.value = formatDateInput(new Date(endDate));
-                
+
                 // 更新快捷按钮状态
-                presetBtns.forEach(function(btn) {
+                presetBtns.forEach(function (btn) {
                     btn.className = 'cbi-button cbi-button-neutral';
                 });
                 if (preset) {
@@ -6899,8 +6970,8 @@ return view.extend({
 
                 updateTimeline(startDateInput.value, endDateInput.value);
             };
-            
-            var queryData = function() {
+
+            var queryData = function () {
                 var startDate = startDateInput.value;
                 var endDate = endDateInput.value;
 
@@ -6931,7 +7002,7 @@ return view.extend({
                 console.log('Traffic Timeline querying with range:', trafficIncrementsCustomRange);
 
                 // 确保无论成功还是失败，都会移除 loading 状态
-                var removeLoading = function() {
+                var removeLoading = function () {
                     if (queryBtn) {
                         queryBtn.disabled = false;
                         queryBtn.classList.remove('bandix-loading');
@@ -6945,14 +7016,14 @@ return view.extend({
                     removeLoading();
                 }
             };
-            
+
             // 快捷选项按钮事件
-            presetBtns.forEach(function(btn) {
-                btn.addEventListener('click', function() {
+            presetBtns.forEach(function (btn) {
+                btn.addEventListener('click', function () {
                     var preset = this.getAttribute('data-preset');
                     var startDate, endDate;
-                    
-                    switch(preset) {
+
+                    switch (preset) {
                         case 'today':
                             startDate = new Date(today);
                             endDate = new Date(today);
@@ -6999,38 +7070,38 @@ return view.extend({
                             endDate = new Date(today);
                             break;
                     }
-                    
+
                     setDateRange(startDate, endDate, preset);
                     queryData();
                 });
             });
-            
+
             // 查询按钮
             if (queryBtn) {
                 queryBtn.addEventListener('click', queryData);
             }
-            
+
             // 重置按钮
             if (resetBtn) {
-                resetBtn.addEventListener('click', function() {
+                resetBtn.addEventListener('click', function () {
                     var oneYearAgo = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
                     setDateRange(oneYearAgo, today, '1year');
                     queryData();
                 });
             }
-            
+
             // 初始化：默认选择最近一年
             var oneYearAgo = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
             setDateRange(oneYearAgo, today, '1year');
 
-            startDateInput.addEventListener('change', function() {
+            startDateInput.addEventListener('change', function () {
                 updateTimeline(this.value, endDateInput.value);
             });
-            
-            endDateInput.addEventListener('change', function() {
+
+            endDateInput.addEventListener('change', function () {
                 updateTimeline(startDateInput.value, this.value);
             });
-            
+
             // 设置初始时间范围并自动加载数据（不显示 loading）
             var startMs = oneYearAgo.getTime();
             var endToday = new Date(today);
