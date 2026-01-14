@@ -8,6 +8,36 @@
 // 颜色常量定义
 var BANDIX_COLOR_UPLOAD = '#f97316';     // 橙色 - 上传/上行
 var BANDIX_COLOR_DOWNLOAD = '#06b6d4';   // 青色 - 下载/下行
+
+// 悬浮框背景色定义
+var BANDIX_TOOLTIP_BG_OPENWRT2020_LIGHT = '#ffffff';    // OpenWrt 2020 浅色主题悬浮框背景
+var BANDIX_TOOLTIP_BG_OPENWRT2020_DARK = '#2a2a2a';     // OpenWrt 2020 深色主题悬浮框背景
+var BANDIX_TOOLTIP_BG_MATERIAL_LIGHT = '#ffffff';       // Material 浅色主题悬浮框背景
+var BANDIX_TOOLTIP_BG_MATERIAL_DARK = '#303030';        // Material 深色主题悬浮框背景
+var BANDIX_TOOLTIP_BG_BOOTSTRAP_LIGHT = '#ffffff';      // Bootstrap 浅色主题悬浮框背景
+var BANDIX_TOOLTIP_BG_BOOTSTRAP_DARK = '#303030';       // Bootstrap 深色主题悬浮框背景
+var BANDIX_TOOLTIP_BG_ARGON_LIGHT = '#ffffff';          // Argon 浅色主题悬浮框背景
+var BANDIX_TOOLTIP_BG_ARGON_DARK = '#252526';           // Argon 深色主题悬浮框背景
+var BANDIX_TOOLTIP_BG_AURORA_LIGHT = '#ffffff';         // Aurora 浅色主题悬浮框背景
+var BANDIX_TOOLTIP_BG_AURORA_DARK = '#0E172B';          // Aurora 深色主题悬浮框背景
+var BANDIX_TOOLTIP_BG_KUCAT_LIGHT = '#8CADCB';          // Kucat 浅色主题悬浮框背景
+var BANDIX_TOOLTIP_BG_KUCAT_DARK = '#8CADCB';          // Kucat 深色主题悬浮框背景
+
+// Modal 背景色定义
+var BANDIX_MODAL_BG_OPENWRT2020_LIGHT = '#ffffff';      // OpenWrt 2020 浅色主题 Modal 背景
+var BANDIX_MODAL_BG_OPENWRT2020_DARK = '#2a2a2a';       // OpenWrt 2020 深色主题 Modal 背景
+var BANDIX_MODAL_BG_MATERIAL_LIGHT = '#ffffff';         // Material 浅色主题 Modal 背景
+var BANDIX_MODAL_BG_MATERIAL_DARK = '#303030';          // Material 深色主题 Modal 背景
+var BANDIX_MODAL_BG_BOOTSTRAP_LIGHT = '#ffffff';        // Bootstrap 浅色主题 Modal 背景
+var BANDIX_MODAL_BG_BOOTSTRAP_DARK = '#303030';         // Bootstrap 深色主题 Modal 背景
+var BANDIX_MODAL_BG_ARGON_LIGHT = '#F4F5F7';            // Argon 浅色主题 Modal 背景
+var BANDIX_MODAL_BG_ARGON_DARK = '#252526';             // Argon 深色主题 Modal 背景
+var BANDIX_MODAL_BG_AURORA_LIGHT = '#ffffff';           // Aurora 浅色主题 Modal 背景
+var BANDIX_MODAL_BG_AURORA_DARK = '#0E172B';            // Aurora 深色主题 Modal 背景
+var BANDIX_MODAL_BG_KUCAT_LIGHT = '#222D3C';            // Kucat 浅色主题 Modal 背景
+var BANDIX_MODAL_BG_KUCAT_DARK = '#222D3C';            // Kucat 深色主题 Modal 背景
+
+// 兼容性定义（向后兼容）
 var BANDIX_TOOLTIP_BG_LIGHT = '#ffffff'; // 浅色模式悬浮窗背景色
 var BANDIX_TOOLTIP_BG_DARK = '#333333';  // 深色模式悬浮窗背景色
 
@@ -47,8 +77,85 @@ function getThemeMode() {
         return darkMode === 'true' ? 'dark' : 'light';
     }
 
-    // 其他主题默认返回 light
-    return 'light';
+    if (theme === '/luci-static/kucat') {
+        // 获取 kucat 的具体模式
+        var kucatMode = L.uci.get('kucat', '@basic[0]', 'mode');
+        if (kucatMode === 'light') {
+            return 'light';
+        }
+        if (kucatMode === 'dark') {
+            return 'dark';
+        }
+        // 如果是其他值（包括auto），使用浏览器媒体查询
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        return prefersDark ? 'dark' : 'light';
+    }
+
+    // 其他主题使用浏览器媒体查询
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return prefersDark ? 'dark' : 'light';
+}
+
+function getThemeColors() {
+    // 获取当前主题和模式
+    var theme = L.uci.get('luci', 'main', 'mediaurlbase');
+    var mode = getThemeMode();
+
+    // 根据主题和模式返回对应的颜色
+    if (theme === '/luci-static/openwrt2020') {
+        return {
+            tooltipBg: mode === 'dark' ? BANDIX_TOOLTIP_BG_OPENWRT2020_DARK : BANDIX_TOOLTIP_BG_OPENWRT2020_LIGHT,
+            modalBg: mode === 'dark' ? BANDIX_MODAL_BG_OPENWRT2020_DARK : BANDIX_MODAL_BG_OPENWRT2020_LIGHT
+        };
+    }
+
+    if (theme === '/luci-static/material') {
+        return {
+            tooltipBg: mode === 'dark' ? BANDIX_TOOLTIP_BG_MATERIAL_DARK : BANDIX_TOOLTIP_BG_MATERIAL_LIGHT,
+            modalBg: mode === 'dark' ? BANDIX_MODAL_BG_MATERIAL_DARK : BANDIX_MODAL_BG_MATERIAL_LIGHT
+        };
+    }
+
+    if (theme === '/luci-static/bootstrap-light' || theme === '/luci-static/bootstrap') {
+        return {
+            tooltipBg: mode === 'dark' ? BANDIX_TOOLTIP_BG_BOOTSTRAP_DARK : BANDIX_TOOLTIP_BG_BOOTSTRAP_LIGHT,
+            modalBg: mode === 'dark' ? BANDIX_MODAL_BG_BOOTSTRAP_DARK : BANDIX_MODAL_BG_BOOTSTRAP_LIGHT
+        };
+    }
+
+    if (theme === '/luci-static/bootstrap-dark') {
+        return {
+            tooltipBg: BANDIX_TOOLTIP_BG_BOOTSTRAP_DARK,
+            modalBg: BANDIX_MODAL_BG_BOOTSTRAP_DARK
+        };
+    }
+
+    if (theme === '/luci-static/argon') {
+        return {
+            tooltipBg: mode === 'dark' ? BANDIX_TOOLTIP_BG_ARGON_DARK : BANDIX_TOOLTIP_BG_ARGON_LIGHT,
+            modalBg: mode === 'dark' ? BANDIX_MODAL_BG_ARGON_DARK : BANDIX_MODAL_BG_ARGON_LIGHT
+        };
+    }
+
+    if (theme === '/luci-static/aurora') {
+        return {
+            tooltipBg: mode === 'dark' ? BANDIX_TOOLTIP_BG_AURORA_DARK : BANDIX_TOOLTIP_BG_AURORA_LIGHT,
+            modalBg: mode === 'dark' ? BANDIX_MODAL_BG_AURORA_DARK : BANDIX_MODAL_BG_AURORA_LIGHT
+        };
+    }
+
+    if (theme === '/luci-static/kucat') {
+        return {
+            tooltipBg: mode === 'dark' ? BANDIX_TOOLTIP_BG_KUCAT_DARK : BANDIX_TOOLTIP_BG_KUCAT_LIGHT,
+            modalBg: mode === 'dark' ? BANDIX_MODAL_BG_KUCAT_DARK : BANDIX_MODAL_BG_KUCAT_LIGHT
+        };
+    }
+
+    // 默认使用 OpenWrt 2020 的颜色
+    return {
+        tooltipBg: mode === 'dark' ? BANDIX_TOOLTIP_BG_OPENWRT2020_DARK : BANDIX_TOOLTIP_BG_OPENWRT2020_LIGHT,
+        modalBg: mode === 'dark' ? BANDIX_MODAL_BG_OPENWRT2020_DARK : BANDIX_MODAL_BG_OPENWRT2020_LIGHT
+    };
 }
 
 function formatSize(bytes) {
@@ -304,6 +411,10 @@ return view.extend({
         // 生成样式字符串的函数
         function generateStyles(colorScheme) {
             var scheme = colorScheme || 'light';
+            var themeColors = getThemeColors();
+            var tooltipTextColor = scheme === 'dark' ? '#f9fafb' : '#1f2937';
+            var tooltipDividerColor = scheme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'currentColor';
+            var tooltipDividerOpacity = 1;
             var css = `
             .bandix-container {
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -813,7 +924,7 @@ return view.extend({
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
-            #confirm-dialog-bandix_modal {
+            #confirm-dialog-bandix-modal {
                 z-index: 1105;
             }
             
@@ -823,20 +934,32 @@ return view.extend({
                 visibility: visible;
             }
             
-            .bandix_modal {
+            /* 通用 modal 尺寸设置 */
+            .modal-content {
                 max-width: 500px;
                 width: 90%;
                 max-height: 90vh;
                 overflow-y: auto;
+            }
+
+            .bandix-modal {
                 opacity: 0;
                 transition: opacity 0.2s ease;
+                background-color: ${themeColors.modalBg} !important;
+                border-radius: 8px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
             }
-            
-            .bandix-modal-overlay.show .bandix_modal {
+
+            .bandix-modal-overlay.show .bandix-modal {
                 opacity: 1;
             }
-            
-            
+
+            .bandix-modal {
+                background-color: ${themeColors.modalBg};
+                border-radius: 8px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            }
+
             .bandix-modal-header {
                 padding: 20px;
             }
@@ -859,7 +982,7 @@ return view.extend({
             }
 
             /* 白名单弹窗样式 */
-            .whitelist_modal-overlay {
+            .whitelist-modal-overlay {
                 position: fixed;
                 top: 0;
                 left: 0;
@@ -875,28 +998,27 @@ return view.extend({
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
-            .whitelist_modal-overlay.show {
+            .whitelist-modal-overlay.show {
                 background-color: rgba(0, 0, 0, 0.5);
                 opacity: 1;
                 visibility: visible;
             }
 
-            .whitelist_modal {
+            .whitelist-modal {
                 max-width: 560px;
                 width: 92%;
                 max-height: 90vh;
                 overflow-y: auto;
                 opacity: 0;
                 transition: opacity 0.2s ease;
-                border-radius: 8px;
             }
 
-            .whitelist_modal-overlay.show .whitelist_modal {
+            .whitelist-modal-overlay.show .whitelist-modal {
                 opacity: 1;
             }
 
 
-            .whitelist_modal-header {
+            .whitelist-modal-header {
                 padding: 16px 20px 0 20px;
                 display: flex;
                 align-items: center;
@@ -904,24 +1026,24 @@ return view.extend({
                 gap: 12px;
             }
 
-            .whitelist_modal-title {
+            .whitelist-modal-title {
                 font-size: 1.1rem;
                 font-weight: 600;
                 margin: 0;
             }
 
-            .whitelist_modal-body {
+            .whitelist-modal-body {
                 padding: 16px 20px;
             }
 
-            .whitelist_modal-footer {
+            .whitelist-modal-footer {
                 padding: 0 20px 18px 20px;
                 display: flex;
                 gap: 10px;
                 justify-content: flex-end;
             }
 
-            .whitelist_modal-row {
+            .whitelist-modal-row {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
@@ -929,14 +1051,14 @@ return view.extend({
                 margin-bottom: 12px;
             }
 
-            .whitelist_modal-list {
+            .whitelist-modal-list {
                 display: flex;
                 flex-direction: column;
                 gap: 8px;
                 margin-top: 8px;
             }
 
-            .whitelist_modal-item {
+            .whitelist-modal-item {
                 display: flex;
                 align-items: flex-start;
                 justify-content: space-between;
@@ -946,18 +1068,18 @@ return view.extend({
             }
 
 
-            .whitelist_modal-mac {
+            .whitelist-modal-mac {
                 font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
                 font-size: 0.875rem;
             }
 
-            .whitelist_modal-hint {
+            .whitelist-modal-hint {
                 font-size: 0.75rem;
                 opacity: 0.7;
                 margin-top: 6px;
             }
 
-            .whitelist_modal-error {
+            .whitelist-modal-error {
                 font-size: 0.8125rem;
                 color: #ef4444;
                 margin-top: 10px;
@@ -987,44 +1109,7 @@ return view.extend({
             .form-input:focus {
                 outline: none;
             }
-            
-            /* Tab 切换样式 */
-            .bandix-modal-tabs {
-                display: flex;
-                margin-bottom: 20px;
-            }
-            
-            
-            .bandix-modal-tab {
-                flex: 1;
-                padding: 12px 16px;
-                text-align: center;
-                cursor: pointer;
-                border: none;
-                background: transparent;
-                font-size: 0.875rem;
-                font-weight: 500;
-                transition: all 0.2s ease;
-                border-bottom: 2px solid transparent;
-            }
-            
-            
-            .bandix-modal-tab:hover {
-                background-color: rgba(0, 0, 0, 0.02);
-            }
-            
-            
-            .bandix-modal-tab.active {
-                font-weight: 600;
-            }
-            
-            .bandix-modal-tab-content {
-                display: none;
-            }
-            
-            .bandix-modal-tab-content.active {
-                display: block;
-            }
+        
             
             .schedule-time-row {
                 display: flex;
@@ -1180,7 +1265,6 @@ return view.extend({
             /* 确认对话框 */
             .confirm-dialog {
                 max-width: 400px;
-                width: 90%;
             }
             
             .confirm-dialog .bandix-modal-body {
@@ -1511,10 +1595,10 @@ return view.extend({
                 font-size: 0.8125rem;
                 line-height: 1.5;
                 white-space: nowrap;
-                background-color: ${scheme === 'dark' ? BANDIX_TOOLTIP_BG_DARK : BANDIX_TOOLTIP_BG_LIGHT};
+                background-color: ${themeColors.tooltipBg} !important;
                 border-radius: 6px;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                color: ${scheme === 'dark' ? '#f9fafb' : '#1f2937'};
+                color: ${tooltipTextColor} !important;
             }
             
             .history-tooltip .ht-title { font-weight: 700; margin-bottom: 6px; }
@@ -1528,7 +1612,7 @@ return view.extend({
 			.history-tooltip .ht-kpi .ht-k-value { font-size: 1rem; font-weight: 700; }
 			.history-tooltip .ht-kpi.down .ht-k-value { color: ${BANDIX_COLOR_DOWNLOAD}; }
 			.history-tooltip .ht-kpi.up .ht-k-value { color: ${BANDIX_COLOR_UPLOAD}; }
-			.history-tooltip .ht-divider { height: 1px; background-color: ${scheme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'currentColor'}; opacity: ${scheme === 'dark' ? 1 : 0.3}; margin: 8px 0; }
+			.history-tooltip .ht-divider { height: 1px; background-color: ${tooltipDividerColor}; opacity: ${tooltipDividerOpacity}; margin: 8px 0; }
 			.history-tooltip .ht-section-title { font-weight: 600; font-size: 0.75rem; opacity: 0.7; margin: 4px 0 6px 0; }
 
 			/* Traffic Timeline Tooltip - 使用与 History Tooltip 相同的样式 */
@@ -1537,7 +1621,7 @@ return view.extend({
 			.traffic-increments-tooltip .ht-kpi .ht-k-value { font-size: 1rem; font-weight: 700; }
 			.traffic-increments-tooltip .ht-kpi.down .ht-k-value { color: ${BANDIX_COLOR_DOWNLOAD}; }
 			.traffic-increments-tooltip .ht-kpi.up .ht-k-value { color: ${BANDIX_COLOR_UPLOAD}; }
-			.traffic-increments-tooltip .ht-divider { height: 1px; background-color: ${scheme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'currentColor'}; opacity: ${scheme === 'dark' ? 1 : 0.3}; margin: 8px 0; }
+			.traffic-increments-tooltip .ht-divider { height: 1px; background-color: ${tooltipDividerColor}; opacity: ${tooltipDividerOpacity}; margin: 8px 0; }
 			.traffic-increments-tooltip .ht-section-title { font-weight: 600; font-size: 0.75rem; opacity: 0.7; margin: 4px 0 6px 0; }
 			.traffic-increments-tooltip .ht-row { display: flex; justify-content: space-between; gap: 12px; }
 			.traffic-increments-tooltip .ht-key { opacity: 0.7; }
@@ -1555,10 +1639,10 @@ return view.extend({
 				pointer-events: none;
 				font-size: 0.8125rem;
 				line-height: 1.5;
-				background-color: ${scheme === 'dark' ? BANDIX_TOOLTIP_BG_DARK : BANDIX_TOOLTIP_BG_LIGHT};
+				background-color: ${themeColors.tooltipBg} !important;
 				border-radius: 6px;
 				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-				color: ${scheme === 'dark' ? '#f9fafb' : '#1f2937'};
+				color: ${tooltipTextColor} !important;
 			}
 			
 			
@@ -2022,8 +2106,8 @@ return view.extend({
 			
 			.traffic-increments-tooltip {
 				position: absolute;
-				background-color: ${scheme === 'dark' ? BANDIX_TOOLTIP_BG_DARK : BANDIX_TOOLTIP_BG_LIGHT};
-				color: ${scheme === 'dark' ? '#f9fafb' : '#1f2937'};
+				background-color: ${themeColors.tooltipBg} !important;
+				color: ${tooltipTextColor} !important;
 				padding: 12px;
 				border-radius: 6px;
 				font-size: 0.8125rem;
@@ -2555,7 +2639,7 @@ return view.extend({
                         ]),
                         E('div', { 'class': 'device-group' }, [
                             E('span', { 'class': 'device-group-label' }, _('Global Rate Limit')),
-                            E('span', { 'class': 'cbi-button', 'id': 'bandix_whitelist_badge', 'style': 'cursor: pointer; user-select: none;' }, _('Loading...'))
+                            E('span', { 'class': 'cbi-button cbi-button-action', 'id': 'bandix_whitelist_badge', 'style': 'cursor: pointer; user-select: none;' }, _('Loading...'))
                         ])
                     ])
                 ]),
@@ -2828,11 +2912,8 @@ return view.extend({
         }
 
         // 创建限速设置模态框
-        var bandix_modal = E('div', { 'class': 'bandix-modal-overlay', 'id': 'rate-limit-bandix_modal' }, [
-            E('div', { 'class': 'modal', "aria-modal": true }, [
-                // E('div', { 'class': 'bandix-modal-header' }, [
-                //     E('h3', { 'class': 'bandix-modal-title' }, _('Device Settings'))
-                // ]),
+        var bandixModal = E('div', { 'class': 'bandix-modal-overlay', 'id': 'rate-limit-bandix-modal' }, [
+            E('div', { 'class': 'modal-content bandix-modal' }, [
                 E('div', { 'class': 'bandix-modal-body', }, [
                     E('div', { 'class': 'device-summary', 'id': 'bandix-modal-device-summary' }),
                     E('div', { 'class': 'form-group' }, [
@@ -2868,11 +2949,11 @@ return view.extend({
             ])
         ]);
 
-        document.body.appendChild(bandix_modal);
+        document.body.appendChild(bandixModal);
 
         // 创建添加规则模态框
-        var addRuleModal = E('div', { 'class': 'bandix-modal-overlay', 'id': 'add-rule-bandix_modal' }, [
-            E('div', { 'class': 'modal', "aria-modal": true }, [
+        var addRuleModal = E('div', { 'class': 'bandix-modal-overlay', 'id': 'add-rule-bandix-modal' }, [
+            E('div', { 'class': 'modal-content bandix-modal' }, [
                 E('div', { 'class': 'bandix-modal-header' }, [
                     E('h3', { 'class': 'bandix-modal-title' }, _('Add Schedule Rule'))
                 ]),
@@ -2924,8 +3005,8 @@ return view.extend({
         document.body.appendChild(addRuleModal);
 
         // 创建确认对话框
-        var confirmDialog = E('div', { 'class': 'bandix-modal-overlay', 'id': 'confirm-dialog-bandix_modal' }, [
-            E('div', { 'class': 'modal confirm-dialog', "aria-modal": true }, [
+        var confirmDialog = E('div', { 'class': 'bandix-modal-overlay', 'id': 'confirm-dialog-bandix-modal' }, [
+            E('div', { 'class': 'modal-content bandix-modal confirm-dialog', "aria-modal": true }, [
                 E('div', { 'class': 'bandix-modal-body' }, [
                     E('div', { 'class': 'confirm-dialog-title', 'id': 'confirm-dialog-title' }, _('Confirm')),
                     E('div', { 'class': 'confirm-dialog-message', 'id': 'confirm-dialog-message' }, ''),
@@ -2940,16 +3021,16 @@ return view.extend({
         document.body.appendChild(confirmDialog);
 
         // 创建白名单管理弹窗
-        var whitelistModal = E('div', { 'class': 'whitelist_modal-overlay', 'id': 'whitelist_modal' }, [
-            E('div', { 'class': 'modal' }, [
-                E('div', { 'class': 'whitelist_modal-header' }, [
-                    E('h3', { 'class': 'whitelist_modal-title' }, _('Global Rate Limit'))
+        var whitelistModal = E('div', { 'class': 'whitelist-modal-overlay', 'id': 'whitelist-modal' }, [
+            E('div', { 'class': 'whitelist-modal bandix-modal' }, [
+                E('div', { 'class': 'whitelist-modal-header' }, [
+                    E('h3', { 'class': 'whitelist-modal-title' }, _('Global Rate Limit'))
                 ]),
-                E('div', { 'class': 'whitelist_modal-body' }, [
-                    E('div', { 'class': 'whitelist_modal-row' }, [
+                E('div', { 'class': 'whitelist-modal-body' }, [
+                    E('div', { 'class': 'whitelist-modal-row' }, [
                         E('div', {}, [
                             E('div', { 'style': 'font-weight: 600;' }, _('Enabled')),
-                            E('div', { 'class': 'whitelist_modal-hint' }, _('When enabled, all devices will be rate limited. Devices in the list are exempt (whitelist).'))
+                            E('div', { 'class': 'whitelist-modal-hint' }, _('When enabled, all devices will be rate limited. Devices in the list are exempt (whitelist).'))
                         ]),
                         E('input', { 'type': 'checkbox', 'id': 'whitelist_enabled_checkbox' })
                     ]),
@@ -2988,22 +3069,22 @@ return view.extend({
                         E('button', { 'class': 'cbi-button cbi-button-action', 'id': 'whitelist_default_save_btn' }, _('Save'))
                     ]),
                     E('div', { 'style': 'margin-top: 8px; font-weight: 600;' }, _('Exempt Devices (Whitelist)')),
-                    E('div', { 'class': 'whitelist_modal-list', 'id': 'whitelist_macs_list' }, [
+                    E('div', { 'class': 'whitelist-modal-list', 'id': 'whitelist_macs_list' }, [
                         E('div', { 'style': 'text-align: center; opacity: 0.7; padding: 12px 0;' }, _('Loading...'))
                     ]),
                     E('div', { 'style': 'margin-top: 14px;' }, [
-                        E('div', { 'class': 'whitelist_modal-row', 'style': 'justify-content: flex-start;' }, [
+                        E('div', { 'class': 'whitelist-modal-row', 'style': 'justify-content: flex-start;' }, [
                             E('select', { 'class': 'cbi-input-select', 'id': 'whitelist_device_select', 'style': 'width: 200px; flex-shrink: 0;' }, [
                                 E('option', { 'value': '' }, _('Select Device'))
                             ]),
                             E('input', { 'type': 'text', 'class': 'form-input', 'id': 'whitelist_add_mac_input', 'placeholder': 'aa:bb:cc:dd:ee:ff', 'style': 'flex: 1;' }),
                             E('button', { 'class': 'cbi-button cbi-button-positive', 'id': 'whitelist_add_mac_btn', 'style': 'flex-shrink: 0;' }, _('Add'))
                         ]),
-                        E('div', { 'class': 'whitelist_modal-error', 'id': 'whitelist_modal_error' }, '')
+                        E('div', { 'class': 'whitelist-modal-error', 'id': 'whitelist-modal-error' }, '')
                     ])
                 ]),
-                E('div', { 'class': 'whitelist_modal-footer' }, [
-                    E('button', { 'class': 'cbi-button cbi-button-reset', 'id': 'whitelist_modal_close' }, _('Close'))
+                E('div', { 'class': 'whitelist-modal-footer' }, [
+                    E('button', { 'class': 'cbi-button cbi-button-reset', 'id': 'whitelist-modal-close' }, _('Close'))
                 ])
             ])
         ]);
@@ -3119,7 +3200,7 @@ return view.extend({
         }
 
         function setWhitelistError(msg) {
-            var el = document.getElementById('whitelist_modal_error');
+            var el = document.getElementById('whitelist-modal-error');
             if (!el) return;
             if (msg) {
                 el.textContent = msg;
@@ -3168,12 +3249,12 @@ return view.extend({
                 var ip = d && d.ip ? d.ip : '';
                 var title = hostname || ip || mac;
 
-                var item = E('div', { 'class': 'whitelist_modal-item' }, [
+                var item = E('div', { 'class': 'whitelist-modal-item' }, [
                     E('div', { 'style': 'display: flex; flex-direction: column; gap: 2px;' }, [
                         E('div', { 'style': 'font-weight: 600;' }, title),
                         E('div', { 'style': 'font-size: 0.75rem; opacity: 0.7;' }, [
                             ip ? (ip + ' · ') : '',
-                            E('span', { 'class': 'whitelist_modal-mac' }, mac)
+                            E('span', { 'class': 'whitelist-modal-mac' }, mac)
                         ])
                     ]),
                     E('button', { 'class': 'cbi-button cbi-button-negative', 'style': 'padding: 4px 10px;' }, _('Delete'))
@@ -3260,7 +3341,7 @@ return view.extend({
             setWhitelistError('');
         }
 
-        document.getElementById('whitelist_modal_close').addEventListener('click', hideWhitelistModal);
+        document.getElementById('whitelist-modal-close').addEventListener('click', hideWhitelistModal);
 
         document.getElementById('whitelist_enabled_checkbox').addEventListener('change', function () {
             var checkbox = this;
@@ -3347,7 +3428,7 @@ return view.extend({
         function showAddRuleModal() {
             if (!currentDevice) return;
 
-            var addRuleModalEl = document.getElementById('add-rule-bandix_modal');
+            var addRuleModalEl = document.getElementById('add-rule-bandix-modal');
             var speedUnit = uci.get('bandix', 'traffic', 'speed_unit') || 'bytes';
 
             // 动态填充单位选择器
@@ -3385,7 +3466,7 @@ return view.extend({
 
         // 隐藏添加规则模态框
         function hideAddRuleModal() {
-            var addRuleModalEl = document.getElementById('add-rule-bandix_modal');
+            var addRuleModalEl = document.getElementById('add-rule-bandix-modal');
             addRuleModalEl.classList.remove('show');
         }
 
@@ -3439,7 +3520,7 @@ return view.extend({
             }
 
             // 重新获取日期按钮引用，确保获取最新状态
-            var addRuleModalEl = document.getElementById('add-rule-bandix_modal');
+            var addRuleModalEl = document.getElementById('add-rule-bandix-modal');
             var dayButtons = addRuleModalEl.querySelectorAll('.schedule-day-btn');
             var selectedDays = [];
             dayButtons.forEach(function (btn) {
@@ -3522,7 +3603,7 @@ return view.extend({
         // 显示模态框
         showRateLimitModal = function (device) {
             currentDevice = device;
-            var bandix_modal = document.getElementById('rate-limit-bandix_modal');
+            var bandixModal = document.getElementById('rate-limit-bandix-modal');
             var deviceSummary = document.getElementById('bandix-modal-device-summary');
             // 清空定时限速规则列表并加载
             var rulesList = document.getElementById('schedule-rules-list');
@@ -3546,13 +3627,13 @@ return view.extend({
 
 
             // 显示模态框并添加动画
-            bandix_modal.classList.add('show');
+            bandixModal.classList.add('show');
         }
 
         // 隐藏模态框
         function hideRateLimitModal() {
-            var bandix_modal = document.getElementById('rate-limit-bandix_modal');
-            bandix_modal.classList.remove('show');
+            var bandixModal = document.getElementById('rate-limit-bandix-modal');
+            bandixModal.classList.remove('show');
 
             // 等待动画完成后清理
             setTimeout(function () {
