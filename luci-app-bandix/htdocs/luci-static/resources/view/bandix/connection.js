@@ -574,7 +574,7 @@ return view.extend({
                 E('div', { 'style': 'text-align: center; padding: 16px;' }, [
                     E('a', {
                         'href': '/cgi-bin/luci/admin/network/bandix/settings',
-                        'class': 'cbi-button cbi-button-positive'
+                        'class': 'btn btn-primary'
                     }, _('Go to Settings'))
                 ])
             ]);

@@ -11,9 +11,6 @@ var BANDIX_COLOR_DOWNLOAD = '#06b6d4';   // 青色 - 下载/下行
 
 
 
-
-
-
 function formatSize(bytes) {
     if (bytes === 0) return '0 B';
     const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
@@ -551,8 +548,6 @@ return view.extend({
             }
 
 			/* 类型联动的高亮与弱化 */
-			.bandix-table .hi { font-weight: 700; }
-			.bandix-table .dim { opacity: 0.6; }
             
             
             .device-info {
@@ -664,26 +659,7 @@ return view.extend({
                 margin-left: 4px;
             }
             
-            .limit-info {
-                display: flex;
-                flex-direction: column;
-                gap: 4px;
-            }
             
-            .limit-badge {
-                padding: 3px 8px;
-                border-radius: 3px;
-                font-size: 0.75rem;
-                text-align: center;
-                margin-top: 4px;
-            }
-            
-            .loading {
-                text-align: center;
-                padding: 40px;
-                opacity: 0.7;
-                font-style: italic;
-            }
             
             .error {
                 text-align: center;
@@ -779,19 +755,6 @@ return view.extend({
                 font-weight: 600;
             }
             
-            .stats-title {
-                font-size: 0.875rem;
-                font-weight: 600;
-                margin-bottom: 8px;
-                display: flex;
-                align-items: center;
-                gap: 6px;
-            }
-            
-            .stats-value {
-                font-size: 1.25rem;
-                font-weight: 700;
-            }
             
             /* 模态框样式 */
             .bandix_modal-overlay {
@@ -827,8 +790,6 @@ return view.extend({
                 overflow-y: auto;
                 opacity: 0;
                 transition: opacity 0.2s ease;
-                background-color: rgba(255, 255, 255, 0.98);
-                color: #1f2937;
             }
             
             .bandix_modal-overlay.show .bandix_modal {
@@ -887,8 +848,6 @@ return view.extend({
                 overflow-y: auto;
                 opacity: 0;
                 transition: opacity 0.2s ease;
-                background-color: rgba(255, 255, 255, 0.98);
-                color: #1f2937;
                 border-radius: 8px;
             }
 
@@ -943,7 +902,6 @@ return view.extend({
                 justify-content: space-between;
                 gap: 10px;
                 padding: 8px 10px;
-                border: 1px solid rgba(0, 0, 0, 0.12);
                 border-radius: 8px;
             }
 
@@ -993,7 +951,6 @@ return view.extend({
             /* Tab 切换样式 */
             .bandix_modal-tabs {
                 display: flex;
-                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
                 margin-bottom: 20px;
             }
             
@@ -1007,21 +964,17 @@ return view.extend({
                 background: transparent;
                 font-size: 0.875rem;
                 font-weight: 500;
-                color: rgba(0, 0, 0, 0.6);
                 transition: all 0.2s ease;
                 border-bottom: 2px solid transparent;
             }
             
             
             .bandix_modal-tab:hover {
-                color: rgba(0, 0, 0, 0.8);
                 background-color: rgba(0, 0, 0, 0.02);
             }
             
             
             .bandix_modal-tab.active {
-                color: #3b82f6;
-                border-bottom-color: #3b82f6;
                 font-weight: 600;
             }
             
@@ -1518,8 +1471,7 @@ return view.extend({
                 font-size: 0.8125rem;
                 line-height: 1.5;
                 white-space: nowrap;
-                background-color: rgba(255, 255, 255, 0.98);
-                border: 1px solid rgba(0, 0, 0, 0.1);
+                background-color: #ffffff;
                 border-radius: 6px;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
                 color: #1f2937;
@@ -1563,8 +1515,7 @@ return view.extend({
 				pointer-events: none;
 				font-size: 0.8125rem;
 				line-height: 1.5;
-				background-color: rgba(255, 255, 255, 0.98);
-				border: 1px solid rgba(0, 0, 0, 0.1);
+				background-color: #ffffff;
 				border-radius: 6px;
 				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 				color: #1f2937;
@@ -2034,7 +1985,6 @@ return view.extend({
 				background-color: #ffffff;
 				color: #1f2937;
 				padding: 12px;
-				border: 1px solid rgba(0, 0, 0, 0.1);
 				border-radius: 6px;
 				font-size: 0.8125rem;
 				pointer-events: none;
@@ -2998,38 +2948,6 @@ return view.extend({
             document.getElementById('confirm-dialog-message').textContent = message || '';
             confirmDialogCallback = onConfirm;
 
-            // 应用主题颜色
-            try {
-                var cbiSection = document.querySelector('.cbi-section');
-                var targetElement = cbiSection || document.querySelector('.main') || document.body;
-                var computedStyle = window.getComputedStyle(targetElement);
-                var bgColor = computedStyle.backgroundColor;
-                var textColor = computedStyle.color;
-
-                var bandix_modalElement = confirmDialog.querySelector('.bandix_modal');
-
-                if (bgColor && bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent') {
-                    var rgbaMatch = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
-                    if (rgbaMatch) {
-                        var r = parseInt(rgbaMatch[1]);
-                        var g = parseInt(rgbaMatch[2]);
-                        var b = parseInt(rgbaMatch[3]);
-                        var alpha = rgbaMatch[4] ? parseFloat(rgbaMatch[4]) : 1;
-
-                        if (alpha < 0.95) {
-                            bandix_modalElement.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
-                        } else {
-                            bandix_modalElement.style.backgroundColor = bgColor;
-                        }
-                    } else {
-                        bandix_modalElement.style.backgroundColor = bgColor;
-                    }
-                }
-
-                if (textColor && textColor !== 'rgba(0, 0, 0, 0)') {
-                    bandix_modalElement.style.color = textColor;
-                }
-            } catch (e) { }
 
             confirmDialog.classList.add('show');
         }
@@ -3389,38 +3307,6 @@ return view.extend({
             // 重置表单
             resetAddRuleForm();
 
-            // 应用主题颜色
-            try {
-                var cbiSection = document.querySelector('.cbi-section');
-                var targetElement = cbiSection || document.querySelector('.main') || document.body;
-                var computedStyle = window.getComputedStyle(targetElement);
-                var bgColor = computedStyle.backgroundColor;
-                var textColor = computedStyle.color;
-
-                var bandix_modalElement = addRuleModalEl.querySelector('.bandix_modal');
-
-                if (bgColor && bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent') {
-                    var rgbaMatch = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
-                    if (rgbaMatch) {
-                        var r = parseInt(rgbaMatch[1]);
-                        var g = parseInt(rgbaMatch[2]);
-                        var b = parseInt(rgbaMatch[3]);
-                        var alpha = rgbaMatch[4] ? parseFloat(rgbaMatch[4]) : 1;
-
-                        if (alpha < 0.95) {
-                            bandix_modalElement.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
-                        } else {
-                            bandix_modalElement.style.backgroundColor = bgColor;
-                        }
-                    } else {
-                        bandix_modalElement.style.backgroundColor = bgColor;
-                    }
-                }
-
-                if (textColor && textColor !== 'rgba(0, 0, 0, 0)') {
-                    bandix_modalElement.style.color = textColor;
-                }
-            } catch (e) { }
 
             // 显示模态框
             addRuleModalEl.classList.add('show');
@@ -3587,82 +3473,6 @@ return view.extend({
             // 设置当前hostname值
             document.getElementById('device-hostname-input').value = device.hostname || '';
 
-            // 应用 cbi-section 的颜色到模态框
-            try {
-                // 优先从 cbi-section 获取颜色
-                var cbiSection = document.querySelector('.cbi-section');
-                var targetElement = cbiSection || document.querySelector('.main') || document.body;
-                var computedStyle = window.getComputedStyle(targetElement);
-                var bgColor = computedStyle.backgroundColor;
-                var textColor = computedStyle.color;
-
-                // 获取模态框元素
-                var bandix_modalElement = bandix_modal.querySelector('.bandix_modal');
-
-                // 确保背景色不透明
-                if (bgColor && bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent') {
-                    var rgbaMatch = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
-                    if (rgbaMatch) {
-                        var r = parseInt(rgbaMatch[1]);
-                        var g = parseInt(rgbaMatch[2]);
-                        var b = parseInt(rgbaMatch[3]);
-                        var alpha = rgbaMatch[4] ? parseFloat(rgbaMatch[4]) : 1;
-
-                        if (alpha < 0.95) {
-                            bandix_modalElement.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
-                        } else {
-                            bandix_modalElement.style.backgroundColor = bgColor;
-                        }
-                    } else {
-                        bandix_modalElement.style.backgroundColor = bgColor;
-                    }
-                } else {
-                    // 如果无法获取背景色，尝试从其他 cbi-section 获取
-                    var allCbiSections = document.querySelectorAll('.cbi-section');
-                    var foundBgColor = false;
-                    for (var i = 0; i < allCbiSections.length; i++) {
-                        var sectionStyle = window.getComputedStyle(allCbiSections[i]);
-                        var sectionBg = sectionStyle.backgroundColor;
-                        if (sectionBg && sectionBg !== 'rgba(0, 0, 0, 0)' && sectionBg !== 'transparent') {
-                            var rgbaMatch = sectionBg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
-                            if (rgbaMatch) {
-                                var r = parseInt(rgbaMatch[1]);
-                                var g = parseInt(rgbaMatch[2]);
-                                var b = parseInt(rgbaMatch[3]);
-                                var alpha = rgbaMatch[4] ? parseFloat(rgbaMatch[4]) : 1;
-                                if (alpha < 0.95) {
-                                    bandix_modalElement.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
-                                } else {
-                                    bandix_modalElement.style.backgroundColor = sectionBg;
-                                }
-                            } else {
-                                bandix_modalElement.style.backgroundColor = sectionBg;
-                            }
-                            foundBgColor = true;
-                            break;
-                        }
-                    }
-                    // 如果无法获取背景色，不设置背景色
-                    if (!foundBgColor) {
-                        // 不设置背景色，让 CSS 媒体查询处理
-                    }
-                }
-
-                // 应用文字颜色
-                if (textColor && textColor !== 'rgba(0, 0, 0, 0)') {
-                    bandix_modalElement.style.color = textColor;
-                } else {
-                    if (cbiSection) {
-                        var sectionTextColor = window.getComputedStyle(cbiSection).color;
-                        if (sectionTextColor && sectionTextColor !== 'rgba(0, 0, 0, 0)') {
-                            bandix_modalElement.style.color = sectionTextColor;
-                        }
-                    }
-                }
-            } catch (e) {
-                // 如果出错，不设置颜色
-                // 不设置样式，让 CSS 处理
-            }
 
             // 显示模态框并添加动画
             bandix_modal.classList.add('show');
@@ -5033,85 +4843,6 @@ return view.extend({
                     try { drawHistoryChart(canvas, canvas.__bandixChart && canvas.__bandixChart.originalLabels ? canvas.__bandixChart.originalLabels : labels, canvas.__bandixChart && canvas.__bandixChart.originalUpSeries ? canvas.__bandixChart.originalUpSeries : upSeries, canvas.__bandixChart && canvas.__bandixChart.originalDownSeries ? canvas.__bandixChart.originalDownSeries : downSeries, zoomScale, zoomOffsetX); } catch (e) { }
                     tooltip.innerHTML = buildTooltipHtml(point);
 
-                    // 应用主题颜色到 tooltip，使用 cbi-section 的颜色
-                    try {
-                        // 优先从 cbi-section 获取颜色（历史趋势卡片就是 cbi-section）
-                        var cbiSection = document.querySelector('.cbi-section');
-                        var targetElement = cbiSection || document.querySelector('.main') || document.body;
-                        var computedStyle = window.getComputedStyle(targetElement);
-                        var bgColor = computedStyle.backgroundColor;
-                        var textColor = computedStyle.color;
-
-                        // 确保背景色不透明
-                        if (bgColor && bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent') {
-                            // 检查是否是 rgba/rgb 格式，如果是半透明则转换为不透明
-                            var rgbaMatch = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
-                            if (rgbaMatch) {
-                                var r = parseInt(rgbaMatch[1]);
-                                var g = parseInt(rgbaMatch[2]);
-                                var b = parseInt(rgbaMatch[3]);
-                                var alpha = rgbaMatch[4] ? parseFloat(rgbaMatch[4]) : 1;
-
-                                // 如果 alpha < 0.95，使用不透明版本
-                                if (alpha < 0.95) {
-                                    tooltip.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
-                                } else {
-                                    tooltip.style.backgroundColor = bgColor;
-                                }
-                            } else {
-                                tooltip.style.backgroundColor = bgColor;
-                            }
-                        } else {
-                            // 如果无法获取背景色，尝试从其他 cbi-section 获取
-                            var allCbiSections = document.querySelectorAll('.cbi-section');
-                            var foundBgColor = false;
-                            for (var i = 0; i < allCbiSections.length; i++) {
-                                var sectionStyle = window.getComputedStyle(allCbiSections[i]);
-                                var sectionBg = sectionStyle.backgroundColor;
-                                if (sectionBg && sectionBg !== 'rgba(0, 0, 0, 0)' && sectionBg !== 'transparent') {
-                                    var rgbaMatch = sectionBg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
-                                    if (rgbaMatch) {
-                                        var r = parseInt(rgbaMatch[1]);
-                                        var g = parseInt(rgbaMatch[2]);
-                                        var b = parseInt(rgbaMatch[3]);
-                                        var alpha = rgbaMatch[4] ? parseFloat(rgbaMatch[4]) : 1;
-                                        if (alpha < 0.95) {
-                                            tooltip.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
-                                        } else {
-                                            tooltip.style.backgroundColor = sectionBg;
-                                        }
-                                    } else {
-                                        tooltip.style.backgroundColor = sectionBg;
-                                    }
-                                    foundBgColor = true;
-                                    break;
-                                }
-                            }
-                            // 如果无法获取背景色，不设置背景色
-                            if (!foundBgColor) {
-                                // 不设置背景色，让 CSS 媒体查询处理
-                            }
-                        }
-
-                        if (textColor && textColor !== 'rgba(0, 0, 0, 0)') {
-                            tooltip.style.color = textColor;
-                        } else {
-                            // 如果无法获取文字颜色，从 cbi-section 获取
-                            if (cbiSection) {
-                                var sectionTextColor = window.getComputedStyle(cbiSection).color;
-                                if (sectionTextColor && sectionTextColor !== 'rgba(0, 0, 0, 0)') {
-                                    tooltip.style.color = sectionTextColor;
-                                }
-                                // 否则使用 CSS 默认颜色（已通过媒体查询设置）
-                            }
-                            // 否则使用 CSS 默认颜色（已通过媒体查询设置）
-                        }
-
-                        // 边框和阴影由 CSS 媒体查询自动处理
-                    } catch (e) {
-                        // 如果出错，不设置颜色
-                        // 不设置样式，让 CSS 处理
-                    }
 
                     // 先显示以计算尺寸
                     tooltip.style.display = 'block';
@@ -5704,35 +5435,6 @@ return view.extend({
 
                                     tooltip.innerHTML = html;
 
-                                    // 应用主题颜色
-                                    try {
-                                        var cbiSection = document.querySelector('.cbi-section');
-                                        var targetElement = cbiSection || document.querySelector('.main') || document.body;
-                                        var computedStyle = window.getComputedStyle(targetElement);
-                                        var bgColor = computedStyle.backgroundColor;
-                                        var textColor = computedStyle.color;
-
-                                        if (bgColor && bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent') {
-                                            var rgbaMatch = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
-                                            if (rgbaMatch) {
-                                                var r = parseInt(rgbaMatch[1]);
-                                                var g = parseInt(rgbaMatch[2]);
-                                                var b = parseInt(rgbaMatch[3]);
-                                                var alpha = rgbaMatch[4] ? parseFloat(rgbaMatch[4]) : 1;
-                                                if (alpha < 0.95) {
-                                                    tooltip.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
-                                                } else {
-                                                    tooltip.style.backgroundColor = bgColor;
-                                                }
-                                            } else {
-                                                tooltip.style.backgroundColor = bgColor;
-                                            }
-                                        }
-
-                                        if (textColor && textColor !== 'rgba(0, 0, 0, 0)') {
-                                            tooltip.style.color = textColor;
-                                        }
-                                    } catch (e) { }
 
                                     // 先隐藏，设置内容后再显示以计算尺寸
                                     tooltip.style.display = 'block';
