@@ -9,122 +9,10 @@
 var BANDIX_COLOR_UPLOAD = '#f97316';     // 橙色 - 上传/上行
 var BANDIX_COLOR_DOWNLOAD = '#06b6d4';   // 青色 - 下载/下行
 
-// 暗色模式：以 LuCI 页面实际主题为准（不依赖浏览器 prefers-color-scheme）
 
-// 检测主题类型：返回 'wide'（宽主题，如 Argon）或 'narrow'（窄主题，如 Bootstrap）
-function getThemeType() {
-    // 获取 LuCI 主题设置
-    var mediaUrlBase = uci.get('luci', 'main', 'mediaurlbase');
 
-    if (!mediaUrlBase) {
-        // 如果无法获取，尝试从 DOM 中检测
-        var linkTags = document.querySelectorAll('link[rel="stylesheet"]');
-        for (var i = 0; i < linkTags.length; i++) {
-            var href = linkTags[i].getAttribute('href') || '';
-            if (href.toLowerCase().includes('argon')) {
-                return 'wide';
-            }
-        }
-        // 默认返回窄主题
-        return 'narrow';
-    }
 
-    var mediaUrlBaseLower = mediaUrlBase.toLowerCase();
 
-    // 宽主题关键词列表（可以根据需要扩展）
-    var wideThemeKeywords = ['argon', 'material', 'design', 'edge'];
-
-    // 检查是否是宽主题
-    for (var i = 0; i < wideThemeKeywords.length; i++) {
-        if (mediaUrlBaseLower.includes(wideThemeKeywords[i])) {
-            return 'wide';
-        }
-    }
-
-    // 默认是窄主题（Bootstrap 等）
-    return 'narrow';
-}
-
-function parseRgbColor(color) {
-    if (!color) return null;
-    var m = color.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\d.]+))?\s*\)/i);
-    if (!m) return null;
-    return {
-        r: parseInt(m[1]),
-        g: parseInt(m[2]),
-        b: parseInt(m[3]),
-        a: m[4] != null ? parseFloat(m[4]) : 1
-    };
-}
-
-function isDarkRgb(rgb) {
-    if (!rgb) return false;
-    var lum = 0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b;
-    return lum < 140;
-}
-
-function getLuCiColorScheme() {
-    try {
-        var cbiSection = document.querySelector('.cbi-section');
-        var targetElement = cbiSection || document.querySelector('.main') || document.body;
-        var style = window.getComputedStyle(targetElement);
-        var bg = style.backgroundColor;
-
-        if (!bg || bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent') {
-            var allCbiSections = document.querySelectorAll('.cbi-section');
-            for (var i = 0; i < allCbiSections.length; i++) {
-                var s = window.getComputedStyle(allCbiSections[i]);
-                var sectionBg = s.backgroundColor;
-                if (sectionBg && sectionBg !== 'rgba(0, 0, 0, 0)' && sectionBg !== 'transparent') {
-                    bg = sectionBg;
-                    break;
-                }
-            }
-        }
-
-        return isDarkRgb(parseRgbColor(bg)) ? 'dark' : 'light';
-    } catch (e) {
-        return 'light';
-    }
-}
-
-function transformPrefersDarkBlocks(cssText, enableDark) {
-    var token = '@media (prefers-color-scheme: dark)';
-    var out = '';
-    var i = 0;
-
-    while (i < cssText.length) {
-        var idx = cssText.indexOf(token, i);
-        if (idx < 0) {
-            out += cssText.slice(i);
-            break;
-        }
-
-        out += cssText.slice(i, idx);
-
-        var braceIdx = cssText.indexOf('{', idx + token.length);
-        if (braceIdx < 0) {
-            out += cssText.slice(idx);
-            break;
-        }
-
-        var depth = 1;
-        var j = braceIdx + 1;
-        while (j < cssText.length && depth > 0) {
-            var ch = cssText[j];
-            if (ch === '{') depth++;
-            else if (ch === '}') depth--;
-            j++;
-        }
-
-        var inner = cssText.slice(braceIdx + 1, j - 1);
-        if (enableDark) out += inner;
-
-        i = j;
-    }
-
-    return out;
-}
 
 function formatSize(bytes) {
     if (bytes === 0) return '0 B';
@@ -378,7 +266,7 @@ return view.extend({
 
         // 生成样式字符串的函数
         function generateStyles(colorScheme) {
-            var scheme = colorScheme || getLuCiColorScheme();
+            var scheme = colorScheme || 'light';
             var css = `
             .bandix-container {
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -445,16 +333,6 @@ return view.extend({
                 transform: translateY(-1px);
             }
             
-            @media (prefers-color-scheme: dark) {
-                .bandix-update-badge {
-                    background-color: rgba(239, 68, 68, 0.2);
-                    color: #f87171;
-                }
-                
-                .bandix-update-badge:hover {
-                    background-color: rgba(239, 68, 68, 0.3);
-                }
-            }
             
             /* 移动端隐藏版本信息和更新徽章 */
             @media (max-width: 768px) {
@@ -535,20 +413,7 @@ return view.extend({
                 font-size: 0.875rem;
             }
             
-            /* 只在宽模式下应用警告样式 */
-            .bandix-alert.wide-theme {
-                background-color: rgba(251, 191, 36, 0.1);
-                border: 1px solid rgba(251, 191, 36, 0.3);
-                color: #92400e;
-            }
             
-            @media (prefers-color-scheme: dark) {
-                .bandix-alert.wide-theme {
-                    background-color: rgba(251, 191, 36, 0.15);
-                    border-color: rgba(251, 191, 36, 0.4);
-                    color: #fbbf24;
-                }
-            }
             
             .bandix-alert-icon {
                 font-size: 0.875rem;
@@ -868,16 +733,6 @@ return view.extend({
                 transform: translateY(-2px);
             }
             
-            @media (prefers-color-scheme: dark) {
-                .stats-grid .cbi-section {
-                    border-color: rgba(255, 255, 255, 0.15);
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-                }
-                
-                .stats-grid .cbi-section:hover {
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-                }
-            }
             
             .stats-card-icon {
                 font-size: 0.875rem;
@@ -980,12 +835,6 @@ return view.extend({
                 opacity: 1;
             }
             
-            @media (prefers-color-scheme: dark) {
-                .bandix_modal {
-                    background-color: rgba(30, 30, 30, 0.98);
-                    color: #e5e7eb;
-                }
-            }
             
             .bandix_modal-header {
                 padding: 20px;
@@ -1047,12 +896,6 @@ return view.extend({
                 opacity: 1;
             }
 
-            @media (prefers-color-scheme: dark) {
-                .whitelist_modal {
-                    background-color: rgba(30, 30, 30, 0.98);
-                    color: #e5e7eb;
-                }
-            }
 
             .whitelist_modal-header {
                 padding: 16px 20px 0 20px;
@@ -1104,11 +947,6 @@ return view.extend({
                 border-radius: 8px;
             }
 
-            @media (prefers-color-scheme: dark) {
-                .whitelist_modal-item {
-                    border-color: rgba(255, 255, 255, 0.15);
-                }
-            }
 
             .whitelist_modal-mac {
                 font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -1159,11 +997,6 @@ return view.extend({
                 margin-bottom: 20px;
             }
             
-            @media (prefers-color-scheme: dark) {
-                .bandix_modal-tabs {
-                    border-bottom-color: rgba(255, 255, 255, 0.15);
-                }
-            }
             
             .bandix_modal-tab {
                 flex: 1;
@@ -1179,23 +1012,12 @@ return view.extend({
                 border-bottom: 2px solid transparent;
             }
             
-            @media (prefers-color-scheme: dark) {
-                .bandix_modal-tab {
-                    color: rgba(255, 255, 255, 0.6);
-                }
-            }
             
             .bandix_modal-tab:hover {
                 color: rgba(0, 0, 0, 0.8);
                 background-color: rgba(0, 0, 0, 0.02);
             }
             
-            @media (prefers-color-scheme: dark) {
-                .bandix_modal-tab:hover {
-                    color: rgba(255, 255, 255, 0.8);
-                    background-color: rgba(255, 255, 255, 0.05);
-                }
-            }
             
             .bandix_modal-tab.active {
                 color: #3b82f6;
@@ -1247,21 +1069,11 @@ return view.extend({
                 text-align: center;
             }
             
-            @media (prefers-color-scheme: dark) {
-                .schedule-day-btn {
-                    border-color: rgba(255, 255, 255, 0.2);
-                }
-            }
             
             .schedule-day-btn:hover {
                 background-color: rgba(0, 0, 0, 0.05);
             }
             
-            @media (prefers-color-scheme: dark) {
-                .schedule-day-btn:hover {
-                    background-color: rgba(255, 255, 255, 0.05);
-                }
-            }
             
             .schedule-day-btn.active {
                 background-color: #3b82f6;
@@ -1273,16 +1085,10 @@ return view.extend({
                 min-height: 200px;
                 max-height: 400px;
                 overflow-y: auto;
-                border: 1px dashed rgba(0, 0, 0, 0.2);
                 border-radius: 4px;
                 padding: 16px;
             }
             
-            @media (prefers-color-scheme: dark) {
-                .schedule-rules-list {
-                    border-color: rgba(255, 255, 255, 0.2);
-                }
-            }
             
             .schedule-rules-empty {
                 display: flex;
@@ -1291,19 +1097,13 @@ return view.extend({
                 justify-content: center;
                 min-height: 200px;
                 text-align: center;
-                color: rgba(0, 0, 0, 0.5);
                 font-size: 0.875rem;
             }
             
-            @media (prefers-color-scheme: dark) {
-                .schedule-rules-empty {
-                    color: rgba(255, 255, 255, 0.5);
-                }
-            }
             
             .schedule-rule-item {
                 padding: 12px;
-                border: 1px solid rgba(0, 0, 0, 0.1);
+                border: 1px solid;
                 border-radius: 4px;
                 margin-bottom: 8px;
                 display: flex;
@@ -1311,11 +1111,6 @@ return view.extend({
                 align-items: center;
             }
             
-            @media (prefers-color-scheme: dark) {
-                .schedule-rule-item {
-                    border-color: rgba(255, 255, 255, 0.15);
-                }
-            }
             
             .schedule-rule-info {
                 flex: 1;
@@ -1408,15 +1203,9 @@ return view.extend({
             .confirm-dialog-message {
                 font-size: 0.875rem;
                 line-height: 1.5;
-                color: rgba(0, 0, 0, 0.7);
                 margin-bottom: 20px;
             }
             
-            @media (prefers-color-scheme: dark) {
-                .confirm-dialog-message {
-                    color: rgba(255, 255, 255, 0.7);
-                }
-            }
             
             .confirm-dialog-footer {
                 display: flex;
@@ -1560,11 +1349,6 @@ return view.extend({
                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
                 }
                 
-                @media (prefers-color-scheme: dark) {
-                    .device-card {
-                        border-color: rgba(255, 255, 255, 0.15);
-                    }
-                }
                 
                 .device-card-header {
                     display: flex;
@@ -1575,11 +1359,6 @@ return view.extend({
                     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
                 }
                 
-                @media (prefers-color-scheme: dark) {
-                    .device-card-header {
-                        border-bottom-color: rgba(255, 255, 255, 0.15);
-                    }
-                }
                 
                 .device-card-name {
                     flex: 1;
@@ -1658,11 +1437,6 @@ return view.extend({
                     border-top: 1px solid rgba(0, 0, 0, 0.1);
                 }
                 
-                @media (prefers-color-scheme: dark) {
-                    .device-card-lan {
-                        border-top-color: rgba(255, 255, 255, 0.15);
-                    }
-                }
                 
                 /* 规则显示样式 */
                 .device-card-rules {
@@ -1671,11 +1445,6 @@ return view.extend({
                     border-top: 1px solid rgba(0, 0, 0, 0.1);
                 }
                 
-                @media (prefers-color-scheme: dark) {
-                    .device-card-rules {
-                        border-top-color: rgba(255, 255, 255, 0.15);
-                    }
-                }
                 
                 .device-card-rules-content {
                     display: flex;
@@ -1756,14 +1525,6 @@ return view.extend({
                 color: #1f2937;
             }
             
-            @media (prefers-color-scheme: dark) {
-                .history-tooltip {
-                    background-color: rgba(30, 30, 30, 0.98);
-                    border-color: rgba(255, 255, 255, 0.2);
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-                    color: #e5e7eb;
-                }
-            }
             .history-tooltip .ht-title { font-weight: 700; margin-bottom: 6px; }
             .history-tooltip .ht-row { display: flex; justify-content: space-between; gap: 12px; }
             .history-tooltip .ht-key { opacity: 0.7; }
@@ -1809,14 +1570,6 @@ return view.extend({
 				color: #1f2937;
 			}
 			
-			@media (prefers-color-scheme: dark) {
-				.schedule-rules-tooltip {
-					background-color: rgba(30, 30, 30, 0.98);
-					border-color: rgba(255, 255, 255, 0.2);
-					box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-					color: #e5e7eb;
-				}
-			}
 			
 			.schedule-rules-tooltip .srt-title {
 				font-weight: 700;
@@ -1829,11 +1582,6 @@ return view.extend({
 				border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 			}
 			
-			@media (prefers-color-scheme: dark) {
-				.schedule-rules-tooltip .srt-rule-item {
-					border-bottom-color: rgba(255, 255, 255, 0.15);
-				}
-			}
 			
 			.schedule-rules-tooltip .srt-rule-item:last-child {
 				border-bottom: none;
@@ -1880,11 +1628,6 @@ return view.extend({
 				border-radius: 8px;
 			}
 			
-			@media (prefers-color-scheme: dark) {
-				.traffic-stats-section {
-					border-color: rgba(255, 255, 255, 0.15);
-				}
-			}
 			
 			.traffic-stats-section h4 {
 				margin: 0 0 16px 0;
@@ -1916,11 +1659,6 @@ return view.extend({
 				border-radius: 8px;
 			}
 			
-			@media (prefers-color-scheme: dark) {
-				.usage-ranking-query {
-					background-color: rgba(255, 255, 255, 0.03);
-				}
-			}
 			
 			.usage-ranking-date-range-row {
 				display: flex;
@@ -2019,12 +1757,6 @@ return view.extend({
 				opacity: 0;
 			}
 
-			@media (prefers-color-scheme: dark) {
-				.usage-ranking-query-btn.bandix-loading::after {
-					border-color: rgba(96, 165, 250, 0.3);
-					border-top-color: #60a5fa;
-				}
-			}
 			
 			
 			.usage-ranking-query-reset {
@@ -2043,17 +1775,6 @@ return view.extend({
 				border-color: rgba(0, 0, 0, 0.25);
 			}
 			
-			@media (prefers-color-scheme: dark) {
-				.usage-ranking-query-reset {
-					color: #9ca3af;
-					border-color: rgba(255, 255, 255, 0.15);
-				}
-				
-				.usage-ranking-query-reset:hover {
-					background-color: rgba(255, 255, 255, 0.05);
-					border-color: rgba(255, 255, 255, 0.25);
-				}
-			}
 			
 			.usage-ranking-timeline {
 				margin-top: 12px;
@@ -2063,11 +1784,6 @@ return view.extend({
 				position: relative;
 			}
 			
-			@media (prefers-color-scheme: dark) {
-				.usage-ranking-timeline {
-					background-color: rgba(255, 255, 255, 0.1);
-				}
-			}
 			
 			.usage-ranking-timeline-range {
 				position: absolute;
@@ -2105,19 +1821,6 @@ return view.extend({
 				background: rgba(0, 0, 0, 0.3);
 			}
 			
-			@media (prefers-color-scheme: dark) {
-				.usage-ranking-list::-webkit-scrollbar-track {
-					background: rgba(255, 255, 255, 0.05);
-				}
-				
-				.usage-ranking-list::-webkit-scrollbar-thumb {
-					background: rgba(255, 255, 255, 0.2);
-				}
-				
-				.usage-ranking-list::-webkit-scrollbar-thumb:hover {
-					background: rgba(255, 255, 255, 0.3);
-				}
-			}
 			
 			.usage-ranking-controls {
 				display: flex;
@@ -2130,11 +1833,6 @@ return view.extend({
 				font-size: 0.875rem;
 			}
 			
-			@media (prefers-color-scheme: dark) {
-				.usage-ranking-controls {
-					background-color: rgba(255, 255, 255, 0.03);
-				}
-			}
 			
 			.usage-ranking-info-text {
 				opacity: 0.6;
@@ -2157,18 +1855,6 @@ return view.extend({
 				border-color: rgba(59, 130, 246, 0.3);
 			}
 			
-			@media (prefers-color-scheme: dark) {
-				.usage-ranking-toggle-btn {
-					background-color: rgba(59, 130, 246, 0.15);
-					border-color: rgba(59, 130, 246, 0.25);
-					color: #60a5fa;
-				}
-				
-				.usage-ranking-toggle-btn:hover {
-					background-color: rgba(59, 130, 246, 0.2);
-					border-color: rgba(59, 130, 246, 0.35);
-				}
-			}
 			
 			.usage-ranking-item {
 				position: relative;
@@ -2183,12 +1869,6 @@ return view.extend({
 				overflow: hidden;
 			}
 			
-			@media (prefers-color-scheme: dark) {
-				.usage-ranking-item {
-					background-color: rgba(255, 255, 255, 0.03);
-					border-color: rgba(255, 255, 255, 0.08);
-				}
-			}
 			
 			.usage-ranking-item:hover {
 				background-color: rgba(0, 0, 0, 0.04);
@@ -2197,13 +1877,6 @@ return view.extend({
 				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 			}
 			
-			@media (prefers-color-scheme: dark) {
-				.usage-ranking-item:hover {
-					background-color: rgba(255, 255, 255, 0.05);
-					border-color: rgba(255, 255, 255, 0.12);
-					box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-				}
-			}
 			
 			/* 背景进度条 */
 			.usage-ranking-item::before {
@@ -2218,11 +1891,6 @@ return view.extend({
 				z-index: 0;
 			}
 			
-			@media (prefers-color-scheme: dark) {
-				.usage-ranking-item::before {
-					background: linear-gradient(90deg, rgba(59, 130, 246, 0.12) 0%, rgba(59, 130, 246, 0.04) 100%);
-				}
-			}
 			
 			.usage-ranking-item > * {
 				position: relative;
@@ -2242,11 +1910,6 @@ return view.extend({
 				color: #3b82f6;
 			}
 			
-			@media (prefers-color-scheme: dark) {
-				.usage-ranking-rank {
-					background-color: rgba(59, 130, 246, 0.15);
-				}
-			}
 			
 			.usage-ranking-info {
 				flex: 1;
@@ -2311,11 +1974,6 @@ return view.extend({
 				font-weight: 600;
 			}
 			
-			@media (prefers-color-scheme: dark) {
-				.usage-ranking-traffic-item.total {
-					color: #9ca3af;
-				}
-			}
 			
 			.usage-ranking-traffic-arrow {
 				font-weight: 700;
@@ -2330,11 +1988,6 @@ return view.extend({
 				text-align: right;
 			}
 			
-			@media (prefers-color-scheme: dark) {
-				.usage-ranking-percentage {
-					color: #60a5fa;
-				}
-			}
 			
 			.traffic-increments-filters {
 				display: flex;
@@ -2367,11 +2020,6 @@ return view.extend({
 				border-radius: 8px;
 			}
 			
-			@media (prefers-color-scheme: dark) {
-				.traffic-increments-query {
-					background-color: rgba(255, 255, 255, 0.03);
-				}
-			}
 			
 			
 			.traffic-increments-chart {
@@ -2383,34 +2031,29 @@ return view.extend({
 			
 			.traffic-increments-tooltip {
 				position: absolute;
-				background-color: rgba(0, 0, 0, 0.9);
-				color: white;
+				background-color: #ffffff;
+				color: #1f2937;
 				padding: 12px;
-				border: 1px solid rgba(255, 255, 255, 0.2);
+				border: 1px solid rgba(0, 0, 0, 0.1);
 				border-radius: 6px;
 				font-size: 0.8125rem;
 				pointer-events: none;
 				z-index: 1000;
-				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 				display: none;
 				min-width: 280px;
 				max-width: 400px;
 			}
 
-			@media (prefers-color-scheme: dark) {
-				.traffic-increments-tooltip {
-					border-color: rgba(255, 255, 255, 0.3);
-					box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-				}
-			}
 
 			.traffic-increments-tooltip-title {
 				font-weight: 600;
 				margin-bottom: 8px;
-				border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+				border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 				padding-bottom: 4px;
 				font-size: 0.875rem;
 			}
+
 
 			.traffic-increments-tooltip-section {
 				margin-bottom: 8px;
@@ -2426,10 +2069,11 @@ return view.extend({
 				text-transform: uppercase;
 				letter-spacing: 0.5px;
 				margin-bottom: 4px;
-				color: rgba(255, 255, 255, 0.8);
-				border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+				color: rgba(0, 0, 0, 0.7);
+				border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 				padding-bottom: 2px;
 			}
+
 
 			.traffic-increments-tooltip-item {
 				display: flex;
@@ -2494,11 +2138,6 @@ return view.extend({
 				background-color: rgba(0, 0, 0, 0.02);
 			}
 			
-			@media (prefers-color-scheme: dark) {
-				.traffic-increments-summary-item {
-					background-color: rgba(255, 255, 255, 0.05);
-				}
-			}
 			
 			.traffic-increments-summary-label {
 				font-size: 0.75rem;
@@ -2676,11 +2315,6 @@ return view.extend({
 					flex-shrink: 0;
 				}
 				
-				@media (prefers-color-scheme: dark) {
-					.usage-ranking-meta > .usage-ranking-meta-total {
-						color: #9ca3af;
-					}
-				}
 				
 				.usage-ranking-stats {
 					flex-direction: column;
@@ -2797,17 +2431,16 @@ return view.extend({
 			}
 
         `;
-            return transformPrefersDarkBlocks(css, scheme === 'dark');
+            return css;
         }
 
         // 添加现代化样式
-        var initialScheme = getLuCiColorScheme();
-        document.documentElement.setAttribute('data-bandix-theme', initialScheme);
+        var initialScheme = 'light';
 
         var oldStyle = document.getElementById('bandix-styles');
         if (oldStyle && oldStyle.parentNode) oldStyle.parentNode.removeChild(oldStyle);
 
-        var style = E('style', { 'id': 'bandix-styles', 'data-bandix-scheme': initialScheme }, generateStyles(initialScheme));
+        var style = E('style', { 'id': 'bandix-styles' }, generateStyles(initialScheme));
         document.head.appendChild(style);
 
         var view = E('div', { 'class': 'bandix-container' }, [
@@ -2829,7 +2462,7 @@ return view.extend({
 
             // 警告提示（包含在线设备数）
             E('div', {
-                'class': 'bandix-alert' + (getThemeType() === 'wide' ? ' wide-theme' : '')
+                'class': 'bandix-alert'
             }, [
                 E('div', { 'style': 'display: flex; align-items: center; gap: 8px;' }, [
                     E('span', { 'style': 'font-size: 1rem;' }, '⚠'),
@@ -2901,7 +2534,7 @@ return view.extend({
                         ]),
                         E('div', { 'class': 'device-group' }, [
                             E('span', { 'class': 'device-group-label' }, _('Global Rate Limit')),
-                            E('span', { 'class': 'bandix-badge', 'id': 'bandix_whitelist_badge', 'style': 'cursor: pointer; user-select: none;' }, _('Loading...'))
+                            E('span', { 'class': 'cbi-button', 'id': 'bandix_whitelist_badge', 'style': 'cursor: pointer; user-select: none;' }, _('Loading...'))
                         ])
                     ])
                 ]),
@@ -3175,7 +2808,7 @@ return view.extend({
 
         // 创建限速设置模态框
         var bandix_modal = E('div', { 'class': 'bandix_modal-overlay', 'id': 'rate-limit-bandix_modal' }, [
-            E('div', { 'class': 'bandix_modal' }, [
+            E('div', { 'class': 'modal' }, [
                 // E('div', { 'class': 'bandix_modal-header' }, [
                 //     E('h3', { 'class': 'bandix_modal-title' }, _('Device Settings'))
                 // ]),
@@ -3218,7 +2851,7 @@ return view.extend({
 
         // 创建添加规则模态框
         var addRuleModal = E('div', { 'class': 'bandix_modal-overlay', 'id': 'add-rule-bandix_modal' }, [
-            E('div', { 'class': 'bandix_modal' }, [
+            E('div', { 'class': 'modal' }, [
                 E('div', { 'class': 'bandix_modal-header' }, [
                     E('h3', { 'class': 'bandix_modal-title' }, _('Add Schedule Rule'))
                 ]),
@@ -3271,7 +2904,7 @@ return view.extend({
 
         // 创建确认对话框
         var confirmDialog = E('div', { 'class': 'bandix_modal-overlay', 'id': 'confirm-dialog-bandix_modal' }, [
-            E('div', { 'class': 'bandix_modal confirm-dialog' }, [
+            E('div', { 'class': 'modal confirm-dialog' }, [
                 E('div', { 'class': 'bandix_modal-body' }, [
                     E('div', { 'class': 'confirm-dialog-title', 'id': 'confirm-dialog-title' }, _('Confirm')),
                     E('div', { 'class': 'confirm-dialog-message', 'id': 'confirm-dialog-message' }, ''),
@@ -3287,7 +2920,7 @@ return view.extend({
 
         // 创建白名单管理弹窗
         var whitelistModal = E('div', { 'class': 'whitelist_modal-overlay', 'id': 'whitelist_modal' }, [
-            E('div', { 'class': 'whitelist_modal' }, [
+            E('div', { 'class': 'modal' }, [
                 E('div', { 'class': 'whitelist_modal-header' }, [
                     E('h3', { 'class': 'whitelist_modal-title' }, _('Global Rate Limit'))
                 ]),
@@ -3519,8 +3152,8 @@ return view.extend({
             var text = state.enabled ? _('Enabled') : _('Disabled');
             var count = (state.macs && state.macs.length) ? state.macs.length : 0;
             badge.textContent = text + ' (' + count + ')';
-            badge.style.backgroundColor = state.enabled ? '#10b981' : '#6b7280';
-            badge.style.color = '#fff';
+            // badge.style.backgroundColor = state.enabled ? '#10b981' : '#6b7280';
+            // badge.style.color = '#fff';
         }
 
         function renderWhitelistList(macs) {
@@ -4009,7 +3642,7 @@ return view.extend({
                             break;
                         }
                     }
-                    // 如果无法获取背景色，CSS 会通过媒体查询自动处理暗色模式
+                    // 如果无法获取背景色，不设置背景色
                     if (!foundBgColor) {
                         // 不设置背景色，让 CSS 媒体查询处理
                     }
@@ -4027,7 +3660,7 @@ return view.extend({
                     }
                 }
             } catch (e) {
-                // 如果出错，CSS 会通过媒体查询自动处理暗色模式
+                // 如果出错，不设置颜色
                 // 不设置样式，让 CSS 处理
             }
 
@@ -4496,12 +4129,9 @@ return view.extend({
             var zoomLevelElement = document.getElementById('history-zoom-level');
             if (!zoomLevelElement) return;
 
-            // 如果是窄主题，隐藏 zoom 显示
-            var themeType = getThemeType();
-            if (themeType === 'narrow') {
-                zoomLevelElement.style.display = 'none';
-                return;
-            }
+            // 默认隐藏 zoom 显示（窄主题样式）
+            zoomLevelElement.style.display = 'none';
+            return;
 
             if (zoomScale <= 1) {
                 zoomLevelElement.style.display = 'none';
@@ -5457,7 +5087,7 @@ return view.extend({
                                     break;
                                 }
                             }
-                            // 如果无法获取背景色，CSS 会通过媒体查询自动处理暗色模式
+                            // 如果无法获取背景色，不设置背景色
                             if (!foundBgColor) {
                                 // 不设置背景色，让 CSS 媒体查询处理
                             }
@@ -5479,7 +5109,7 @@ return view.extend({
 
                         // 边框和阴影由 CSS 媒体查询自动处理
                     } catch (e) {
-                        // 如果出错，CSS 会通过媒体查询自动处理暗色模式
+                        // 如果出错，不设置颜色
                         // 不设置样式，让 CSS 处理
                     }
 
@@ -5913,9 +5543,8 @@ return view.extend({
                 filteredDevices.forEach(function (device) {
                     var isOnline = isDeviceOnline(device);
 
-                    // 根据主题类型决定按钮显示内容
-                    var themeType = getThemeType();
-                    var buttonText = themeType === 'narrow' ? '⚙' : _('Settings');
+                    // 默认使用窄主题样式
+                    var buttonText = '⚙';
 
                     var actionButton = E('button', {
                         'class': 'cbi-button cbi-button-action',
@@ -7775,125 +7404,8 @@ return view.extend({
             }, 500);
         })();
 
-        // 自动适应主题背景色和文字颜色的函数（仅应用于弹窗和 tooltip）
-        function applyThemeColors() {
-            try {
-                var prevScheme = document.documentElement.getAttribute('data-bandix-theme');
-                var scheme = getLuCiColorScheme();
-                document.documentElement.setAttribute('data-bandix-theme', scheme);
-                var styleEl = document.getElementById('bandix-styles');
-                if (styleEl && styleEl.textContent && styleEl.getAttribute('data-bandix-scheme') !== scheme) {
-                    styleEl.textContent = generateStyles(scheme);
-                    styleEl.setAttribute('data-bandix-scheme', scheme);
-                }
-                if (prevScheme && prevScheme !== scheme) {
-                    var incCanvas = document.getElementById('traffic-increments-chart-canvas');
-                    if (incCanvas && incCanvas.__bandixIncrements && incCanvas.__bandixIncrements.increments) {
-                        drawIncrementsChart(incCanvas, incCanvas.__bandixIncrements.increments, incCanvas.__bandixIncrements.aggregation);
-                    }
-                }
 
-                // 优先从 cbi-section 获取颜色
-                var cbiSection = document.querySelector('.cbi-section');
-                var targetElement = cbiSection || document.querySelector('.main') || document.body;
-                var computedStyle = window.getComputedStyle(targetElement);
-                var bgColor = computedStyle.backgroundColor;
-                var textColor = computedStyle.color;
 
-                // 如果无法获取背景色，尝试从其他 cbi-section 获取
-                if (!bgColor || bgColor === 'rgba(0, 0, 0, 0)' || bgColor === 'transparent') {
-                    var allCbiSections = document.querySelectorAll('.cbi-section');
-                    for (var i = 0; i < allCbiSections.length; i++) {
-                        var sectionStyle = window.getComputedStyle(allCbiSections[i]);
-                        var sectionBg = sectionStyle.backgroundColor;
-                        if (sectionBg && sectionBg !== 'rgba(0, 0, 0, 0)' && sectionBg !== 'transparent') {
-                            bgColor = sectionBg;
-                            textColor = sectionStyle.color;
-                            break;
-                        }
-                    }
-                }
-
-                // 只应用到模态框和 tooltip，不修改页面其他元素
-                if (bgColor && bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent') {
-                    // 应用到模态框（确保不透明）
-                    var bandix_modal = document.querySelector('.bandix_modal');
-                    if (bandix_modal) {
-                        var rgbaMatch = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
-                        if (rgbaMatch) {
-                            var r = parseInt(rgbaMatch[1]);
-                            var g = parseInt(rgbaMatch[2]);
-                            var b = parseInt(rgbaMatch[3]);
-                            var alpha = rgbaMatch[4] ? parseFloat(rgbaMatch[4]) : 1;
-                            if (alpha < 0.95) {
-                                bandix_modal.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
-                            } else {
-                                bandix_modal.style.backgroundColor = bgColor;
-                            }
-                        } else {
-                            bandix_modal.style.backgroundColor = bgColor;
-                        }
-                    }
-
-                    // 应用到 tooltip（包括所有 tooltip 实例）
-                    var tooltips = document.querySelectorAll('.history-tooltip, .traffic-increments-tooltip');
-                    tooltips.forEach(function (tooltip) {
-                        var rgbaMatch = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
-                        if (rgbaMatch) {
-                            var r = parseInt(rgbaMatch[1]);
-                            var g = parseInt(rgbaMatch[2]);
-                            var b = parseInt(rgbaMatch[3]);
-                            var alpha = rgbaMatch[4] ? parseFloat(rgbaMatch[4]) : 1;
-                            if (alpha < 0.95) {
-                                tooltip.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
-                            } else {
-                                tooltip.style.backgroundColor = bgColor;
-                            }
-                        } else {
-                            tooltip.style.backgroundColor = bgColor;
-                        }
-                    });
-                }
-
-                // 检测文字颜色并应用（仅应用到模态框和 tooltip）
-                if (textColor && textColor !== 'rgba(0, 0, 0, 0)') {
-                    // 应用到模态框的文字颜色
-                    var bandix_modal = document.querySelector('.bandix_modal');
-                    if (bandix_modal) {
-                        bandix_modal.style.color = textColor;
-                    }
-
-                    // 应用到 tooltip 的文字颜色
-                    var tooltips = document.querySelectorAll('.history-tooltip, .traffic-increments-tooltip');
-                    tooltips.forEach(function (tooltip) {
-                        tooltip.style.color = textColor;
-                    });
-                }
-            } catch (e) {
-                // 如果检测失败，使用默认值
-                console.log('Theme adaptation:', e);
-            }
-        }
-
-        // 初始应用主题颜色
-        setTimeout(applyThemeColors, 100);
-
-        // 监听 DOM 变化，自动应用到新创建的元素
-        if (typeof MutationObserver !== 'undefined') {
-            var observer = new MutationObserver(function (mutations) {
-                applyThemeColors();
-            });
-
-            setTimeout(function () {
-                var container = document.querySelector('.bandix-container');
-                if (container) {
-                    observer.observe(container, {
-                        childList: true,
-                        subtree: true
-                    });
-                }
-            }, 200);
-        }
 
         return view;
     }
