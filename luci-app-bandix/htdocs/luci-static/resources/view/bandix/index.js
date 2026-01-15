@@ -5932,19 +5932,24 @@ return view.extend({
 
             // 如果设备数量超过默认限制，显示控制栏
             if (data.length > USAGE_RANKING_DEFAULT_LIMIT) {
+                var toggleBtn = E('button', {
+                    'class': 'usage-ranking-toggle-btn'
+                }, showAll ? _('Show Top %d').format(USAGE_RANKING_DEFAULT_LIMIT) : _('Show All'));
+                
+                toggleBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    usageRankingShowAll = !usageRankingShowAll;
+                    renderUsageRanking(usageRankingData, usageRankingShowAll);
+                });
+                
                 var controls = E('div', { 'class': 'usage-ranking-controls' }, [
                     E('span', { 'class': 'usage-ranking-info-text' },
                         showAll
                             ? _('Showing all %d devices').format(data.length)
                             : _('Showing top %d of %d devices').format(displayData.length, data.length)
                     ),
-                    E('button', {
-                        'class': 'usage-ranking-toggle-btn',
-                        'onclick': function () {
-                            usageRankingShowAll = !usageRankingShowAll;
-                            renderUsageRanking(usageRankingData, usageRankingShowAll);
-                        }
-                    }, showAll ? _('Show Top %d').format(USAGE_RANKING_DEFAULT_LIMIT) : _('Show All'))
+                    toggleBtn
                 ]);
                 container.appendChild(controls);
             }
