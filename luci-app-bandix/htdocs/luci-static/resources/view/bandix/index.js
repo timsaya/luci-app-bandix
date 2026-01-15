@@ -20,8 +20,8 @@ var BANDIX_TOOLTIP_BG_ARGON_LIGHT = '#ffffff';          // Argon 浅色主题悬
 var BANDIX_TOOLTIP_BG_ARGON_DARK = '#252526';           // Argon 深色主题悬浮框背景
 var BANDIX_TOOLTIP_BG_AURORA_LIGHT = '#ffffff';         // Aurora 浅色主题悬浮框背景
 var BANDIX_TOOLTIP_BG_AURORA_DARK = '#0E172B';          // Aurora 深色主题悬浮框背景
-var BANDIX_TOOLTIP_BG_KUCAT_LIGHT = '#8CADCB';          // Kucat 浅色主题悬浮框背景
-var BANDIX_TOOLTIP_BG_KUCAT_DARK = '#8CADCB';          // Kucat 深色主题悬浮框背景
+var BANDIX_TOOLTIP_BG_KUCAT_LIGHT = '#ffffff';          // Kucat 浅色主题悬浮框背景
+var BANDIX_TOOLTIP_BG_KUCAT_DARK = '#222D3C';          // Kucat 深色主题悬浮框背景
 
 // Modal 背景色定义
 var BANDIX_MODAL_BG_OPENWRT2020_LIGHT = '#ffffff';      // OpenWrt 2020 浅色主题 Modal 背景

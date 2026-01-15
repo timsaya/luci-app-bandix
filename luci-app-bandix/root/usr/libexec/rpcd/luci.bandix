@@ -683,12 +683,6 @@ get_version() {
 	json_cleanup
 }
 
-# 提取主版本号（去掉修订号，如 -r1, -r2 等）
-extract_base_version() {
-	local version="$1"
-	echo "$version" | sed 's/-r[0-9]*$//'
-}
-
 compare_versions() {
 	local ver1="$1"
 	local ver2="$2"
@@ -729,21 +723,42 @@ get_system_arch() {
 check_update() {
 	json_init
 	
+	# 检测包管理器类型
+	local pkg_manager=$(get_package_manager)
+	
 	# 获取当前版本
 	local current_luci_version=""
-	if [ -f "/usr/lib/opkg/info/luci-app-bandix.control" ]; then
-		current_luci_version=$(grep "^Version:" /usr/lib/opkg/info/luci-app-bandix.control 2>/dev/null | cut -d' ' -f2)
-	fi
-	if [ -z "$current_luci_version" ]; then
-		current_luci_version=$(opkg info luci-app-bandix 2>/dev/null | grep "^Version:" | cut -d' ' -f2)
+	if [ "$pkg_manager" = "opkg" ]; then
+		if [ -f "/usr/lib/opkg/info/luci-app-bandix.control" ]; then
+			current_luci_version=$(grep "^Version:" /usr/lib/opkg/info/luci-app-bandix.control 2>/dev/null | cut -d' ' -f2)
+		fi
+		if [ -z "$current_luci_version" ]; then
+			current_luci_version=$(opkg list-installed luci-app-bandix 2>/dev/null | awk '{print $NF}')
+		fi
+	elif [ "$pkg_manager" = "apk" ]; then
+		if [ -f "/lib/apk/db/installed" ]; then
+			current_luci_version=$(grep "^luci-app-bandix-" /lib/apk/db/installed 2>/dev/null | head -n 1 | sed -n 's/^luci-app-bandix-\(.*\)$/\1/p')
+		fi
+		if [ -z "$current_luci_version" ]; then
+			current_luci_version=$(apk info luci-app-bandix 2>/dev/null | grep "^luci-app-bandix-" | head -n 1 | sed -n 's/^luci-app-bandix-\(.*\) .*/\1/p')
+		fi
 	fi
 	
 	local current_bandix_version=""
-	if [ -f "/usr/lib/opkg/info/bandix.control" ]; then
-		current_bandix_version=$(grep "^Version:" /usr/lib/opkg/info/bandix.control 2>/dev/null | cut -d' ' -f2)
-	fi
-	if [ -z "$current_bandix_version" ]; then
-		current_bandix_version=$(opkg info bandix 2>/dev/null | grep "^Version:" | cut -d' ' -f2)
+	if [ "$pkg_manager" = "opkg" ]; then
+		if [ -f "/usr/lib/opkg/info/bandix.control" ]; then
+			current_bandix_version=$(grep "^Version:" /usr/lib/opkg/info/bandix.control 2>/dev/null | cut -d' ' -f2)
+		fi
+		if [ -z "$current_bandix_version" ]; then
+			current_bandix_version=$(opkg list-installed bandix 2>/dev/null | awk '{print $NF}')
+		fi
+	elif [ "$pkg_manager" = "apk" ]; then
+		if [ -f "/lib/apk/db/installed" ]; then
+			current_bandix_version=$(grep "^bandix-" /lib/apk/db/installed 2>/dev/null | grep -v "^luci-app-bandix-" | head -n 1 | sed -n 's/^bandix-\(.*\)$/\1/p')
+		fi
+		if [ -z "$current_bandix_version" ]; then
+			current_bandix_version=$(apk info bandix 2>/dev/null | grep "^bandix-" | head -n 1 | sed -n 's/^bandix-\(.*\) .*/\1/p')
+		fi
 	fi
 	
 	# 检查 luci-app-bandix 更新
@@ -753,7 +768,7 @@ check_update() {
 	local luci_release_body=""
 	local luci_download_url=""
 	
-	local luci_api_result=$(curl -s --connect-timeout 5 --max-time 10 "https://api.github.com/repos/timsaya/luci-app-bandix/releases/latest" 2>/dev/null)
+	local luci_api_result=$(curl -s --connect-timeout 10 --max-time 30 "https://api.github.com/repos/timsaya/luci-app-bandix/releases/latest" 2>/dev/null)
 	if [ $? -eq 0 ] && [ -n "$luci_api_result" ]; then
 		luci_latest_version=$(echo "$luci_api_result" | jsonfilter -e '$.tag_name' 2>/dev/null)
 		# 去掉 v 前缀
@@ -842,7 +857,7 @@ check_update() {
 	local bandix_release_body=""
 	local bandix_download_url=""
 	
-	local bandix_api_result=$(curl -s --connect-timeout 5 --max-time 10 "https://api.github.com/repos/timsaya/openwrt-bandix/releases/latest" 2>/dev/null)
+	local bandix_api_result=$(curl -s --connect-timeout 10 --max-time 30 "https://api.github.com/repos/timsaya/openwrt-bandix/releases/latest" 2>/dev/null)
 	if [ $? -eq 0 ] && [ -n "$bandix_api_result" ]; then
 		bandix_latest_version=$(echo "$bandix_api_result" | jsonfilter -e '$.tag_name' 2>/dev/null)
 		# 去掉 v 前缀
