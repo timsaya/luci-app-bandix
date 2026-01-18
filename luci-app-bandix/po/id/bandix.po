@@ -1126,3 +1126,6 @@ msgstr "Subnet lokal tambahan (notasi CIDR dipisahkan koma, contoh '192.168.2.0/
 
 msgid "No devices"
 msgstr "Tidak ada perangkat"
+
+msgid "LAN Traffic is viewed from the entire subnet perspective, so upload and download are always equal, forming a closed loop. Additionally, due to the presence of dedicated hardware switching chips, LAN traffic between 2 devices (e.g., PC - NAS) within the local network may not be monitorable."
+msgstr "Lalu lintas LAN dilihat dari perspektif seluruh subnet, jadi unggah dan unduh selalu sama, membentuk loop tertutup. Selain itu, karena adanya chip switching perangkat keras khusus, lalu lintas LAN antara 2 perangkat (misalnya, PC - NAS) dalam jaringan lokal mungkin tidak dapat dipantau."

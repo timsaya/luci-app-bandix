@@ -1126,3 +1126,6 @@ msgstr "額外的本地子網（用逗號分隔的CIDR表示法，例如'192.168
 
 msgid "No devices"
 msgstr "無設備"
+
+msgid "LAN Traffic is viewed from the entire subnet perspective, so upload and download are always equal, forming a closed loop. Additionally, due to the presence of dedicated hardware switching chips, LAN traffic between 2 devices (e.g., PC - NAS) within the local network may not be monitorable."
+msgstr "LAN 流量是從整個子網視角來看，所以上傳和下載總是相等，是一個閉環。另外，由於專用硬體交換晶片的存在，區域網路中 2 終端（比如 PC - NAS）之間的 LAN 流量可能無法監控。"

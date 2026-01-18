@@ -405,19 +405,10 @@ return view.extend({
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
                 transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
             }
-            
-            .stats-grid .cbi-section:hover {
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-                transform: translateY(-2px);
-            }
-            
+
             .theme-dark .stats-grid .cbi-section {
                 border-color: rgba(255, 255, 255, 0.15);
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            }
-            
-            .theme-dark .stats-grid .cbi-section:hover {
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
             }
             
             .stats-card-main-value {

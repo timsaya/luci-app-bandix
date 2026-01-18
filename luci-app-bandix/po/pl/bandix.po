@@ -1126,3 +1126,6 @@ msgstr "Dodatkowe lokalne podsieci (notacja CIDR oddzielona przecinkami, np. '19
 
 msgid "No devices"
 msgstr "Brak urządzeń"
+
+msgid "LAN Traffic is viewed from the entire subnet perspective, so upload and download are always equal, forming a closed loop. Additionally, due to the presence of dedicated hardware switching chips, LAN traffic between 2 devices (e.g., PC - NAS) within the local network may not be monitorable."
+msgstr "Ruch LAN jest postrzegany z perspektywy całej podsieci, więc przesyłanie i pobieranie są zawsze równe, tworząc zamkniętą pętlę. Ponadto, ze względu na obecność dedykowanych chipów przełączających sprzętowych, ruch LAN między 2 urządzeniami (np. PC - NAS) w sieci lokalnej może nie być monitorowany."
