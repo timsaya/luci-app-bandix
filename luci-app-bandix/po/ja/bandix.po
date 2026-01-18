@@ -1126,3 +1126,6 @@ msgstr "追加のローカルサブネット（カンマ区切りのCIDR表記�
 
 msgid "No devices"
 msgstr "デバイスなし"
+
+msgid "LAN Traffic is viewed from the entire subnet perspective, so upload and download are always equal, forming a closed loop. Additionally, due to the presence of dedicated hardware switching chips, LAN traffic between 2 devices (e.g., PC - NAS) within the local network may not be monitorable."
+msgstr "LANトラフィックはサブネット全体の視点から見られるため、アップロードとダウンロードは常に等しく、閉ループを形成します。さらに、専用ハードウェアスイッチングチップの存在により、ローカルネットワーク内の2つのデバイス（例：PC - NAS）間のLANトラフィックは監視できない可能性があります。"

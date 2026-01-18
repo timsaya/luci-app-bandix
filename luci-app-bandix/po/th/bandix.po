@@ -1126,3 +1126,6 @@ msgstr "ซับเน็ตท้องถิ่นเพิ่มเติม
 
 msgid "No devices"
 msgstr "ไม่มีอุปกรณ์"
+
+msgid "LAN Traffic is viewed from the entire subnet perspective, so upload and download are always equal, forming a closed loop. Additionally, due to the presence of dedicated hardware switching chips, LAN traffic between 2 devices (e.g., PC - NAS) within the local network may not be monitorable."
+msgstr "LAN Traffic ถูกมองจากมุมมองของทั้ง subnet ดังนั้นการอัปโหลดและการดาวน์โหลดจึงเท่ากันเสมอ สร้างเป็นวงปิด นอกจากนี้ เนื่องจากมีชิปสวิตชิ่งฮาร์ดแวร์เฉพาะ LAN Traffic ระหว่าง 2 อุปกรณ์ (เช่น PC - NAS) ภายในเครือข่ายท้องถิ่นอาจไม่สามารถตรวจสอบได้"

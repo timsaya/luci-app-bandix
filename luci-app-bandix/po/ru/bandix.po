@@ -1126,3 +1126,6 @@ msgstr "Дополнительные локальные подсети (CIDR н�
 
 msgid "No devices"
 msgstr "Нет устройств"
+
+msgid "LAN Traffic is viewed from the entire subnet perspective, so upload and download are always equal, forming a closed loop. Additionally, due to the presence of dedicated hardware switching chips, LAN traffic between 2 devices (e.g., PC - NAS) within the local network may not be monitorable."
+msgstr "Трафик LAN рассматривается с точки зрения всей подсети, поэтому загрузка и выгрузка всегда равны, образуя замкнутый цикл. Кроме того, из-за наличия специализированных аппаратных коммутационных чипов, трафик LAN между 2 устройствами (например, ПК - NAS) в локальной сети может быть не подлежащим мониторингу."

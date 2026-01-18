@@ -1126,3 +1126,6 @@ msgstr "Subredes locales adicionales (notación CIDR separada por comas, ej. '19
 
 msgid "No devices"
 msgstr "Sin dispositivos"
+
+msgid "LAN Traffic is viewed from the entire subnet perspective, so upload and download are always equal, forming a closed loop. Additionally, due to the presence of dedicated hardware switching chips, LAN traffic between 2 devices (e.g., PC - NAS) within the local network may not be monitorable."
+msgstr "El tráfico LAN se ve desde la perspectiva de toda la subred, por lo que la carga y descarga siempre son iguales, formando un bucle cerrado. Además, debido a la presencia de chips de conmutación de hardware dedicados, el tráfico LAN entre 2 dispositivos (p. ej., PC - NAS) dentro de la red local puede no ser monitoreable."

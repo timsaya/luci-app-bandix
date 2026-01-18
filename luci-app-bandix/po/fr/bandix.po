@@ -1126,3 +1126,6 @@ msgstr "Sous-réseaux locaux supplémentaires (notation CIDR séparée par des v
 
 msgid "No devices"
 msgstr "Aucun appareil"
+
+msgid "LAN Traffic is viewed from the entire subnet perspective, so upload and download are always equal, forming a closed loop. Additionally, due to the presence of dedicated hardware switching chips, LAN traffic between 2 devices (e.g., PC - NAS) within the local network may not be monitorable."
+msgstr "Le trafic LAN est vu depuis la perspective de tout le sous-réseau, donc l'upload et le download sont toujours égaux, formant une boucle fermée. De plus, en raison de la présence de puces de commutation matérielles dédiées, le trafic LAN entre 2 appareils (par ex., PC - NAS) au sein du réseau local peut ne pas être surveillable."

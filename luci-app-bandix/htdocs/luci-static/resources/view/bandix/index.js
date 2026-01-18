@@ -892,11 +892,6 @@ return view.extend({
                 margin: 0 0 0 0 !important;
             }
             
-            .stats-grid .cbi-section:hover {
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-                transform: translateY(-2px);
-            }
-            
             
             .stats-card-icon {
                 font-size: 0.875rem;
@@ -1384,6 +1379,10 @@ return view.extend({
                 .bandix-alert #device-count {
                     width: 100%;
                     text-align: left;
+                }
+                
+                .stats-card-info-icon {
+                    display: none;
                 }
                 
                 #history-canvas { 
@@ -2142,7 +2141,7 @@ return view.extend({
 			}
 			
 			.traffic-increments-tooltip {
-				position: absolute;
+				position: fixed;
 				background-color: ${themeColors.tooltipBg} !important;
 				color: ${tooltipTextColor} !important;
 				padding: 12px;
@@ -2234,6 +2233,44 @@ return view.extend({
 				background-color: #10b981;
 			}
 			
+			.stats-card-info-icon {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				width: 16px;
+				height: 16px;
+				border-radius: 50%;
+				background-color: ${scheme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)'};
+				color: ${scheme === 'dark' ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'};
+				font-size: 0.75rem;
+				font-weight: 600;
+				cursor: help;
+				margin-left: 6px;
+				vertical-align: middle;
+				line-height: 1;
+				transition: background-color 0.2s ease, color 0.2s ease;
+			}
+			
+			.stats-card-info-icon:hover {
+				background-color: ${scheme === 'dark' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.15)'};
+				color: ${scheme === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)'};
+			}
+			
+			.lan-traffic-tooltip {
+				position: absolute;
+				background-color: ${themeColors.tooltipBg} !important;
+				color: ${tooltipTextColor} !important;
+				padding: 12px;
+				border-radius: 6px;
+				font-size: 0.8125rem;
+				pointer-events: none;
+				z-index: 1000;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+				display: none;
+				min-width: 280px;
+				max-width: 400px;
+				line-height: 1.5;
+			}
 			
 			.traffic-increments-summary {
 				display: grid;
@@ -2871,6 +2908,10 @@ return view.extend({
         // 创建全局的 Schedule Rules Tooltip 元素
         var scheduleRulesTooltip = E('div', { 'class': 'schedule-rules-tooltip', 'id': 'schedule-rules-tooltip' });
         document.body.appendChild(scheduleRulesTooltip);
+
+        // 创建全局的 LAN Traffic Tooltip 元素
+        var lanTrafficTooltip = E('div', { 'class': 'lan-traffic-tooltip', 'id': 'lan-traffic-tooltip' });
+        document.body.appendChild(lanTrafficTooltip);
 
         // 构建规则列表的 HTML（用于 tooltip）
         function buildScheduleRulesTooltipHtml(allRules, activeRules, speedUnit) {
@@ -5216,6 +5257,9 @@ return view.extend({
         // 存储移动端卡片展开状态（设备MAC地址集合）
         var expandedDeviceCards = new Set();
 
+        // 预先获取 LAN Traffic tooltip 翻译文本
+        var lanTrafficTooltipText = _('LAN Traffic is viewed from the entire subnet perspective, so upload and download are always equal, forming a closed loop. Additionally, due to the presence of dedicated hardware switching chips, LAN traffic between 2 devices (e.g., PC - NAS) within the local network may not be monitorable.');
+
         // 定义更新设备数据的函数
         function updateDeviceData() {
             var devicePeriod = localStorage.getItem('bandix_device_period') || 'all';
@@ -5265,8 +5309,11 @@ return view.extend({
                 statsGrid.innerHTML = '';
 
                 // LAN 流量卡片
-                statsGrid.appendChild(E('div', { 'class': 'cbi-section' }, [
-                    E('div', { 'class': 'stats-card-title' }, _('LAN Traffic')),
+                var lanTrafficCard = E('div', { 'class': 'cbi-section', 'id': 'lan-traffic-card' }, [
+                    E('div', { 'class': 'stats-card-title' }, [
+                        E('span', {}, _('LAN Traffic')),
+                        E('span', { 'class': 'stats-card-info-icon' }, '?')
+                    ]),
                     E('div', { 'style': 'display: flex; flex-direction: column; gap: 8px;' }, [
                         // 上传行
                         E('div', { 'style': 'display: flex; align-items: center; gap: 4px;' }, [
@@ -5281,7 +5328,68 @@ return view.extend({
                             E('span', { 'style': 'font-size: 0.75rem; color: #64748b; margin-left: 4px;' }, '(' + formatSize(totalLanDown) + ')')
                         ])
                     ])
-                ]));
+                ]);
+                statsGrid.appendChild(lanTrafficCard);
+
+                // 设置 LAN Traffic 卡片的 tooltip
+                setTimeout(function() {
+                    var lanTrafficCardEl = document.getElementById('lan-traffic-card');
+                    var tooltip = document.getElementById('lan-traffic-tooltip');
+                    if (lanTrafficCardEl && tooltip) {
+                        var isMobile = window.innerWidth <= 768;
+                        if (isMobile) return;
+                        
+                        var tooltipTextSet = false;
+                        
+                        function updateTooltipPosition(e) {
+                            if (!tooltipTextSet) {
+                                tooltip.textContent = lanTrafficTooltipText;
+                                tooltipTextSet = true;
+                            }
+                            tooltip.style.display = 'block';
+                            tooltip.style.left = '-9999px';
+                            tooltip.style.top = '-9999px';
+                            var tw = tooltip.offsetWidth || 0;
+                            var th = tooltip.offsetHeight || 0;
+                            
+                            var tooltipX = e.clientX + 15;
+                            var tooltipY = e.clientY - th - 15;
+                            
+                            if (tooltipY < 0) {
+                                tooltipY = e.clientY + 15;
+                            }
+                            
+                            if (tooltipX + tw > window.innerWidth) {
+                                tooltipX = e.clientX - tw - 15;
+                            }
+                            if (tooltipX < 0) {
+                                tooltipX = 10;
+                            }
+                            if (tooltipY + th > window.innerHeight) {
+                                tooltipY = window.innerHeight - th - 10;
+                            }
+                            
+                            tooltip.style.left = tooltipX + 'px';
+                            tooltip.style.top = tooltipY + 'px';
+                        }
+                        
+                        lanTrafficCardEl.addEventListener('mouseenter', function(e) {
+                            updateTooltipPosition(e);
+                        });
+                        
+                        lanTrafficCardEl.addEventListener('mouseleave', function() {
+                            tooltip.style.display = 'none';
+                        });
+                        
+                        lanTrafficCardEl.addEventListener('mousemove', function(e) {
+                            updateTooltipPosition(e);
+                        });
+                        
+                        lanTrafficCardEl.addEventListener('wheel', function() {
+                            tooltip.style.display = 'none';
+                        });
+                    }
+                }, 100);
 
                 // WAN 流量卡片
                 statsGrid.appendChild(E('div', { 'class': 'cbi-section' }, [
@@ -6065,6 +6173,12 @@ return view.extend({
         }
 
         // 更新时间序列增量数据（使用 Traffic Timeline 自己的时间范围）
+        // Traffic Timeline 缩放变量
+        var incrementsZoomEnabled = false;
+        var incrementsZoomScale = 1;
+        var incrementsZoomOffsetX = 0;
+        var incrementsZoomTimer = null;
+
         function updateTrafficIncrements(startMs, endMs, aggregation, mac, callback) {
             // 如果没有传入时间范围，使用独立的时间范围变量
             if (!startMs || !endMs) {
@@ -6181,10 +6295,80 @@ return view.extend({
                 // 绘制图表
                 setTimeout(function () {
                     var aggregation = result.aggregation || 'hourly';
-                    drawIncrementsChart(canvas, normalizedIncrements, aggregation);
+                    
+                    // 重置缩放状态
+                    if (incrementsZoomTimer) {
+                        clearTimeout(incrementsZoomTimer);
+                        incrementsZoomTimer = null;
+                    }
+                    incrementsZoomEnabled = false;
+                    incrementsZoomScale = 1;
+                    incrementsZoomOffsetX = 0;
+                    
+                    drawIncrementsChart(canvas, normalizedIncrements, aggregation, incrementsZoomScale, incrementsZoomOffsetX);
 
                     // 添加鼠标悬浮事件
                     setupChartTooltip(canvas, tooltip, normalizedIncrements, aggregation, selectedNetworkType);
+
+                    // 添加缩放功能
+                    canvas.onmouseenter = function () {
+                        if (incrementsZoomTimer) clearTimeout(incrementsZoomTimer);
+                        incrementsZoomTimer = setTimeout(function () {
+                            incrementsZoomEnabled = true;
+                            incrementsZoomTimer = null;
+                        }, 1000);
+                    };
+
+                    canvas.onmouseleave = function () {
+                        if (incrementsZoomTimer) {
+                            clearTimeout(incrementsZoomTimer);
+                            incrementsZoomTimer = null;
+                        }
+                        incrementsZoomEnabled = false;
+                        incrementsZoomScale = 1;
+                        incrementsZoomOffsetX = 0;
+                        drawIncrementsChart(canvas, normalizedIncrements, aggregation, incrementsZoomScale, incrementsZoomOffsetX);
+                    };
+
+                    canvas.onwheel = function (evt) {
+                        if (!incrementsZoomEnabled) return;
+                        evt.preventDefault();
+
+                        var delta = evt.deltaY > 0 ? 0.9 : 1.1;
+                        var newScale = incrementsZoomScale * delta;
+
+                        // 限制缩放范围
+                        if (newScale < 1) newScale = 1;
+                        if (newScale > 10) newScale = 10;
+
+                        var rect = canvas.getBoundingClientRect();
+                        var mouseX = evt.clientX - rect.left;
+                        var info = canvas.__bandixIncrements;
+                        if (!info || !info.originalIncrements) return;
+
+                        var padding = { top: 20, right: 20, bottom: 40, left: 80 };
+                        var chartWidth = rect.width - padding.left - padding.right;
+                        var relativeX = (mouseX - padding.left) / chartWidth;
+                        var totalLen = info.originalIncrements.length;
+                        var mouseDataIndex = relativeX * totalLen;
+
+                        // 调整偏移以保持鼠标位置为缩放中心
+                        var oldVisibleLen = totalLen / incrementsZoomScale;
+                        var newVisibleLen = totalLen / newScale;
+                        var centerShift = (oldVisibleLen - newVisibleLen) * (mouseDataIndex / totalLen);
+
+                        incrementsZoomScale = newScale;
+                        incrementsZoomOffsetX = Math.max(0, Math.min(totalLen - newVisibleLen, incrementsZoomOffsetX + centerShift));
+
+                        // 重绘图表
+                        try {
+                            drawIncrementsChart(canvas, info.originalIncrements, aggregation, incrementsZoomScale, incrementsZoomOffsetX);
+                            // 重新设置 tooltip（使用原始数据）
+                            setupChartTooltip(canvas, tooltip, info.originalIncrements, aggregation, selectedNetworkType);
+                        } catch (e) {
+                            console.error('Zoom error:', e);
+                        }
+                    };
 
                     // 调用回调函数
                     if (callback) callback();
@@ -6270,8 +6454,12 @@ return view.extend({
         }
 
         // 绘制时间序列增量图表
-        function drawIncrementsChart(canvas, increments, aggregation) {
+        function drawIncrementsChart(canvas, increments, aggregation, scale, offsetX) {
             if (!canvas || !increments || increments.length === 0) return;
+
+            // 缩放参数默认值
+            scale = scale || 1;
+            offsetX = offsetX || 0;
 
             var dpr = window.devicePixelRatio || 1;
             var cssWidth = canvas.parentElement.offsetWidth || 600;
@@ -6289,9 +6477,10 @@ return view.extend({
             var width = cssWidth;
             var height = cssHeight;
 
-            // 计算最大值
+            // 计算最大值（使用原始数据，确保缩放时Y轴范围不变）
+            var originalIncrements = canvas.__bandixIncrementsOriginal || increments;
             var maxValue = 0;
-            increments.forEach(function (item) {
+            originalIncrements.forEach(function (item) {
                 maxValue = Math.max(maxValue, item.total_bytes || 0);
             });
 
@@ -6314,6 +6503,24 @@ return view.extend({
             padding.left = Math.max(padding.left, Math.ceil(maxLabelWidth) + 30); // 确保右侧时间不被裁剪
             var chartWidth = width - padding.left - padding.right;
             var chartHeight = height - padding.top - padding.bottom;
+
+            // 保存原始数据到 canvas
+            if (!canvas.__bandixIncrementsOriginal) {
+                canvas.__bandixIncrementsOriginal = increments;
+            }
+
+            // 应用缩放：只显示部分数据
+            var totalLen = increments.length;
+            var displayIncrements = increments;
+            var displayStartIndex = 0;
+            var displayEndIndex = totalLen;
+
+            if (scale > 1) {
+                var visibleLen = Math.ceil(totalLen / scale);
+                displayStartIndex = Math.floor(offsetX);
+                displayEndIndex = Math.min(totalLen, displayStartIndex + visibleLen);
+                displayIncrements = increments.slice(displayStartIndex, displayEndIndex);
+            }
 
             // 清空画布
             ctx.clearRect(0, 0, width, height);
@@ -6344,7 +6551,7 @@ return view.extend({
             }
 
             // 绘制堆叠柱状图
-            var barWidth = chartWidth / increments.length;
+            var barWidth = chartWidth / displayIncrements.length;
             var barDisplayWidth = barWidth * 0.7; // 柱子显示宽度（留出间距）
 
             var baseY = height - padding.bottom;
@@ -6352,7 +6559,7 @@ return view.extend({
             function px(v) { return Math.round(v); }
             function pxStroke(v) { return Math.round(v) + 0.5; }
 
-            increments.forEach(function (item, index) {
+            displayIncrements.forEach(function (item, index) {
                 var barX = padding.left + barWidth * index + (barWidth - barDisplayWidth) / 2;
                 var rxHeight = chartHeight * ((item.rx_bytes || 0) / maxValue);
                 var txHeight = chartHeight * ((item.tx_bytes || 0) / maxValue);
@@ -6392,61 +6599,95 @@ return view.extend({
 
             // 保存柱子的位置信息，用于鼠标悬浮检测
             canvas.barPositions = [];
-            increments.forEach(function (item, index) {
+            displayIncrements.forEach(function (item, index) {
                 var barX = padding.left + barWidth * index + (barWidth - barDisplayWidth) / 2;
+                var originalIndex = displayStartIndex + index;
                 canvas.barPositions.push({
                     x: px(barX),
                     width: Math.max(1, px(barDisplayWidth)),
-                    index: index,
+                    index: originalIndex,
                     item: item
                 });
             });
-            canvas.__bandixIncrements = { increments: increments, aggregation: aggregation };
+            canvas.__bandixIncrements = { 
+                increments: displayIncrements, 
+                originalIncrements: canvas.__bandixIncrementsOriginal || increments,
+                aggregation: aggregation,
+                scale: scale,
+                offsetX: offsetX,
+                displayStartIndex: displayStartIndex,
+                displayEndIndex: displayEndIndex
+            };
 
-            // 绘制时间标签
+            // 绘制时间标签 - 固定显示 7 个刻度
             ctx.fillStyle = axisTextColor;
             ctx.textAlign = 'center';
             var isMobile = window.innerWidth <= 768;
-            var labelStep = Math.max(1, Math.floor(increments.length / 6));
             var isDaily = aggregation === 'daily';
-            var barWidth = chartWidth / increments.length;
+            var barWidth = chartWidth / displayIncrements.length;
+            
+            // 计算要显示的标签索引位置（固定 7 个，包括第一个和最后一个）
+            var maxLabels = 7;
+            var labelIndices = [];
+            if (displayIncrements.length <= maxLabels) {
+                // 如果数据点少于等于 7 个，全部显示
+                for (var i = 0; i < displayIncrements.length; i++) {
+                    labelIndices.push(i);
+                }
+            } else {
+                // 均匀分布 7 个标签
+                for (var i = 0; i < maxLabels; i++) {
+                    var idx = Math.round((i / (maxLabels - 1)) * (displayIncrements.length - 1));
+                    labelIndices.push(idx);
+                }
+            }
 
-            increments.forEach(function (item, index) {
-                var shouldShowLabel = false;
+            // 移动端只显示第一个和最后一个
+            if (isMobile && displayIncrements.length > 2) {
+                labelIndices = [0, displayIncrements.length - 1];
+            }
 
-                if (isMobile) {
-                    // 移动端：只显示第一个和最后一个
-                    shouldShowLabel = index === 0 || index === increments.length - 1;
+            labelIndices.forEach(function (index) {
+                if (index < 0 || index >= displayIncrements.length) return;
+                
+                var item = displayIncrements[index];
+                // 标签居中显示在每个柱子组的中心
+                var x = padding.left + barWidth * (index + 0.5);
+                var date = new Date(item.ts_ms);
+                var timeStr;
+
+                if (isDaily) {
+                    // 按天聚合：只显示日期
+                    var year = date.getFullYear();
+                    var month = (date.getMonth() + 1).toString().padStart(2, '0');
+                    var day = date.getDate().toString().padStart(2, '0');
+                    timeStr = month + '/' + day;
                 } else {
-                    // 桌面端：按原来的逻辑显示
-                    shouldShowLabel = index % labelStep === 0 || index === increments.length - 1;
+                    // 按小时聚合：显示整点小时
+                    // 使用 start_ts_ms 来确定这个时间段代表哪个小时
+                    var startTs = item.start_ts_ms || item.ts_ms;
+                    var startDate = new Date(startTs);
+
+                    // 使用开始时间的整点小时
+                    var hour = startDate.getHours();
+                    timeStr = (hour < 10 ? '0' : '') + hour + ':00';
                 }
 
-                if (shouldShowLabel) {
-                    // 标签居中显示在每个柱子组的中心
-                    var x = padding.left + barWidth * (index + 0.5);
-                    var date = new Date(item.ts_ms);
-                    var timeStr;
-
-                    if (isDaily) {
-                        // 按天聚合：只显示日期
-                        var year = date.getFullYear();
-                        var month = (date.getMonth() + 1).toString().padStart(2, '0');
-                        var day = date.getDate().toString().padStart(2, '0');
-                        timeStr = month + '/' + day;
-                    } else {
-                        // 按小时聚合：显示整点小时
-                        // 使用 start_ts_ms 来确定这个时间段代表哪个小时
-                        var startTs = item.start_ts_ms || item.ts_ms;
-                        var startDate = new Date(startTs);
-
-                        // 使用开始时间的整点小时
-                        var hour = startDate.getHours();
-                        timeStr = (hour < 10 ? '0' : '') + hour + ':00';
-                    }
-
-                    ctx.fillText(timeStr, x, height - padding.bottom + 20);
+                // 测量文本宽度，确保不会超出边界
+                var textWidth = ctx.measureText(timeStr).width;
+                var labelX = x;
+                
+                // 检查右侧边界
+                if (labelX + textWidth / 2 > width - padding.right) {
+                    labelX = width - padding.right - textWidth / 2;
                 }
+                
+                // 检查左侧边界
+                if (labelX - textWidth / 2 < padding.left) {
+                    labelX = padding.left + textWidth / 2;
+                }
+
+                ctx.fillText(timeStr, labelX, height - padding.bottom + 20);
             });
 
             // 如果存在 hoverIndex，则绘制垂直虚线（鼠标对着的柱子）
@@ -6455,20 +6696,24 @@ return view.extend({
                 if (isMobile) return; // 移动端不绘制悬浮虚线
 
                 var hoverIndex = canvas.__bandixIncrementsHoverIndex;
-                if (typeof hoverIndex === 'number' && hoverIndex >= 0 && hoverIndex < increments.length) {
-                    var barX = padding.left + barWidth * hoverIndex + (barWidth - barDisplayWidth) / 2;
-                    var hoverX = barX + barDisplayWidth / 2; // 虚线在柱子中心
+                if (typeof hoverIndex === 'number' && hoverIndex >= 0) {
+                    // 计算在显示数据中的索引
+                    var displayIndex = hoverIndex - displayStartIndex;
+                    if (displayIndex >= 0 && displayIndex < displayIncrements.length) {
+                        var barX = padding.left + barWidth * displayIndex + (barWidth - barDisplayWidth) / 2;
+                        var hoverX = barX + barDisplayWidth / 2; // 虚线在柱子中心
 
-                    ctx.save();
-                    ctx.strokeStyle = 'rgba(156,163,175,0.9)';
-                    ctx.lineWidth = 1;
-                    ctx.setLineDash([6, 4]);
-                    ctx.beginPath();
-                    ctx.moveTo(hoverX, padding.top);
-                    ctx.lineTo(hoverX, height - padding.bottom);
-                    ctx.stroke();
-                    ctx.setLineDash([]);
-                    ctx.restore();
+                        ctx.save();
+                        ctx.strokeStyle = 'rgba(156,163,175,0.9)';
+                        ctx.lineWidth = 1;
+                        ctx.setLineDash([6, 4]);
+                        ctx.beginPath();
+                        ctx.moveTo(hoverX, padding.top);
+                        ctx.lineTo(hoverX, height - padding.bottom);
+                        ctx.stroke();
+                        ctx.setLineDash([]);
+                        ctx.restore();
+                    }
                 }
             } catch (e) { /* 安全兜底 */ }
         }
@@ -6535,7 +6780,12 @@ return view.extend({
                     y < padding.top || y > rect.height - padding.bottom) {
                     // 清除悬浮索引并重新绘制图表以清除虚线
                     delete canvas.__bandixIncrementsHoverIndex;
-                    drawIncrementsChart(canvas, increments, aggregation);
+                    var info = canvas.__bandixIncrements;
+                    if (info && info.originalIncrements) {
+                        drawIncrementsChart(canvas, info.originalIncrements, aggregation, info.scale || 1, info.offsetX || 0);
+                    } else {
+                        drawIncrementsChart(canvas, increments, aggregation);
+                    }
                     tooltip.style.display = 'none';
                     return;
                 }
@@ -6552,17 +6802,25 @@ return view.extend({
                     }
                 }
 
-                if (barIndex >= 0 && barIndex < increments.length) {
+                // 使用原始数据获取 item
+                var info = canvas.__bandixIncrements;
+                var originalIncrements = (info && info.originalIncrements) ? info.originalIncrements : increments;
+
+                if (barIndex >= 0 && barIndex < originalIncrements.length) {
                     // 设置悬浮索引，用于绘制垂直虚线
                     var prevHoverIndex = canvas.__bandixIncrementsHoverIndex;
                     canvas.__bandixIncrementsHoverIndex = barIndex;
 
                     // 只有当 hoverIndex 发生变化时才重新绘制
                     if (prevHoverIndex !== barIndex) {
-                        drawIncrementsChart(canvas, increments, aggregation);
+                        if (info && info.originalIncrements) {
+                            drawIncrementsChart(canvas, info.originalIncrements, aggregation, info.scale || 1, info.offsetX || 0);
+                        } else {
+                            drawIncrementsChart(canvas, increments, aggregation);
+                        }
                     }
 
-                    var item = increments[barIndex];
+                    var item = originalIncrements[barIndex];
                     var timeStr = formatTimeRange(item.start_ts_ms || item.ts_ms, item.end_ts_ms || item.ts_ms, isDaily);
 
                     // Get speed unit from UCI config
@@ -6704,15 +6962,19 @@ return view.extend({
                     var tooltipWidth = tooltip.offsetWidth || 280;
                     var tooltipHeight = tooltip.offsetHeight || 200;
 
-                    var tooltipX = e.clientX - rect.left + 20;
-                    var tooltipY = e.clientY - rect.top - 20;
+                    // 使用全局坐标（fixed 定位）
+                    // 默认位置：鼠标右上角（增加距离，不要太近）
+                    var tooltipX = e.clientX + 20;
+                    var tooltipY = e.clientY - tooltipHeight - 20;
 
-                    // 确保 tooltip 不超出画布边界
-                    if (tooltipX + tooltipWidth > rect.width) {
-                        tooltipX = e.clientX - rect.left - tooltipWidth - 20;
+                    // 如果上方空间不足，显示在鼠标下方
+                    if (tooltipY < 0) {
+                        tooltipY = e.clientY + 20;
                     }
-                    if (tooltipY + tooltipHeight > rect.height) {
-                        tooltipY = e.clientY - rect.top - tooltipHeight - 20;
+
+                    // 如果右侧空间不足，显示在鼠标左侧
+                    if (tooltipX + tooltipWidth > window.innerWidth) {
+                        tooltipX = e.clientX - tooltipWidth - 20;
                     }
 
                     // 确保tooltip不会超出左侧边界
@@ -6722,6 +6984,10 @@ return view.extend({
                     // 确保tooltip不会超出顶部边界
                     if (tooltipY < 0) {
                         tooltipY = 10;
+                    }
+                    // 确保tooltip不会超出底部边界
+                    if (tooltipY + tooltipHeight > window.innerHeight) {
+                        tooltipY = window.innerHeight - tooltipHeight - 10;
                     }
 
                     tooltip.style.left = tooltipX + 'px';
