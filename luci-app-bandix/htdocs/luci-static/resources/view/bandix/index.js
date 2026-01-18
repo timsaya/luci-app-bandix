@@ -5384,6 +5384,10 @@ return view.extend({
                         lanTrafficCardEl.addEventListener('mousemove', function(e) {
                             updateTooltipPosition(e);
                         });
+                        
+                        lanTrafficCardEl.addEventListener('wheel', function() {
+                            tooltip.style.display = 'none';
+                        });
                     }
                 }, 100);
 
