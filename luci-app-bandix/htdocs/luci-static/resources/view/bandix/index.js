@@ -211,6 +211,32 @@ function formatByterate(bytes_per_sec, unit) {
     }
 }
 
+function getConnectionTypeIcon(connectionType) {
+    if (!connectionType) return null;
+    
+    var iconSize = 14;
+    
+    if (connectionType === 'wifi') {
+        var wifiIcon = E('img', {
+            'src': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXdpZmktaWNvbiBsdWNpZGUtd2lmaSI+PHBhdGggZD0iTTEyIDIwaC4wMSIvPjxwYXRoIGQ9Ik0yIDguODJhMTUgMTUgMCAwIDEgMjAgMCIvPjxwYXRoIGQ9Ik01IDEyLjg1OWExMCAxMCAwIDAgMSAxNCAwIi8+PHBhdGggZD0iTTguNSAxNi40MjlhNSA1IDAgMCAxIDcgMCIvPjwvc3ZnPg==',
+            'width': iconSize,
+            'height': iconSize,
+            'alt': 'WiFi',
+            'style': 'vertical-align: middle; display: inline-block; opacity: 0.8;'
+        });
+        return wifiIcon;
+    } else {
+        var ethernetIcon = E('img', {
+            'src': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWV0aGVybmV0LXBvcnQtaWNvbiBsdWNpZGUtZXRoZXJuZXQtcG9ydCI+PHBhdGggZD0ibTE1IDIwIDMtM2gyYTIgMiAwIDAgMCAyLTJWNmEyIDIgMCAwIDAtMi0ySDRhMiAyIDAgMCAwLTIgMnY5YTIgMiAwIDAgMCAyIDJoMmwzIDN6Ii8+PHBhdGggZD0iTTYgOHYxIi8+PHBhdGggZD0iTTEwIDh2MSIvPjxwYXRoIGQ9Ik0xNCA4djEiLz48cGF0aCBkPSJNMTggOHYxIi8+PC9zdmc+',
+            'width': iconSize,
+            'height': iconSize,
+            'alt': 'Ethernet',
+            'style': 'vertical-align: middle; display: inline-block; opacity: 0.8;'
+        });
+        return ethernetIcon;
+    }
+}
+
 // 解析速度字符串为字节/秒
 function parseSpeed(speedStr) {
     if (!speedStr || speedStr === '0' || speedStr === '0 B/s' || speedStr === '0 bps') return 0;
@@ -755,6 +781,13 @@ return view.extend({
                 font-size: 0.75rem;
                 opacity: 1.0;
                 cursor: help;
+                display: inline-flex;
+                align-items: center;
+                margin-right: 4px;
+            }
+            
+            .device-connection-type svg {
+                opacity: 0.8;
             }
             
             .device-status {
@@ -5604,7 +5637,7 @@ return view.extend({
                             device.connection_type ? E('span', {
                                 'class': 'device-connection-type',
                                 'title': device.connection_type === 'wifi' ? _('Wireless') : _('Wired')
-                            }, device.connection_type === 'wifi' ? '📶' : '🔗') : '',
+                            }, getConnectionTypeIcon(device.connection_type)) : '',
                             device.ip
                         ])
                     ];
@@ -5834,7 +5867,7 @@ return view.extend({
                                         device.connection_type ? E('span', {
                                             'class': 'device-connection-type',
                                             'title': device.connection_type === 'wifi' ? _('Wireless') : _('Wired')
-                                        }, device.connection_type === 'wifi' ? '📶' : '🔗') : '',
+                                        }, getConnectionTypeIcon(device.connection_type)) : '',
                                         device.ip
                                     ])
                                 ])
