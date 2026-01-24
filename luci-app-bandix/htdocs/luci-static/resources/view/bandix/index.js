@@ -225,6 +225,15 @@ function getConnectionTypeIcon(connectionType) {
             'style': 'vertical-align: middle; display: inline-block; opacity: 0.8;'
         });
         return wifiIcon;
+    } else if (connectionType === 'router') {
+        var routerIcon = E('img', {
+            'src': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXJvdXRlci1pY29uIGx1Y2lkZS1yb3V0ZXIiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSI4IiB4PSIyIiB5PSIxNCIgcng9IjIiLz48cGF0aCBkPSJNNi4wMSAxOEg2Ii8+PHBhdGggZD0iTTEwLjAxIDE4SDEwIi8+PHBhdGggZD0iTTE1IDEwdjQiLz48cGF0aCBkPSJNMTcuODQgNy4xN2E0IDQgMCAwIDAtNS42NiAwIi8+PHBhdGggZD0iTTIwLjY2IDQuMzRhOCA4IDAgMCAwLTExLjMxIDAiLz48L3N2Zz4=',
+            'width': iconSize,
+            'height': iconSize,
+            'alt': 'Router',
+            'style': 'vertical-align: middle; display: inline-block; opacity: 0.8;'
+        });
+        return routerIcon;
     } else {
         var ethernetIcon = E('img', {
             'src': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWV0aGVybmV0LXBvcnQtaWNvbiBsdWNpZGUtZXRoZXJuZXQtcG9ydCI+PHBhdGggZD0ibTE1IDIwIDMtM2gyYTIgMiAwIDAgMCAyLTJWNmEyIDIgMCAwIDAtMi0ySDRhMiAyIDAgMCAwLTIgMnY5YTIgMiAwIDAgMCAyIDJoMmwzIDN6Ii8+PHBhdGggZD0iTTYgOHYxIi8+PHBhdGggZD0iTTEwIDh2MSIvPjxwYXRoIGQ9Ik0xNCA4djEiLz48cGF0aCBkPSJNMTggOHYxIi8+PC9zdmc+',
@@ -786,8 +795,12 @@ return view.extend({
                 margin-right: 4px;
             }
             
-            .device-connection-type svg {
+            .device-connection-type img {
                 opacity: 0.8;
+            }
+            
+            .theme-dark .device-connection-type img {
+                filter: invert(1);
             }
             
             .device-status {
@@ -5636,7 +5649,7 @@ return view.extend({
                         E('div', { 'class': 'device-ip' }, [
                             device.connection_type ? E('span', {
                                 'class': 'device-connection-type',
-                                'title': device.connection_type === 'wifi' ? _('Wireless') : _('Wired')
+                                'title': device.connection_type === 'wifi' ? _('Wireless') : (device.connection_type === 'router' ? _('Router') : _('Wired'))
                             }, getConnectionTypeIcon(device.connection_type)) : '',
                             device.ip
                         ])
@@ -5866,7 +5879,7 @@ return view.extend({
                                     E('div', { 'class': 'device-card-ip' }, [
                                         device.connection_type ? E('span', {
                                             'class': 'device-connection-type',
-                                            'title': device.connection_type === 'wifi' ? _('Wireless') : _('Wired')
+                                            'title': device.connection_type === 'wifi' ? _('Wireless') : (device.connection_type === 'router' ? _('Router') : _('Wired'))
                                         }, getConnectionTypeIcon(device.connection_type)) : '',
                                         device.ip
                                     ])
