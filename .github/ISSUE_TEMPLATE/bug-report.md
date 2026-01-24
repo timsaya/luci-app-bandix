@@ -7,14 +7,14 @@ assignees: ''
 
 ---
 
-** [Description] 描述这个 Bug / 截图**
+##  [Description] 描述这个 Bug / 截图
 
 
 
 
-** [System Info]你的系统信息 / bandix 版本 / 网络架构等**
+##  [System Info]你的系统信息 / bandix 版本 / 网络架构等
 
 
 
 
-** [Try]做了哪些尝试 **
+##  [Try]做了哪些尝试
