@@ -734,6 +734,12 @@ msgstr "1 ชั่วโมง"
 msgid "2 hours"
 msgstr "2 ชั่วโมง"
 
+msgid "12 hours"
+msgstr "12 ชั่วโมง"
+
+msgid "24 hours"
+msgstr "24 ชั่วโมง"
+
 msgid "Data Directory"
 msgstr "ไดเรกทอรีข้อมูล"
 

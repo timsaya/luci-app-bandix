@@ -716,8 +716,8 @@ return view.extend({
                                 ])
                             ])
                         ]),
-                        E('td', { 'style': 'font-weight: 600;' }, device.tcp_connections || 0),
-                        E('td', { 'style': 'font-weight: 600;' }, device.udp_connections || 0),
+                        E('td', { 'style': 'font-weight: 600; font-size: 1.25rem;' }, device.tcp_connections || 0),
+                        E('td', { 'style': 'font-weight: 600; font-size: 1.25rem;' }, device.udp_connections || 0),
                         E('td', {}, [
                             E('div', { 'class': 'tcp-status-details' }, [
                                 E('div', { 'class': 'tcp-status-item' }, [
@@ -734,7 +734,7 @@ return view.extend({
                                 ])
                             ])
                         ]),
-                        E('td', {}, E('strong', {}, device.total_connections || 0))
+                        E('td', {}, E('strong', { 'style': 'font-size: 1.25rem;' }, device.total_connections || 0))
                     ]);
                 }))
             ]);

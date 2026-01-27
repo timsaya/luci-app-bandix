@@ -734,6 +734,12 @@ msgstr "1 heure"
 msgid "2 hours"
 msgstr "2 heures"
 
+msgid "12 hours"
+msgstr "12 heures"
+
+msgid "24 hours"
+msgstr "24 heures"
+
 msgid "Data Directory"
 msgstr "Répertoire de données"
 
