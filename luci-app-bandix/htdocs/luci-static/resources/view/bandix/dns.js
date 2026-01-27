@@ -775,6 +775,7 @@ return view.extend({
                         E('option', { 'value': 'NS' }, 'NS'),
                         E('option', { 'value': 'PTR' }, 'PTR'),
                         E('option', { 'value': 'SOA' }, 'SOA'),
+                        E('option', { 'value': 'SRV' }, 'SRV'),
                         E('option', { 'value': 'HTTPS' }, 'HTTPS'),
                         E('option', { 'value': 'SVCB' }, 'SVCB')
                     ])
