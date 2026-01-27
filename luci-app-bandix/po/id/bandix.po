@@ -734,6 +734,12 @@ msgstr "1 jam"
 msgid "2 hours"
 msgstr "2 jam"
 
+msgid "12 hours"
+msgstr "12 jam"
+
+msgid "24 hours"
+msgstr "24 jam"
+
 msgid "Data Directory"
 msgstr "Direktori data"
 

@@ -59,7 +59,8 @@
 					"setRateLimitWhitelistEnabled",
 					"addRateLimitWhitelist",
 					"deleteRateLimitWhitelist",
-					"setDefaultRateLimit"
+					"setDefaultRateLimit",
+					"updateScheduleLimit"
 				]
 			},
 			"uci": [

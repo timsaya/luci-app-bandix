@@ -380,10 +380,17 @@ var callSetScheduleLimit = rpc.declare({
     expect: { success: true }
 });
 
+var callUpdateScheduleLimit = rpc.declare({
+    object: 'luci.bandix',
+    method: 'updateScheduleLimit',
+    params: ['id', 'mac', 'start_time', 'end_time', 'days', 'wan_rx_rate_limit', 'wan_tx_rate_limit'],
+    expect: { success: true }
+});
+
 var callDeleteScheduleLimit = rpc.declare({
     object: 'luci.bandix',
     method: 'deleteScheduleLimit',
-    params: ['mac', 'start_time', 'end_time', 'days'],
+    params: ['id'],
     expect: { success: true }
 });
 
@@ -1301,6 +1308,27 @@ return view.extend({
             
             .schedule-rule-delete:hover {
                 background-color: rgba(239, 68, 68, 0.2);
+            }
+            
+            .schedule-rule-actions {
+                display: flex;
+                gap: 8px;
+                flex-shrink: 0;
+            }
+            
+            .schedule-rule-edit {
+                padding: 6px 12px;
+                font-size: 0.75rem;
+                cursor: pointer;
+                border-radius: 4px;
+                border: 1px solid rgba(59, 130, 246, 0.3);
+                background-color: rgba(59, 130, 246, 0.1);
+                color: #3b82f6;
+                transition: all 0.15s ease;
+            }
+            
+            .schedule-rule-edit:hover {
+                background-color: rgba(59, 130, 246, 0.2);
             }
             
             .device-summary {
@@ -3549,12 +3577,25 @@ return view.extend({
             });
         });
 
-        // 显示添加规则模态框
-        function showAddRuleModal() {
+        // 显示添加/编辑规则模态框
+        function showAddRuleModal(rule) {
             if (!currentDevice) return;
 
+            editingRule = rule || null;
+
             var addRuleModalEl = document.getElementById('add-rule-bandix-modal');
+            var modalTitle = addRuleModalEl.querySelector('.bandix-modal-title');
+            var saveButton = document.getElementById('add-rule-save');
             var speedUnit = uci.get('bandix', 'traffic', 'speed_unit') || 'bytes';
+
+            // 更新标题和按钮文本
+            if (editingRule) {
+                modalTitle.textContent = _('Edit Schedule Rule');
+                saveButton.textContent = _('Save');
+            } else {
+                modalTitle.textContent = _('Add Schedule Rule');
+                saveButton.textContent = _('Add');
+            }
 
             // 动态填充单位选择器
             var uploadUnitSelect = document.getElementById('add-rule-upload-limit-unit');
@@ -3581,9 +3622,69 @@ return view.extend({
                 downloadUnitSelect.appendChild(E('option', { 'value': '1073741824' }, 'GB/s'));
             }
 
-            // 重置表单
-            resetAddRuleForm();
+            if (editingRule) {
+                // 填充编辑数据
+                document.getElementById('add-rule-start-time').value = editingRule.time_slot && editingRule.time_slot.start ? editingRule.time_slot.start : '00:00';
+                document.getElementById('add-rule-end-time').value = editingRule.time_slot && editingRule.time_slot.end ? editingRule.time_slot.end : '23:59';
 
+                // 设置选中的天数
+                var dayButtons = addRuleModal.querySelectorAll('.schedule-day-btn');
+                var selectedDays = editingRule.time_slot && editingRule.time_slot.days ? editingRule.time_slot.days : [];
+                dayButtons.forEach(function (btn) {
+                    var day = parseInt(btn.getAttribute('data-day'));
+                    if (selectedDays.indexOf(day) !== -1) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+
+                // 设置限速值
+                var uploadLimit = editingRule.wan_tx_rate_limit || 0;
+                var downloadLimit = editingRule.wan_rx_rate_limit || 0;
+
+                // 根据限速值选择合适的单位
+                var uploadUnit, uploadValue, downloadUnit, downloadValue;
+                if (speedUnit === 'bits') {
+                    if (uploadLimit >= 125000000 && uploadLimit % 125000000 === 0) {
+                        uploadUnit = '125000000'; uploadValue = uploadLimit / 125000000;
+                    } else if (uploadLimit >= 125000 && uploadLimit % 125000 === 0) {
+                        uploadUnit = '125000'; uploadValue = uploadLimit / 125000;
+                    } else {
+                        uploadUnit = '125'; uploadValue = Math.round(uploadLimit / 125);
+                    }
+                    if (downloadLimit >= 125000000 && downloadLimit % 125000000 === 0) {
+                        downloadUnit = '125000000'; downloadValue = downloadLimit / 125000000;
+                    } else if (downloadLimit >= 125000 && downloadLimit % 125000 === 0) {
+                        downloadUnit = '125000'; downloadValue = downloadLimit / 125000;
+                    } else {
+                        downloadUnit = '125'; downloadValue = Math.round(downloadLimit / 125);
+                    }
+                } else {
+                    if (uploadLimit >= 1073741824 && uploadLimit % 1073741824 === 0) {
+                        uploadUnit = '1073741824'; uploadValue = uploadLimit / 1073741824;
+                    } else if (uploadLimit >= 1048576 && uploadLimit % 1048576 === 0) {
+                        uploadUnit = '1048576'; uploadValue = uploadLimit / 1048576;
+                    } else {
+                        uploadUnit = '1024'; uploadValue = Math.round(uploadLimit / 1024);
+                    }
+                    if (downloadLimit >= 1073741824 && downloadLimit % 1073741824 === 0) {
+                        downloadUnit = '1073741824'; downloadValue = downloadLimit / 1073741824;
+                    } else if (downloadLimit >= 1048576 && downloadLimit % 1048576 === 0) {
+                        downloadUnit = '1048576'; downloadValue = downloadLimit / 1048576;
+                    } else {
+                        downloadUnit = '1024'; downloadValue = Math.round(downloadLimit / 1024);
+                    }
+                }
+
+                document.getElementById('add-rule-upload-limit-value').value = uploadValue;
+                document.getElementById('add-rule-upload-limit-unit').value = uploadUnit;
+                document.getElementById('add-rule-download-limit-value').value = downloadValue;
+                document.getElementById('add-rule-download-limit-unit').value = downloadUnit;
+            } else {
+                // 重置表单
+                resetAddRuleForm();
+            }
 
             // 显示模态框
             addRuleModalEl.classList.add('show');
@@ -3593,6 +3694,7 @@ return view.extend({
         function hideAddRuleModal() {
             var addRuleModalEl = document.getElementById('add-rule-bandix-modal');
             addRuleModalEl.classList.remove('show');
+            editingRule = null;
         }
 
         // 重置添加规则表单
@@ -3639,10 +3741,6 @@ return view.extend({
 
             var startTime = document.getElementById('add-rule-start-time').value;
             var endTime = document.getElementById('add-rule-end-time').value;
-            // HTML5 time 输入不支持 24:00，将 23:59 转换为 24:00 表示全天
-            if (endTime === '23:59') {
-                endTime = '24:00';
-            }
 
             // 重新获取日期按钮引用，确保获取最新状态
             var addRuleModalEl = document.getElementById('add-rule-bandix-modal');
@@ -3679,50 +3777,69 @@ return view.extend({
             var scheduleDownloadUnit = parseInt(document.getElementById('add-rule-download-limit-unit').value);
             var scheduleDownloadLimit = scheduleDownloadValue > 0 ? scheduleDownloadValue * scheduleDownloadUnit : 0;
 
-            console.log('Calling setScheduleLimit:', {
-                mac: currentDevice.mac,
-                startTime: startTime,
-                endTime: endTime,
-                days: selectedDays,
-                uploadLimit: scheduleUploadLimit,
-                downloadLimit: scheduleDownloadLimit
-            });
+            var apiCall;
+            if (editingRule) {
+                console.log('Calling updateScheduleLimit:', {
+                    id: editingRule.id,
+                    mac: currentDevice.mac,
+                    startTime: startTime,
+                    endTime: endTime,
+                    days: selectedDays,
+                    downloadLimit: scheduleDownloadLimit,
+                    uploadLimit: scheduleUploadLimit
+                });
+                apiCall = callUpdateScheduleLimit(
+                    editingRule.id,
+                    currentDevice.mac,
+                    startTime,
+                    endTime,
+                    JSON.stringify(selectedDays),
+                    scheduleDownloadLimit,
+                    scheduleUploadLimit
+                );
+            } else {
+                console.log('Calling setScheduleLimit:', {
+                    mac: currentDevice.mac,
+                    startTime: startTime,
+                    endTime: endTime,
+                    days: selectedDays,
+                    uploadLimit: scheduleUploadLimit,
+                    downloadLimit: scheduleDownloadLimit
+                });
+                apiCall = callSetScheduleLimit(
+                    currentDevice.mac,
+                    startTime,
+                    endTime,
+                    JSON.stringify(selectedDays),
+                    scheduleUploadLimit,
+                    scheduleDownloadLimit
+                );
+            }
 
-            callSetScheduleLimit(
-                currentDevice.mac,
-                startTime,
-                endTime,
-                JSON.stringify(selectedDays),
-                scheduleUploadLimit,
-                scheduleDownloadLimit
-            ).then(function (result) {
-                console.log('setScheduleLimit result:', result);
-                // 恢复按钮状态
+            apiCall.then(function (result) {
+                console.log('Schedule limit result:', result);
                 saveButton.innerHTML = originalText;
                 saveButton.classList.remove('btn-loading');
                 saveButton.disabled = false;
 
-                // 隐藏模态框
                 hideAddRuleModal();
-
-                // 重置表单
                 resetAddRuleForm();
+                editingRule = null;
 
-                // 刷新规则列表
                 loadScheduleRules();
                 updateDeviceData();
             }).catch(function (error) {
-                console.error('Failed to add schedule rule:', error);
-                // 恢复按钮状态
+                console.error('Failed to save schedule rule:', error);
                 saveButton.innerHTML = originalText;
                 saveButton.classList.remove('btn-loading');
                 saveButton.disabled = false;
-                ui.addNotification(null, E('p', {}, _('Failed to add schedule rule: ') + (error.message || error)), 'error');
+                ui.addNotification(null, E('p', {}, _('Failed to save schedule rule: ') + (error.message || error)), 'error');
             });
         });
 
         // 模态框事件处理
         var currentDevice = null;
+        var editingRule = null;
         var showRateLimitModal;
 
         // 显示模态框
@@ -3849,24 +3966,28 @@ return view.extend({
                                 ' / ↓ ' + formatByterate(downloadLimit, speedUnit)
                             )
                         ]),
-                        E('button', {
-                            'class': 'schedule-rule-delete',
-                            'title': _('Delete')
-                        }, _('Delete'))
+                        E('div', { 'class': 'schedule-rule-actions' }, [
+                            E('button', {
+                                'class': 'schedule-rule-edit',
+                                'title': _('Edit')
+                            }, _('Edit')),
+                            E('button', {
+                                'class': 'schedule-rule-delete',
+                                'title': _('Delete')
+                            }, _('Delete'))
+                        ])
                     ]);
+
+                    ruleItem.querySelector('.schedule-rule-edit').addEventListener('click', function () {
+                        showAddRuleModal(rule);
+                    });
 
                     ruleItem.querySelector('.schedule-rule-delete').addEventListener('click', function () {
                         showConfirmDialog(
                             _('Delete Schedule Rule'),
                             _('Are you sure you want to delete this schedule rule?'),
                             function () {
-                                var days = rule.time_slot && rule.time_slot.days ? JSON.stringify(rule.time_slot.days) : '[]';
-                                callDeleteScheduleLimit(
-                                    rule.mac,
-                                    startTime,
-                                    endTime,
-                                    days
-                                ).then(function () {
+                                callDeleteScheduleLimit(rule.id).then(function () {
                                     loadScheduleRules();
                                     updateDeviceData();
                                 }).catch(function (error) {
@@ -4000,11 +4121,6 @@ return view.extend({
             var endTime = rule.time_slot.end || '';
 
             if (!startTime || !endTime) return false;
-
-            // 处理 24:00 的情况
-            if (endTime === '24:00') {
-                endTime = '23:59';
-            }
 
             // 比较时间
             if (startTime <= endTime) {

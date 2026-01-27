@@ -4,6 +4,7 @@
 'require ui';
 'require uci';
 'require rpc';
+'require tools.widgets as widgets';
 
 
 // 暗色模式检测已改为使用 CSS 媒体查询 @media (prefers-color-scheme: dark)
@@ -207,8 +208,6 @@ return view.extend({
 
 	render: function (data) {
 		var m, s, o;
-		var networkConfig = uci.sections('network', 'device');
-		var physicalInterfaces = [];
 
 		// 确保UCI section存在，否则表单不会显示
 		if (!uci.get('bandix', 'general')) {
@@ -222,30 +221,6 @@ return view.extend({
 		}
 		if (!uci.get('bandix', 'dns')) {
 			uci.add('bandix', 'dns', 'dns');
-		}
-
-		// 从network配置中提取物理接口名称
-		if (networkConfig && networkConfig.length > 0) {
-			networkConfig.forEach(function (device) {
-				if (device.name) {
-					physicalInterfaces.push(device.name);
-				}
-			});
-		}
-
-		// 添加网络接口配置中的物理接口
-		var interfaces = uci.sections('network', 'interface');
-		if (interfaces && interfaces.length > 0) {
-			interfaces.forEach(function (iface) {
-				if (iface.device && physicalInterfaces.indexOf(iface.device) === -1) {
-					physicalInterfaces.push(iface.device);
-				}
-			});
-		}
-
-		// 确保至少有一些默认值
-		if (physicalInterfaces.length === 0) {
-			physicalInterfaces = [];
 		}
 
 		// 创建表单
@@ -264,15 +239,13 @@ return view.extend({
 		o.placeholder = '8686';
 		o.rmempty = false;
 
-		// 添加网卡选择下拉菜单
-		o = s.option(form.ListValue, 'iface', _('Monitor Interface'),
+		// 使用 OpenWrt 自带的设备选择器
+		o = s.option(widgets.DeviceSelect, 'iface', _('Monitor Interface'),
 			_('Select the LAN network interface to monitor'));
 		o.rmempty = false;
-
-		// 添加从配置获取的物理接口
-		physicalInterfaces.forEach(function (iface) {
-			o.value(iface, iface);
-		});
+		o.noaliases = true;
+		o.nobridges = false;
+		o.nocreate = true;
 
 		// 添加日志级别选择选项
 		o = s.option(form.ListValue, 'log_level', _('Log Level'),
@@ -702,6 +675,10 @@ return view.extend({
 		o.value('300', _('5 minutes'));
 		o.value('600', _('10 minutes'));
 		o.value('1800', _('30 minutes'));
+		o.value('3600', _('1 hour'));
+		o.value('7200', _('2 hours'));
+		o.value('43200', _('12 hours'));
+		o.value('86400', _('24 hours'));
 		o.default = '600';
 		o.rmempty = false;
 		o.depends('traffic_persist_history', '1');
