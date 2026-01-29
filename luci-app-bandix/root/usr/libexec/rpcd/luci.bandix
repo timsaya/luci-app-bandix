@@ -1053,19 +1053,7 @@ install_update() {
 		return
 	fi
 	
-	# 步骤2: 如果是 bandix 包，先停止服务
-	if [ "$package_type" = "bandix" ]; then
-		json_add_string "step" "stopping"
-		if [ -f "/etc/init.d/bandix" ]; then
-			local stop_result=$(/etc/init.d/bandix stop 2>&1)
-			local stop_exit_code=$?
-			json_add_string "stop_output" "$stop_result"
-			json_add_int "stop_exit_code" "$stop_exit_code"
-			sleep 2
-		fi
-	fi
-	
-	# 步骤3: 安装包
+	# 步骤2: 安装包
 	json_add_string "step" "installing"
 	local install_result=""
 	local install_exit_code=1
@@ -1090,10 +1078,6 @@ install_update() {
 	rm -f "$filepath"
 	
 	if [ $install_exit_code -ne 0 ]; then
-		# 安装失败，尝试重新启动服务
-		if [ "$package_type" = "bandix" ] && [ -f "/etc/init.d/bandix" ]; then
-			/etc/init.d/bandix start >/dev/null 2>&1
-		fi
 		json_add_boolean "success" 0
 		json_add_string "error" "Failed to install package"
 		json_add_string "output" "$install_result"
@@ -1101,20 +1085,6 @@ install_update() {
 		json_dump
 		json_cleanup
 		return
-	fi
-	
-	# 步骤4: 如果是 bandix 包，启动服务
-	if [ "$package_type" = "bandix" ]; then
-		json_add_string "step" "starting"
-		if [ -f "/etc/init.d/bandix" ]; then
-			local start_result=$(/etc/init.d/bandix start 2>&1)
-			local start_exit_code=$?
-			json_add_string "start_output" "$start_result"
-			json_add_int "start_exit_code" "$start_exit_code"
-		else
-			json_add_string "start_output" "Service script not found: /etc/init.d/bandix"
-			json_add_int "start_exit_code" 1
-		fi
 	fi
 	
 	# 返回成功结果
