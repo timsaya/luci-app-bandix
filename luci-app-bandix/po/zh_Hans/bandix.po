@@ -644,6 +644,12 @@ msgstr "端口"
 msgid "Port for Bandix service to listen on"
 msgstr "Bandix 服务监听的端口"
 
+msgid "TC Priority"
+msgstr "TC 优先级"
+
+msgid "Set TC filter priority to better coexist with other eBPF TC programs. Lower numbers indicate higher priority. 0 means system-assigned."
+msgstr "设置 TC filter 优先级，使得与其他 eBPF TC 程序更好的共存，数字越小，优先级越高，0 表示由系统分配。"
+
 msgid "Monitor Interface"
 msgstr "监控网卡"
 

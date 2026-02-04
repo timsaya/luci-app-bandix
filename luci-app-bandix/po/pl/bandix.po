@@ -647,6 +647,12 @@ msgstr "Port"
 msgid "Port for Bandix service to listen on"
 msgstr "Port, na którym usługa Bandix nasłuchuje"
 
+msgid "TC Priority"
+msgstr "Priorytet TC"
+
+msgid "Set TC filter priority to better coexist with other eBPF TC programs. Lower numbers indicate higher priority. 0 means system-assigned."
+msgstr "Ustaw priorytet filtra TC, aby lepiej współistnieć z innymi programami eBPF TC. Mniejsze liczby oznaczają wyższy priorytet. 0 oznacza przypisane przez system."
+
 msgid "Monitor Interface"
 msgstr "Interfejs monitora"
 

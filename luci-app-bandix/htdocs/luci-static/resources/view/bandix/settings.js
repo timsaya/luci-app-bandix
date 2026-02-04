@@ -266,6 +266,14 @@ return view.extend({
 		o.placeholder = '/usr/share/bandix';
 		o.rmempty = false;
 
+		// 添加 tc_priority 设置
+		o = s.option(form.Value, 'tc_priority', _('TC Priority'),
+			_('Set TC filter priority to better coexist with other eBPF TC programs. Lower numbers indicate higher priority. 0 means system-assigned.'));
+		o.default = '0';
+		o.datatype = 'integer';
+		o.placeholder = '0';
+		o.rmempty = false;
+
 		// 添加版本信息显示（合并显示）
 		o = s.option(form.DummyValue, 'version', _('Version'));
 		o.cfgvalue = function () {
