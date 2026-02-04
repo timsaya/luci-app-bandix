@@ -647,6 +647,12 @@ msgstr "พอร์ต"
 msgid "Port for Bandix service to listen on"
 msgstr "พอร์ตสำหรับบริการ Bandix ฟัง"
 
+msgid "TC Priority"
+msgstr "ลำดับความสำคัญ TC"
+
+msgid "Set TC filter priority to better coexist with other eBPF TC programs. Lower numbers indicate higher priority. 0 means system-assigned."
+msgstr "ตั้งค่าลำดับความสำคัญของตัวกรอง TC เพื่อให้อยู่ร่วมกับโปรแกรม eBPF TC อื่นๆ ได้ดีขึ้น ตัวเลขที่น้อยกว่าหมายถึงลำดับความสำคัญที่สูงกว่า 0 หมายถึงการกำหนดโดยระบบ"
+
 msgid "Monitor Interface"
 msgstr "อินเทอร์เฟซตรวจสอบ"
 
