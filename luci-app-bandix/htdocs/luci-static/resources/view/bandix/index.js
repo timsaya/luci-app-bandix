@@ -2044,13 +2044,12 @@ return view.extend({
 			.usage-ranking-item {
 				position: relative;
 				display: flex;
-				align-items: center;
+				align-items: flex-start;
 				gap: 12px;
 				padding: 12px;
 				border-radius: 8px;
 				background-color: rgba(0, 0, 0, 0.02);
 				border: 1px solid rgba(0, 0, 0, 0.06);
-				transition: all 0.2s ease;
 				overflow: hidden;
 			}
 			
@@ -2058,8 +2057,6 @@ return view.extend({
 			.usage-ranking-item:hover {
 				background-color: rgba(0, 0, 0, 0.04);
 				border-color: rgba(0, 0, 0, 0.1);
-				transform: translateY(-1px);
-				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 			}
 			
 			
@@ -2072,7 +2069,6 @@ return view.extend({
 				bottom: 0;
 				width: var(--progress-width, 0%);
 				background: linear-gradient(90deg, rgba(59, 130, 246, 0.18) 0%, rgba(59, 130, 246, 0.10) 100%);
-				transition: width 0.3s ease;
 				z-index: 0;
 			}
 			
@@ -2093,6 +2089,8 @@ return view.extend({
 				border-radius: 6px;
 				background-color: rgba(59, 130, 246, 0.1);
 				color: #3b82f6;
+				margin-top: 2px;
+				flex-shrink: 0;
 			}
 			
 			
@@ -2100,7 +2098,7 @@ return view.extend({
 				flex: 1;
 				min-width: 0;
 				display: flex;
-				align-items: center;
+				align-items: flex-start;
 				gap: 16px;
 			}
 			
@@ -2126,10 +2124,16 @@ return view.extend({
 				font-family: monospace;
 			}
 			
+			.usage-ranking-meta > span {
+				flex-shrink: 0;
+				white-space: nowrap;
+			}
+			
 			.usage-ranking-stats {
 				display: flex;
 				align-items: center;
 				gap: 20px;
+				margin-top: 2px;
 			}
 			
 			.usage-ranking-traffic {

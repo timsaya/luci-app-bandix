@@ -86,28 +86,7 @@ function getThemeType() {
     return 'narrow';
 }
 
-function formatTimestamp(timestamp) {
-    if (!timestamp) return '-';
-    var date = new Date(timestamp);
-    return date.toLocaleString('zh-CN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        fractionalSecondDigits: 3
-    });
-}
 
-function formatResponseCode(code) {
-    if (code === 'Success' || code === 'NOERROR') return _('Success');
-    if (code === 'Domain not found' || code === 'NXDomain' || code === 'NXDOMAIN') return _('Domain not found');
-    if (code === 'Server error' || code === 'ServFail' || code === 'SERVFAIL') return _('Server error');
-    if (code === 'Format error' || code === 'FormErr' || code === 'FORMERR') return _('Format error');
-    if (code === 'Refused' || code === 'Refused' || code === 'REFUSED') return _('Refused');
-    return code || _('Other');
-}
 
 function formatDeviceName(device) {
     var parts = [];
@@ -947,7 +926,7 @@ return view.extend({
                     ]),
                     E('tbody', {}, queries.map(function (query) {
                         return E('tr', {}, [
-                            E('td', {}, formatTimestamp(query.timestamp)),
+                            E('td', {}, query.timestamp_formatted || '-'),
                             E('td', {}, query.domain || '-'),
                             E('td', {}, query.query_type || '-'),
                             E('td', {}, [
@@ -1010,7 +989,7 @@ return view.extend({
                     var card = E('div', { 'class': 'dns-query-card' }, [
                         // 卡片头部：时间和类型
                         E('div', { 'class': 'dns-query-card-header' }, [
-                            E('div', { 'class': 'dns-query-card-time' }, formatTimestamp(query.timestamp)),
+                            E('div', { 'class': 'dns-query-card-time' }, query.timestamp_formatted || '-'),
                             E('span', {
                                 'class': 'query-badge ' + (query.is_query ? 'query' : 'response')
                             }, query.is_query ? _('Query') : _('Response'))
