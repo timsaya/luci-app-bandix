@@ -1981,7 +1981,7 @@ return view.extend({
 			.usage-ranking-list {
 				display: flex;
 				flex-direction: column;
-				gap: 12px;
+				gap: 8px;
 				overflow-y: auto;
 				padding-right: 4px;
 			}
@@ -2043,9 +2043,9 @@ return view.extend({
 			.usage-ranking-item {
 				position: relative;
 				display: flex;
-				align-items: flex-start;
-				gap: 12px;
-				padding: 12px;
+				align-items: center;
+				gap: 10px;
+				padding: 10px;
 				border-radius: 8px;
 				background-color: rgba(0, 0, 0, 0.02);
 				border: 1px solid rgba(0, 0, 0, 0.06);
@@ -2081,14 +2081,13 @@ return view.extend({
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				min-width: 28px;
-				height: 28px;
+				min-width: 24px;
+				height: 24px;
 				font-weight: 700;
-				font-size: 0.8125rem;
+				font-size: 0.75rem;
 				border-radius: 6px;
 				background-color: rgba(59, 130, 246, 0.1);
 				color: #3b82f6;
-				margin-top: 2px;
 				flex-shrink: 0;
 			}
 			
@@ -2098,7 +2097,7 @@ return view.extend({
 				min-width: 0;
 				display: flex;
 				align-items: flex-start;
-				gap: 16px;
+				gap: 12px;
 			}
 			
 			.usage-ranking-device {
@@ -2108,8 +2107,8 @@ return view.extend({
 			
 			.usage-ranking-name {
 				font-weight: 600;
-				font-size: 0.9375rem;
-				margin-bottom: 4px;
+				font-size: 0.875rem;
+				margin-bottom: 2px;
 				overflow: hidden;
 				text-overflow: ellipsis;
 				white-space: nowrap;
@@ -2117,7 +2116,7 @@ return view.extend({
 			
 			.usage-ranking-meta {
 				display: flex;
-				gap: 12px;
+				gap: 8px;
 				font-size: 0.75rem;
 				opacity: 0.5;
 				font-family: monospace;
@@ -2131,14 +2130,13 @@ return view.extend({
 			.usage-ranking-stats {
 				display: flex;
 				align-items: center;
-				gap: 20px;
-				margin-top: 2px;
+				gap: 16px;
 			}
 			
 			.usage-ranking-traffic {
 				display: flex;
 				align-items: center;
-				gap: 12px;
+				gap: 10px;
 			}
 			
 			.usage-ranking-traffic-item {
@@ -2169,7 +2167,7 @@ return view.extend({
 			}
 			
 			.usage-ranking-percentage {
-				font-size: 1.5rem;
+				font-size: 1.25rem;
 				font-weight: 700;
 				color: #3b82f6;
 				min-width: 70px;
@@ -2507,7 +2505,7 @@ return view.extend({
 				
 				.usage-ranking-name {
 					font-size: 0.875rem;
-					margin-bottom: 3px;
+					margin-bottom: 2px;
 				}
 				
 				.usage-ranking-meta {
