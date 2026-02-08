@@ -1053,7 +1053,15 @@ install_update() {
 		return
 	fi
 	
-	# 步骤2: 安装包
+	# 步骤2: 更新软件仓库
+	json_add_string "step" "updating_repo"
+	if command -v opkg >/dev/null 2>&1; then
+		opkg update 2>/dev/null || true
+	elif command -v apk >/dev/null 2>&1; then
+		apk update 2>/dev/null || true
+	fi
+	
+	# 步骤3: 安装包
 	json_add_string "step" "installing"
 	local install_result=""
 	local install_exit_code=1

@@ -1061,8 +1061,8 @@ msgstr "Pobieranie Ręczne"
 msgid "Close"
 msgstr "Zamknij"
 
-msgid "Starting installation... The page will refresh automatically in 5 seconds."
-msgstr "Rozpoczynanie instalacji... Strona odświeży się automatycznie za 5 sekund."
+msgid "Starting installation... The page will refresh automatically in 30 seconds."
+msgstr "Rozpoczynanie instalacji... Strona odświeży się automatycznie za 30 sekund."
 
 msgid "Please clear your browser cache manually after updating."
 msgstr "Po aktualizacji należy ręcznie wyczyścić pamięć podręczną przeglądarki."

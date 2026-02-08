@@ -1061,8 +1061,8 @@ msgstr "ดาวน์โหลดด้วยตนเอง"
 msgid "Close"
 msgstr "ปิด"
 
-msgid "Starting installation... The page will refresh automatically in 5 seconds."
-msgstr "กำลังเริ่มการติดตั้ง... หน้าจะรีเฟรชอัตโนมัติใน 5 วินาที"
+msgid "Starting installation... The page will refresh automatically in 30 seconds."
+msgstr "กำลังเริ่มการติดตั้ง... หน้าจะรีเฟรชอัตโนมัติใน 30 วินาที"
 
 msgid "Please clear your browser cache manually after updating."
 msgstr "กรุณาล้างแคชเบราว์เซอร์ด้วยตนเองหลังจากอัปเดต"

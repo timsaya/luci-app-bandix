@@ -1058,8 +1058,8 @@ msgstr "手动下载"
 msgid "Close"
 msgstr "关闭"
 
-msgid "Starting installation... The page will refresh automatically in 5 seconds."
-msgstr "开始安装... 页面将在5秒后自动刷新。"
+msgid "Starting installation... The page will refresh automatically in 30 seconds."
+msgstr "开始安装... 页面将在30秒后自动刷新。"
 
 msgid "Please clear your browser cache manually after updating."
 msgstr "更新后请手动清空浏览器缓存。"

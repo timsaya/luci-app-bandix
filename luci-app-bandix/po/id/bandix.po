@@ -1061,8 +1061,8 @@ msgstr "Unduh Manual"
 msgid "Close"
 msgstr "Tutup"
 
-msgid "Starting installation... The page will refresh automatically in 5 seconds."
-msgstr "Memulai instalasi... Halaman akan dimuat ulang secara otomatis dalam 5 detik."
+msgid "Starting installation... The page will refresh automatically in 30 seconds."
+msgstr "Memulai instalasi... Halaman akan dimuat ulang secara otomatis dalam 30 detik."
 
 msgid "Please clear your browser cache manually after updating."
 msgstr "Harap hapus cache browser secara manual setelah memperbarui."

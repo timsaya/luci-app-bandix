@@ -371,19 +371,16 @@ return view.extend({
 								statusDiv.style.display = 'block';
 								statusDiv.style.background = 'rgba(59, 130, 246, 0.1)';
 								statusDiv.style.color = '#1e40af';
-								statusDiv.textContent = _('Starting installation... The page will refresh automatically in 5 seconds.');
+								statusDiv.textContent = _('Starting installation... The page will refresh automatically in 30 seconds.');
 
 								// 对于 luci-app-bandix 安装，由于会重启 uhttpd/rpcd 导致连接断开，
-								// 所以不等待响应，直接设置 5 秒后刷新页面
+								// 不等待响应，固定 30 秒后刷新页面，避免刷新过早未完成安装
 								callInstallUpdate('luci', result.luci_download_url).catch(function (err) {
-									// 忽略错误，因为连接可能会断开
-									// 即使出错也会刷新页面，让用户看到最新状态
 								});
 
-								// 5秒后自动刷新页面
 								setTimeout(function () {
 									window.location.reload();
-								}, 5000);
+								}, 30000);
 							}
 						}, _('Download and Install'));
 						luciContainer.appendChild(installBtn);
