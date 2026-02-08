@@ -1982,7 +1982,6 @@ return view.extend({
 				display: flex;
 				flex-direction: column;
 				gap: 12px;
-				max-height: 800px;
 				overflow-y: auto;
 				padding-right: 4px;
 			}
