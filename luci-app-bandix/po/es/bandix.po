@@ -1061,8 +1061,8 @@ msgstr "Descarga Manual"
 msgid "Close"
 msgstr "Cerrar"
 
-msgid "Starting installation... The page will refresh automatically in 5 seconds."
-msgstr "Iniciando instalación... La página se actualizará automáticamente en 5 segundos."
+msgid "Starting installation... The page will refresh automatically in 30 seconds."
+msgstr "Iniciando instalación... La página se actualizará automáticamente en 30 segundos."
 
 msgid "Please clear your browser cache manually after updating."
 msgstr "Por favor, borre manualmente la caché del navegador después de actualizar."

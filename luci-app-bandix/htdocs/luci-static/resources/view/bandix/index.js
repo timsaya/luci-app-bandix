@@ -1981,8 +1981,7 @@ return view.extend({
 			.usage-ranking-list {
 				display: flex;
 				flex-direction: column;
-				gap: 12px;
-				max-height: 800px;
+				gap: 8px;
 				overflow-y: auto;
 				padding-right: 4px;
 			}
@@ -2045,12 +2044,11 @@ return view.extend({
 				position: relative;
 				display: flex;
 				align-items: center;
-				gap: 12px;
-				padding: 12px;
+				gap: 10px;
+				padding: 10px;
 				border-radius: 8px;
 				background-color: rgba(0, 0, 0, 0.02);
 				border: 1px solid rgba(0, 0, 0, 0.06);
-				transition: all 0.2s ease;
 				overflow: hidden;
 			}
 			
@@ -2058,8 +2056,6 @@ return view.extend({
 			.usage-ranking-item:hover {
 				background-color: rgba(0, 0, 0, 0.04);
 				border-color: rgba(0, 0, 0, 0.1);
-				transform: translateY(-1px);
-				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 			}
 			
 			
@@ -2072,7 +2068,6 @@ return view.extend({
 				bottom: 0;
 				width: var(--progress-width, 0%);
 				background: linear-gradient(90deg, rgba(59, 130, 246, 0.18) 0%, rgba(59, 130, 246, 0.10) 100%);
-				transition: width 0.3s ease;
 				z-index: 0;
 			}
 			
@@ -2086,13 +2081,14 @@ return view.extend({
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				min-width: 28px;
-				height: 28px;
+				min-width: 24px;
+				height: 24px;
 				font-weight: 700;
-				font-size: 0.8125rem;
+				font-size: 0.75rem;
 				border-radius: 6px;
 				background-color: rgba(59, 130, 246, 0.1);
 				color: #3b82f6;
+				flex-shrink: 0;
 			}
 			
 			
@@ -2100,8 +2096,8 @@ return view.extend({
 				flex: 1;
 				min-width: 0;
 				display: flex;
-				align-items: center;
-				gap: 16px;
+				align-items: flex-start;
+				gap: 12px;
 			}
 			
 			.usage-ranking-device {
@@ -2111,8 +2107,8 @@ return view.extend({
 			
 			.usage-ranking-name {
 				font-weight: 600;
-				font-size: 0.9375rem;
-				margin-bottom: 4px;
+				font-size: 0.875rem;
+				margin-bottom: 2px;
 				overflow: hidden;
 				text-overflow: ellipsis;
 				white-space: nowrap;
@@ -2120,22 +2116,27 @@ return view.extend({
 			
 			.usage-ranking-meta {
 				display: flex;
-				gap: 12px;
+				gap: 8px;
 				font-size: 0.75rem;
 				opacity: 0.5;
 				font-family: monospace;
 			}
 			
+			.usage-ranking-meta > span {
+				flex-shrink: 0;
+				white-space: nowrap;
+			}
+			
 			.usage-ranking-stats {
 				display: flex;
 				align-items: center;
-				gap: 20px;
+				gap: 16px;
 			}
 			
 			.usage-ranking-traffic {
 				display: flex;
 				align-items: center;
-				gap: 12px;
+				gap: 10px;
 			}
 			
 			.usage-ranking-traffic-item {
@@ -2166,7 +2167,7 @@ return view.extend({
 			}
 			
 			.usage-ranking-percentage {
-				font-size: 1.5rem;
+				font-size: 1.25rem;
 				font-weight: 700;
 				color: #3b82f6;
 				min-width: 70px;
@@ -2504,7 +2505,7 @@ return view.extend({
 				
 				.usage-ranking-name {
 					font-size: 0.875rem;
-					margin-bottom: 3px;
+					margin-bottom: 2px;
 				}
 				
 				.usage-ranking-meta {

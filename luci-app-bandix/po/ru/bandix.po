@@ -1061,8 +1061,8 @@ msgstr "Ручная Загрузка"
 msgid "Close"
 msgstr "Закрыть"
 
-msgid "Starting installation... The page will refresh automatically in 5 seconds."
-msgstr "Начало установки... Страница автоматически обновится через 5 секунд."
+msgid "Starting installation... The page will refresh automatically in 30 seconds."
+msgstr "Начало установки... Страница автоматически обновится через 30 секунд."
 
 msgid "Please clear your browser cache manually after updating."
 msgstr "Пожалуйста, вручную очистите кеш браузера после обновления."
