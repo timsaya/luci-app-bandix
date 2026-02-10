@@ -767,6 +767,18 @@ msgstr "Максимум записей DNS"
 msgid "Set the maximum number of DNS query records to keep. Older records will be deleted when this limit is exceeded"
 msgstr "设置DNS查询记录的最大保存数量，超过此数量将删除最旧的记录"
 
+msgid "Persist DNS Data"
+msgstr "Сохранять данные DNS"
+
+msgid "Enable DNS data persistence functionality, data will only be persisted to disk when this option is enabled"
+msgstr "Включить функцию постоянного хранения данных DNS, данные будут сохраняться на диск только при включении этой опции"
+
+msgid "DNS Data Flush Interval"
+msgstr "Интервал сброса данных DNS"
+
+msgid "Set the interval for flushing DNS data to disk"
+msgstr "Установить интервал для сброса данных DNS на диск"
+
 msgid "Persist History Data"
 msgstr "Сохранять историю данных"
 

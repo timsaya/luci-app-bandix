@@ -668,17 +668,18 @@ return view.extend({
 		// o.rmempty = true;
 
 		// 添加持久化历史数据选项
-		o = s.option(form.Flag, 'traffic_persist_history', _('Persist History Data'),
+		o = s.option(form.Flag, 'traffic_enable_storage', _('Persist History Data'),
 			_('Enable data persistence functionality, data will only be persisted to disk when this option is enabled'));
 		o.default = '0';
 		o.rmempty = false;
 
 		// 添加数据 flush 间隔（秒）
-		o = s.option(form.ListValue, 'traffic_flush_interval_seconds', _('Data Flush Interval'),
+		o = s.option(form.ListValue, 'traffic_flush_interval', _('Data Flush Interval'),
 			_('Set the interval for flushing data to disk'));
 		o.value('60', _('1 minute'));
 		o.value('300', _('5 minutes'));
 		o.value('600', _('10 minutes'));
+		o.value('900', _('15 minutes'));
 		o.value('1800', _('30 minutes'));
 		o.value('3600', _('1 hour'));
 		o.value('7200', _('2 hours'));
@@ -689,7 +690,7 @@ return view.extend({
 		o.depends('traffic_persist_history', '1');
 
 		// 添加历史流量周期（秒）
-		o = s.option(form.ListValue, 'traffic_retention_seconds', _('Realtime Traffic Period'),
+		o = s.option(form.ListValue, 'traffic_realtime_window', _('Realtime Traffic Period'),
 			_('Does not occupy storage space, stored only in memory'));
 		o.value('600', _('10 minutes'));
 		o.value('900', _('15 minutes'));
@@ -739,17 +740,37 @@ return view.extend({
 		o.default = '0';
 		o.rmempty = false;
 
-		// 添加DNS最大记录数选项
-		o = s.option(form.Value, 'dns_max_records', _('DNS Max Records'),
-			_('Set the maximum number of DNS query records to keep. Older records will be deleted when this limit is exceeded'));
-		o.datatype = 'uinteger';
-		o.placeholder = '10000';
-		o.default = '10000';
-		o.rmempty = false;
+	// 添加DNS最大记录数选项
+	o = s.option(form.Value, 'dns_max_records', _('DNS Max Records'),
+		_('Set the maximum number of DNS query records to keep. Older records will be deleted when this limit is exceeded'));
+	o.datatype = 'uinteger';
+	o.placeholder = '10000';
+	o.default = '10000';
+	o.rmempty = false;
 
-		// 将 view 实例关联到 form map，以便在 cfgvalue 中访问
-		m.view = this;
+	o = s.option(form.Flag, 'dns_enable_storage', _('Persist DNS Data'),
+		_('Enable DNS data persistence functionality, data will only be persisted to disk when this option is enabled'));
+	o.default = '0';
+	o.rmempty = false;
 
-		return m.render();
+	o = s.option(form.ListValue, 'dns_flush_interval', _('DNS Data Flush Interval'),
+		_('Set the interval for flushing DNS data to disk'));
+	o.value('60', _('1 minute'));
+	o.value('300', _('5 minutes'));
+	o.value('600', _('10 minutes'));
+	o.value('900', _('15 minutes'));
+	o.value('1800', _('30 minutes'));
+	o.value('3600', _('1 hour'));
+	o.value('7200', _('2 hours'));
+	o.value('43200', _('12 hours'));
+	o.value('86400', _('24 hours'));
+	o.default = '900';
+	o.rmempty = false;
+	o.depends('dns_enable_storage', '1');
+
+	// 将 view 实例关联到 form map，以便在 cfgvalue 中访问
+	m.view = this;
+
+	return m.render();
 	}
 }); 

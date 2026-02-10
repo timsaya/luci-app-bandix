@@ -767,6 +767,18 @@ msgstr "DNS最大記録数"
 msgid "Set the maximum number of DNS query records to keep. Older records will be deleted when this limit is exceeded"
 msgstr "保持するDNSクエリ記録の最大数を設定。この制限を超えると古い記録が削除されます"
 
+msgid "Persist DNS Data"
+msgstr "DNSデータを永続化"
+
+msgid "Enable DNS data persistence functionality, data will only be persisted to disk when this option is enabled"
+msgstr "DNSデータ永続化機能を有効にする。このオプションが有効な場合のみデータがディスクに永続化されます"
+
+msgid "DNS Data Flush Interval"
+msgstr "DNSデータフラッシュ間隔"
+
+msgid "Set the interval for flushing DNS data to disk"
+msgstr "DNSデータをディスクにフラッシュする間隔を設定"
+
 msgid "Persist History Data"
 msgstr "履歴データを永続化"
 
