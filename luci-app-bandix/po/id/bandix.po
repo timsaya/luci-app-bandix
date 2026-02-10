@@ -767,6 +767,18 @@ msgstr "Maksimum catatan DNS"
 msgid "Set the maximum number of DNS query records to keep. Older records will be deleted when this limit is exceeded"
 msgstr "Atur jumlah maksimum catatan kueri DNS yang disimpan. Catatan lama akan dihapus ketika batas ini terlampaui"
 
+msgid "Persist DNS Data"
+msgstr "Simpan data DNS"
+
+msgid "Enable DNS data persistence functionality, data will only be persisted to disk when this option is enabled"
+msgstr "Aktifkan fungsi persistensi data DNS, data hanya akan disimpan ke disk ketika opsi ini diaktifkan"
+
+msgid "DNS Data Flush Interval"
+msgstr "Interval pembilasan data DNS"
+
+msgid "Set the interval for flushing DNS data to disk"
+msgstr "Atur interval untuk membilas data DNS ke disk"
+
 msgid "Persist History Data"
 msgstr "Simpan data riwayat"
 

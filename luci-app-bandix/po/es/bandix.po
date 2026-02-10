@@ -767,6 +767,18 @@ msgstr "Registros DNS máximos"
 msgid "Set the maximum number of DNS query records to keep. Older records will be deleted when this limit is exceeded"
 msgstr "Establecer el número máximo de registros de consulta DNS para mantener. Los registros más antiguos se eliminarán cuando se exceda este límite"
 
+msgid "Persist DNS Data"
+msgstr "Persistir datos DNS"
+
+msgid "Enable DNS data persistence functionality, data will only be persisted to disk when this option is enabled"
+msgstr "Habilitar funcionalidad de persistencia de datos DNS, los datos solo se persistirán en el disco cuando esta opción esté habilitada"
+
+msgid "DNS Data Flush Interval"
+msgstr "Intervalo de descarga de datos DNS"
+
+msgid "Set the interval for flushing DNS data to disk"
+msgstr "Establecer el intervalo para descargar datos DNS al disco"
+
 msgid "Persist History Data"
 msgstr "Persistir datos del historial"
 
