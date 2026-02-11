@@ -687,7 +687,7 @@ return view.extend({
 		o.value('86400', _('24 hours'));
 		o.default = '600';
 		o.rmempty = false;
-		o.depends('traffic_persist_history', '1');
+		o.depends('traffic_enable_storage', '1');
 
 		// 添加历史流量周期（秒）
 		o = s.option(form.ListValue, 'traffic_realtime_window', _('Realtime Traffic Period'),
