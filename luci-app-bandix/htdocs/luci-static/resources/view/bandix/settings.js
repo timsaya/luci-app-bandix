@@ -720,6 +720,11 @@ return view.extend({
 		o.placeholder = '192.168.2.0/24,10.0.0.0/8';
 		o.rmempty = true;
 
+		o = s.option(form.Flag, 'traffic_exclude_iface_device', _('Exclude Interface Device'),
+			_('Exclude the router itself (interface device) from traffic statistics'));
+		o.default = '0';
+		o.rmempty = false;
+
 		// 3. 连接监控设置部分 (connections)
 		s = m.section(form.NamedSection, 'connections', 'connections', _('Connection Monitor Settings'));
 		s.description = _('Configure connection monitoring related parameters');

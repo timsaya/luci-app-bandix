@@ -456,6 +456,13 @@ var callDeleteRateLimitWhitelist = rpc.declare({
     expect: {}
 });
 
+var callDeleteDevice = rpc.declare({
+    object: 'luci.bandix',
+    method: 'deleteDevice',
+    params: ['mac'],
+    expect: {}
+});
+
 var callSetDefaultRateLimit = rpc.declare({
     object: 'luci.bandix',
     method: 'setDefaultRateLimit',
@@ -771,6 +778,20 @@ return view.extend({
                 width: 16.5%;
             }
             
+            .device-actions {
+                display: flex;
+                gap: 6px;
+            }
+            
+            .device-actions .cbi-button {
+                min-width: 32px;
+                min-height: 32px;
+                padding: 6px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                box-sizing: border-box;
+            }
             .schedule-rules-info {
                 display: flex;
                 flex-direction: column;
@@ -1578,11 +1599,19 @@ return view.extend({
                 
                 .device-card-action {
                     flex-shrink: 0;
+                    display: flex;
+                    gap: 6px;
                 }
                 
                 .device-card-action .cbi-button {
-                    padding: 6px 12px;
+                    min-width: 32px;
+                    min-height: 32px;
+                    padding: 6px;
                     font-size: 0.875rem;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-sizing: border-box;
                 }
                 
                 .device-card-content {
@@ -5743,9 +5772,27 @@ return view.extend({
                         'title': _('Settings')
                     }, buttonText);
 
-                    // 绑定点击事件
                     actionButton.addEventListener('click', function () {
                         showRateLimitModal(device);
+                    });
+
+                    var deleteButton = E('button', {
+                        'class': 'cbi-button cbi-button-reset',
+                        'title': _('Delete Device')
+                    }, '\u2715');
+                    deleteButton.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        showConfirmDialog(
+                            _('Delete Device'),
+                            _('Are you sure you want to delete this device? Traffic history will be removed.'),
+                            function () {
+                                callDeleteDevice(device.mac).then(function () {
+                                    updateDeviceData();
+                                }).catch(function (err) {
+                                    ui.addNotification(null, E('p', {}, _('Failed to delete device')), 'error');
+                                });
+                            }
+                        );
                     });
 
                     // 获取当前显示模式
@@ -5978,8 +6025,9 @@ return view.extend({
                         })(),
 
                         // 操作
-                        E('td', {}, [
-                            actionButton
+                        E('td', { 'class': 'device-actions' }, [
+                            actionButton,
+                            deleteButton
                         ])
                     ]);
 
@@ -6012,6 +6060,27 @@ return view.extend({
                                         showRateLimitModal(device);
                                     });
                                     return cardActionBtn;
+                                })(),
+                                (function () {
+                                    var cardDeleteBtn = E('button', {
+                                        'class': 'cbi-button cbi-button-reset',
+                                        'title': _('Delete Device')
+                                    }, '\u2715');
+                                    cardDeleteBtn.addEventListener('click', function (e) {
+                                        e.stopPropagation();
+                                        showConfirmDialog(
+                                            _('Delete Device'),
+                                            _('Are you sure you want to delete this device? Traffic history will be removed.'),
+                                            function () {
+                                                callDeleteDevice(device.mac).then(function () {
+                                                    updateDeviceData();
+                                                }).catch(function (err) {
+                                                    ui.addNotification(null, E('p', {}, _('Failed to delete device')), 'error');
+                                                });
+                                            }
+                                        );
+                                    });
+                                    return cardDeleteBtn;
                                 })()
                             ])
                         ]),

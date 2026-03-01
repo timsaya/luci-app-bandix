@@ -872,6 +872,15 @@ msgstr "确定要删除这个定时限速规则吗？"
 msgid "Failed to delete schedule rule"
 msgstr "删除定时限速规则失败"
 
+msgid "Delete Device"
+msgstr "删除设备"
+
+msgid "Are you sure you want to delete this device? Traffic history will be removed."
+msgstr "确定要删除该设备吗？流量历史将被清除。"
+
+msgid "Failed to delete device"
+msgstr "删除设备失败"
+
 msgid "Confirm"
 msgstr "确认"
 
@@ -1174,6 +1183,12 @@ msgstr "额外子网"
 
 msgid "Additional local subnets (comma-separated CIDR notation, e.g. '192.168.2.0/24,10.0.0.0/8'). Leave empty to use only interface subnet."
 msgstr "额外的本地子网（用逗号分隔的CIDR表示法，例如'192.168.2.0/24,10.0.0.0/8'）。留空则只使用接口子网。"
+
+msgid "Exclude Interface Device"
+msgstr "排除接口设备"
+
+msgid "Exclude the router itself (interface device) from traffic statistics"
+msgstr "从流量统计中排除路由器本身（接口设备）"
 
 msgid "No devices"
 msgstr "无设备"
