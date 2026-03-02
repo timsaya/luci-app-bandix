@@ -12,7 +12,7 @@ msgid "Unable to fetch data"
 msgstr "Не удалось получить данные"
 
 msgid "Unable to fetch history data"
-msgstr "无法获取历史数据"
+msgstr "Не удалось получить данные истории"
 
 msgid "Hostname"
 msgstr "Имя хоста"
@@ -72,7 +72,7 @@ msgid "Online Devices"
 msgstr "Устройства в сети"
 
 msgid "WAN Only"
-msgstr "仅限WAN 流量"
+msgstr "Только WAN"
 
 msgid "Settings"
 msgstr "Настройки"
@@ -81,10 +81,10 @@ msgid "Device Settings"
 msgstr "Настройки устройства"
 
 msgid "Rate Limits"
-msgstr "限速设置"
+msgstr "Настройки ограничения"
 
 msgid "Remove Rate Limit"
-msgstr "取消限速"
+msgstr "Снять ограничение"
 
 msgid "Save"
 msgstr "Сохранить"
@@ -93,22 +93,22 @@ msgid "Cancel"
 msgstr "Отмена"
 
 msgid "Set Rate Limit"
-msgstr "设置限速"
+msgstr "Установить ограничение"
 
 msgid "Device"
 msgstr "Устройство"
 
 msgid "Set Hostname"
-msgstr "设置主机名"
+msgstr "Установить имя хоста"
 
 msgid "Please enter hostname"
-msgstr "请输入主机名"
+msgstr "Введите имя хоста"
 
 msgid "Hostname set successfully"
-msgstr "主机名设置成功"
+msgstr "Имя хоста успешно установлено"
 
 msgid "Failed to set hostname"
-msgstr "主机名设置失败"
+msgstr "Не удалось установить имя хоста"
 
 msgid "Unlimited"
 msgstr "Без ограничений"
@@ -120,10 +120,10 @@ msgid "Failed to save settings"
 msgstr "Не удалось сохранить настройки"
 
 msgid "Please enter a valid speed value"
-msgstr "请输入有效的速度值"
+msgstr "Введите допустимое значение скорости"
 
 msgid "Speed value must be greater than 0"
-msgstr "速度值必须大于0"
+msgstr "Скорость должна быть больше 0"
 
 msgid "Saving..."
 msgstr "Сохранение..."
@@ -132,7 +132,7 @@ msgid "Rate limiting only applies to WAN traffic."
 msgstr "Ограничение скорости применяется только к трафику WAN. Некоторые внутренние трафики LAN могут не отслеживаться из-за аппаратного ускорения коммутации."
 
 msgid "Tip: Enter 0 for unlimited"
-msgstr "提示：输入 0 表示无限制"
+msgstr "Подсказка: введите 0 для без ограничений"
 
 msgid "Traffic History"
 msgstr "История трафика"
@@ -147,16 +147,16 @@ msgid "All Devices"
 msgstr "Все устройства"
 
 msgid "Time Range"
-msgstr "时间范围"
+msgstr "Временной диапазон"
 
 msgid "Last 5 minutes"
-msgstr "最近5分钟"
+msgstr "Последние 5 минут"
 
 msgid "Last 30 minutes"
-msgstr "最近30分钟"
+msgstr "Последние 30 минут"
 
 msgid "Last 2 hours"
-msgstr "最近2小时"
+msgstr "Последние 2 часа"
 
 msgid "Type"
 msgstr "Тип"
@@ -165,10 +165,10 @@ msgid "Total"
 msgstr "Всего"
 
 msgid "LAN"
-msgstr "LAN 流量"
+msgstr "Трафик LAN"
 
 msgid "WAN"
-msgstr "WAN 流量"
+msgstr "Трафик WAN"
 
 msgid "Refresh"
 msgstr "Обновить"
@@ -180,46 +180,46 @@ msgid "Download Rate"
 msgstr "Скорость загрузки"
 
 msgid "Last"
-msgstr "最近"
+msgstr "Последний"
 
 msgid "second"
-msgstr "秒"
+msgstr "секунда"
 
 msgid "minute"
-msgstr "分钟"
+msgstr "минута"
 
 msgid "hour"
-msgstr "小时"
+msgstr "час"
 
 msgid "day"
-msgstr "天"
+msgstr "день"
 
 msgid "week"
-msgstr "周"
+msgstr "неделя"
 
 msgid "Other Rates"
-msgstr "其他速率"
+msgstr "Другие скорости"
 
 msgid "Cumulative"
-msgstr "累计流量"
+msgstr "Накопительный трафик"
 
 msgid "Total Uploaded"
-msgstr "总上传"
+msgstr "Всего отправлено"
 
 msgid "Total Downloaded"
-msgstr "总下载"
+msgstr "Всего загружено"
 
 msgid "LAN Uploaded"
-msgstr "LAN 已上传"
+msgstr "LAN отправлено"
 
 msgid "LAN Downloaded"
-msgstr "LAN 已下载"
+msgstr "LAN загружено"
 
 msgid "WAN Uploaded"
-msgstr "WAN 已上传"
+msgstr "WAN отправлено"
 
 msgid "WAN Downloaded"
-msgstr "WAN 已下载"
+msgstr "WAN загружено"
 
 msgid "Total Upload"
 msgstr "Всего выгружено"
@@ -228,16 +228,16 @@ msgid "Total Download"
 msgstr "Всего загружено"
 
 msgid "LAN Upload"
-msgstr "LAN 上传速率"
+msgstr "Скорость отправки LAN"
 
 msgid "LAN Download"
-msgstr "LAN 下载速率"
+msgstr "Скорость загрузки LAN"
 
 msgid "WAN Upload"
-msgstr "WAN 上传速率"
+msgstr "Скорость отправки WAN"
 
 msgid "WAN Download"
-msgstr "WAN 下载速率"
+msgstr "Скорость загрузки WAN"
 
 msgid "Never Online"
 msgstr "Никогда не был в сети"
@@ -264,28 +264,28 @@ msgid "Last Online"
 msgstr "Последний раз в сети"
 
 msgid "Zoom"
-msgstr "缩放"
+msgstr "Масштаб"
 
 msgid "Sort By"
-msgstr "排序方式"
+msgstr "Сортировать по"
 
 msgid "Online Status"
-msgstr "在线状态"
+msgstr "Статус в сети"
 
 msgid "Total Traffic"
-msgstr "总流量"
+msgstr "Всего трафика"
 
 msgid "Ascending"
-msgstr "升序"
+msgstr "По возрастанию"
 
 msgid "Descending"
-msgstr "降序"
+msgstr "По убыванию"
 
 msgid "Sort by Speed"
-msgstr "按速度排序"
+msgstr "Сортировать по скорости"
 
 msgid "Sort by Traffic"
-msgstr "按用量排序"
+msgstr "Сортировать по трафику"
 
 msgid "Simple Mode"
 msgstr "Простой режим"
@@ -303,19 +303,19 @@ msgid "DNS Query Records"
 msgstr "Записи запросов DNS"
 
 msgid "DNS Statistics"
-msgstr "DNS 统计信息"
+msgstr "Статистика DNS"
 
 msgid "DNS Monitoring Disabled"
-msgstr "DNS监控未启用"
+msgstr "Мониторинг DNS отключён"
 
 msgid "Please enable DNS monitoring in settings"
-msgstr "请在设置中启用DNS监控功能"
+msgstr "Включите мониторинг DNS в настройках"
 
 msgid "Go to Settings"
-msgstr "前往设置"
+msgstr "Перейти в настройки"
 
 msgid "No Data"
-msgstr "无数据"
+msgstr "Нет данных"
 
 msgid "Time"
 msgstr "Время"
@@ -327,22 +327,22 @@ msgid "Query Type"
 msgstr "Тип запроса"
 
 msgid "Response Code"
-msgstr "响应码"
+msgstr "Код ответа"
 
 msgid "Response Time"
 msgstr "Время отклика"
 
 msgid "Source IP"
-msgstr "源IP"
+msgstr "IP источника"
 
 msgid "Destination IP"
-msgstr "目标IP"
+msgstr "IP назначения"
 
 msgid "Response IPs"
-msgstr "响应IP"
+msgstr "IP ответа"
 
 msgid "Response Result"
-msgstr "响应结果"
+msgstr "Результат ответа"
 
 msgid "DNS Server"
 msgstr "DNS-сервер"
@@ -354,19 +354,19 @@ msgid "Response"
 msgstr "Ответ"
 
 msgid "Filter"
-msgstr "过滤"
+msgstr "Фильтр"
 
 msgid "Domain Filter"
-msgstr "域名过滤"
+msgstr "Фильтр домена"
 
 msgid "Device Filter"
-msgstr "设备过滤"
+msgstr "Фильтр устройства"
 
 msgid "DNS Server Filter"
-msgstr "DNS服务器过滤"
+msgstr "Фильтр DNS-сервера"
 
 msgid "Type Filter"
-msgstr "类型过滤"
+msgstr "Фильтр типа"
 
 msgid "All"
 msgstr "Все"
@@ -390,25 +390,25 @@ msgid "Year"
 msgstr "Этот Год"
 
 msgid "Queries Only"
-msgstr "仅查询"
+msgstr "Только запросы"
 
 msgid "Responses Only"
-msgstr "仅响应"
+msgstr "Только ответы"
 
 msgid "Search"
 msgstr "Поиск"
 
 msgid "Search Domain"
-msgstr "搜索域名"
+msgstr "Поиск домена"
 
 msgid "Search Device"
-msgstr "搜索设备"
+msgstr "Поиск устройства"
 
 msgid "Search DNS Server"
-msgstr "搜索DNS服务器"
+msgstr "Поиск DNS-сервера"
 
 msgid "Clear"
-msgstr "清除"
+msgstr "Очистить"
 
 msgid "Previous"
 msgstr "Предыдущая"
@@ -429,31 +429,31 @@ msgid "records"
 msgstr "записей"
 
 msgid "Per Page"
-msgstr "每页显示"
+msgstr "На странице"
 
 msgid ""
-msgstr "条"
+msgstr ""
 
 msgid "Total Queries"
 msgstr "Всего запросов"
 
 msgid "Total Responses"
-msgstr "总响应数"
+msgstr "Всего ответов"
 
 msgid "Queries with Response"
-msgstr "有响应查询"
+msgstr "Запросы с ответом"
 
 msgid "Queries without Response"
-msgstr "无响应查询"
+msgstr "Запросы без ответа"
 
 msgid "Avg Response Time"
-msgstr "平均响应时间"
+msgstr "Среднее время ответа"
 
 msgid "Min Response Time"
-msgstr "最快响应时间"
+msgstr "Минимальное время ответа"
 
 msgid "Max Response Time"
-msgstr "最慢响应时间"
+msgstr "Максимальное время ответа"
 
 msgid "Success Rate"
 msgstr "Процент успеха"
@@ -468,52 +468,52 @@ msgid "Top Domains"
 msgstr "Самые запрашиваемые домены"
 
 msgid "Top Query Types"
-msgstr "最常用查询类型"
+msgstr "Самые частые типы запросов"
 
 msgid "Top Devices"
 msgstr "Самые активные устройства"
 
 msgid "Top DNS Servers"
-msgstr "最常用DNS服务器"
+msgstr "Самые частые DNS-серверы"
 
 msgid "Unique Devices"
-msgstr "唯一设备数"
+msgstr "Уникальных устройств"
 
 msgid "ms"
-msgstr "毫秒"
+msgstr "мс"
 
 msgid "minutes"
-msgstr "分钟"
+msgstr "минут"
 
 msgid "Unknown Device"
-msgstr "未知设备"
+msgstr "Неизвестное устройство"
 
 msgid "Domain not found"
-msgstr "域名未找到"
+msgstr "Домен не найден"
 
 msgid "Server error"
-msgstr "服务器错误"
+msgstr "Ошибка сервера"
 
 msgid "Format error"
-msgstr "格式错误"
+msgstr "Ошибка формата"
 
 msgid "Refused"
-msgstr "拒绝"
+msgstr "Отказ"
 
 msgid "Other"
-msgstr "其他"
+msgstr "Другое"
 
 msgid "Does not include DoH and DoT"
-msgstr "不包含 DoH 和 DoT"
+msgstr "Не включает DoH и DoT"
 
 msgid "Latest Response Time"
-msgstr "最新响应时间"
+msgstr "Последнее время ответа"
 
 msgid "Response Code Distribution"
-msgstr "响应码分布"
+msgstr "Распределение кодов ответа"
 
 msgid "Response Time Percentiles"
-msgstr "响应时间百分位"
+msgstr "Перцентили времени ответа"
 
 msgid "P50"
 msgstr "P50"
@@ -534,25 +534,25 @@ msgid "Connection Monitor"
 msgstr "Монитор соединений"
 
 msgid "Device Connection Statistics"
-msgstr "设备连接统计"
+msgstr "Статистика соединений по устройствам"
 
 msgid "Global Connection Statistics"
-msgstr "全局连接统计"
+msgstr "Общая статистика соединений"
 
 msgid "Active TCP"
-msgstr "活跃TCP"
+msgstr "Активный TCP"
 
 msgid "Active UDP"
-msgstr "活跃UDP"
+msgstr "Активный UDP"
 
 msgid "Closed TCP"
-msgstr "已关闭TCP"
+msgstr "Закрытый TCP"
 
 msgid "Total Connections"
 msgstr "Всего соединений"
 
 msgid "Last Updated"
-msgstr "最后更新"
+msgstr "Последнее обновление"
 
 msgid "TCP Connections"
 msgstr "Соединения TCP"
@@ -561,7 +561,7 @@ msgid "UDP Connections"
 msgstr "Соединения UDP"
 
 msgid "Established TCP"
-msgstr "已建立TCP"
+msgstr "Установленный TCP"
 
 msgid "TIME_WAIT TCP"
 msgstr "TIME_WAIT TCP"
@@ -570,19 +570,19 @@ msgid "CLOSE_WAIT TCP"
 msgstr "CLOSE_WAIT TCP"
 
 msgid "Total Devices"
-msgstr "设备总数"
+msgstr "Всего устройств"
 
 msgid "Connection Monitor Disabled"
-msgstr "连接监控未启用"
+msgstr "Мониторинг соединений отключён"
 
 msgid "Please enable connection monitoring in settings"
-msgstr "请在设置中启用连接监控功能"
+msgstr "Включите мониторинг соединений в настройках"
 
 msgid "List only shows LAN device connections, data may differ from total connections."
-msgstr "列表只显示局域网设备连接，数据可能和总连接数不一致。"
+msgstr "Список показывает только соединения устройств LAN, данные могут отличаться от общего числа соединений."
 
 msgid "TCP Status Details"
-msgstr "TCP 状态详情"
+msgstr "Подробности статуса TCP"
 
 msgid "Basic Settings"
 msgstr "Основные настройки"
@@ -597,34 +597,34 @@ msgid "DNS Monitor Settings"
 msgstr "Настройки монитора DNS"
 
 msgid "Bandix Basic Configuration"
-msgstr "Bandix 基本配置"
+msgstr "Базовая конфигурация Bandix"
 
 msgid "Configure basic parameters for Bandix service"
-msgstr "配置 Bandix 服务的基本参数"
+msgstr "Настройка базовых параметров службы Bandix"
 
 msgid "Bandix Traffic Monitor Configuration"
-msgstr "Bandix 流量监控配置"
+msgstr "Конфигурация монитора трафика Bandix"
 
 msgid "Configure traffic monitoring related parameters"
-msgstr "配置流量监控相关参数"
+msgstr "Настройка параметров мониторинга трафика"
 
 msgid "Bandix Connection Monitor Configuration"
-msgstr "Bandix 连接监控配置"
+msgstr "Конфигурация монитора соединений Bandix"
 
 msgid "Configure connection monitoring related parameters"
-msgstr "配置连接监控相关参数"
+msgstr "Настройка параметров мониторинга соединений"
 
 msgid "Bandix DNS Monitor Configuration"
-msgstr "Bandix DNS监控配置"
+msgstr "Конфигурация монитора DNS Bandix"
 
 msgid "Configure DNS monitoring related parameters"
-msgstr "配置DNS监控相关参数"
+msgstr "Настройка параметров мониторинга DNS"
 
 msgid "Enable"
 msgstr "Включить"
 
 msgid "Enable Bandix Traffic Monitor Service"
-msgstr "启用 Bandix 流量监控服务"
+msgstr "Включить службу мониторинга трафика Bandix"
 
 msgid "Enable Traffic Monitoring"
 msgstr "Включить мониторинг трафика"
@@ -636,10 +636,10 @@ msgid "Enable DNS Monitoring"
 msgstr "Включить мониторинг DNS"
 
 msgid "Simplified Chinese"
-msgstr "简体中文"
+msgstr "Китайский упрощённый"
 
 msgid "Traditional Chinese"
-msgstr "繁体中文"
+msgstr "Китайский традиционный"
 
 msgid "Port"
 msgstr "Порт"
@@ -657,49 +657,49 @@ msgid "Monitor Interface"
 msgstr "Интерфейс мониторинга"
 
 msgid "Select the LAN network interface to monitor"
-msgstr "选择要监控的LAN网络接口"
+msgstr "Выберите сетевой интерфейс LAN для мониторинга"
 
 msgid "Speed Units"
 msgstr "Единицы скорости"
 
 msgid "Select the speed display unit format"
-msgstr "选择网速显示的单位格式"
+msgstr "Выберите формат единиц отображения скорости"
 
 msgid "Bytes Units (B/s, KB/s, MB/s)"
-msgstr "字节单位 (B/s, KB/s, MB/s)"
+msgstr "Единицы в байтах (B/s, KB/s, MB/s)"
 
 msgid "Bits Units (bps, Kbps, Mbps)"
-msgstr "比特单位 (bps, Kbps, Mbps)"
+msgstr "Единицы в битах (bps, Kbps, Mbps)"
 
 msgid "Interface Theme"
-msgstr "界面主题"
+msgstr "Тема интерфейса"
 
 msgid "Select the display theme for Bandix Traffic Monitor"
-msgstr "选择 Bandix 流量监控的显示主题"
+msgstr "Выберите тему отображения монитора трафика Bandix"
 
 msgid "Follow System"
-msgstr "跟随系统"
+msgstr "Следовать системе"
 
 msgid "Light Mode"
-msgstr "明亮模式"
+msgstr "Светлый режим"
 
 msgid "Dark Mode"
-msgstr "暗黑模式"
+msgstr "Тёмный режим"
 
 msgid "Feedback"
-msgstr "意见反馈"
+msgstr "Обратная связь"
 
 msgid "Log Level"
 msgstr "Уровень журналирования"
 
 msgid "Set the log level for Bandix service"
-msgstr "设置 Bandix 服务的日志级别"
+msgstr "Установить уровень логирования службы Bandix"
 
 msgid "Offline Timeout"
 msgstr "Таймаут офлайн"
 
 msgid "Set the timeout for device offline detection (seconds). Devices inactive for longer than this time will be marked as offline"
-msgstr "设置设备离线判断的超时时间（秒）。超过此时间未活动的设备将被标记为离线"
+msgstr "Установить таймаут определения офлайн (секунды). Устройства, неактивные дольше, будут помечены офлайн"
 
 msgid "Realtime Traffic Period"
 msgstr "Период трафика в реальном времени"
@@ -711,7 +711,7 @@ msgid "Data Flush Interval"
 msgstr "Интервал сброса данных"
 
 msgid "Set the interval for flushing data to disk"
-msgstr "设置数据写入磁盘的时间间隔"
+msgstr "Установить интервал записи данных на диск"
 
 msgid "1 minute"
 msgstr "1 минута"
@@ -723,16 +723,16 @@ msgid "10 minutes"
 msgstr "10 минут"
 
 msgid "15 minutes"
-msgstr "15 分钟"
+msgstr "15 минут"
 
 msgid "20 minutes"
-msgstr "20 分钟"
+msgstr "20 минут"
 
 msgid "25 minutes"
-msgstr "25 分钟"
+msgstr "25 минут"
 
 msgid "30 minutes"
-msgstr "30 分钟"
+msgstr "30 минут"
 
 msgid "1 hour"
 msgstr "1 час"
@@ -753,19 +753,19 @@ msgid "If you change the directory, please manually add it to the backup directo
 msgstr "Если вы измените каталог, пожалуйста, добавьте его вручную в каталог резервных копий"
 
 msgid "Bandix data storage directory"
-msgstr "Bandix 数据存储目录"
+msgstr "Каталог хранения данных Bandix"
 
 msgid "Enable Bandix connection monitoring"
-msgstr "启用 Bandix 连接监控功能"
+msgstr "Включить мониторинг соединений Bandix"
 
 msgid "Enable Bandix DNS monitoring"
-msgstr "启用 Bandix DNS监控功能"
+msgstr "Включить мониторинг DNS Bandix"
 
 msgid "DNS Max Records"
 msgstr "Максимум записей DNS"
 
 msgid "Set the maximum number of DNS query records to keep. Older records will be deleted when this limit is exceeded"
-msgstr "设置DNS查询记录的最大保存数量，超过此数量将删除最旧的记录"
+msgstr "Установить максимальное количество сохраняемых записей DNS. При превышении старые записи будут удаляться"
 
 msgid "Persist DNS Data"
 msgstr "Сохранять данные DNS"
