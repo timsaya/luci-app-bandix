@@ -1069,11 +1069,11 @@ return view.extend({
                         E('tr', {}, [
                             E('th', {}, _('Protocol')),
                             E('th', {}, _('State')),
-                            E('th', {}, 'Orig Src'),
-                            E('th', {}, 'Orig Dst'),
+                            E('th', {}, _('Orig Src')),
+                            E('th', {}, _('Orig Dst')),
                             E('th', {}, _('Send')),
-                            E('th', {}, 'Repl Src'),
-                            E('th', {}, 'Repl Dst'),
+                            E('th', {}, _('Repl Src')),
+                            E('th', {}, _('Repl Dst')),
                             E('th', {}, _('Reply')),
                             E('th', {}, _('Flags'))
                         ])

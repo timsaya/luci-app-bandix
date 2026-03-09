@@ -1163,8 +1163,65 @@ msgstr "Excluir dispositivo de interfaz"
 msgid "Exclude the router itself (interface device) from traffic statistics"
 msgstr "Excluir el propio router (dispositivo de interfaz) de las estadísticas de tráfico"
 
+msgid "Enable Neighbor Flush"
+msgstr "Habilitar vaciado de tabla de vecinos"
+
+msgid "Enable periodic flush of neighbor table data. Generally not recommended if the device list works normally."
+msgstr "Habilitar vaciado periódico de datos de la tabla de vecinos. Generalmente no se recomienda si la lista de dispositivos funciona con normalidad."
+
+msgid "Neighbor Flush Interval"
+msgstr "Intervalo de vaciado de tabla de vecinos"
+
+msgid "Set the interval for flushing neighbor table data"
+msgstr "Establecer el intervalo de vaciado de datos de la tabla de vecinos"
+
 msgid "No devices"
 msgstr "Sin dispositivos"
 
 msgid "LAN Traffic is viewed from the entire subnet perspective, so upload and download are always equal, forming a closed loop. Additionally, due to the presence of dedicated hardware switching chips, LAN traffic between 2 devices (e.g., PC - NAS) within the local network may not be monitorable."
 msgstr "El tráfico LAN se ve desde la perspectiva de toda la subred, por lo que la carga y descarga siempre son iguales, formando un bucle cerrado. Además, debido a la presencia de chips de conmutación de hardware dedicados, el tráfico LAN entre 2 dispositivos (p. ej., PC - NAS) dentro de la red local puede no ser monitoreable."
+
+msgid "Protocol"
+msgstr "Protocolo"
+
+msgid "State"
+msgstr "Estado"
+
+msgid "Send"
+msgstr "Enviar"
+
+msgid "Reply"
+msgstr "Respuesta"
+
+msgid "Flags"
+msgstr "Marcas"
+
+msgid "Loading…"
+msgstr "Cargando…"
+
+msgid "No connections"
+msgstr "Sin conexiones"
+
+msgid "pkts"
+msgstr "paquetes"
+
+msgid "Failed to load"
+msgstr "Error al cargar"
+
+msgid "Connection Details"
+msgstr "Detalles de conexión"
+
+msgid "Details"
+msgstr "Detalles"
+
+msgid "Orig Src"
+msgstr "Origen orig."
+
+msgid "Orig Dst"
+msgstr "Destino orig."
+
+msgid "Repl Src"
+msgstr "Origen resp."
+
+msgid "Repl Dst"
+msgstr "Destino resp."

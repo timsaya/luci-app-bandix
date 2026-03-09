@@ -1163,8 +1163,65 @@ msgstr "Wyklucz urządzenie interfejsu"
 msgid "Exclude the router itself (interface device) from traffic statistics"
 msgstr "Wyklucz sam router (urządzenie interfejsu) ze statystyk ruchu"
 
+msgid "Enable Neighbor Flush"
+msgstr "Włącz odświeżanie tabeli sąsiadów"
+
+msgid "Enable periodic flush of neighbor table data. Generally not recommended if the device list works normally."
+msgstr "Włącz okresowe odświeżanie danych tabeli sąsiadów. Ogólnie nie zalecane, jeśli lista urządzeń działa prawidłowo."
+
+msgid "Neighbor Flush Interval"
+msgstr "Interwał odświeżania tabeli sąsiadów"
+
+msgid "Set the interval for flushing neighbor table data"
+msgstr "Ustaw interwał odświeżania danych tabeli sąsiadów"
+
 msgid "No devices"
 msgstr "Brak urządzeń"
 
 msgid "LAN Traffic is viewed from the entire subnet perspective, so upload and download are always equal, forming a closed loop. Additionally, due to the presence of dedicated hardware switching chips, LAN traffic between 2 devices (e.g., PC - NAS) within the local network may not be monitorable."
 msgstr "Ruch LAN jest postrzegany z perspektywy całej podsieci, więc przesyłanie i pobieranie są zawsze równe, tworząc zamkniętą pętlę. Ponadto, ze względu na obecność dedykowanych chipów przełączających sprzętowych, ruch LAN między 2 urządzeniami (np. PC - NAS) w sieci lokalnej może nie być monitorowany."
+
+msgid "Protocol"
+msgstr "Protokół"
+
+msgid "State"
+msgstr "Stan"
+
+msgid "Send"
+msgstr "Wyślij"
+
+msgid "Reply"
+msgstr "Odpowiedź"
+
+msgid "Flags"
+msgstr "Flagi"
+
+msgid "Loading…"
+msgstr "Ładowanie…"
+
+msgid "No connections"
+msgstr "Brak połączeń"
+
+msgid "pkts"
+msgstr "pakiety"
+
+msgid "Failed to load"
+msgstr "Błąd ładowania"
+
+msgid "Connection Details"
+msgstr "Szczegóły połączenia"
+
+msgid "Details"
+msgstr "Szczegóły"
+
+msgid "Orig Src"
+msgstr "Źródło orig."
+
+msgid "Orig Dst"
+msgstr "Cel orig."
+
+msgid "Repl Src"
+msgstr "Źródło odp."
+
+msgid "Repl Dst"
+msgstr "Cel odp."

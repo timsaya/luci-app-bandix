@@ -1163,8 +1163,65 @@ msgstr "Исключить устройство интерфейса"
 msgid "Exclude the router itself (interface device) from traffic statistics"
 msgstr "Исключить сам роутер (устройство интерфейса) из статистики трафика"
 
+msgid "Enable Neighbor Flush"
+msgstr "Включить сброс таблицы соседей"
+
+msgid "Enable periodic flush of neighbor table data. Generally not recommended if the device list works normally."
+msgstr "Включить периодический сброс данных таблицы соседей. Обычно не рекомендуется, если список устройств работает нормально."
+
+msgid "Neighbor Flush Interval"
+msgstr "Интервал сброса таблицы соседей"
+
+msgid "Set the interval for flushing neighbor table data"
+msgstr "Установить интервал сброса данных таблицы соседей"
+
 msgid "No devices"
 msgstr "Нет устройств"
 
 msgid "LAN Traffic is viewed from the entire subnet perspective, so upload and download are always equal, forming a closed loop. Additionally, due to the presence of dedicated hardware switching chips, LAN traffic between 2 devices (e.g., PC - NAS) within the local network may not be monitorable."
 msgstr "Трафик LAN рассматривается с точки зрения всей подсети, поэтому загрузка и выгрузка всегда равны, образуя замкнутый цикл. Кроме того, из-за наличия специализированных аппаратных коммутационных чипов, трафик LAN между 2 устройствами (например, ПК - NAS) в локальной сети может быть не подлежащим мониторингу."
+
+msgid "Protocol"
+msgstr "Протокол"
+
+msgid "State"
+msgstr "Состояние"
+
+msgid "Send"
+msgstr "Отправка"
+
+msgid "Reply"
+msgstr "Ответ"
+
+msgid "Flags"
+msgstr "Флаги"
+
+msgid "Loading…"
+msgstr "Загрузка…"
+
+msgid "No connections"
+msgstr "Нет подключений"
+
+msgid "pkts"
+msgstr "пакеты"
+
+msgid "Failed to load"
+msgstr "Ошибка загрузки"
+
+msgid "Connection Details"
+msgstr "Подробности соединения"
+
+msgid "Details"
+msgstr "Подробнее"
+
+msgid "Orig Src"
+msgstr "Ист. отпр."
+
+msgid "Orig Dst"
+msgstr "Назнач. отпр."
+
+msgid "Repl Src"
+msgstr "Ист. ответа"
+
+msgid "Repl Dst"
+msgstr "Назнач. ответа"

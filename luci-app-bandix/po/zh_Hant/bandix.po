@@ -1163,8 +1163,65 @@ msgstr "排除介面設備"
 msgid "Exclude the router itself (interface device) from traffic statistics"
 msgstr "從流量統計中排除路由器本身（介面設備）"
 
+msgid "Enable Neighbor Flush"
+msgstr "啟用鄰居表刷新"
+
+msgid "Enable periodic flush of neighbor table data. Generally not recommended if the device list works normally."
+msgstr "啟用定期刷新鄰居表數據。若設備列表正常，通常不建議開啟。"
+
+msgid "Neighbor Flush Interval"
+msgstr "鄰居表刷新間隔"
+
+msgid "Set the interval for flushing neighbor table data"
+msgstr "設置鄰居表數據刷新的時間間隔"
+
 msgid "No devices"
 msgstr "無設備"
 
 msgid "LAN Traffic is viewed from the entire subnet perspective, so upload and download are always equal, forming a closed loop. Additionally, due to the presence of dedicated hardware switching chips, LAN traffic between 2 devices (e.g., PC - NAS) within the local network may not be monitorable."
 msgstr "LAN 流量是從整個子網視角來看，所以上傳和下載總是相等，是一個閉環。另外，由於專用硬體交換晶片的存在，區域網路中 2 終端（比如 PC - NAS）之間的 LAN 流量可能無法監控。"
+
+msgid "Protocol"
+msgstr "協定"
+
+msgid "State"
+msgstr "狀態"
+
+msgid "Send"
+msgstr "發送"
+
+msgid "Reply"
+msgstr "回覆"
+
+msgid "Flags"
+msgstr "標記"
+
+msgid "Loading…"
+msgstr "載入中…"
+
+msgid "No connections"
+msgstr "暫無連線"
+
+msgid "pkts"
+msgstr "封包"
+
+msgid "Failed to load"
+msgstr "載入失敗"
+
+msgid "Connection Details"
+msgstr "連線詳情"
+
+msgid "Details"
+msgstr "詳情"
+
+msgid "Orig Src"
+msgstr "發起源"
+
+msgid "Orig Dst"
+msgstr "發起目標"
+
+msgid "Repl Src"
+msgstr "回覆源"
+
+msgid "Repl Dst"
+msgstr "回覆目標"

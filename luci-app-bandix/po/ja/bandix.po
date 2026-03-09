@@ -1163,8 +1163,65 @@ msgstr "インターフェースデバイスを除外"
 msgid "Exclude the router itself (interface device) from traffic statistics"
 msgstr "トラフィック統計からルーター自体（インターフェースデバイス）を除外する"
 
+msgid "Enable Neighbor Flush"
+msgstr "ネイバーテーブルフラッシュを有効にする"
+
+msgid "Enable periodic flush of neighbor table data. Generally not recommended if the device list works normally."
+msgstr "ネイバーテーブルデータの定期フラッシュを有効にします。デバイスリストが正常に動作している場合は、通常は有効にしないことをお勧めします。"
+
+msgid "Neighbor Flush Interval"
+msgstr "ネイバーテーブルフラッシュ間隔"
+
+msgid "Set the interval for flushing neighbor table data"
+msgstr "ネイバーテーブルデータのフラッシュ間隔を設定"
+
 msgid "No devices"
 msgstr "デバイスなし"
 
 msgid "LAN Traffic is viewed from the entire subnet perspective, so upload and download are always equal, forming a closed loop. Additionally, due to the presence of dedicated hardware switching chips, LAN traffic between 2 devices (e.g., PC - NAS) within the local network may not be monitorable."
 msgstr "LANトラフィックはサブネット全体の視点から見られるため、アップロードとダウンロードは常に等しく、閉ループを形成します。さらに、専用ハードウェアスイッチングチップの存在により、ローカルネットワーク内の2つのデバイス（例：PC - NAS）間のLANトラフィックは監視できない可能性があります。"
+
+msgid "Protocol"
+msgstr "プロトコル"
+
+msgid "State"
+msgstr "状態"
+
+msgid "Send"
+msgstr "送信"
+
+msgid "Reply"
+msgstr "応答"
+
+msgid "Flags"
+msgstr "フラグ"
+
+msgid "Loading…"
+msgstr "読み込み中…"
+
+msgid "No connections"
+msgstr "接続なし"
+
+msgid "pkts"
+msgstr "パケット"
+
+msgid "Failed to load"
+msgstr "読み込み失敗"
+
+msgid "Connection Details"
+msgstr "接続詳細"
+
+msgid "Details"
+msgstr "詳細"
+
+msgid "Orig Src"
+msgstr "送信元"
+
+msgid "Orig Dst"
+msgstr "送信先"
+
+msgid "Repl Src"
+msgstr "応答元"
+
+msgid "Repl Dst"
+msgstr "応答先"
