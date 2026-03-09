@@ -850,6 +850,72 @@ return view.extend({
                 opacity: 0.7;
                 font-size: 0.875rem;
             }
+
+            .device-uplink-badges {
+                display: inline-flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                align-items: center;
+                margin-left: 6px;
+                vertical-align: middle;
+            }
+
+            .device-uplink-badge,
+            .device-ch-badge {
+                display: inline-block;
+                padding: 2px 6px;
+                border-radius: 4px;
+                font-size: 0.7rem;
+                font-weight: 600;
+                line-height: 1.2;
+            }
+
+            .device-uplink-badge {
+                background: rgba(107, 114, 128, 0.2);
+                color: #4b5563;
+            }
+
+            .theme-dark .device-uplink-badge {
+                background: rgba(156, 163, 175, 0.25);
+                color: #9ca3af;
+            }
+
+            .device-ch-badge.device-ch-g24 {
+                background: rgba(245, 158, 11, 0.2);
+                color: #b45309;
+            }
+
+            .theme-dark .device-ch-badge.device-ch-g24 {
+                background: rgba(251, 191, 36, 0.2);
+                color: #fbbf24;
+            }
+
+            .device-ch-badge.device-ch-g5 {
+                background: rgba(59, 130, 246, 0.2);
+                color: #2563eb;
+            }
+
+            .theme-dark .device-ch-badge.device-ch-g5 {
+                background: rgba(96, 165, 250, 0.2);
+                color: #60a5fa;
+            }
+
+            .device-ch-badge.device-ch-g6 {
+                background: rgba(139, 92, 246, 0.2);
+                color: #6d28d9;
+            }
+
+            .theme-dark .device-ch-badge.device-ch-g6 {
+                background: rgba(167, 139, 250, 0.2);
+                color: #a78bfa;
+            }
+
+            .device-uplink-badges-wrap {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                align-items: center;
+            }
             
             .device-ipv6 {
                 opacity: 0.7;
@@ -1367,7 +1433,11 @@ return view.extend({
                 opacity: 0.7;
                 font-size: 0.875rem;
             }
-            
+
+            .device-summary-badges {
+                margin-top: 8px;
+            }
+
             /* 加载动画 */
             .loading-spinner {
                 display: inline-block;
@@ -1595,6 +1665,12 @@ return view.extend({
                     font-size: 0.75rem;
                     opacity: 0.7;
                     margin-top: 4px;
+                }
+
+                .device-card-ip .device-uplink-badges .device-uplink-badge,
+                .device-card-ip .device-uplink-badges .device-ch-badge {
+                    padding: 1px 5px;
+                    font-size: 0.65rem;
                 }
                 
                 .device-card-action {
@@ -3888,11 +3964,15 @@ return view.extend({
             // 加载定时限速规则列表
             loadScheduleRules();
 
-            // 更新设备信息
-            deviceSummary.innerHTML = E('div', {}, [
+            var modalContent = [
                 E('div', { 'class': 'device-summary-name' }, device.host || device.ip4),
                 E('div', { 'class': 'device-summary-details' }, device.ip4 + ' (' + device.mac + ')')
-            ]).innerHTML;
+            ];
+            var modalBadges = buildDeviceUplinkChBadges(device);
+            if (modalBadges.length) {
+                modalContent.push(E('div', { 'class': 'device-summary-badges device-uplink-badges-wrap' }, modalBadges));
+            }
+            deviceSummary.innerHTML = E('div', {}, modalContent).innerHTML;
 
             // 设置当前hostname值
             document.getElementById('device-hostname-input').value = device.host || '';
@@ -4905,6 +4985,52 @@ return view.extend({
             return timeDiff <= offlineThreshold;
         }
 
+        function channelToBand(ch) {
+            var c = Number(ch);
+            if (c < 1) return null;
+            if (c <= 14) return '2.4 GHz';
+            if (c <= 165) return '5 GHz';
+            if (c <= 233) return '6 GHz';
+            return null;
+        }
+
+        function channelToBandClass(ch) {
+            var c = Number(ch);
+            if (c <= 14) return 'g24';
+            if (c <= 165) return 'g5';
+            if (c <= 233) return 'g6';
+            return '';
+        }
+
+        function buildDeviceUplinkChBadges(device) {
+            var badges = [];
+            if (device.uplink && String(device.uplink).trim() !== '') {
+                badges.push(E('span', { 'class': 'device-uplink-badge', 'title': _('Interface') }, device.uplink.trim()));
+            }
+            if (device.w_ch && Number(device.w_ch) > 0) {
+                var ch = Number(device.w_ch);
+                var band = channelToBand(ch);
+                var bandClass = channelToBandClass(ch);
+                if (band && bandClass) {
+                    badges.push(E('span', {
+                        'class': 'device-ch-badge device-ch-' + bandClass,
+                        'title': _('WiFi Channel') + ' ' + ch
+                    }, band));
+                }
+            }
+            return badges;
+        }
+
+        function formatDeviceUplinkCh(device) {
+            var parts = [];
+            if (device.uplink && String(device.uplink).trim() !== '') parts.push(device.uplink.trim());
+            if (device.w_ch && Number(device.w_ch) > 0) {
+                var band = channelToBand(Number(device.w_ch));
+                if (band) parts.push(band);
+            }
+            return parts.join(' · ');
+        }
+
         // 格式化最后上线时间
         function formatLastOnlineTime(lastOnlineTs) {
             if (!lastOnlineTs || lastOnlineTs <= 0) {
@@ -5802,7 +5928,7 @@ return view.extend({
                     var deviceMode = isMobileScreen ? 'simple' : (localStorage.getItem('bandix_device_mode') || 'simple');
                     var isDetailedMode = deviceMode === 'detailed';
 
-                    // 构建设备信息元素
+                    var uplinkChBadges = buildDeviceUplinkChBadges(device);
                     var deviceInfoElements = [
                         E('div', { 'class': 'device-name' }, [
                             E('span', {
@@ -5815,7 +5941,8 @@ return view.extend({
                                 'class': 'device-connection-type',
                                 'title': device.conn === 'wifi' ? _('Wireless') : (device.conn === 'router' ? _('Router') : _('Wired'))
                             }, getConnectionTypeIcon(device.conn)) : '',
-                            device.ip4
+                            device.ip4,
+                            uplinkChBadges.length ? E('span', { 'class': 'device-uplink-badges' }, uplinkChBadges) : ''
                         ])
                     ];
 
@@ -6046,7 +6173,11 @@ return view.extend({
                                             'class': 'device-connection-type',
                                             'title': device.conn === 'wifi' ? _('Wireless') : (device.conn === 'router' ? _('Router') : _('Wired'))
                                         }, getConnectionTypeIcon(device.conn)) : '',
-                                        device.ip4
+                                        device.ip4,
+                                        (function () {
+                                            var badges = buildDeviceUplinkChBadges(device);
+                                            return badges.length ? E('span', { 'class': 'device-uplink-badges' }, badges) : '';
+                                        })()
                                     ])
                                 ])
                             ]),

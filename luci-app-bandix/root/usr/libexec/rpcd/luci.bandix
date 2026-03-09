@@ -161,6 +161,8 @@ delete_device() {
 #     ip6,                           # IPv6 地址列表
 #     host,                          # 主机名
 #     conn,                          # 接入类型 (wifi/wired/router)
+#     uplink,                        # 接入接口名 (eth1/lan2/phy0-ap0)，无则空串
+#     w_ch,                          # WiFi 频道号 (1/36/149)，非 WiFi 为 0
 #     last,                          # 最后在线时间戳(ms)
 #     t_rx_b, t_tx_b,                # 总下/上行字节
 #     t_rx_r, t_tx_r,                # 总下/上行速率
