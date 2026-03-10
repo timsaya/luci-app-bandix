@@ -3118,8 +3118,8 @@ return view.extend({
                 };
                 var daysText = days.length > 0 ? days.map(function (d) { return dayNames[d] || d; }).join(', ') : '-';
 
-                var uploadLimit = rule.w_tx_r_limit || 0;
-                var downloadLimit = rule.w_rx_r_limit || 0;
+                var uploadLimit = rule.wan_tx_rate_limit || 0;
+                var downloadLimit = rule.wan_rx_rate_limit || 0;
 
                 // 使用 isRuleActive 函数检查规则是否激活
                 var isActive = isRuleActive(rule);
@@ -3746,8 +3746,8 @@ return view.extend({
                 });
 
                 // 设置限速值
-                var uploadLimit = editingRule.w_tx_r_limit || 0;
-                var downloadLimit = editingRule.w_rx_r_limit || 0;
+                var uploadLimit = editingRule.wan_tx_rate_limit || 0;
+                var downloadLimit = editingRule.wan_rx_rate_limit || 0;
 
                 // 根据限速值选择合适的单位
                 var uploadUnit, uploadValue, downloadUnit, downloadValue;
@@ -4064,8 +4064,8 @@ return view.extend({
 
                     var startTime = rule.time_slot && rule.time_slot.start ? rule.time_slot.start : '';
                     var endTime = rule.time_slot && rule.time_slot.end ? rule.time_slot.end : '';
-                    var uploadLimit = rule.w_tx_r_limit || 0;
-                    var downloadLimit = rule.w_rx_r_limit || 0;
+                    var uploadLimit = rule.wan_tx_rate_limit || 0;
+                    var downloadLimit = rule.wan_rx_rate_limit || 0;
 
                     var ruleItem = E('div', { 'class': 'schedule-rule-item' }, [
                         E('div', { 'class': 'schedule-rule-info' }, [
@@ -4262,8 +4262,8 @@ return view.extend({
             var downloadLimits = [];
 
             activeRules.forEach(function (rule) {
-                var uploadLimit = rule.w_tx_r_limit || 0;
-                var downloadLimit = rule.w_rx_r_limit || 0;
+                var uploadLimit = rule.wan_tx_rate_limit || 0;
+                var downloadLimit = rule.wan_rx_rate_limit || 0;
 
                 // 只收集非零的限制值
                 if (uploadLimit > 0) {
