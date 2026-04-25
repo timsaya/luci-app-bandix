@@ -860,6 +860,9 @@ msgstr "還沒有定時限速規則，點擊"新增規則"開始設定"
 msgid "Loading..."
 msgstr "載入中..."
 
+msgid "Loading in chunks, please wait... (%d/%d)"
+msgstr "分段載入中，請稍候... (%d/%d)"
+
 msgid "No schedule rules"
 msgstr "沒有定時限速規則"
 

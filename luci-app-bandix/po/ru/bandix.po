@@ -860,6 +860,9 @@ msgstr "Правил расписания пока нет, нажмите \"До
 msgid "Loading..."
 msgstr "Загрузка..."
 
+msgid "Loading in chunks, please wait... (%d/%d)"
+msgstr "Поштучная загрузка, подождите... (%d/%d)"
+
 msgid "No schedule rules"
 msgstr "Нет правил расписания"
 

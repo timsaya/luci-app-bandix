@@ -346,11 +346,15 @@ get_connection_flows() {
 	local ip="$1"
 	local protocol="$2"
 	local state="$3"
+	local page="$4"
+	local page_size="$5"
 
 	local query_params=""
 	[ -n "$ip" ] && query_params="${query_params}ip=$(printf '%s' "$ip" | sed 's/ /%20/g')&"
 	[ -n "$protocol" ] && query_params="${query_params}protocol=$(printf '%s' "$protocol" | sed 's/ /%20/g')&"
 	[ -n "$state" ] && query_params="${query_params}state=$(printf '%s' "$state" | sed 's/ /%20/g')&"
+	[ -n "$page" ] && query_params="${query_params}page=$page&"
+	[ -n "$page_size" ] && query_params="${query_params}page_size=$page_size&"
 	query_params=$(echo "$query_params" | sed 's/&$//')
 
 	local url="$BANDIX_CONNECTION_FLOWS_API"
@@ -1248,6 +1252,8 @@ case "$1" in
 		json_add_string "ip"
 		json_add_string "protocol"
 		json_add_string "state"
+		json_add_int "page"
+		json_add_int "page_size"
 		json_close_object
 		
 		json_add_object "getDnsQueries"
@@ -1444,6 +1450,8 @@ case "$1" in
 				ip=""
 				protocol=""
 				state=""
+				page=""
+				page_size=""
 				input=""
 				if read -t 1 -r input; then
 					:
@@ -1455,12 +1463,18 @@ case "$1" in
 					[ -z "$protocol" ] && protocol="$(echo "$input" | jsonfilter -e '$.protocol' 2>/dev/null)"
 					state="$(echo "$input" | jsonfilter -e '$[2]' 2>/dev/null)"
 					[ -z "$state" ] && state="$(echo "$input" | jsonfilter -e '$.state' 2>/dev/null)"
+					page="$(echo "$input" | jsonfilter -e '$[3]' 2>/dev/null)"
+					[ -z "$page" ] && page="$(echo "$input" | jsonfilter -e '$.page' 2>/dev/null)"
+					page_size="$(echo "$input" | jsonfilter -e '$[4]' 2>/dev/null)"
+					[ -z "$page_size" ] && page_size="$(echo "$input" | jsonfilter -e '$.page_size' 2>/dev/null)"
 				else
 					[ -n "$3" ] && ip="$3"
 					[ -n "$4" ] && protocol="$4"
 					[ -n "$5" ] && state="$5"
+					[ -n "$6" ] && page="$6"
+					[ -n "$7" ] && page_size="$7"
 				fi
-				get_connection_flows "$ip" "$protocol" "$state"
+				get_connection_flows "$ip" "$protocol" "$state" "$page" "$page_size"
 				;;
 			getDnsQueries)
 				# logger "luci.bandix: getDnsQueries called"

@@ -860,6 +860,9 @@ msgstr "Aún no hay reglas programadas, haga clic en \"Agregar regla\" para come
 msgid "Loading..."
 msgstr "Cargando..."
 
+msgid "Loading in chunks, please wait... (%d/%d)"
+msgstr "Carga por fragmentos, espere... (%d/%d)"
+
 msgid "No schedule rules"
 msgstr "No hay reglas programadas"
 

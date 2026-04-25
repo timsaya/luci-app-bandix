@@ -150,7 +150,7 @@ var callGetConnection = rpc.declare({
 var callGetConnectionFlows = rpc.declare({
     object: 'luci.bandix',
     method: 'getConnectionFlows',
-    params: ['ip', 'protocol', 'state'],
+    params: ['ip', 'protocol', 'state', 'page', 'page_size'],
     expect: {}
 });
 
@@ -688,14 +688,16 @@ return view.extend({
                 flex-shrink: 0;
             }
 
-            .flows-modal-content .flows-filters select {
+            .flows-modal-content .flows-filters select,
+            .flows-modal-content .flows-footer select {
                 padding: 6px 10px;
                 border-radius: 4px;
                 border: 1px solid rgba(0,0,0,0.2);
                 font-size: 0.875rem;
             }
 
-            .flows-modal-content.theme-dark .flows-filters select {
+            .flows-modal-content.theme-dark .flows-filters select,
+            .flows-modal-content.theme-dark .flows-footer select {
                 background-color: #3a3a3a;
                 border-color: rgba(255,255,255,0.2);
                 color: #e5e5e5;
@@ -778,6 +780,13 @@ return view.extend({
                 flex-shrink: 0;
                 display: flex;
                 justify-content: flex-end;
+                align-items: center;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+
+            .flows-modal-content .flows-footer .flows-page-size-select {
+                min-width: 92px;
             }
 
             .flows-modal-content.theme-dark .flows-footer {
@@ -1051,6 +1060,11 @@ return view.extend({
 
         function showFlowsModal(deviceIp, deviceInfo) {
             var currentTheme = getThemeMode();
+            var currentPage = 1;
+            var totalPages = 1;
+            var totalItems = 0;
+            var currentPageSize = 100;
+
             var protocolSelect = E('select', { 'class': 'cbi-input-select', 'id': 'flows-protocol' }, [
                 E('option', { 'value': '' }, _('All')),
                 E('option', { 'value': 'tcp' }, 'TCP'),
@@ -1068,6 +1082,15 @@ return view.extend({
                 E('option', { 'value': 'LAST_ACK' }, 'LAST_ACK'),
                 E('option', { 'value': 'CLOSE' }, 'CLOSE')
             ]);
+            var pageSizeSelect = E('select', { 'class': 'cbi-input-select flows-page-size-select', 'id': 'flows-page-size' }, [
+                E('option', { 'value': '50' }, '50'),
+                E('option', { 'value': '100', 'selected': 'selected' }, '100'),
+                E('option', { 'value': '200' }, '200'),
+                E('option', { 'value': '500' }, '500')
+            ]);
+            var pageInfo = E('span', { 'style': 'font-size: 0.85rem; opacity: 0.85; margin: 0 14px;' }, '');
+            var prevPageBtn = E('button', { 'class': 'cbi-button cbi-button-action', 'style': 'margin-right: 8px;' }, _('Previous'));
+            var nextPageBtn = E('button', { 'class': 'cbi-button cbi-button-action' }, _('Next'));
             var tableBody = E('tbody', { 'class': 'flows-table-body' });
             var tableWrap = E('div', { 'class': 'flows-table-wrap' }, [
                 E('table', { 'class': 'flows-table' }, [
@@ -1088,22 +1111,75 @@ return view.extend({
                 ])
             ]);
 
-            function loadFlows() {
+            function updatePaginationUi() {
+                if (pageInfo) {
+                    pageInfo.textContent = _('Page') + ' ' + currentPage + '/' + totalPages + ' · ' + _('Total') + ': ' + totalItems;
+                }
+                if (prevPageBtn) {
+                    prevPageBtn.disabled = currentPage <= 1;
+                }
+                if (nextPageBtn) {
+                    nextPageBtn.disabled = currentPage >= totalPages;
+                }
+            }
+
+            function normalizeFlowsResponse(res) {
+                if (!res || res.status !== 'success') {
+                    return { items: [], total: 0, page: currentPage, page_size: currentPageSize, total_pages: 1 };
+                }
+
+                if (Array.isArray(res.data)) {
+                    // 兼容旧后端：data 直接是数组
+                    return {
+                        items: res.data,
+                        total: res.data.length,
+                        page: 1,
+                        page_size: res.data.length || currentPageSize,
+                        total_pages: 1
+                    };
+                }
+
+                if (res.data && Array.isArray(res.data.items)) {
+                    // 新后端：分页对象
+                    return {
+                        items: res.data.items,
+                        total: res.data.total || 0,
+                        page: res.data.page || currentPage,
+                        page_size: res.data.page_size || currentPageSize,
+                        total_pages: res.data.total_pages || 1
+                    };
+                }
+
+                return { items: [], total: 0, page: currentPage, page_size: currentPageSize, total_pages: 1 };
+            }
+
+            function loadFlows(resetPage) {
+                if (resetPage) {
+                    currentPage = 1;
+                }
                 var protocol = protocolSelect.value || '';
                 var state = stateSelect.value || '';
+                currentPageSize = parseInt(pageSizeSelect.value, 10) || 100;
                 tableBody.innerHTML = '';
                 tableBody.appendChild(E('tr', {}, [
                     E('td', { 'colspan': 9, 'class': 'loading-state' }, _('Loading…'))
                 ]));
-                return callGetConnectionFlows(deviceIp, protocol || null, state || null).then(function (res) {
+                return callGetConnectionFlows(deviceIp, protocol || null, state || null, currentPage, currentPageSize).then(function (res) {
                     tableBody.innerHTML = '';
-                    if (!res || res.status !== 'success' || !res.data || res.data.length === 0) {
+                    var normalized = normalizeFlowsResponse(res);
+                    var flows = normalized.items;
+                    totalItems = normalized.total;
+                    currentPage = normalized.page;
+                    totalPages = Math.max(1, normalized.total_pages);
+                    updatePaginationUi();
+
+                    if (!flows || flows.length === 0) {
                         tableBody.appendChild(E('tr', {}, [
                             E('td', { 'colspan': 9, 'class': 'loading-state' }, _('No connections'))
                         ]));
                         return;
                     }
-                    res.data.forEach(function (f) {
+                    flows.forEach(function (f) {
                         var stateCls = '';
                         if (f.state) {
                             if (f.state.indexOf('ESTABLISHED') >= 0) stateCls = 'flows-state-est';
@@ -1131,21 +1207,41 @@ return view.extend({
                         ]));
                     });
                 }).catch(function (err) {
+                    totalItems = 0;
+                    totalPages = 1;
+                    currentPage = 1;
+                    updatePaginationUi();
                     tableBody.innerHTML = '';
                     tableBody.appendChild(E('tr', {}, [
-                        E('td', { 'colspan': 9, 'class': 'error-state' }, _('Failed to load') + ': ' + (err.message || err))
+                        E('td', { 'colspan': 9, 'class': 'error-state' }, _('Failed to load') + ': ' + (err.message || err) + ' · ' + _('Try using filters or smaller page size'))
                     ]));
                 });
             }
 
             function onFilterChange() {
-                loadFlows();
+                loadFlows(true);
             }
 
             function hideFlowsModal() {
                 var overlay = document.getElementById('flows-modal-overlay');
                 if (overlay) overlay.classList.remove('show');
             }
+
+            prevPageBtn.addEventListener('click', function () {
+                if (currentPage > 1) {
+                    currentPage -= 1;
+                    loadFlows(false);
+                }
+            });
+            nextPageBtn.addEventListener('click', function () {
+                if (currentPage < totalPages) {
+                    currentPage += 1;
+                    loadFlows(false);
+                }
+            });
+            pageSizeSelect.addEventListener('change', function () {
+                loadFlows(true);
+            });
 
             var modalContent = E('div', { 'class': 'flows-modal-content theme-' + currentTheme }, [
                 E('div', { 'class': 'flows-modal-header' }, [
@@ -1161,6 +1257,10 @@ return view.extend({
                 ]),
                 tableWrap,
                 E('div', { 'class': 'flows-footer' }, [
+                    pageSizeSelect,
+                    prevPageBtn,
+                    nextPageBtn,
+                    pageInfo,
                     E('button', { 'class': 'cbi-button cbi-button-reset', 'click': hideFlowsModal }, _('Close'))
                 ])
             ]);
@@ -1181,7 +1281,8 @@ return view.extend({
             overlay.appendChild(modalContent);
             overlay.classList.add('show');
             modalContent.addEventListener('click', function (e) { e.stopPropagation(); });
-            loadFlows();
+            updatePaginationUi();
+            loadFlows(true);
         }
 
         container.addEventListener('click', function (ev) {

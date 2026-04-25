@@ -6535,6 +6535,99 @@ return view.extend({
             return increments.map(normalizeTrafficIncrementItem).filter(function (x) { return x; });
         }
 
+        // 为了规避 ubus 1MB 响应限制，长时间范围按块分段请求
+        var TRAFFIC_INCREMENT_CHUNK_MS_HOURLY = 14 * 24 * 60 * 60 * 1000;  // 14 天
+        var TRAFFIC_INCREMENT_CHUNK_MS_DAILY = 60 * 24 * 60 * 60 * 1000;   // 60 天
+
+        function mergeIncrementsResponse(base, part) {
+            if (!part) return base;
+            if (Array.isArray(part.inc)) {
+                base.inc = base.inc.concat(part.inc);
+            }
+
+            if (part.start && (!base.start || part.start < base.start)) {
+                base.start = part.start;
+            }
+            if (part.end && (!base.end || part.end > base.end)) {
+                base.end = part.end;
+            }
+
+            base.t_rx_b = (base.t_rx_b || 0) + (part.t_rx_b || 0);
+            base.t_tx_b = (base.t_tx_b || 0) + (part.t_tx_b || 0);
+            base.t_b = (base.t_b || 0) + (part.t_b || 0);
+
+            if (!base.agg && part.agg) base.agg = part.agg;
+            if (!base.mac && part.mac) base.mac = part.mac;
+            if (!base.net && part.net) base.net = part.net;
+            if (!base.network_type && part.network_type) base.network_type = part.network_type;
+
+            return base;
+        }
+
+        function buildTrafficIncrementsChunks(startMs, endMs, aggregation) {
+            if (!startMs || !endMs || endMs <= startMs) {
+                return null;
+            }
+
+            var chunkMs = aggregation === 'daily' ? TRAFFIC_INCREMENT_CHUNK_MS_DAILY : TRAFFIC_INCREMENT_CHUNK_MS_HOURLY;
+            var totalRange = endMs - startMs;
+            if (totalRange <= chunkMs) {
+                return null;
+            }
+
+            var chunks = [];
+            for (var s = startMs; s < endMs; s += chunkMs) {
+                chunks.push({ start: s, end: Math.min(s + chunkMs, endMs) });
+            }
+            return chunks;
+        }
+
+        function fetchTrafficIncrementsChunked(startMs, endMs, aggregation, mac, networkType, onProgress) {
+            var chunks = buildTrafficIncrementsChunks(startMs, endMs, aggregation);
+            if (!chunks) {
+                return callGetTrafficUsageIncrements(startMs, endMs, aggregation, mac, networkType);
+            }
+
+            if (typeof onProgress === 'function') {
+                onProgress(0, chunks.length);
+            }
+
+            var merged = {
+                start: startMs,
+                end: endMs,
+                agg: aggregation,
+                inc: [],
+                t_rx_b: 0,
+                t_tx_b: 0,
+                t_b: 0
+            };
+
+            var chain = Promise.resolve(merged);
+            var finished = 0;
+            chunks.forEach(function (chunk) {
+                chain = chain.then(function (acc) {
+                    return callGetTrafficUsageIncrements(chunk.start, chunk.end, aggregation, mac, networkType).then(function (part) {
+                        finished += 1;
+                        if (typeof onProgress === 'function') {
+                            onProgress(finished, chunks.length);
+                        }
+                        return mergeIncrementsResponse(acc, part || {});
+                    });
+                });
+            });
+
+            return chain.then(function (result) {
+                if (Array.isArray(result.inc)) {
+                    result.inc.sort(function (a, b) {
+                        var aTs = (a && (a.start || a.ts_ms || a.end)) || 0;
+                        var bTs = (b && (b.start || b.ts_ms || b.end)) || 0;
+                        return aTs - bTs;
+                    });
+                }
+                return result;
+            });
+        }
+
         // 更新时间序列增量数据（使用 Traffic Timeline 自己的时间范围）
         // Traffic Timeline 缩放变量
         var incrementsZoomEnabled = false;
@@ -6568,7 +6661,29 @@ return view.extend({
                 selectedNetworkType = null;
             }
 
-            callGetTrafficUsageIncrements(startMs, endMs, selectedAggregation, selectedMac, selectedNetworkType).then(function (result) {
+            var container = document.getElementById('traffic-increments-container');
+            var chunks = buildTrafficIncrementsChunks(startMs, endMs, selectedAggregation);
+            if (container) {
+                if (chunks && chunks.length > 1) {
+                    container.innerHTML = '<div class="loading-state">' + _('Loading in chunks, please wait... (%d/%d)').format(0, chunks.length) + '</div>';
+                } else {
+                    container.innerHTML = '<div class="loading-state">' + _('Loading...') + '</div>';
+                }
+            }
+
+            fetchTrafficIncrementsChunked(
+                startMs,
+                endMs,
+                selectedAggregation,
+                selectedMac,
+                selectedNetworkType,
+                function (done, total) {
+                    var progressContainer = document.getElementById('traffic-increments-container');
+                    if (progressContainer && total > 1) {
+                        progressContainer.innerHTML = '<div class="loading-state">' + _('Loading in chunks, please wait... (%d/%d)').format(done, total) + '</div>';
+                    }
+                }
+            ).then(function (result) {
                 if (!result || !result.inc) {
                     var container = document.getElementById('traffic-increments-container');
                     if (container) {

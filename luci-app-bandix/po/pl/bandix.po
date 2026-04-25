@@ -860,6 +860,9 @@ msgstr "Brak jeszcze reguł limitu czasu, kliknij \"Dodaj regułę\", aby rozpoc
 msgid "Loading..."
 msgstr "Ładowanie..."
 
+msgid "Loading in chunks, please wait... (%d/%d)"
+msgstr "Ładowanie fragmentami, proszę czekać... (%d/%d)"
+
 msgid "No schedule rules"
 msgstr "Brak reguł limitu czasu"
 

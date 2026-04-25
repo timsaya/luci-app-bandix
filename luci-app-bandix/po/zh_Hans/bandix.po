@@ -857,6 +857,9 @@ msgstr "还没有定时限速规则，点击"添加规则"开始设置"
 msgid "Loading..."
 msgstr "加载中..."
 
+msgid "Loading in chunks, please wait... (%d/%d)"
+msgstr "分段加载中，请稍等... (%d/%d)"
+
 msgid "No schedule rules"
 msgstr "没有定时限速规则"
 
