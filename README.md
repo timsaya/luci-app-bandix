@@ -1,5 +1,8 @@
 # LuCI Bandix
 
+> Recommended for **single-interface** setups.
+> Need **multi-interface** support? See [LuCI Bandix Plus](https://github.com/timsaya/luci-app-bandix-plus).
+
 English | [简体中文](README.zh.md) | [架构文档](ARCHITECTURE.md)
 
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
