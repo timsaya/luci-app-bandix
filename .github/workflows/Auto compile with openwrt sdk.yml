@@ -85,11 +85,9 @@ jobs:
       matrix:
         include:
           - version: ipk
-            sdk_ver: 24.10.1
-            sdk_arch: x86-64
+            container_tag: x86_64-24.10.1
           - version: apk
-            sdk_ver: snapshots
-            sdk_arch: x86-64
+            container_tag: x86_64
     steps:
       - name: Checkout
         uses: actions/checkout@main
@@ -109,8 +107,7 @@ jobs:
       - name: Setup OpenWrt SDK
         uses: openwrt/gh-action-sdk@main
         env:
-          ARCH: ${{ matrix.sdk_arch }}
-          VERSION: ${{ matrix.sdk_ver }}
+          ARCH: ${{ matrix.container_tag }}
           PACKAGES: luci-app-bandix
           V: s
 
