@@ -18,7 +18,7 @@ env:
 jobs:
   job_check:
     name: Check Version
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     outputs:
       luci-app-bandix_version: ${{ steps.check_version.outputs.latest_version }}
       has_update: ${{ steps.check_version.outputs.has_update }}
@@ -79,95 +79,24 @@ jobs:
     name: Build luci-app-bandix [${{ matrix.version }}]
     needs: job_check
     if: needs.job_check.outputs.has_update == 'true'
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
           - version: ipk
-            sdk_url: https://downloads.openwrt.org/releases/24.10.1/targets/x86/64/openwrt-sdk-24.10.1-x86-64_gcc-13.3.0_musl.Linux-x86_64.tar.zst
+            sdk_ver: 24.10.1
+            sdk_arch: x86-64
           - version: apk
-            sdk_url: https://downloads.openwrt.org/snapshots/targets/x86/64/openwrt-sdk-x86-64_gcc-14.3.0_musl.Linux-x86_64.tar.zst
+            sdk_ver: snapshots
+            sdk_arch: x86-64
     steps:
-      - name: Install packages
+      - name: Checkout
+        uses: actions/checkout@main
+
+      - name: Generate .config for Language Packs
         run: |
-          sudo -E rm -rf /usr/share/dotnet /etc/mysql /etc/php /usr/local/lib/android
-          echo "Install packages"
-          sudo -E apt-get -qq update
-          sudo -E apt-get -qq install ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential \
-            bzip2 ccache clang cmake cpio curl device-tree-compiler ecj fastjar flex gawk gettext gcc-multilib \
-            g++-multilib git gnutls-dev gperf haveged help2man intltool lib32gcc-s1 libc6-dev-i386 libelf-dev \
-            libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses-dev libpython3-dev \
-            libreadline-dev libssl-dev libtool libyaml-dev libz-dev lld llvm lrzsz mkisofs msmtp nano \
-            ninja-build p7zip p7zip-full patch pkgconf python3 python3-pip python3-ply python3-docutils \
-            python3-pyelftools qemu-utils re2c rsync scons squashfs-tools subversion swig texinfo uglifyjs \
-            upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd
-          sudo -E apt-get -qq autoremove --purge
-
-      - name: Initialization environment
-        run: |
-          wget ${{ matrix.sdk_url }}
-          file_name=$(echo ${{ matrix.sdk_url }} | awk -F/ '{print $NF}')
-          mkdir sdk
-          if [[ $file_name == *.tar.xz ]]; then
-            tar -xJf $file_name -C ./sdk --strip-components=1
-          elif [[ $file_name == *.tar.zst ]]; then
-            tar --zstd -x -f $file_name -C ./sdk --strip-components=1
-          else
-            echo "Unsupported file format: $file_name"
-            exit 1
-          fi
-          cd sdk
-
-          rm -rf ./package/custom_packages
-          mkdir -p ./package/custom_packages
-          git clone https://github.com/timsaya/luci-app-bandix.git ./package/custom_packages/luci-app-bandix
-
-          # Update feeds to github source
-          sed -i \
-              -e 's|git\.openwrt\.org/feed|github.com/openwrt|g' \
-              -e 's|git\.openwrt\.org/project|github.com/openwrt|g' \
-              -e 's|git\.openwrt\.org/openwrt|github.com/openwrt|g' \
-              "feeds.conf.default"
-
-          ./scripts/feeds update -a
-          ./scripts/feeds install -a
-
-          #--------------------------------------begin_patches------------------------------------------
-          echo "Start applying the patch"
-
-          rm -rf temp_resp
-          git clone -b master --single-branch https://github.com/openwrt/packages.git temp_resp
-          echo "update golang version"
-          rm -rf feeds/packages/lang/golang
-          cp -r temp_resp/lang/golang feeds/packages/lang
-          echo "update rust version"
-          rm -rf feeds/packages/lang/rust
-          cp -r temp_resp/lang/rust feeds/packages/lang
-          rm -rf temp_resp
-          
-          echo "update patch-kernel.sh"
-          git clone -b main --single-branch https://github.com/openwrt/openwrt.git temp_resp
-          cp -f temp_resp/scripts/patch-kernel.sh scripts/
-          rm -rf temp_resp
-
-          echo "Patch application completed"
-          #--------------------------------------end_patches--------------------------------------------
-
-      - name: Update source code
-        run: |
-          cd sdk/package/custom_packages
-          rm -rf luci-app-bandix
-          git clone https://github.com/timsaya/luci-app-bandix.git luci-app-bandix
-
-      - name: Compile
-        id: compile
-        run: |
-          cd sdk
-          echo "CONFIG_ALL_NONSHARED=n" > .config
-          echo "CONFIG_ALL_KMODS=n" >> .config
-          echo "CONFIG_ALL=n" >> .config
-          echo "CONFIG_AUTOREMOVE=n" >> .config
+          echo "CONFIG_PACKAGE_luci-app-bandix=m" > .config
           echo "CONFIG_LUCI_LANG_zh_Hans=y" >> .config
           echo "CONFIG_LUCI_LANG_zh_Hant=y" >> .config
           echo "CONFIG_LUCI_LANG_ja=y" >> .config
@@ -177,18 +106,26 @@ jobs:
           echo "CONFIG_LUCI_LANG_pl=y" >> .config
           echo "CONFIG_LUCI_LANG_th=y" >> .config
           echo "CONFIG_LUCI_LANG_es=y" >> .config
-          echo "CONFIG_PACKAGE_luci-app-bandix=m" >> .config
-          
+      - name: Setup OpenWrt SDK
+        uses: openwrt/gh-action-sdk@main
+        env:
+          ARCH: ${{ matrix.sdk_arch }}
+          VERSION: ${{ matrix.sdk_ver }}
+          PACKAGES: luci-app-bandix
+          V: s
 
-
-          make defconfig
-          make package/custom_packages/luci-app-bandix/luci-app-bandix/compile -j$(nproc) V=s
-          mkdir upload
-          mv bin/packages/*/base/luci-app-bandix* upload/
-          mv bin/packages/*/base/luci-i18n-bandix* upload/
-          cd upload
+      - name: Process and Rename Artifacts
+        id: compile
+        run: |
+          mkdir -p ${{ github.workspace }}/upload
           
-          # 重命名不包含 all 的文件，在扩展名前添加 _all
+          # 使用 find 安全提取生成的 ipk/apk 及语言包
+          find bin/packages/ -type f -name "luci-app-bandix*" -exec cp {} ${{ github.workspace }}/upload/ \;
+          find bin/packages/ -type f -name "luci-i18n-bandix*" -exec cp {} ${{ github.workspace }}/upload/ \;
+          
+          cd ${{ github.workspace }}/upload
+          
+          # _all 后缀重命名逻辑
           for file in *; do
             if [[ -f "$file" ]] && [[ ! "$file" =~ _all\. ]]; then
               filename="${file%.*}"
@@ -199,8 +136,8 @@ jobs:
           done
           
           echo "status=success" >> $GITHUB_OUTPUT
-          echo "FIRMWARE=$PWD" >> $GITHUB_ENV
 
+      # 4. 上传至 Release
       - name: Upload to release
         uses: softprops/action-gh-release@v3
         if: steps.compile.outputs.status == 'success'
@@ -208,4 +145,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: v${{needs.job_check.outputs.luci-app-bandix_version}}
-          files: ${{ env.FIRMWARE }}/*
+          files: ${{ github.workspace }}/upload/*
