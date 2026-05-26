@@ -106,8 +106,8 @@ luci-app-bandix 需要以下依赖包：
 
 ## 团队成员
 
-- [timsaya](https://github.com/timsaya)（维护者）
-- [smallprogram](https://github.com/smallprogram)（维护者）
+- [timsaya](https://github.com/timsaya)
+- [smallprogram](https://github.com/smallprogram)
 
 
 ## 许可证

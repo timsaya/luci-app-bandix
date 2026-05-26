@@ -106,8 +106,8 @@ Please ensure you install matching versions to ensure compatibility and proper f
 
 ## Team Members
 
-- [timsaya](https://github.com/timsaya) — Maintainer
-- [smallprogram](https://github.com/smallprogram) — Maintainer
+- [timsaya](https://github.com/timsaya)
+- [smallprogram](https://github.com/smallprogram)
 
 
 ## License
