@@ -104,6 +104,12 @@ luci-app-bandix 需要以下依赖包：
 请确保安装匹配的版本以确保兼容性和正常功能。
 
 
+## 团队成员
+
+- [timsaya](https://github.com/timsaya)（维护者）
+- [smallprogram](https://github.com/smallprogram)（维护者）
+
+
 ## 许可证
 
 本项目采用 [Apache 2.0 许可证](LICENSE)。
