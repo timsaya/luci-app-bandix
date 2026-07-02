@@ -42,6 +42,13 @@ LuCI Bandix is developed based on the LuCI framework, offering network traffic m
 
    After installation, you can access the Bandix application through the LuCI web interface under the "Network" menu. Go to the Bandix settings page and select your LAN interface to enable proper monitoring. Make sure to check the "Enable" option to start the service.
 
+### Build
+
+```conf
+# feeds.conf
+    "src-git openwrt_bandix https://github.com/timsaya/openwrt-bandix.git;main"
+    "src-git luci_app_bandix https://github.com/timsaya/luci-app-bandix.git;main"
+```
 
 ## Screenshots
 
