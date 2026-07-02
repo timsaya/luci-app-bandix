@@ -43,6 +43,15 @@ LuCI Bandix 基于 LuCI 框架开发，为 OpenWrt 路由器提供网络流量�
 
    安装完成后，可以通过 LuCI Web 界面访问 Bandix 应用，应用位于"网络"菜单下。进入 Bandix 设置页面，选择您的 LAN 接口以启用正确的监控功能。请确保勾选"启用"选项来启动服务。
 
+
+### 从源码编译
+
+```conf
+# feeds.conf
+    "src-git openwrt_bandix https://github.com/timsaya/openwrt-bandix.git;main"
+    "src-git luci_app_bandix https://github.com/timsaya/luci-app-bandix.git;main"
+```
+
 ## 截图
 
 ![LuCI Bandix Screenshot](docs/images/index-1.png)
