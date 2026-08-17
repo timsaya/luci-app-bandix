@@ -1094,15 +1094,6 @@ msgstr "有更新"
 msgid "Update available, click to go to settings"
 msgstr "有更新，点击前往设置"
 
-msgid "Advertising spaces"
-msgstr "广告位"
-
-msgid "Advertising space"
-msgstr "广告位"
-
-msgid "AD"
-msgstr "广告"
-
 msgid "Traffic Statistics"
 msgstr "流量统计"
 
@@ -1126,27 +1117,6 @@ msgstr "今天"
 
 msgid "Yesterday"
 msgstr "昨天"
-
-msgid "Support the Author"
-msgstr "支持作者"
-
-msgid "If Bandix is useful to you, you can support its continued development."
-msgstr "如果 Bandix 对您有帮助，您可以支持项目的持续开发。"
-
-msgid "Alipay"
-msgstr "支付宝"
-
-msgid "Scan with Alipay to support"
-msgstr "使用支付宝扫码支持"
-
-msgid "WeChat Pay"
-msgstr "微信支付"
-
-msgid "Scan with WeChat Pay to support"
-msgstr "使用微信支付扫码支持"
-
-msgid "Donations are voluntary. Thank you for supporting Bandix."
-msgstr "赞助完全自愿。感谢您对 Bandix 的支持。"
 
 msgid "This Week"
 msgstr "本周"

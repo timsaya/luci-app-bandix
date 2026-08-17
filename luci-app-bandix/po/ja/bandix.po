@@ -1115,27 +1115,6 @@ msgstr "今日"
 msgid "Yesterday"
 msgstr "昨日"
 
-msgid "Support the Author"
-msgstr "作者を支援"
-
-msgid "If Bandix is useful to you, you can support its continued development."
-msgstr "Bandix が役に立った場合は、継続的な開発をご支援いただけます。"
-
-msgid "Alipay"
-msgstr "Alipay"
-
-msgid "Scan with Alipay to support"
-msgstr "Alipay でスキャンして支援"
-
-msgid "WeChat Pay"
-msgstr "WeChat Pay"
-
-msgid "Scan with WeChat Pay to support"
-msgstr "WeChat Pay でスキャンして支援"
-
-msgid "Donations are voluntary. Thank you for supporting Bandix."
-msgstr "寄付は任意です。Bandix をご支援いただきありがとうございます。"
-
 msgid "This Week"
 msgstr "今週"
 

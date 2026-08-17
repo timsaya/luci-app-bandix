@@ -1115,27 +1115,6 @@ msgstr "Hoy"
 msgid "Yesterday"
 msgstr "Ayer"
 
-msgid "Support the Author"
-msgstr "Apoyar al autor"
-
-msgid "If Bandix is useful to you, you can support its continued development."
-msgstr "Si Bandix te resulta útil, puedes apoyar su desarrollo continuo."
-
-msgid "Alipay"
-msgstr "Alipay"
-
-msgid "Scan with Alipay to support"
-msgstr "Escanea con Alipay para apoyar"
-
-msgid "WeChat Pay"
-msgstr "WeChat Pay"
-
-msgid "Scan with WeChat Pay to support"
-msgstr "Escanea con WeChat Pay para apoyar"
-
-msgid "Donations are voluntary. Thank you for supporting Bandix."
-msgstr "Las donaciones son voluntarias. Gracias por apoyar a Bandix."
-
 msgid "This Week"
 msgstr "Esta Semana"
 
