@@ -1258,3 +1258,93 @@ msgstr "ID de programa ancla de egreso TCX"
 
 msgid "Used when tc_order is before/after. Must be a valid egress program id on the same interface."
 msgstr "Se usa cuando tc_order es before/after. Debe ser un ID de programa de egreso valido en la misma interfaz."
+
+msgid "Traffic Quota"
+msgstr "Cuota de tráfico"
+
+msgid "Quota Status"
+msgstr "Estado de la cuota"
+
+msgid "Minute Quota"
+msgstr "Cuota por minuto"
+
+msgid "Hourly Quota"
+msgstr "Cuota por hora"
+
+msgid "Daily Quota"
+msgstr "Cuota diaria"
+
+msgid "Weekly Quota"
+msgstr "Cuota semanal"
+
+msgid "Monthly Quota"
+msgstr "Cuota mensual"
+
+msgid "Lifetime Quota"
+msgstr "Cuota total acumulada"
+
+msgid "WAN upload and download are counted together. Enter 0 for unlimited."
+msgstr "La subida y la descarga WAN se contabilizan juntas. Introduzca 0 para no establecer límite."
+
+msgid "Not configured"
+msgstr "Sin configurar"
+
+msgid "Blocked"
+msgstr "Bloqueado"
+
+msgid "Active"
+msgstr "Activa"
+
+msgid "No quota usage data"
+msgstr "No hay datos de uso de la cuota"
+
+msgid "Delete Quota"
+msgstr "Eliminar cuota"
+
+msgid "Save Quota"
+msgstr "Guardar cuota"
+
+msgid "Usage starts when a quota is first saved."
+msgstr "El uso comienza a contabilizarse al guardar una cuota por primera vez."
+
+msgid "Minute"
+msgstr "Minuto"
+
+msgid "Lifetime"
+msgstr "Total acumulado"
+
+msgid "Quota exceeded"
+msgstr "Cuota excedida"
+
+msgid "Quota active"
+msgstr "Cuota activa"
+
+msgid "WAN traffic is blocked because a quota was reached."
+msgstr "El tráfico WAN está bloqueado porque se alcanzó una cuota."
+
+msgid "Quota blocked"
+msgstr "Bloqueado por cuota"
+
+msgid "Quota values must be non-negative and within the supported range."
+msgstr "Los valores de cuota deben ser no negativos y estar dentro del rango admitido."
+
+msgid "Failed to save traffic quota"
+msgstr "No se pudo guardar la cuota de tráfico"
+
+msgid "Delete Traffic Quota"
+msgstr "Eliminar cuota de tráfico"
+
+msgid "Delete this quota and all of its accumulated usage?"
+msgstr "¿Eliminar esta cuota y todo su uso acumulado?"
+
+msgid "Failed to delete traffic quota"
+msgstr "No se pudo eliminar la cuota de tráfico"
+
+msgid "Rules / Quota"
+msgstr "Reglas / Cuota"
+
+msgid "Failed to load traffic quotas"
+msgstr "No se pudieron cargar las cuotas de tráfico"
+
+msgid "Unavailable"
+msgstr "No disponible"

@@ -1258,3 +1258,93 @@ msgstr "ID programu kotwicy TCX egress"
 
 msgid "Used when tc_order is before/after. Must be a valid egress program id on the same interface."
 msgstr "Uzywane, gdy tc_order to before/after. Musi to byc prawidlowe ID programu egress na tym samym interfejsie."
+
+msgid "Traffic Quota"
+msgstr "Limit transferu"
+
+msgid "Quota Status"
+msgstr "Stan limitu"
+
+msgid "Minute Quota"
+msgstr "Limit minutowy"
+
+msgid "Hourly Quota"
+msgstr "Limit godzinowy"
+
+msgid "Daily Quota"
+msgstr "Limit dzienny"
+
+msgid "Weekly Quota"
+msgstr "Limit tygodniowy"
+
+msgid "Monthly Quota"
+msgstr "Limit miesięczny"
+
+msgid "Lifetime Quota"
+msgstr "Łączny limit"
+
+msgid "WAN upload and download are counted together. Enter 0 for unlimited."
+msgstr "Ruch wysyłany i pobierany przez WAN jest sumowany. Wpisz 0, aby wyłączyć limit."
+
+msgid "Not configured"
+msgstr "Nie skonfigurowano"
+
+msgid "Blocked"
+msgstr "Zablokowano"
+
+msgid "Active"
+msgstr "Aktywny"
+
+msgid "No quota usage data"
+msgstr "Brak danych o wykorzystaniu limitu"
+
+msgid "Delete Quota"
+msgstr "Usuń limit"
+
+msgid "Save Quota"
+msgstr "Zapisz limit"
+
+msgid "Usage starts when a quota is first saved."
+msgstr "Naliczanie użycia rozpoczyna się po pierwszym zapisaniu limitu."
+
+msgid "Minute"
+msgstr "Minuta"
+
+msgid "Lifetime"
+msgstr "Łącznie"
+
+msgid "Quota exceeded"
+msgstr "Limit przekroczony"
+
+msgid "Quota active"
+msgstr "Limit aktywny"
+
+msgid "WAN traffic is blocked because a quota was reached."
+msgstr "Ruch WAN jest zablokowany, ponieważ osiągnięto limit."
+
+msgid "Quota blocked"
+msgstr "Blokada przez limit"
+
+msgid "Quota values must be non-negative and within the supported range."
+msgstr "Wartości limitu muszą być nieujemne i mieścić się w obsługiwanym zakresie."
+
+msgid "Failed to save traffic quota"
+msgstr "Nie udało się zapisać limitu transferu"
+
+msgid "Delete Traffic Quota"
+msgstr "Usuń limit transferu"
+
+msgid "Delete this quota and all of its accumulated usage?"
+msgstr "Usunąć ten limit i wszystkie dane o naliczonym użyciu?"
+
+msgid "Failed to delete traffic quota"
+msgstr "Nie udało się usunąć limitu transferu"
+
+msgid "Rules / Quota"
+msgstr "Reguły / Limit"
+
+msgid "Failed to load traffic quotas"
+msgstr "Nie udało się wczytać limitów transferu"
+
+msgid "Unavailable"
+msgstr "Niedostępne"

@@ -1258,3 +1258,93 @@ msgstr "ID du programme d ancrage egress TCX"
 
 msgid "Used when tc_order is before/after. Must be a valid egress program id on the same interface."
 msgstr "Utilise lorsque tc_order est before/after. Doit etre un ID de programme egress valide sur la meme interface."
+
+msgid "Traffic Quota"
+msgstr "Quota de trafic"
+
+msgid "Quota Status"
+msgstr "État du quota"
+
+msgid "Minute Quota"
+msgstr "Quota par minute"
+
+msgid "Hourly Quota"
+msgstr "Quota par heure"
+
+msgid "Daily Quota"
+msgstr "Quota journalier"
+
+msgid "Weekly Quota"
+msgstr "Quota hebdomadaire"
+
+msgid "Monthly Quota"
+msgstr "Quota mensuel"
+
+msgid "Lifetime Quota"
+msgstr "Quota total cumulé"
+
+msgid "WAN upload and download are counted together. Enter 0 for unlimited."
+msgstr "Le trafic montant et descendant WAN est comptabilisé ensemble. Saisissez 0 pour un trafic illimité."
+
+msgid "Not configured"
+msgstr "Non configuré"
+
+msgid "Blocked"
+msgstr "Bloqué"
+
+msgid "Active"
+msgstr "Actif"
+
+msgid "No quota usage data"
+msgstr "Aucune donnée d'utilisation du quota"
+
+msgid "Delete Quota"
+msgstr "Supprimer le quota"
+
+msgid "Save Quota"
+msgstr "Enregistrer le quota"
+
+msgid "Usage starts when a quota is first saved."
+msgstr "Le suivi de l'utilisation commence lors du premier enregistrement d'un quota."
+
+msgid "Minute"
+msgstr "Minute"
+
+msgid "Lifetime"
+msgstr "Total cumulé"
+
+msgid "Quota exceeded"
+msgstr "Quota dépassé"
+
+msgid "Quota active"
+msgstr "Quota actif"
+
+msgid "WAN traffic is blocked because a quota was reached."
+msgstr "Le trafic WAN est bloqué car un quota a été atteint."
+
+msgid "Quota blocked"
+msgstr "Blocage par quota"
+
+msgid "Quota values must be non-negative and within the supported range."
+msgstr "Les valeurs de quota doivent être positives ou nulles et respecter la plage prise en charge."
+
+msgid "Failed to save traffic quota"
+msgstr "Impossible d'enregistrer le quota de trafic"
+
+msgid "Delete Traffic Quota"
+msgstr "Supprimer le quota de trafic"
+
+msgid "Delete this quota and all of its accumulated usage?"
+msgstr "Supprimer ce quota et toutes ses données d'utilisation cumulées ?"
+
+msgid "Failed to delete traffic quota"
+msgstr "Impossible de supprimer le quota de trafic"
+
+msgid "Rules / Quota"
+msgstr "Règles / Quota"
+
+msgid "Failed to load traffic quotas"
+msgstr "Impossible de charger les quotas de trafic"
+
+msgid "Unavailable"
+msgstr "Indisponible"

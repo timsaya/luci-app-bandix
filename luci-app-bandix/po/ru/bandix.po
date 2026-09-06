@@ -1258,3 +1258,93 @@ msgstr "ID якорной программы TCX egress"
 
 msgid "Used when tc_order is before/after. Must be a valid egress program id on the same interface."
 msgstr "Используется, когда tc_order имеет значение before/after. Должен быть корректный ID egress-программы на том же интерфейсе."
+
+msgid "Traffic Quota"
+msgstr "Квота трафика"
+
+msgid "Quota Status"
+msgstr "Состояние квоты"
+
+msgid "Minute Quota"
+msgstr "Минутная квота"
+
+msgid "Hourly Quota"
+msgstr "Часовая квота"
+
+msgid "Daily Quota"
+msgstr "Суточная квота"
+
+msgid "Weekly Quota"
+msgstr "Недельная квота"
+
+msgid "Monthly Quota"
+msgstr "Месячная квота"
+
+msgid "Lifetime Quota"
+msgstr "Общая квота"
+
+msgid "WAN upload and download are counted together. Enter 0 for unlimited."
+msgstr "Входящий и исходящий трафик WAN учитываются вместе. Введите 0, чтобы отключить ограничение."
+
+msgid "Not configured"
+msgstr "Не настроено"
+
+msgid "Blocked"
+msgstr "Заблокировано"
+
+msgid "Active"
+msgstr "Активна"
+
+msgid "No quota usage data"
+msgstr "Нет данных об использовании квоты"
+
+msgid "Delete Quota"
+msgstr "Удалить квоту"
+
+msgid "Save Quota"
+msgstr "Сохранить квоту"
+
+msgid "Usage starts when a quota is first saved."
+msgstr "Учет трафика начинается после первого сохранения квоты."
+
+msgid "Minute"
+msgstr "Минута"
+
+msgid "Lifetime"
+msgstr "Всего"
+
+msgid "Quota exceeded"
+msgstr "Квота превышена"
+
+msgid "Quota active"
+msgstr "Квота активна"
+
+msgid "WAN traffic is blocked because a quota was reached."
+msgstr "Трафик WAN заблокирован, так как достигнута квота."
+
+msgid "Quota blocked"
+msgstr "Блокировка по квоте"
+
+msgid "Quota values must be non-negative and within the supported range."
+msgstr "Значения квоты должны быть неотрицательными и находиться в поддерживаемом диапазоне."
+
+msgid "Failed to save traffic quota"
+msgstr "Не удалось сохранить квоту трафика"
+
+msgid "Delete Traffic Quota"
+msgstr "Удалить квоту трафика"
+
+msgid "Delete this quota and all of its accumulated usage?"
+msgstr "Удалить эту квоту и все накопленные данные об использовании?"
+
+msgid "Failed to delete traffic quota"
+msgstr "Не удалось удалить квоту трафика"
+
+msgid "Rules / Quota"
+msgstr "Правила / Квота"
+
+msgid "Failed to load traffic quotas"
+msgstr "Не удалось загрузить квоты трафика"
+
+msgid "Unavailable"
+msgstr "Недоступно"

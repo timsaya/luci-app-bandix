@@ -19,6 +19,7 @@ readonly BANDIX_TRAFFIC_USAGE_INCREMENTS_API="$BANDIX_API_BASE/api/traffic/usage
 readonly BANDIX_RATE_LIMIT_WHITELIST_API="$BANDIX_API_BASE/api/traffic/rate_limit/whitelist"
 readonly BANDIX_RATE_LIMIT_WHITELIST_ENABLED_API="$BANDIX_API_BASE/api/traffic/rate_limit/whitelist/enabled"
 readonly BANDIX_RATE_LIMIT_DEFAULT_API="$BANDIX_API_BASE/api/traffic/rate_limit/default"
+readonly BANDIX_TRAFFIC_QUOTAS_API="$BANDIX_API_BASE/api/traffic/quotas"
 
 # 通用函数：创建简单的JSON响应
 make_value() {
@@ -132,6 +133,71 @@ set_default_rate_limit() {
 		return
 	fi
 	echo "$response"
+}
+
+get_traffic_quotas() {
+	local response=$(curl -s --connect-timeout 2 --max-time 5 -X GET "$BANDIX_TRAFFIC_QUOTAS_API" 2>/dev/null)
+	if [ $? -ne 0 ] || [ -z "$response" ]; then
+		make_error "Failed to connect to Bandix service"
+		return
+	fi
+	echo "$response"
+}
+
+set_traffic_quota() {
+	local mac="$1"
+	local minute_bytes="$2"
+	local hourly_bytes="$3"
+	local daily_bytes="$4"
+	local weekly_bytes="$5"
+	local monthly_bytes="$6"
+	local total_bytes="$7"
+
+	if [ -z "$mac" ]; then
+		make_error "MAC address is required"
+		return
+	fi
+	for value in "$minute_bytes" "$hourly_bytes" "$daily_bytes" "$weekly_bytes" "$monthly_bytes" "$total_bytes"; do
+		case "$value" in
+			''|*[!0-9]*)
+				make_error "Quota values must be non-negative integers"
+				return
+				;;
+		esac
+	done
+
+	local mac_escaped=$(escape_json_string "$mac")
+	local request_data="{
+		\"mac\": \"$mac_escaped\",
+		\"minute_bytes\": $minute_bytes,
+		\"hourly_bytes\": $hourly_bytes,
+		\"daily_bytes\": $daily_bytes,
+		\"weekly_bytes\": $weekly_bytes,
+		\"monthly_bytes\": $monthly_bytes,
+		\"total_bytes\": $total_bytes
+	}"
+	local response=$(curl -s --connect-timeout 3 --max-time 10 -X POST -H "Content-Type: application/json" -d "$request_data" "$BANDIX_TRAFFIC_QUOTAS_API" 2>/dev/null)
+	if [ $? -eq 0 ] && [ -n "$response" ] && echo "$response" | grep -q '"status":[[:space:]]*"success"'; then
+		make_success "Traffic quota saved successfully"
+	else
+		make_error "Failed to save traffic quota"
+	fi
+}
+
+delete_traffic_quota() {
+	local mac="$1"
+	if [ -z "$mac" ]; then
+		make_error "MAC address is required"
+		return
+	fi
+	local mac_escaped=$(escape_json_string "$mac")
+	local request_data="{\"mac\": \"$mac_escaped\"}"
+	local response=$(curl -s --connect-timeout 3 --max-time 10 -X DELETE -H "Content-Type: application/json" -d "$request_data" "$BANDIX_TRAFFIC_QUOTAS_API" 2>/dev/null)
+	if [ $? -eq 0 ] && [ -n "$response" ] && echo "$response" | grep -q '"status":[[:space:]]*"success"'; then
+		make_success "Traffic quota deleted successfully"
+	else
+		make_error "Failed to delete traffic quota"
+	fi
 }
 
 # 删除设备
@@ -1348,6 +1414,23 @@ case "$1" in
 	json_add_int "wan_rx_rate_limit"
 	json_add_int "wan_tx_rate_limit"
 	json_close_object
+
+	json_add_object "getTrafficQuotas"
+	json_close_object
+
+	json_add_object "setTrafficQuota"
+	json_add_string "mac"
+	json_add_int "minute_bytes"
+	json_add_int "hourly_bytes"
+	json_add_int "daily_bytes"
+	json_add_int "weekly_bytes"
+	json_add_int "monthly_bytes"
+	json_add_int "total_bytes"
+	json_close_object
+
+	json_add_object "deleteTrafficQuota"
+	json_add_string "mac"
+	json_close_object
 	
 	json_dump
 	json_cleanup
@@ -1792,6 +1875,57 @@ case "$1" in
 					[ -n "$4" ] && wan_tx_rate_limit="$4"
 				fi
 				set_default_rate_limit "$wan_rx_rate_limit" "$wan_tx_rate_limit"
+				;;
+			getTrafficQuotas)
+				get_traffic_quotas
+				;;
+			setTrafficQuota)
+				mac=""
+				minute_bytes=""
+				hourly_bytes=""
+				daily_bytes=""
+				weekly_bytes=""
+				monthly_bytes=""
+				total_bytes=""
+				input=""
+				if read -t 1 -r input; then :; fi
+				if [ -n "$input" ]; then
+					mac="$(echo "$input" | jsonfilter -e '$[0]' 2>/dev/null)"
+					[ -z "$mac" ] && mac="$(echo "$input" | jsonfilter -e '$.mac' 2>/dev/null)"
+					minute_bytes="$(echo "$input" | jsonfilter -e '$[1]' 2>/dev/null)"
+					[ -z "$minute_bytes" ] && minute_bytes="$(echo "$input" | jsonfilter -e '$.minute_bytes' 2>/dev/null)"
+					hourly_bytes="$(echo "$input" | jsonfilter -e '$[2]' 2>/dev/null)"
+					[ -z "$hourly_bytes" ] && hourly_bytes="$(echo "$input" | jsonfilter -e '$.hourly_bytes' 2>/dev/null)"
+					daily_bytes="$(echo "$input" | jsonfilter -e '$[3]' 2>/dev/null)"
+					[ -z "$daily_bytes" ] && daily_bytes="$(echo "$input" | jsonfilter -e '$.daily_bytes' 2>/dev/null)"
+					weekly_bytes="$(echo "$input" | jsonfilter -e '$[4]' 2>/dev/null)"
+					[ -z "$weekly_bytes" ] && weekly_bytes="$(echo "$input" | jsonfilter -e '$.weekly_bytes' 2>/dev/null)"
+					monthly_bytes="$(echo "$input" | jsonfilter -e '$[5]' 2>/dev/null)"
+					[ -z "$monthly_bytes" ] && monthly_bytes="$(echo "$input" | jsonfilter -e '$.monthly_bytes' 2>/dev/null)"
+					total_bytes="$(echo "$input" | jsonfilter -e '$[6]' 2>/dev/null)"
+					[ -z "$total_bytes" ] && total_bytes="$(echo "$input" | jsonfilter -e '$.total_bytes' 2>/dev/null)"
+				else
+					mac="$3"
+					minute_bytes="$4"
+					hourly_bytes="$5"
+					daily_bytes="$6"
+					weekly_bytes="$7"
+					monthly_bytes="$8"
+					total_bytes="$9"
+				fi
+				set_traffic_quota "$mac" "$minute_bytes" "$hourly_bytes" "$daily_bytes" "$weekly_bytes" "$monthly_bytes" "$total_bytes"
+				;;
+			deleteTrafficQuota)
+				mac=""
+				input=""
+				if read -t 1 -r input; then :; fi
+				if [ -n "$input" ]; then
+					mac="$(echo "$input" | jsonfilter -e '$[0]' 2>/dev/null)"
+					[ -z "$mac" ] && mac="$(echo "$input" | jsonfilter -e '$.mac' 2>/dev/null)"
+				else
+					mac="$3"
+				fi
+				delete_traffic_quota "$mac"
 				;;
 		esac
 		;;

@@ -1258,3 +1258,93 @@ msgstr "TCX egressアンカープログラムID"
 
 msgid "Used when tc_order is before/after. Must be a valid egress program id on the same interface."
 msgstr "tc_orderがbefore/afterのときに使用します。同じインターフェース上の有効なegressプログラムIDである必要があります。"
+
+msgid "Traffic Quota"
+msgstr "トラフィッククォータ"
+
+msgid "Quota Status"
+msgstr "クォータの状態"
+
+msgid "Minute Quota"
+msgstr "1分あたりのクォータ"
+
+msgid "Hourly Quota"
+msgstr "1時間あたりのクォータ"
+
+msgid "Daily Quota"
+msgstr "1日あたりのクォータ"
+
+msgid "Weekly Quota"
+msgstr "1週間あたりのクォータ"
+
+msgid "Monthly Quota"
+msgstr "1か月あたりのクォータ"
+
+msgid "Lifetime Quota"
+msgstr "累計クォータ"
+
+msgid "WAN upload and download are counted together. Enter 0 for unlimited."
+msgstr "WANのアップロードとダウンロードは合算されます。無制限にするには0を入力してください。"
+
+msgid "Not configured"
+msgstr "未設定"
+
+msgid "Blocked"
+msgstr "ブロック中"
+
+msgid "Active"
+msgstr "有効"
+
+msgid "No quota usage data"
+msgstr "クォータ使用量データはありません"
+
+msgid "Delete Quota"
+msgstr "クォータを削除"
+
+msgid "Save Quota"
+msgstr "クォータを保存"
+
+msgid "Usage starts when a quota is first saved."
+msgstr "クォータを初めて保存した時点から使用量の計測を開始します。"
+
+msgid "Minute"
+msgstr "1分"
+
+msgid "Lifetime"
+msgstr "累計"
+
+msgid "Quota exceeded"
+msgstr "クォータ超過"
+
+msgid "Quota active"
+msgstr "クォータ有効"
+
+msgid "WAN traffic is blocked because a quota was reached."
+msgstr "クォータに達したためWANトラフィックがブロックされています。"
+
+msgid "Quota blocked"
+msgstr "クォータによりブロック"
+
+msgid "Quota values must be non-negative and within the supported range."
+msgstr "クォータ値は0以上で、サポートされている範囲内である必要があります。"
+
+msgid "Failed to save traffic quota"
+msgstr "トラフィッククォータを保存できませんでした"
+
+msgid "Delete Traffic Quota"
+msgstr "トラフィッククォータを削除"
+
+msgid "Delete this quota and all of its accumulated usage?"
+msgstr "このクォータと累積された使用量をすべて削除しますか？"
+
+msgid "Failed to delete traffic quota"
+msgstr "トラフィッククォータを削除できませんでした"
+
+msgid "Rules / Quota"
+msgstr "ルール / クォータ"
+
+msgid "Failed to load traffic quotas"
+msgstr "トラフィッククォータを読み込めませんでした"
+
+msgid "Unavailable"
+msgstr "利用不可"

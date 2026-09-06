@@ -1285,3 +1285,93 @@ msgstr "TCX 出站锚点程序 ID"
 
 msgid "Used when tc_order is before/after. Must be a valid egress program id on the same interface."
 msgstr "当 tc_order 为 before/after 时使用。必须是同一接口上的有效出站程序 ID。"
+
+msgid "Traffic Quota"
+msgstr "流量配额"
+
+msgid "Quota Status"
+msgstr "配额状态"
+
+msgid "Hourly Quota"
+msgstr "每小时配额"
+
+msgid "Daily Quota"
+msgstr "每天配额"
+
+msgid "Weekly Quota"
+msgstr "每周配额"
+
+msgid "Monthly Quota"
+msgstr "每月配额"
+
+msgid "Lifetime Quota"
+msgstr "累计总量配额"
+
+msgid "WAN upload and download are counted together. Enter 0 for unlimited."
+msgstr "WAN 上传和下载合并计算；输入 0 表示不限量。"
+
+msgid "Not configured"
+msgstr "未配置"
+
+msgid "Blocked"
+msgstr "已阻断"
+
+msgid "Active"
+msgstr "生效中"
+
+msgid "No quota usage data"
+msgstr "暂无配额用量数据"
+
+msgid "Delete Quota"
+msgstr "删除配额"
+
+msgid "Save Quota"
+msgstr "保存配额"
+
+msgid "Usage starts when a quota is first saved."
+msgstr "首次保存配额后开始累计用量。"
+
+msgid "Lifetime"
+msgstr "累计"
+
+msgid "Quota exceeded"
+msgstr "配额已用尽"
+
+msgid "Quota active"
+msgstr "配额生效中"
+
+msgid "WAN traffic is blocked because a quota was reached."
+msgstr "因达到流量配额，WAN 流量已被阻断。"
+
+msgid "Quota blocked"
+msgstr "配额阻断"
+
+msgid "Quota values must be non-negative and within the supported range."
+msgstr "配额必须是支持范围内的非负数。"
+
+msgid "Failed to save traffic quota"
+msgstr "保存流量配额失败"
+
+msgid "Delete Traffic Quota"
+msgstr "删除流量配额"
+
+msgid "Delete this quota and all of its accumulated usage?"
+msgstr "确定删除此配额及其全部累计用量吗？"
+
+msgid "Failed to delete traffic quota"
+msgstr "删除流量配额失败"
+
+msgid "Rules / Quota"
+msgstr "规则 / 配额"
+
+msgid "Failed to load traffic quotas"
+msgstr "加载流量配额失败"
+
+msgid "Unavailable"
+msgstr "不可用"
+
+msgid "Minute Quota"
+msgstr "每分钟配额"
+
+msgid "Minute"
+msgstr "每分钟"

@@ -26,7 +26,8 @@
 					"installUpdate",
 					"getTrafficUsageRanking",
 					"getTrafficUsageIncrements",
-					"getRateLimitWhitelist"
+					"getRateLimitWhitelist",
+					"getTrafficQuotas"
 				]
 			},
 			"uci": [
@@ -64,7 +65,10 @@
 					"addRateLimitWhitelist",
 					"deleteRateLimitWhitelist",
 					"setDefaultRateLimit",
-					"updateScheduleLimit"
+					"updateScheduleLimit",
+					"getTrafficQuotas",
+					"setTrafficQuota",
+					"deleteTrafficQuota"
 				]
 			},
 			"uci": [
