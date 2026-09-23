@@ -1348,3 +1348,6 @@ msgstr "No se pudieron cargar las cuotas de tráfico"
 
 msgid "Unavailable"
 msgstr "No disponible"
+
+msgid "Show reply direction"
+msgstr "Mostrar la dirección de respuesta"

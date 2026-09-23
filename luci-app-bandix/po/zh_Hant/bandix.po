@@ -1348,3 +1348,6 @@ msgstr "載入流量配額失敗"
 
 msgid "Unavailable"
 msgstr "無法使用"
+
+msgid "Show reply direction"
+msgstr "顯示回覆方向"

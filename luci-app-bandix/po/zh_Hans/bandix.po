@@ -1375,3 +1375,6 @@ msgstr "每分钟配额"
 
 msgid "Minute"
 msgstr "每分钟"
+
+msgid "Show reply direction"
+msgstr "显示回复方向"

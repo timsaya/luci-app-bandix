@@ -1348,3 +1348,6 @@ msgstr "Impossible de charger les quotas de trafic"
 
 msgid "Unavailable"
 msgstr "Indisponible"
+
+msgid "Show reply direction"
+msgstr "Afficher la direction de réponse"

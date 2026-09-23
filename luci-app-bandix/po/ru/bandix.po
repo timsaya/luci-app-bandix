@@ -1348,3 +1348,6 @@ msgstr "Не удалось загрузить квоты трафика"
 
 msgid "Unavailable"
 msgstr "Недоступно"
+
+msgid "Show reply direction"
+msgstr "Показывать обратное направление"
