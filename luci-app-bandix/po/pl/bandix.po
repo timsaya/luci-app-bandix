@@ -1348,3 +1348,6 @@ msgstr "Nie udało się wczytać limitów transferu"
 
 msgid "Unavailable"
 msgstr "Niedostępne"
+
+msgid "Show reply direction"
+msgstr "Pokaż kierunek odpowiedzi"

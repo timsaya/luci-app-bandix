@@ -1348,3 +1348,6 @@ msgstr "トラフィッククォータを読み込めませんでした"
 
 msgid "Unavailable"
 msgstr "利用不可"
+
+msgid "Show reply direction"
+msgstr "応答方向を表示"
