@@ -4,6 +4,7 @@
 'require uci';
 'require rpc';
 'require poll';
+'require bandix.geoip as geoip';
 
 var BANDIX_MODAL_BG_OPENWRT2020_LIGHT = '#ffffff';
 var BANDIX_MODAL_BG_OPENWRT2020_DARK = '#2a2a2a';
@@ -136,15 +137,21 @@ function formatSize(bytes) {
 // IPv6 地址按 RFC 3986 用方括号包起来，一是避免 '2600:...:8000::' + ':' + '80' 拼出
 // ':::80' 这种分不清边界的写法，二是选中复制出来就是 [addr]:port，可以直接粘去用。
 // 地址和端口是行内元素，复制时不会被拆成两行；端口自身 nowrap，不会被折断
-function flowEndpointCell(addr, port) {
+function flowEndpointCell(addr, port, information) {
     var text = addr || '-';
     if (text.indexOf(':') >= 0) {
         text = '[' + text + ']';
     }
-    return E('td', { 'class': 'flows-addr-cell' }, [
+    var description = geoip.describe(information);
+    var children = [E('div', {}, [
         E('span', { 'class': 'flows-addr' }, text),
         E('span', { 'class': 'flows-port' }, port ? ':' + port : '')
-    ]);
+    ])];
+    if (description) children.push(E('div', {
+        'class': 'flows-geoip', title: description.details,
+        style: 'font-size:0.8rem;opacity:0.75;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px'
+    }, description.summary));
+    return E('td', { 'class': 'flows-addr-cell' }, children);
 }
 
 function formatDeviceName(device) {
@@ -1211,7 +1218,8 @@ return view.extend({
                         total: res.data.total || 0,
                         page: res.data.page || currentPage,
                         page_size: res.data.page_size || currentPageSize,
-                        total_pages: res.data.total_pages || 1
+                        total_pages: res.data.total_pages || 1,
+                        geoip: res.data.geoip || {}
                     };
                 }
 
@@ -1233,6 +1241,7 @@ return view.extend({
                     tableBody.innerHTML = '';
                     var normalized = normalizeFlowsResponse(res);
                     var flows = normalized.items;
+                    var information = normalized.geoip || {};
                     totalItems = normalized.total;
                     currentPage = normalized.page;
                     totalPages = Math.max(1, normalized.total_pages);
@@ -1258,11 +1267,11 @@ return view.extend({
                         tableBody.appendChild(E('tr', {}, [
                             E('td', { 'class': protoCls }, (f.protocol || '-').toUpperCase()),
                             E('td', { 'class': 'flows-state-cell ' + stateCls }, f.state || '-'),
-                            flowEndpointCell(f.orig && f.orig.src, f.orig && f.orig.sport),
-                            flowEndpointCell(f.orig && f.orig.dst, f.orig && f.orig.dport),
+                            flowEndpointCell(f.orig && f.orig.src, f.orig && f.orig.sport, information[f.orig && f.orig.src]),
+                            flowEndpointCell(f.orig && f.orig.dst, f.orig && f.orig.dport, information[f.orig && f.orig.dst]),
                             E('td', {}, sendStr),
-                            flowEndpointCell(f.repl && f.repl.src, f.repl && f.repl.sport),
-                            flowEndpointCell(f.repl && f.repl.dst, f.repl && f.repl.dport),
+                            flowEndpointCell(f.repl && f.repl.src, f.repl && f.repl.sport, information[f.repl && f.repl.src]),
+                            flowEndpointCell(f.repl && f.repl.dst, f.repl && f.repl.dport, information[f.repl && f.repl.dst]),
                             E('td', {}, replyStr),
                             E('td', { 'style': 'font-size: 0.8rem;' }, flagsStr)
                         ]));

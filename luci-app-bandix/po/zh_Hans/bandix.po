@@ -221,12 +221,6 @@ msgstr "WAN 已上传"
 msgid "WAN Downloaded"
 msgstr "WAN 已下载"
 
-msgid "Total Upload"
-msgstr "总上传速率"
-
-msgid "Total Download"
-msgstr "总下载速率"
-
 msgid "LAN Upload"
 msgstr "LAN 上传速率"
 
@@ -419,17 +413,11 @@ msgstr "第"
 msgid "of"
 msgstr "页，共"
 
-msgid "Total"
-msgstr "全部"
-
 msgid "records"
 msgstr "条记录"
 
 msgid "Per Page"
 msgstr "每页显示"
-
-msgid ""
-msgstr "条"
 
 msgid "Total Queries"
 msgstr "总查询数"
@@ -852,7 +840,7 @@ msgid "Please select at least one day"
 msgstr "请至少选择一天"
 
 msgid "No scheduled rules yet, click \"Add Rule\" to start setting"
-msgstr "还没有定时限速规则，点击"添加规则"开始设置"
+msgstr "还没有定时限速规则，点击\"添加规则\"开始设置"
 
 msgid "Loading..."
 msgstr "加载中..."
@@ -934,18 +922,6 @@ msgstr "最大值"
 
 msgid "Minimum"
 msgstr "最小值"
-
-msgid "WAN Upload"
-msgstr "WAN 上传"
-
-msgid "WAN Download"
-msgstr "WAN 下载"
-
-msgid "WAN Uploaded"
-msgstr "WAN 上传量"
-
-msgid "WAN Downloaded"
-msgstr "WAN 下载量"
 
 msgid "Clear Traffic Data"
 msgstr "删除流量数据"
@@ -1079,9 +1055,6 @@ msgstr "下载并安装"
 msgid "Manual Download"
 msgstr "手动下载"
 
-msgid "Close"
-msgstr "关闭"
-
 msgid "Starting installation... The page will refresh automatically in 30 seconds."
 msgstr "开始安装... 页面将在30秒后自动刷新。"
 
@@ -1093,9 +1066,6 @@ msgstr "有更新"
 
 msgid "Update available, click to go to settings"
 msgstr "有更新，点击前往设置"
-
-msgid "Traffic Statistics"
-msgstr "流量统计"
 
 msgid "Traffic Statistics"
 msgstr "流量统计"
@@ -1378,3 +1348,192 @@ msgstr "每分钟"
 
 msgid "Show reply direction"
 msgstr "显示回复方向"
+
+msgid "Available space"
+msgstr "可用空间"
+
+msgid "Cannot prepare storage. Check free space and directory permissions."
+msgstr "无法准备存储，请检查剩余空间和目录权限。"
+
+msgid "Checking database version…"
+msgstr "正在检查数据库版本…"
+
+msgid "Checking storage…"
+msgstr "正在检查存储空间…"
+
+msgid "Choose an uncompressed .mmdb file within the upload size limit."
+msgstr "请选择未压缩且未超过上传大小限制的 .mmdb 文件。"
+
+msgid "Country/region + network organization — approximately 12 MiB"
+msgstr "国家/地区 + 网络组织 · 约 12 MiB"
+
+msgid "Country/region — approximately 3.3 MiB"
+msgstr "国家/地区 · 约 3.3 MiB"
+
+msgid "Data source"
+msgstr "数据来源"
+
+msgid "Data terms"
+msgstr "数据使用条款"
+
+msgid "Database contents"
+msgstr "数据库内容"
+
+msgid "Database directory"
+msgstr "数据库目录"
+
+msgid "Database enabled"
+msgstr "数据库已启用"
+
+msgid "Database is up to date"
+msgstr "数据库已是最新版本"
+
+msgid "Database operation failed"
+msgstr "数据库操作失败"
+
+msgid "Database operation failed. Retry or upload a local database."
+msgstr "数据库操作失败，请重试或上传本地数据库。"
+
+msgid "Database upload failed"
+msgstr "数据库上传失败"
+
+msgid "Database validation failed. The previous database is unchanged."
+msgstr "数据库校验失败，原数据库未更改。"
+
+msgid "Delete"
+msgstr "删除"
+
+msgid "Delete GeoIP databases"
+msgstr "删除 IP 归属地数据库"
+
+msgid "Disabled"
+msgstr "已停用"
+
+msgid "Documentation address"
+msgstr "文档示例地址"
+
+msgid "Download and enable"
+msgstr "下载并启用"
+
+msgid "Download cancelled"
+msgstr "下载已取消"
+
+msgid "Downloading database…"
+msgstr "正在下载数据库…"
+
+msgid "Enable IP location lookup"
+msgstr "启用 IP 归属地查询"
+
+msgid "Enabled"
+msgstr "已启用"
+
+msgid "GeoIP service is unavailable. Enable connection monitoring and apply settings, or update Bandix."
+msgstr "IP 归属地服务不可用，请启用连接监控并应用设置，或更新 Bandix。"
+
+msgid "IP location database"
+msgstr "IP 归属地数据库"
+
+msgid "Importing database…"
+msgstr "正在导入数据库…"
+
+msgid "Link-local address"
+msgstr "链路本地地址"
+
+msgid "Loading database…"
+msgstr "正在加载数据库…"
+
+msgid "Local network"
+msgstr "局域网"
+
+msgid "Loopback"
+msgstr "回环地址"
+
+msgid "Maximum upload size"
+msgstr "上传大小上限"
+
+msgid "Multicast"
+msgstr "组播地址"
+
+msgid "Not installed"
+msgstr "未安装"
+
+msgid "Private address"
+msgstr "私有地址"
+
+msgid "Province/city (uploaded database)"
+msgstr "省市（已上传的数据库）"
+
+msgid "Province/city + network organization — approximately 57 MiB"
+msgstr "省市 + 网络组织 · 约 57 MiB"
+
+msgid "Remove installed databases and disable IP location lookup?"
+msgstr "删除已安装的数据库并停用 IP 归属地查询？"
+
+msgid "Reserved address"
+msgstr "保留地址"
+
+msgid "Shared address (CGNAT)"
+msgstr "共享地址（CGNAT）"
+
+msgid "Storage used"
+msgstr "存储占用"
+
+msgid "The installed database could not be loaded. Download or upload it again."
+msgstr "无法加载已安装的数据库，请重新下载或上传。"
+
+msgid "Unknown"
+msgstr "未知"
+
+msgid "Unknown location"
+msgstr "归属地未知"
+
+msgid "Unspecified address"
+msgstr "未指定地址"
+
+msgid "Update database"
+msgstr "更新数据库"
+
+msgid "Upload an uncompressed Country, City or ASN .mmdb file. To add ASN, install a Country or City database first."
+msgstr "可上传未压缩的 Country、City 或 ASN .mmdb 文件。添加 ASN 前，请先安装 Country 或 City 数据库。"
+
+msgid "Upload and enable"
+msgstr "上传并启用"
+
+msgid "Upload database"
+msgstr "上传数据库"
+
+msgid "Uploading database…"
+msgstr "正在上传数据库…"
+
+msgid "Use persistent storage or an external drive. Save and apply directory changes before downloading."
+msgstr "请使用持久存储或外接磁盘。更改目录后，请先保存并应用，再下载数据库。"
+
+msgid "Verifying database…"
+msgstr "正在校验数据库…"
+
+msgid "Version"
+msgstr "版本"
+
+msgid "Country/region"
+msgstr "国家/地区"
+
+msgid "Province/city"
+msgstr "省市"
+
+msgid "Network organization"
+msgstr "网络组织"
+
+msgid "Not enough free space for this database."
+msgstr "没有足够空间安装此数据库。"
+
+msgid "Required space"
+msgstr "所需空间"
+
+msgid "Database ready"
+msgstr "数据库已就绪"
+
+msgid "Listen Address"
+msgstr "监听地址"
+
+msgid "IP address for Bandix to listen on. Use 127.0.0.1 for local access or 0.0.0.0 / :: for all interfaces."
+msgstr "Bandix 监听的 IP 地址。127.0.0.1 仅供本机访问，0.0.0.0 / :: 监听所有接口。"

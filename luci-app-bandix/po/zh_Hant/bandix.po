@@ -221,12 +221,6 @@ msgstr "WAN 已上傳"
 msgid "WAN Downloaded"
 msgstr "WAN 已下載"
 
-msgid "Total Upload"
-msgstr "總上傳速率"
-
-msgid "Total Download"
-msgstr "總下載速率"
-
 msgid "LAN Upload"
 msgstr "LAN 上傳速率"
 
@@ -422,17 +416,11 @@ msgstr "第"
 msgid "of"
 msgstr "頁，共"
 
-msgid "Total"
-msgstr "全部"
-
 msgid "records"
 msgstr "筆記錄"
 
 msgid "Per Page"
 msgstr "每頁顯示"
-
-msgid ""
-msgstr "筆"
 
 msgid "Total Queries"
 msgstr "總查詢數"
@@ -855,7 +843,7 @@ msgid "Please select at least one day"
 msgstr "請至少選擇一天"
 
 msgid "No scheduled rules yet, click \"Add Rule\" to start setting"
-msgstr "還沒有定時限速規則，點擊"新增規則"開始設定"
+msgstr "還沒有定時限速規則，點擊\"新增規則\"開始設定"
 
 msgid "Loading..."
 msgstr "載入中..."
@@ -937,18 +925,6 @@ msgstr "最大值"
 
 msgid "Minimum"
 msgstr "最小值"
-
-msgid "WAN Upload"
-msgstr "WAN 上傳"
-
-msgid "WAN Download"
-msgstr "WAN 下載"
-
-msgid "WAN Uploaded"
-msgstr "WAN 上傳量"
-
-msgid "WAN Downloaded"
-msgstr "WAN 下載量"
 
 msgid "Clear Traffic Data"
 msgstr "刪除流量數據"
@@ -1082,17 +1058,11 @@ msgstr "下載並安裝"
 msgid "Manual Download"
 msgstr "手動下載"
 
-msgid "Close"
-msgstr "關閉"
-
 msgid "Starting installation... The page will refresh automatically in 30 seconds."
 msgstr "開始安裝... 頁面將在30秒後自動重新整理。"
 
 msgid "Please clear your browser cache manually after updating."
 msgstr "更新後請手動清空瀏覽器快取。"
-
-msgid "Traffic Statistics"
-msgstr "流量統計"
 
 msgid "Traffic Statistics"
 msgstr "流量統計"
@@ -1351,3 +1321,192 @@ msgstr "無法使用"
 
 msgid "Show reply direction"
 msgstr "顯示回覆方向"
+
+msgid "Available space"
+msgstr "可用空間"
+
+msgid "Cannot prepare storage. Check free space and directory permissions."
+msgstr "無法準備儲存空間，請檢查剩餘空間和目錄權限。"
+
+msgid "Checking database version…"
+msgstr "正在檢查資料庫版本…"
+
+msgid "Checking storage…"
+msgstr "正在檢查儲存空間…"
+
+msgid "Choose an uncompressed .mmdb file within the upload size limit."
+msgstr "請選擇未壓縮且未超過上傳大小限制的 .mmdb 檔案。"
+
+msgid "Country/region + network organization — approximately 12 MiB"
+msgstr "國家/地區 + 網路組織 · 約 12 MiB"
+
+msgid "Country/region — approximately 3.3 MiB"
+msgstr "國家/地區 · 約 3.3 MiB"
+
+msgid "Data source"
+msgstr "資料來源"
+
+msgid "Data terms"
+msgstr "資料使用條款"
+
+msgid "Database contents"
+msgstr "資料庫內容"
+
+msgid "Database directory"
+msgstr "資料庫目錄"
+
+msgid "Database enabled"
+msgstr "資料庫已啟用"
+
+msgid "Database is up to date"
+msgstr "資料庫已是最新版本"
+
+msgid "Database operation failed"
+msgstr "資料庫操作失敗"
+
+msgid "Database operation failed. Retry or upload a local database."
+msgstr "資料庫操作失敗，請重試或上傳本機資料庫。"
+
+msgid "Database upload failed"
+msgstr "資料庫上傳失敗"
+
+msgid "Database validation failed. The previous database is unchanged."
+msgstr "資料庫驗證失敗，原資料庫未變更。"
+
+msgid "Delete"
+msgstr "刪除"
+
+msgid "Delete GeoIP databases"
+msgstr "刪除 IP 歸屬地資料庫"
+
+msgid "Disabled"
+msgstr "已停用"
+
+msgid "Documentation address"
+msgstr "文件範例位址"
+
+msgid "Download and enable"
+msgstr "下載並啟用"
+
+msgid "Download cancelled"
+msgstr "下載已取消"
+
+msgid "Downloading database…"
+msgstr "正在下載資料庫…"
+
+msgid "Enable IP location lookup"
+msgstr "啟用 IP 歸屬地查詢"
+
+msgid "Enabled"
+msgstr "已啟用"
+
+msgid "GeoIP service is unavailable. Enable connection monitoring and apply settings, or update Bandix."
+msgstr "IP 歸屬地服務無法使用，請啟用連線監控並套用設定，或更新 Bandix。"
+
+msgid "IP location database"
+msgstr "IP 歸屬地資料庫"
+
+msgid "Importing database…"
+msgstr "正在匯入資料庫…"
+
+msgid "Link-local address"
+msgstr "鏈路本機位址"
+
+msgid "Loading database…"
+msgstr "正在載入資料庫…"
+
+msgid "Local network"
+msgstr "區域網路"
+
+msgid "Loopback"
+msgstr "回送位址"
+
+msgid "Maximum upload size"
+msgstr "上傳大小上限"
+
+msgid "Multicast"
+msgstr "多點傳送位址"
+
+msgid "Not installed"
+msgstr "未安裝"
+
+msgid "Private address"
+msgstr "私有位址"
+
+msgid "Province/city (uploaded database)"
+msgstr "省市（已上傳的資料庫）"
+
+msgid "Province/city + network organization — approximately 57 MiB"
+msgstr "省市 + 網路組織 · 約 57 MiB"
+
+msgid "Remove installed databases and disable IP location lookup?"
+msgstr "刪除已安裝的資料庫並停用 IP 歸屬地查詢？"
+
+msgid "Reserved address"
+msgstr "保留位址"
+
+msgid "Shared address (CGNAT)"
+msgstr "共用位址（CGNAT）"
+
+msgid "Storage used"
+msgstr "儲存用量"
+
+msgid "The installed database could not be loaded. Download or upload it again."
+msgstr "無法載入已安裝的資料庫，請重新下載或上傳。"
+
+msgid "Unknown"
+msgstr "未知"
+
+msgid "Unknown location"
+msgstr "歸屬地未知"
+
+msgid "Unspecified address"
+msgstr "未指定位址"
+
+msgid "Update database"
+msgstr "更新資料庫"
+
+msgid "Upload an uncompressed Country, City or ASN .mmdb file. To add ASN, install a Country or City database first."
+msgstr "可上傳未壓縮的 Country、City 或 ASN .mmdb 檔案。新增 ASN 前，請先安裝 Country 或 City 資料庫。"
+
+msgid "Upload and enable"
+msgstr "上傳並啟用"
+
+msgid "Upload database"
+msgstr "上傳資料庫"
+
+msgid "Uploading database…"
+msgstr "正在上傳資料庫…"
+
+msgid "Use persistent storage or an external drive. Save and apply directory changes before downloading."
+msgstr "請使用持續性儲存或外接磁碟。變更目錄後，請先儲存並套用，再下載資料庫。"
+
+msgid "Verifying database…"
+msgstr "正在驗證資料庫…"
+
+msgid "Version"
+msgstr "版本"
+
+msgid "Country/region"
+msgstr "國家/地區"
+
+msgid "Province/city"
+msgstr "省市"
+
+msgid "Network organization"
+msgstr "網路組織"
+
+msgid "Not enough free space for this database."
+msgstr "沒有足夠空間安裝此資料庫。"
+
+msgid "Required space"
+msgstr "所需空間"
+
+msgid "Database ready"
+msgstr "資料庫已就緒"
+
+msgid "Listen Address"
+msgstr "監聽位址"
+
+msgid "IP address for Bandix to listen on. Use 127.0.0.1 for local access or 0.0.0.0 / :: for all interfaces."
+msgstr "Bandix 監聽的 IP 位址。127.0.0.1 僅供本機存取，0.0.0.0 / :: 監聽所有介面。"

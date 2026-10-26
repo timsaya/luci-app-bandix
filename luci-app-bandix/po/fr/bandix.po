@@ -221,12 +221,6 @@ msgstr "WAN envoyé"
 msgid "WAN Downloaded"
 msgstr "WAN téléchargé"
 
-msgid "Total Upload"
-msgstr "Téléversement total"
-
-msgid "Total Download"
-msgstr "Téléchargement total"
-
 msgid "LAN Upload"
 msgstr "Débit envoi LAN"
 
@@ -422,17 +416,11 @@ msgstr "Page"
 msgid "of"
 msgstr "sur"
 
-msgid "Total"
-msgstr "Total"
-
 msgid "records"
 msgstr "enregistrements"
 
 msgid "Per Page"
 msgstr "Par page"
-
-msgid ""
-msgstr ""
 
 msgid "Total Queries"
 msgstr "Total des requêtes"
@@ -938,18 +926,6 @@ msgstr "Maximum"
 msgid "Minimum"
 msgstr "Minimum"
 
-msgid "WAN Upload"
-msgstr "Envoi WAN"
-
-msgid "WAN Download"
-msgstr "Téléchargement WAN"
-
-msgid "WAN Uploaded"
-msgstr "Envoyé WAN"
-
-msgid "WAN Downloaded"
-msgstr "Téléchargé WAN"
-
 msgid "Clear Traffic Data"
 msgstr "Effacer les données de trafic"
 
@@ -1082,17 +1058,11 @@ msgstr "Télécharger et Installer"
 msgid "Manual Download"
 msgstr "Téléchargement Manuel"
 
-msgid "Close"
-msgstr "Fermer"
-
 msgid "Starting installation... The page will refresh automatically in 30 seconds."
 msgstr "Démarrage de l'installation... La page sera actualisée automatiquement dans 30 secondes."
 
 msgid "Please clear your browser cache manually after updating."
 msgstr "Veuillez vider manuellement le cache du navigateur après la mise à jour."
-
-msgid "Traffic Statistics"
-msgstr "Statistiques de Trafic"
 
 msgid "Traffic Statistics"
 msgstr "Statistiques de Trafic"
@@ -1351,3 +1321,192 @@ msgstr "Indisponible"
 
 msgid "Show reply direction"
 msgstr "Afficher la direction de réponse"
+
+msgid "Available space"
+msgstr "Espace disponible"
+
+msgid "Cannot prepare storage. Check free space and directory permissions."
+msgstr "Impossible de préparer le stockage. Vérifiez l’espace libre et les permissions."
+
+msgid "Checking database version…"
+msgstr "Vérification de la version…"
+
+msgid "Checking storage…"
+msgstr "Vérification du stockage…"
+
+msgid "Choose an uncompressed .mmdb file within the upload size limit."
+msgstr "Choisissez un fichier .mmdb non compressé respectant la taille limite."
+
+msgid "Country/region + network organization — approximately 12 MiB"
+msgstr "Pays/région + organisation réseau · environ 12 MiB"
+
+msgid "Country/region — approximately 3.3 MiB"
+msgstr "Pays/région · environ 3,3 MiB"
+
+msgid "Data source"
+msgstr "Source des données"
+
+msgid "Data terms"
+msgstr "Conditions d’utilisation"
+
+msgid "Database contents"
+msgstr "Contenu de la base"
+
+msgid "Database directory"
+msgstr "Répertoire de la base"
+
+msgid "Database enabled"
+msgstr "Base activée"
+
+msgid "Database is up to date"
+msgstr "La base est à jour"
+
+msgid "Database operation failed"
+msgstr "Échec de l’opération"
+
+msgid "Database operation failed. Retry or upload a local database."
+msgstr "Échec de l’opération. Réessayez ou importez une base locale."
+
+msgid "Database upload failed"
+msgstr "Échec de l’envoi de la base"
+
+msgid "Database validation failed. The previous database is unchanged."
+msgstr "Échec de validation. La base précédente est conservée."
+
+msgid "Delete"
+msgstr "Supprimer"
+
+msgid "Delete GeoIP databases"
+msgstr "Supprimer les bases GeoIP"
+
+msgid "Disabled"
+msgstr "Désactivé"
+
+msgid "Documentation address"
+msgstr "Adresse de documentation"
+
+msgid "Download and enable"
+msgstr "Télécharger et activer"
+
+msgid "Download cancelled"
+msgstr "Téléchargement annulé"
+
+msgid "Downloading database…"
+msgstr "Téléchargement de la base…"
+
+msgid "Enable IP location lookup"
+msgstr "Activer la géolocalisation IP"
+
+msgid "Enabled"
+msgstr "Activé"
+
+msgid "GeoIP service is unavailable. Enable connection monitoring and apply settings, or update Bandix."
+msgstr "GeoIP indisponible. Activez le suivi des connexions et appliquez les paramètres, ou mettez Bandix à jour."
+
+msgid "IP location database"
+msgstr "Base de géolocalisation IP"
+
+msgid "Importing database…"
+msgstr "Importation de la base…"
+
+msgid "Link-local address"
+msgstr "Adresse de lien local"
+
+msgid "Loading database…"
+msgstr "Chargement de la base…"
+
+msgid "Local network"
+msgstr "Réseau local"
+
+msgid "Loopback"
+msgstr "Bouclage"
+
+msgid "Maximum upload size"
+msgstr "Taille maximale d’envoi"
+
+msgid "Multicast"
+msgstr "Multidiffusion"
+
+msgid "Not installed"
+msgstr "Non installé"
+
+msgid "Private address"
+msgstr "Adresse privée"
+
+msgid "Province/city (uploaded database)"
+msgstr "Région/ville (base importée)"
+
+msgid "Province/city + network organization — approximately 57 MiB"
+msgstr "Région/ville + organisation réseau · environ 57 MiB"
+
+msgid "Remove installed databases and disable IP location lookup?"
+msgstr "Supprimer les bases et désactiver la géolocalisation IP ?"
+
+msgid "Reserved address"
+msgstr "Adresse réservée"
+
+msgid "Shared address (CGNAT)"
+msgstr "Adresse partagée (CGNAT)"
+
+msgid "Storage used"
+msgstr "Espace utilisé"
+
+msgid "The installed database could not be loaded. Download or upload it again."
+msgstr "Impossible de charger la base. Téléchargez-la ou importez-la à nouveau."
+
+msgid "Unknown"
+msgstr "Inconnu"
+
+msgid "Unknown location"
+msgstr "Localisation inconnue"
+
+msgid "Unspecified address"
+msgstr "Adresse non spécifiée"
+
+msgid "Update database"
+msgstr "Mettre à jour la base"
+
+msgid "Upload an uncompressed Country, City or ASN .mmdb file. To add ASN, install a Country or City database first."
+msgstr "Importez un fichier Country, City ou ASN .mmdb non compressé. Installez Country ou City avant d’ajouter ASN."
+
+msgid "Upload and enable"
+msgstr "Importer et activer"
+
+msgid "Upload database"
+msgstr "Importer une base"
+
+msgid "Uploading database…"
+msgstr "Envoi de la base…"
+
+msgid "Use persistent storage or an external drive. Save and apply directory changes before downloading."
+msgstr "Utilisez un stockage persistant ou externe. Enregistrez et appliquez le changement de répertoire avant de télécharger."
+
+msgid "Verifying database…"
+msgstr "Vérification de la base…"
+
+msgid "Version"
+msgstr "Version"
+
+msgid "Country/region"
+msgstr "Pays/région"
+
+msgid "Province/city"
+msgstr "Région/ville"
+
+msgid "Network organization"
+msgstr "Organisation réseau"
+
+msgid "Not enough free space for this database."
+msgstr "Espace insuffisant pour cette base."
+
+msgid "Required space"
+msgstr "Espace nécessaire"
+
+msgid "Database ready"
+msgstr "Base prête"
+
+msgid "Listen Address"
+msgstr "Adresse d’écoute"
+
+msgid "IP address for Bandix to listen on. Use 127.0.0.1 for local access or 0.0.0.0 / :: for all interfaces."
+msgstr "Adresse IP d’écoute de Bandix. Utilisez 127.0.0.1 pour un accès local ou 0.0.0.0 / :: pour toutes les interfaces."

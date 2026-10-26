@@ -3,9 +3,16 @@
 
 . /usr/share/libubox/jshn.sh
 
-# 从UCI配置读取端口号，如果读取失败则使用默认端口8686
-BANDIX_PORT=$(uci get bandix.general.port 2>/dev/null || echo "8686")
-readonly BANDIX_API_BASE="http://127.0.0.1:$BANDIX_PORT"
+# Wildcard listening addresses must be reached through loopback on the router.
+BANDIX_HOST=$(uci -q get bandix.general.host)
+BANDIX_PORT=$(uci -q get bandix.general.port)
+BANDIX_PORT=${BANDIX_PORT:-8686}
+case "$BANDIX_HOST" in
+	''|0.0.0.0) BANDIX_HOST='127.0.0.1' ;;
+	::) BANDIX_HOST='[::1]' ;;
+	*:*) BANDIX_HOST="[$BANDIX_HOST]" ;;
+esac
+readonly BANDIX_API_BASE="http://$BANDIX_HOST:$BANDIX_PORT"
 readonly BANDIX_DEVICES_API="$BANDIX_API_BASE/api/traffic/devices"
 readonly BANDIX_LIMITS_API="$BANDIX_API_BASE/api/traffic/limits"
 readonly BANDIX_METRICS_API="$BANDIX_API_BASE/api/traffic/metrics"
@@ -421,17 +428,56 @@ get_connection_flows() {
 	[ -n "$state" ] && query_params="${query_params}state=$(printf '%s' "$state" | sed 's/ /%20/g')&"
 	[ -n "$page" ] && query_params="${query_params}page=$page&"
 	[ -n "$page_size" ] && query_params="${query_params}page_size=$page_size&"
+	if [ -n "$page" ] || [ -n "$page_size" ]; then query_params="${query_params}geoip=1&"; fi
 	query_params=$(echo "$query_params" | sed 's/&$//')
 
 	local url="$BANDIX_CONNECTION_FLOWS_API"
 	[ -n "$query_params" ] && url="${url}?${query_params}"
 
-	local response=$(curl -s --connect-timeout 2 --max-time 5 -X GET "$url" 2>/dev/null)
+	local response=$(curl -s --connect-timeout 2 --max-time 15 -X GET "$url" 2>/dev/null)
 	if [ $? -ne 0 ] || [ -z "$response" ]; then
 		make_error "Failed to connect to Bandix service"
 		return
 	fi
 	echo "$response"
+}
+
+# GeoIP management is proxied to the router itself; writes require the LuCI
+# write ACL. Accept only action/profile identifiers, never arbitrary URLs/paths.
+get_geoip_status() {
+    local response
+    response=$(curl -s --connect-timeout 2 --max-time 8 "$BANDIX_API_BASE/api/geoip/status" 2>/dev/null)
+    if [ $? -ne 0 ] || [ -z "$response" ]; then
+        make_error "GeoIP service is unavailable"
+        return
+    fi
+    printf '%s\n' "$response"
+}
+
+manage_geoip() {
+    local action="$1" profile="$2" enabled="$3" payload response
+    json_init
+    case "$action" in
+        download)
+            case "$profile" in country|country_asn|city|city_asn) ;; *) make_error "Invalid database profile"; return ;; esac
+            json_add_string "action" "download"
+            json_add_string "profile" "$profile"
+            ;;
+        enable)
+            json_add_string "action" "enable"
+            case "$enabled" in 1|true) json_add_boolean "enabled" 1 ;; 0|false) json_add_boolean "enabled" 0 ;; *) make_error "Invalid enabled value"; return ;; esac
+            ;;
+        cancel|delete|import) json_add_string "action" "$action" ;;
+        *) make_error "Invalid GeoIP action"; return ;;
+    esac
+    payload=$(json_dump)
+    json_cleanup
+    response=$(curl -s --connect-timeout 2 --max-time 8 -X POST -H 'Content-Type: application/json' --data-binary "$payload" "$BANDIX_API_BASE/api/geoip/manage" 2>/dev/null)
+    if [ $? -ne 0 ] || [ -z "$response" ]; then
+        make_error "GeoIP service is unavailable"
+        return
+    fi
+    printf '%s\n' "$response"
 }
 
 # 获取 DNS 查询记录
@@ -1311,6 +1357,14 @@ case "$1" in
 		json_add_string "mac"
 		json_close_object
 		
+		json_add_object "getGeoipStatus"
+		json_close_object
+		json_add_object "manageGeoip"
+		json_add_string "action"
+		json_add_string "profile"
+		json_add_string "enabled"
+		json_close_object
+
 		json_add_object "getConnection"
 		json_close_object
 
@@ -1524,6 +1578,20 @@ case "$1" in
 					[ -n "$3" ] && mac="$3"
 				fi
 				delete_device "$mac"
+				;;
+			getGeoipStatus)
+				get_geoip_status
+				;;
+			manageGeoip)
+				input=""
+				read -r input
+				action="$(printf '%s' "$input" | jsonfilter -e '$.action' 2>/dev/null)"
+				[ -z "$action" ] && action="$(printf '%s' "$input" | jsonfilter -e '$[0]' 2>/dev/null)"
+				profile="$(printf '%s' "$input" | jsonfilter -e '$.profile' 2>/dev/null)"
+				[ -z "$profile" ] && profile="$(printf '%s' "$input" | jsonfilter -e '$[1]' 2>/dev/null)"
+				enabled="$(printf '%s' "$input" | jsonfilter -e '$.enabled' 2>/dev/null)"
+				[ -z "$enabled" ] && enabled="$(printf '%s' "$input" | jsonfilter -e '$[2]' 2>/dev/null)"
+				manage_geoip "$action" "$profile" "$enabled"
 				;;
 			getConnection)
 				# logger "luci.bandix: getConnection called"

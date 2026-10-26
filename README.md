@@ -114,3 +114,33 @@ Please ensure you install matching versions to ensure compatibility and proper f
 ## License
 
 This project is licensed under the [Apache 2.0 License](LICENSE).
+
+## IP location databases
+
+Open **Settings → Connection Monitor Settings → IP location database**. Select
+Country, Country + ASN or City + ASN, then click **Download and enable**. A Bandix
+service binary with GeoIP support is required.
+
+The widget supports progress, cancellation, updates, enable/disable, deletion
+and local `.mmdb` uploads. Failed updates retain installed data. Enable state,
+profile and version persist on the router, and downloads continue after leaving
+the settings page. Connection details show a compact location line with full
+location, ASN and organization in the tooltip.
+
+Directory changes use UCI's Save & Apply flow. Uploads are checked for extension
+and size before transferring, using a memory-aware cap advertised by Bandix.
+Management requires LuCI write permissions; file upload ACL is restricted to one
+staging file.
+
+Run `node --test tests/geoip.test.cjs` and validate translation catalogs with
+`msgfmt` when modifying this feature.
+
+## Listening address
+
+Settings → Basic Settings → Listen Address configures `bandix.general.host`.
+The default is `127.0.0.1`; IPv4 and IPv6 addresses are supported, including
+`0.0.0.0` and `::` for all interfaces. Save & Apply restarts the service.
+LuCI automatically follows the configured address and uses loopback for wildcard
+listeners. The HTTP API has no authentication; restrict non-loopback access to trusted clients.
+Changing the address requires a service binary supporting `--host`. Existing
+configurations without this option keep the loopback default.
