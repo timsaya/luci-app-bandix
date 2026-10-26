@@ -11,7 +11,7 @@ LUCI_DEPENDS:=+luci-base +luci-lib-jsonc +curl +bandix
 PKG_MAINTAINER:=timsaya
 
 PKG_VERSION:=0.12.12
-PKG_RELEASE:=3
+PKG_RELEASE:=4
 # Rebuild language packages when a package revision changes without a PO commit.
 PKG_PO_VERSION=$(if $(DUMP),x,$(strip $(call findrev)))-r$(PKG_RELEASE)
 

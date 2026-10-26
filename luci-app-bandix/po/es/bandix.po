@@ -1510,3 +1510,71 @@ msgstr "Dirección de escucha"
 
 msgid "IP address for Bandix to listen on. Use 127.0.0.1 for local access or 0.0.0.0 / :: for all interfaces."
 msgstr "Dirección IP de escucha de Bandix. Use 127.0.0.1 para acceso local o 0.0.0.0 / :: para todas las interfaces."
+
+msgid "ASN / network organization"
+msgstr "ASN / organización de red"
+
+msgid "Country/region + province/city"
+msgstr "País/región + provincia/ciudad"
+
+msgid "Database build dates"
+msgstr "Fechas de creación de las bases de datos"
+
+msgid "Download contents"
+msgstr "Contenido de la descarga"
+
+msgid "Installed data source"
+msgstr "Origen de los datos instalados"
+
+msgid "Installed databases"
+msgstr "Bases de datos instaladas"
+
+msgid "Release version"
+msgstr "Versión publicada"
+
+msgid "Location and ASN databases work together."
+msgstr "Las bases de ubicación y ASN funcionan juntas."
+
+msgid "Database details"
+msgstr "Detalles de las bases de datos"
+
+msgid "Apply directory changes before downloading."
+msgstr "Aplique los cambios de directorio antes de descargar."
+
+msgid "Batch deletion is unavailable. Update the Bandix service."
+msgstr "La eliminación por lotes no está disponible. Actualice el servicio Bandix."
+
+#, c-format
+msgid "Delete selected devices (%d)? Their traffic history, hostname bindings, rate limits and quotas will also be removed. Online devices may reappear."
+msgstr "¿Eliminar los dispositivos seleccionados (%d)? También se eliminarán su historial de tráfico, sus asociaciones de nombres, sus límites de velocidad y sus cuotas. Los dispositivos conectados pueden reaparecer."
+
+msgid "Delete selected"
+msgstr "Eliminar seleccionados"
+
+#, c-format
+msgid "Deleted: %d; not found: %d; failed: %d."
+msgstr "Eliminados: %d; no encontrados: %d; fallidos: %d."
+
+msgid "Failed to delete devices"
+msgstr "No se pudieron eliminar los dispositivos"
+
+msgid "Invalid batch deletion response"
+msgstr "Respuesta de eliminación por lotes no válida"
+
+msgid "Select all"
+msgstr "Seleccionar todos"
+
+msgid "Select device"
+msgstr "Seleccionar dispositivo"
+
+msgid "Search this page: protocol, IP, port, location, ASN…"
+msgstr "Buscar en esta página: protocolo, IP, puerto, ubicación, ASN…"
+
+msgid "Search connections on this page"
+msgstr "Buscar conexiones en esta página"
+
+msgid "Matches on this page"
+msgstr "Coincidencias en esta página"
+
+msgid "No matching connections on this page"
+msgstr "No hay conexiones coincidentes en esta página"

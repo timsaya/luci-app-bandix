@@ -47,6 +47,7 @@
 					"getConnectionFlows",
 					"setHostname",
 					"deleteDevice",
+					"deleteDevices",
 					"getDnsQueries",
 					"getDnsStats",
 					"getScheduleLimits",

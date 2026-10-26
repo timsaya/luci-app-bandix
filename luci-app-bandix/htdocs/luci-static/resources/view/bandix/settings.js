@@ -796,8 +796,7 @@ return view.extend({
 		o = s.option(form.DummyValue, '_geoip_manager', _('IP location database'));
 		o.renderWidget = function () { return geoip.render(); };
 
-		o = s.option(form.Value, 'geoip_dir', _('Database directory'),
-			_('Use persistent storage or an external drive. Save and apply directory changes before downloading.'));
+		o = s.option(form.Value, 'geoip_dir', _('Database directory'));
 		o.default = '/usr/share/bandix-geoip';
 		o.placeholder = '/usr/share/bandix-geoip';
 		o.datatype = 'directory';

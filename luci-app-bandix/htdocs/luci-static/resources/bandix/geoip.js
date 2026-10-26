@@ -50,6 +50,8 @@ return baseclass.extend({
 		var country = countryName(info), region = localized(info.region_names), city = localized(info.city_names);
 		var location = [country, region, city].filter(function (value, index, all) { return value && all.indexOf(value) === index; }).join(' · ');
 		return {
+			location: location || scopes.unknown,
+			organization: info.organization || '',
 			summary: [location, info.organization].filter(Boolean).join(' · ') || scopes.unknown,
 			details: [location, info.asn ? 'AS' + info.asn : '', info.organization].filter(Boolean).join('\n')
 		};
@@ -59,13 +61,14 @@ return baseclass.extend({
 		if (this._root) return this._root;
 		var root, current = null, pending = false, refreshing = false, dirtyProfile = false;
 		var badge = E('strong', {}, _('Loading…'));
-		var enabled = E('input', { type: 'checkbox', disabled: true });
-		var profile = E('select', { 'class': 'cbi-input-select', 'aria-label': _('Database contents') }, [
-			E('option', { value: 'country' }, _('Country/region — approximately 3.3 MiB')),
-			E('option', { value: 'country_asn' }, _('Country/region + network organization — approximately 12 MiB')),
-			E('option', { value: 'city_asn' }, _('Province/city + network organization — approximately 57 MiB'))
-		]);
-		var importedCity = null;
+		var controlStyle = 'appearance:auto;display:block;position:static;transform:none;flex:0 0 16px;box-sizing:border-box;width:16px;height:16px;margin:0;padding:0;align-self:center;';
+		var enabled = E('input', { type: 'checkbox', 'class': 'bandix-geoip-control', style: controlStyle + '-webkit-appearance:checkbox', disabled: true });
+		var country = E('input', { type: 'radio', 'class': 'bandix-geoip-control', style: controlStyle + '-webkit-appearance:radio', name: 'bandix-geoip-location', value: 'country', checked: true, disabled: true });
+		var city = E('input', { type: 'radio', 'class': 'bandix-geoip-control', style: controlStyle + '-webkit-appearance:radio', name: 'bandix-geoip-location', value: 'city', disabled: true });
+		var asn = E('input', { type: 'checkbox', 'class': 'bandix-geoip-control', style: controlStyle + '-webkit-appearance:checkbox', disabled: true, 'aria-label': _('ASN / network organization') });
+		var choices = [country, city, asn];
+		var selection = E('div', { style: 'font-size:0.9em;margin:8px 0' });
+		var installed = E('div', { style: 'margin-bottom:6px' });
 		var details = E('div', { style: 'color:var(--text-color-secondary,#888);font-size:0.9em;line-height:1.6;overflow-wrap:anywhere' });
 		var message = E('div', { role: 'status', 'aria-live': 'polite', style: 'font-size:0.9em;overflow-wrap:anywhere' });
 		var progressFill = E('div', { style: 'width:0%' });
@@ -75,6 +78,26 @@ return baseclass.extend({
 		var cancel = E('button', { type: 'button', 'class': 'btn cbi-button', style: 'display:none' }, _('Cancel'));
 		var remove = E('button', { type: 'button', 'class': 'btn cbi-button cbi-button-negative', style: 'display:none' }, _('Delete'));
 
+		function controlLabel(input, text) {
+			return E('label', { style: 'display:inline-flex;align-items:center;gap:6px;min-height:32px;margin:0;padding:0;width:auto;line-height:16px;box-sizing:border-box' }, [
+				input, E('span', { style: 'display:block;font-size:13px;line-height:16px;margin:0;padding:0' }, text)
+			]);
+		}
+		function selectedProfile() {
+			return (city.checked ? 'city' : 'country') + (asn.checked ? '_asn' : '');
+		}
+		function setProfile(value) {
+			city.checked = value === 'city' || value === 'city_asn';
+			country.checked = !city.checked;
+			asn.checked = value === 'country_asn' || value === 'city_asn';
+		}
+		function databaseName(kind) {
+			return { country: _('Country/region'), city: _('Country/region + province/city'), asn: _('ASN / network organization') }[kind] || kind;
+		}
+		function showSelection() {
+			selection.textContent = _('Download contents') + ': ' + [databaseName(city.checked ? 'city' : 'country'), asn.checked ? databaseName('asn') : ''].filter(Boolean).join(' + ');
+			selection.style.display = current && current.databases && current.databases.length && current.profile !== selectedProfile() ? '' : 'none';
+		}
 		function display(status) {
 			var wasBusy = current && current.job && current.job.busy;
 			if (wasBusy && status.job && !status.job.busy && status.job.phase === 'completed') dirtyProfile = false;
@@ -83,29 +106,28 @@ return baseclass.extend({
 			badge.style.color = status.enabled ? 'var(--success-color,#2f9e44)' : '';
 			badge.textContent = status.enabled ? _('Enabled') : databases.length ? _('Disabled') : _('Not installed');
 			enabled.checked = !!status.enabled; enabled.disabled = busy || !databases.length;
-			if (!dirtyProfile && status.profile) {
-				if (status.profile === 'city' && !importedCity) {
-					importedCity = E('option', { value: 'city' }, _('Province/city (uploaded database)')); profile.appendChild(importedCity);
-				}
-				profile.value = status.profile;
-			}
-			if (job.busy && job.profile) profile.value = job.profile;
-			profile.disabled = busy;
+			if (!dirtyProfile && status.profile) setProfile(status.profile);
+			if (job.busy && job.profile) setProfile(job.profile);
+			choices.forEach(function (input) { input.disabled = busy; });
+			showSelection();
 			download.disabled = busy; upload.disabled = busy;
-			download.textContent = databases.length ? _('Update database') : _('Download and enable');
+			download.textContent = databases.length && status.profile === selectedProfile() ? _('Update database') : _('Download and enable');
 			remove.style.display = databases.length || status.load_error ? '' : 'none'; remove.disabled = busy;
 			cancel.style.display = job.busy && job.phase !== 'activating' ? '' : 'none'; cancel.disabled = pending;
+			installed.textContent = _('Installed databases') + ': ' + (databases.length ? databases.map(function (db) { return databaseName(db.kind); }).join(' + ') : _('Not installed'));
+			installed.style.display = databases.length ? '' : 'none';
 			var builds = databases.map(function (db) {
-				var name = { country: _('Country/region'), city: _('Province/city'), asn: _('Network organization') }[db.kind] || db.kind;
 				var date = '—';
 				if (db.build_epoch) {
 					try { date = new Date(db.build_epoch * 1000).toLocaleDateString((L.env.lang || 'en').replace(/_/g, '-')); }
 					catch (e) { date = new Date(db.build_epoch * 1000).toLocaleDateString(); }
 				}
-				return name + ' ' + date;
+				return databaseName(db.kind) + ': ' + date;
 			});
 			details.textContent = [
-				builds.length ? _('Version') + ': ' + builds.join(' · ') : '',
+				status.source ? _('Installed data source') + ': ' + status.source : '',
+				status.version ? _('Release version') + ': ' + status.version : '',
+				builds.length ? _('Database build dates') + ':\n' + builds.join('\n') : '',
 				_('Storage used') + ': ' + size(status.installed_bytes) + ' · ' + _('Available space') + ': ' + size(status.free_bytes),
 				_('Database directory') + ': ' + status.directory
 			].filter(Boolean).join('\n'); details.style.whiteSpace = 'pre-line';
@@ -141,6 +163,7 @@ return baseclass.extend({
 				message.textContent = _('GeoIP service is unavailable. Enable connection monitoring and apply settings, or update Bandix.');
 				message.title = error.message || String(error);
 				download.disabled = true; upload.disabled = true; enabled.disabled = true;
+				choices.forEach(function (input) { input.disabled = true; });
 			}).finally(function () { refreshing = false; });
 		}
 		function manage(action, selected, checked) {
@@ -152,9 +175,18 @@ return baseclass.extend({
 				ui.addNotification(null, E('p', _('Database operation failed') + ': ' + (error.message || error)), 'error');
 			}).finally(function () { pending = false; if (current) display(current); });
 		}
-		profile.addEventListener('change', function () { dirtyProfile = true; });
+		choices.forEach(function (input) {
+			input.addEventListener('change', function () {
+				if (input === country || input === city) {
+					country.checked = input === country;
+					city.checked = input === city;
+				}
+				dirtyProfile = true;
+				if (current) display(current); else showSelection();
+			});
+		});
 		enabled.addEventListener('change', function () { manage('enable', null, enabled.checked); });
-		download.addEventListener('click', function () { manage('download', profile.value); });
+		download.addEventListener('click', function () { manage('download', selectedProfile()); });
 		cancel.addEventListener('click', function () { manage('cancel'); });
 		remove.addEventListener('click', function () {
 			ui.showModal(_('Delete GeoIP databases'), [
@@ -202,20 +234,36 @@ return baseclass.extend({
 				}).finally(function () { pending = false; if (current) display(current); });
 			});
 			ui.showModal(_('Upload database'), [
+				E('p', {}, _('Upload an uncompressed Country, City or ASN .mmdb file. To add ASN, install a Country or City database first.')),
 				E('p', {}, _('Maximum upload size') + ': ' + size(limit)), selection, uploadError,
 				E('div', { 'class': 'right' }, [E('button', { type: 'button', 'class': 'btn', click: ui.hideModal }, _('Cancel')), ' ', uploadAction])
 			]);
 		});
 		root = E('div', { style: 'max-width:780px' }, [
+			E('style', {}, '.bandix-geoip-control::before,.bandix-geoip-control::after{content:none!important;display:none!important}'),
 			E('div', { style: 'display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin-bottom:12px' }, [
-				E('label', { style: 'display:flex;align-items:center;gap:8px' }, [enabled, _('Enable IP location lookup')]), badge
+				controlLabel(enabled, _('Enable IP location lookup')), badge
 			]),
-			E('div', { style: 'display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px' }, [profile, download, upload, cancel, remove]),
-			details, progress, message,
+			E('fieldset', { style: 'border:1px solid var(--border-color,#aaa);border-radius:6px;padding:12px;margin:0 0 10px' }, [
+				E('legend', {}, _('Database contents')),
+				E('div', { style: 'display:flex;flex-wrap:wrap;gap:12px;margin-bottom:10px' }, [
+					controlLabel(country, _('Country/region')),
+					controlLabel(city, _('Country/region + province/city'))
+				]),
+				controlLabel(asn, _('ASN / network organization')),
+				selection
+			]),
+			E('div', { style: 'display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px' }, [download, upload, cancel, remove]),
+			progress, message,
 			E('div', { style: 'font-size:0.85em;opacity:0.75;margin-top:8px' }, [
-				_('Data source') + ': ', E('a', { href: 'https://github.com/P3TERX/GeoLite.mmdb', target: '_blank', rel: 'noopener noreferrer' }, 'P3TERX / MaxMind GeoLite2'),
-				' · ', E('a', { href: 'https://www.maxmind.com/en/geolite2/eula', target: '_blank', rel: 'noopener noreferrer' }, _('Data terms')),
-				E('div', {}, _('Upload an uncompressed Country, City or ASN .mmdb file. To add ASN, install a Country or City database first.'))
+				_('Data source') + ': ', E('a', { href: 'https://github.com/P3TERX/GeoLite.mmdb/releases/latest', target: '_blank', rel: 'noopener noreferrer' }, 'P3TERX / MaxMind GeoLite2')
+			]),
+			E('details', { style: 'margin-top:8px' }, [
+				E('summary', { style: 'cursor:pointer' }, _('Database details')),
+				installed, details,
+				E('div', { style: 'font-size:0.85em;margin-top:6px' }, [
+					E('a', { href: 'https://www.maxmind.com/en/geolite2/eula', target: '_blank', rel: 'noopener noreferrer' }, _('Data terms'))
+				])
 			])
 		]);
 		this._root = root;

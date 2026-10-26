@@ -1510,3 +1510,71 @@ msgstr "待ち受けアドレス"
 
 msgid "IP address for Bandix to listen on. Use 127.0.0.1 for local access or 0.0.0.0 / :: for all interfaces."
 msgstr "Bandix が待ち受ける IP アドレス。ローカルアクセスには 127.0.0.1、すべてのインターフェースには 0.0.0.0 / :: を指定します。"
+
+msgid "ASN / network organization"
+msgstr "ASN / ネットワーク組織"
+
+msgid "Country/region + province/city"
+msgstr "国・地域 + 都道府県・市区町村"
+
+msgid "Database build dates"
+msgstr "データベースの作成日"
+
+msgid "Download contents"
+msgstr "ダウンロード内容"
+
+msgid "Installed data source"
+msgstr "インストール済みデータの提供元"
+
+msgid "Installed databases"
+msgstr "インストール済みデータベース"
+
+msgid "Release version"
+msgstr "リリースバージョン"
+
+msgid "Location and ASN databases work together."
+msgstr "位置情報と ASN のデータベースは併用されます。"
+
+msgid "Database details"
+msgstr "データベースの詳細"
+
+msgid "Apply directory changes before downloading."
+msgstr "ダウンロードする前にディレクトリの変更を適用してください。"
+
+msgid "Batch deletion is unavailable. Update the Bandix service."
+msgstr "一括削除を利用できません。Bandix サービスを更新してください。"
+
+#, c-format
+msgid "Delete selected devices (%d)? Their traffic history, hostname bindings, rate limits and quotas will also be removed. Online devices may reappear."
+msgstr "選択したデバイス（%d 台）を削除しますか？通信履歴、ホスト名の割り当て、速度制限、通信量の上限設定も削除されます。オンラインのデバイスは再表示されることがあります。"
+
+msgid "Delete selected"
+msgstr "選択したデバイスを削除"
+
+#, c-format
+msgid "Deleted: %d; not found: %d; failed: %d."
+msgstr "削除済み: %d、未検出: %d、失敗: %d。"
+
+msgid "Failed to delete devices"
+msgstr "デバイスの削除に失敗しました"
+
+msgid "Invalid batch deletion response"
+msgstr "一括削除の応答が無効です"
+
+msgid "Select all"
+msgstr "すべて選択"
+
+msgid "Select device"
+msgstr "デバイスを選択"
+
+msgid "Search this page: protocol, IP, port, location, ASN…"
+msgstr "このページを検索: プロトコル、IP、ポート、位置、ASN…"
+
+msgid "Search connections on this page"
+msgstr "このページの接続を検索"
+
+msgid "Matches on this page"
+msgstr "このページの一致件数"
+
+msgid "No matching connections on this page"
+msgstr "このページに一致する接続はありません"

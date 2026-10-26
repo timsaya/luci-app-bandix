@@ -1537,3 +1537,71 @@ msgstr "监听地址"
 
 msgid "IP address for Bandix to listen on. Use 127.0.0.1 for local access or 0.0.0.0 / :: for all interfaces."
 msgstr "Bandix 监听的 IP 地址。127.0.0.1 仅供本机访问，0.0.0.0 / :: 监听所有接口。"
+
+msgid "ASN / network organization"
+msgstr "ASN / 网络组织"
+
+msgid "Country/region + province/city"
+msgstr "国家/地区 + 省市"
+
+msgid "Database build dates"
+msgstr "数据库构建日期"
+
+msgid "Download contents"
+msgstr "待下载内容"
+
+msgid "Installed data source"
+msgstr "已安装数据来源"
+
+msgid "Installed databases"
+msgstr "已安装数据库"
+
+msgid "Release version"
+msgstr "发布版本"
+
+msgid "Location and ASN databases work together."
+msgstr "位置库与 ASN 库共同生效。"
+
+msgid "Database details"
+msgstr "数据库详情"
+
+msgid "Apply directory changes before downloading."
+msgstr "更改目录后，请先保存并应用，再下载。"
+
+msgid "Batch deletion is unavailable. Update the Bandix service."
+msgstr "批量删除不可用，请更新 Bandix 服务端。"
+
+#, c-format
+msgid "Delete selected devices (%d)? Their traffic history, hostname bindings, rate limits and quotas will also be removed. Online devices may reappear."
+msgstr "删除所选的 %d 台设备？流量历史、主机名绑定、限速规则及配额也将被清除。在线设备可能重新出现。"
+
+msgid "Delete selected"
+msgstr "删除所选设备"
+
+#, c-format
+msgid "Deleted: %d; not found: %d; failed: %d."
+msgstr "已删除：%d；不存在：%d；失败：%d。"
+
+msgid "Failed to delete devices"
+msgstr "删除设备失败"
+
+msgid "Invalid batch deletion response"
+msgstr "批量删除响应无效"
+
+msgid "Select all"
+msgstr "全选"
+
+msgid "Select device"
+msgstr "选择设备"
+
+msgid "Search this page: protocol, IP, port, location, ASN…"
+msgstr "搜索本页：协议、IP、端口、归属地、ASN…"
+
+msgid "Search connections on this page"
+msgstr "搜索本页连接"
+
+msgid "Matches on this page"
+msgstr "本页匹配"
+
+msgid "No matching connections on this page"
+msgstr "本页没有匹配的连接"

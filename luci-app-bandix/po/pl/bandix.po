@@ -1510,3 +1510,71 @@ msgstr "Adres nasłuchiwania"
 
 msgid "IP address for Bandix to listen on. Use 127.0.0.1 for local access or 0.0.0.0 / :: for all interfaces."
 msgstr "Adres IP nasłuchiwania Bandix. Użyj 127.0.0.1 dla dostępu lokalnego lub 0.0.0.0 / :: dla wszystkich interfejsów."
+
+msgid "ASN / network organization"
+msgstr "ASN / organizacja sieciowa"
+
+msgid "Country/region + province/city"
+msgstr "Kraj/region + województwo/miasto"
+
+msgid "Database build dates"
+msgstr "Daty utworzenia baz danych"
+
+msgid "Download contents"
+msgstr "Zawartość do pobrania"
+
+msgid "Installed data source"
+msgstr "Źródło zainstalowanych danych"
+
+msgid "Installed databases"
+msgstr "Zainstalowane bazy danych"
+
+msgid "Release version"
+msgstr "Wersja wydania"
+
+msgid "Location and ASN databases work together."
+msgstr "Bazy lokalizacji i ASN działają wspólnie."
+
+msgid "Database details"
+msgstr "Szczegóły baz danych"
+
+msgid "Apply directory changes before downloading."
+msgstr "Zastosuj zmiany katalogu przed pobraniem."
+
+msgid "Batch deletion is unavailable. Update the Bandix service."
+msgstr "Usuwanie zbiorcze jest niedostępne. Zaktualizuj usługę Bandix."
+
+#, c-format
+msgid "Delete selected devices (%d)? Their traffic history, hostname bindings, rate limits and quotas will also be removed. Online devices may reappear."
+msgstr "Usunąć wybrane urządzenia (%d)? Ich historia ruchu, powiązania nazw, limity prędkości i limity transferu również zostaną usunięte. Urządzenia online mogą pojawić się ponownie."
+
+msgid "Delete selected"
+msgstr "Usuń wybrane"
+
+#, c-format
+msgid "Deleted: %d; not found: %d; failed: %d."
+msgstr "Usunięto: %d; nie znaleziono: %d; błędy: %d."
+
+msgid "Failed to delete devices"
+msgstr "Nie udało się usunąć urządzeń"
+
+msgid "Invalid batch deletion response"
+msgstr "Nieprawidłowa odpowiedź usuwania zbiorczego"
+
+msgid "Select all"
+msgstr "Zaznacz wszystkie"
+
+msgid "Select device"
+msgstr "Wybierz urządzenie"
+
+msgid "Search this page: protocol, IP, port, location, ASN…"
+msgstr "Szukaj na tej stronie: protokół, IP, port, lokalizacja, ASN…"
+
+msgid "Search connections on this page"
+msgstr "Szukaj połączeń na tej stronie"
+
+msgid "Matches on this page"
+msgstr "Dopasowania na stronie"
+
+msgid "No matching connections on this page"
+msgstr "Brak pasujących połączeń na tej stronie"

@@ -115,11 +115,47 @@ Please ensure you install matching versions to ensure compatibility and proper f
 
 This project is licensed under the [Apache 2.0 License](LICENSE).
 
+## Batch device deletion
+
+Select devices individually or select all currently displayed devices, in either
+the desktop table or mobile cards, then click **Delete selected** and confirm.
+Polling preserves selections; filtering out a device deselects it. Successful
+deletion refreshes the list silently. Partial failures and request errors show
+results; failed selections are retained and network errors are not retried automatically.
+
+Requires a Bandix service supporting `DELETE /api/traffic/devices/batch`. Deletion
+removes device records, traffic history, hostname bindings, rate limit whitelist
+entries, scheduled limits and quotas. Online devices may be rediscovered. LuCI
+sends sequential batches of 50; the batch deletion RPC requires write permissions.
+
+## Connection detail search
+
+The connection details search filters the currently loaded page immediately in
+the browser without making requests while typing. It matches protocol, state,
+original/reply IPs and ports, flags, country, region, city, ASN and organization,
+including tooltip details and hidden reply columns. Matching is case-insensitive;
+space-separated terms must all match, e.g. `tcp 443 Berlin`. ASN queries accept
+either `AS64512` or the number. Clearing the search restores the loaded rows.
+The query persists across paging, refreshes and protocol/state changes. Server
+pagination totals remain unchanged; a separate count shows matches on this page.
+Search does not cover other pages that have not been loaded.
+
 ## IP location databases
 
 Open **Settings → Connection Monitor Settings → IP location database**. Select
-Country, Country + ASN or City + ASN, then click **Download and enable**. A Bandix
-service binary with GeoIP support is required.
+country-level or city-level location data, optionally check **ASN / network
+organization**, then click **Download and enable**. Location and ASN databases
+work together; city data already includes country information. A Bandix service
+binary with GeoIP support is required.
+
+Only the data source is shown as a permanent note. Download contents appear
+when selecting a different combination, which only
+replaces installed data after clicking **Download and enable**. Expand **Database
+details** for installed databases, source, release version, build dates, storage
+usage, directory and data terms. Upload
+requirements appear in the upload dialog. Downloads use the [latest P3TERX / MaxMind GeoLite2 release](https://github.com/P3TERX/GeoLite.mmdb/releases/latest).
+Use database build dates and release versions to assess freshness rather than
+repository code commit dates.
 
 The widget supports progress, cancellation, updates, enable/disable, deletion
 and local `.mmdb` uploads. Failed updates retain installed data. Enable state,
