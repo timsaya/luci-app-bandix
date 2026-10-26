@@ -851,35 +851,37 @@ return view.extend({
             
             .bandix-table th:nth-child(1),
             .bandix-table td:nth-child(1) {
-                width: 28px;
-                padding: 12px 4px;
-                text-align: center;
+                width: 27%;
             }
             
             .bandix-table th:nth-child(2),
             .bandix-table td:nth-child(2) {
-                width: calc((100% - 28px) * 0.27);
-                padding-left: 4px;
+                width: 22%;
             }
             
             .bandix-table th:nth-child(3),
             .bandix-table td:nth-child(3) {
-                width: calc((100% - 28px) * 0.22);
+                width: 22%;
             }
             
             .bandix-table th:nth-child(4),
             .bandix-table td:nth-child(4) {
-                width: calc((100% - 28px) * 0.22);
+                width: 12.5%;
             }
             
             .bandix-table th:nth-child(5),
             .bandix-table td:nth-child(5) {
-                width: calc((100% - 28px) * 0.125);
+                width: 16.5%;
             }
 
-            .bandix-table th:nth-child(6),
-            .bandix-table td:nth-child(6) {
-                width: calc((100% - 28px) * 0.165);
+            .device-info-selection {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .device-info-selection .device-info {
+                min-width: 0;
             }
             
             .device-actions {
@@ -3094,7 +3096,6 @@ return view.extend({
                     E('table', { 'class': 'bandix-table' }, [
                         E('thead', {}, [
                             E('tr', {}, [
-                                E('th', { 'aria-label': _('Select device') }),
                                 E('th', {}, _('Device Info')),
                                 E('th', {}, _('LAN Traffic')),
                                 E('th', {}, _('WAN Traffic')),
@@ -6344,7 +6345,6 @@ return view.extend({
                 var table = E('table', { 'class': 'bandix-table' }, [
                     E('thead', {}, [
                         E('tr', {}, [
-                            E('th', { 'aria-label': _('Select device') }),
                             createSortableHeader(_('Device Info'), 'online'),
                             createSplitHeader(_('LAN Traffic'), 'lan_speed', 'lan_traffic'),
                             createSplitHeader(_('WAN Traffic'), 'wan_speed', 'wan_traffic'),
@@ -6474,10 +6474,12 @@ return view.extend({
                     }
 
                     var row = E('tr', {}, [
-                        E('td', { 'class': 'device-selection-cell' }, [deviceSelection.checkbox(device)]),
                         // 设备信息
                         E('td', {}, [
-                            E('div', { 'class': 'device-info' }, deviceInfoElements)
+                            E('div', { 'class': 'device-info-selection' }, [
+                                deviceSelection.checkbox(device),
+                                E('div', { 'class': 'device-info' }, deviceInfoElements)
+                            ])
                         ]),
 
                         // LAN 流量
