@@ -35,7 +35,7 @@ function status() {
         installed_bytes: 0, version: '', source: '', databases: [], job: {}, load_error: null, upload_max_bytes: 8 * 1048576
     };
 }
-function harness(initial = status()) {
+function harness(initial = status(), { lang = 'en', documentLang = 'en', intl = Intl } = {}) {
     const h = { status: initial, calls: [], modal: null, notifications: [], upload: null };
     let poll;
     const ui = {
@@ -62,9 +62,9 @@ function harness(initial = status()) {
     const request = { post: async (url, data) => { h.upload = { url, fields: data.fields }; return { ok: true, json: () => ({ size: 5000 }) }; } };
     const context = vm.createContext({
         E: (tag, attributes, children) => new Element(tag, attributes, children),
-        _: value => value, L: { env: { lang: 'en', cgi_base: '/cgi-bin/luci' } },
-        document: { documentElement: { lang: 'en' } },
-        Intl, FormData: FormDataMock, setTimeout: () => {},
+        _: value => value, L: { env: { lang, cgi_base: '/cgi-bin/luci' } },
+        document: { documentElement: { lang: documentLang } },
+        Intl: intl, FormData: FormDataMock, setTimeout: () => {},
     });
     h.module = vm.runInContext('(function(baseclass,rpc,ui,poll,request){' + source + '\n})', context)(
         { extend: value => value }, rpc, ui, { add: fn => { poll = fn; } }, request
@@ -186,6 +186,34 @@ test('country/city/ASN details remain plain text and special address labels are 
     assert.equal(h.module.describe({ scope: 'shared' }).summary, 'Shared address (CGNAT)');
     assert.equal(h.module.describe({ scope: 'local' }).summary, 'Local network');
     assert.equal(h.module.describe(null), null);
+});
+
+test('GeoIP uses the page language when LuCI does not expose env.lang', () => {
+    const info = {
+        scope: 'public', country_code: 'CN', country_names: { en: 'China', 'zh-CN': '中国' },
+        region_names: { en: 'Zhejiang', 'zh-CN': '浙江' }, city_names: { en: 'Ningbo', 'zh-CN': '宁波' },
+        organization: 'NINGBO, ZHEJIANG Province, P.R.China.'
+    };
+    for (const documentLang of ['zh-CN', 'zh-cn', 'zh-Hans', 'zh_Hans']) {
+        const h = harness(undefined, { lang: null, documentLang });
+        const description = h.module.describe(info);
+        assert.equal(description.location, '中国 · 浙江 · 宁波', documentLang);
+        assert.equal(description.organization, info.organization);
+        assert.equal(h.module.describe({ scope: 'public', country_code: 'US' }).location, '美国');
+    }
+    const english = harness(undefined, { lang: null, documentLang: 'en' });
+    assert.equal(english.module.describe(info).location, 'China · Zhejiang · Ningbo');
+    const traditional = harness(undefined, { lang: null, documentLang: 'zh-Hant' });
+    assert.equal(traditional.module.describe({ scope: 'public', country_code: 'US' }).location, '美國');
+});
+
+test('GeoIP falls back to database names without Intl.DisplayNames and to English for untranslated cities', () => {
+    const h = harness(undefined, { lang: null, documentLang: 'zh-Hans', intl: {} });
+    assert.equal(h.module.describe({
+        scope: 'public', country_code: 'CN', country_names: { en: 'China', 'zh-CN': '中国' },
+        city_names: { en: 'Example City' }
+    }).location, '中国 · Example City');
+    assert.equal(h.module.describe({ scope: 'public', country_code: 'US' }).location, 'US');
 });
 
 test('only read ACL can query status; downloads, deletion and uploads need write ACL', () => {

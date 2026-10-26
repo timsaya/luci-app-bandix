@@ -653,11 +653,11 @@ msgstr "Unidades de velocidad"
 msgid "Select the speed display unit format"
 msgstr "Seleccione el formato de unidad de visualización de velocidad"
 
-msgid "Bytes Units (B/s, KB/s, MB/s)"
-msgstr "Unidades de bytes (B/s, KB/s, MB/s)"
+msgid "Bytes Units (B/s, KiB/s, MiB/s)"
+msgstr "Unidades de bytes (B/s, KiB/s, MiB/s)"
 
-msgid "Bits Units (bps, Kbps, Mbps)"
-msgstr "Unidades de bits (bps, Kbps, Mbps)"
+msgid "Bits Units (bps, kbps, Mbps)"
+msgstr "Unidades de bits (bps, kbps, Mbps)"
 
 msgid "Interface Theme"
 msgstr "Tema de la interfaz"
@@ -692,8 +692,8 @@ msgstr "Establecer el tiempo de espera para la detección de dispositivos sin co
 msgid "Realtime Traffic Period"
 msgstr "Período de tráfico en tiempo real"
 
-msgid "10 minutes interval uses about 60 KB per device"
-msgstr "Intervalo de 10 minutos usa aproximadamente 60 KB por dispositivo"
+msgid "10 minutes interval uses about 60 KiB per device"
+msgstr "Intervalo de 10 minutos usa aproximadamente 60 KiB por dispositivo"
 
 msgid "Data Flush Interval"
 msgstr "Intervalo de vaciado de datos"

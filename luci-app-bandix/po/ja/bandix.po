@@ -653,11 +653,11 @@ msgstr "速度単位"
 msgid "Select the speed display unit format"
 msgstr "速度表示の単位形式を選択"
 
-msgid "Bytes Units (B/s, KB/s, MB/s)"
-msgstr "バイト単位 (B/s, KB/s, MB/s)"
+msgid "Bytes Units (B/s, KiB/s, MiB/s)"
+msgstr "バイト単位 (B/s, KiB/s, MiB/s)"
 
-msgid "Bits Units (bps, Kbps, Mbps)"
-msgstr "ビット単位 (bps, Kbps, Mbps)"
+msgid "Bits Units (bps, kbps, Mbps)"
+msgstr "ビット単位 (bps, kbps, Mbps)"
 
 msgid "Interface Theme"
 msgstr "インターフェーステーマ"
@@ -692,8 +692,8 @@ msgstr "デバイスのオフライン検出のタイムアウトを設定（秒
 msgid "Realtime Traffic Period"
 msgstr "リアルタイムトラフィック周期"
 
-msgid "10 minutes interval uses about 60 KB per device"
-msgstr "10分間隔でデバイスあたり約60KBを使用"
+msgid "10 minutes interval uses about 60 KiB per device"
+msgstr "10分間隔でデバイスあたり約60 KiBを使用"
 
 msgid "Data Flush Interval"
 msgstr "データフラッシュ間隔"

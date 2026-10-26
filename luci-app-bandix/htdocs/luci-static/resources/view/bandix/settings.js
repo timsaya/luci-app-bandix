@@ -694,8 +694,8 @@ return view.extend({
 		// 添加网速单位选择选项
 		o = s.option(form.ListValue, 'speed_unit', _('Speed Units'),
 			_('Select the speed display unit format'));
-		o.value('bytes', _('Bytes Units (B/s, KB/s, MB/s)'));
-		o.value('bits', _('Bits Units (bps, Kbps, Mbps)'));
+		o.value('bytes', _('Bytes Units (B/s, KiB/s, MiB/s)'));
+		o.value('bits', _('Bits Units (bps, kbps, Mbps)'));
 		o.default = 'bytes';
 		o.rmempty = false;
 

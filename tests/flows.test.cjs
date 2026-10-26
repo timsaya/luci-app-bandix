@@ -68,7 +68,12 @@ class Element {
         const classes = new Set((attributes.class || '').split(/\s+/));
         this.classList = { add: value => classes.add(value), remove: value => classes.delete(value), contains: value => classes.has(value) };
         for (const [key, value] of Object.entries(attributes)) if (typeof value === 'function') this.listeners[key] = value;
-        for (const child of Array.isArray(children) ? children : [children]) this.appendChild(child);
+        // LuCI converts non-node array entries, including null, to text nodes.
+        if (Array.isArray(children)) {
+            for (const child of children) this.appendChild(child instanceof Element ? child : String(child));
+        } else {
+            this.appendChild(children);
+        }
         if (tag === 'select') this.value = (this.children.find(child => child.attributes?.selected != null) || this.children[0])?.value || '';
     }
     appendChild(child) { if (child != null) this.children.push(child); return child; }
@@ -115,6 +120,13 @@ test('modal search filters immediately without requests, shows page matches and 
     h.search.input('no-such-organization'); assert.match(h.tbody.textContent, /No matching connections on this page/);
     h.search.input(''); assert.equal(h.tbody.children.length, 3);
     assert.doesNotMatch(h.pageText(), /Matches on this page/); assert.equal(h.calls.length, 1);
+});
+
+test('endpoint locations render without null text when the network organization is absent', async () => {
+    const h = harness(); await h.settle();
+    assert.match(h.tbody.textContent, /Local network/);
+    assert.doesNotMatch(h.tbody.textContent, /null|undefined/);
+    assert.ok(h.find(node => node.classList.contains('flows-geoip-network') && node.textContent === 'Example Transit'));
 });
 
 test('search includes hidden reply data and persists across protocol filters, paging and refresh', async () => {

@@ -653,11 +653,11 @@ msgstr "网速單位"
 msgid "Select the speed display unit format"
 msgstr "選擇网速顯示的單位格式"
 
-msgid "Bytes Units (B/s, KB/s, MB/s)"
-msgstr "位元組單位 (B/s, KB/s, MB/s)"
+msgid "Bytes Units (B/s, KiB/s, MiB/s)"
+msgstr "位元組單位 (B/s, KiB/s, MiB/s)"
 
-msgid "Bits Units (bps, Kbps, Mbps)"
-msgstr "位元單位 (bps, Kbps, Mbps)"
+msgid "Bits Units (bps, kbps, Mbps)"
+msgstr "位元單位 (bps, kbps, Mbps)"
 
 msgid "Interface Theme"
 msgstr "界面主題"
@@ -692,8 +692,8 @@ msgstr "設定設備離線判斷的超时時間（秒）。超過此時間未活
 msgid "Realtime Traffic Period"
 msgstr "即時流量週期"
 
-msgid "10 minutes interval uses about 60 KB per device"
-msgstr "10分鐘歷史週期，每个設備佔用 60KB"
+msgid "10 minutes interval uses about 60 KiB per device"
+msgstr "10分鐘歷史週期，每个設備佔用 60 KiB"
 
 msgid "Data Flush Interval"
 msgstr "數据 flush 間隔"
@@ -1578,3 +1578,171 @@ msgstr "本頁符合"
 
 msgid "No matching connections on this page"
 msgstr "本頁沒有符合的連線"
+
+msgid "Upload"
+msgstr "上傳"
+
+msgid "Download"
+msgstr "下載"
+
+msgid "Used"
+msgstr "已用"
+
+msgid "Unit"
+msgstr "單位"
+
+msgid "Combined"
+msgstr "合計"
+
+msgid "Upload Quota"
+msgstr "上傳配額"
+
+msgid "Download Quota"
+msgstr "下載配額"
+
+msgid "Upload blocked"
+msgstr "上傳已阻斷"
+
+msgid "Download blocked"
+msgstr "下載已阻斷"
+
+msgid "Upload and download blocked"
+msgstr "上傳、下載已阻斷"
+
+msgid "Clear combined limits"
+msgstr "清除合計限制"
+
+msgid "Combined quota (upload + download)"
+msgstr "合計配額（上傳 + 下載）"
+
+msgid "A combined limit blocks both directions when reached. Set it to 0 to remove that limit."
+msgstr "達到合計上限會同時阻斷上傳和下載；設為 0 可取消該限制。"
+
+msgid "WAN upload and download have separate quotas. Only the exhausted direction is blocked. Enter 0 for unlimited."
+msgstr "WAN 上傳、下載分別計量，超額只阻斷對應方向；輸入 0 表示不限量。"
+
+msgid "Update the Bandix service to configure separate upload and download quotas."
+msgstr "請更新 Bandix 服務端，以設定獨立的上傳、下載配額。"
+
+msgid "Add"
+msgstr "新增"
+
+msgid "Combined quota"
+msgstr "合計配額"
+
+msgid "Default Rate Limit"
+msgstr "預設限速"
+
+msgid "Edit"
+msgstr "編輯"
+
+msgid "Edit Schedule Rule"
+msgstr "編輯排程規則"
+
+msgid "Exempt Devices (Whitelist)"
+msgstr "豁免裝置（白名單）"
+
+msgid "Failed"
+msgstr "失敗"
+
+msgid "Failed to connect to Bandix service"
+msgstr "無法連線至 Bandix 服務"
+
+msgid "Failed to load data"
+msgstr "載入資料失敗"
+
+msgid "Failed to load whitelist"
+msgstr "載入白名單失敗"
+
+msgid "Failed to save schedule rule: "
+msgstr "儲存排程規則失敗： "
+
+msgid "Global Rate Limit"
+msgstr "全域限速"
+
+msgid "Interface"
+msgstr "介面"
+
+msgid "Invalid MAC address"
+msgstr "MAC 位址無效"
+
+msgid "Invalid value"
+msgstr "輸入值無效"
+
+msgid "Multiple time slots"
+msgstr "多個時段"
+
+msgid "No data"
+msgstr "暫無資料"
+
+msgid "Not saved"
+msgstr "尚未儲存"
+
+msgid "Only the selected mode takes effect. Switching modes preserves usage and clears the other limits when saved."
+msgstr "僅選取的模式生效。切換模式後儲存，會保留已用流量並清除另一模式的上限。"
+
+msgid "Please select both start and end dates"
+msgstr "請選擇開始與結束日期"
+
+msgid "Quota mode"
+msgstr "配額模式"
+
+msgid "Remove this device from the list?"
+msgstr "要從清單中移除此裝置嗎？"
+
+msgid "Router"
+msgstr "路由器"
+
+msgid "Separate upload / download"
+msgstr "獨立上傳／下載配額"
+
+msgid "Show All"
+msgstr "顯示全部"
+
+msgid "Show Top %d"
+msgstr "顯示前 %d 台"
+
+msgid "Showing all %d devices"
+msgstr "顯示全部 %d 台裝置"
+
+msgid "Showing top %d of %d devices"
+msgstr "顯示前 %d 台，共 %d 台裝置"
+
+msgid "Start date must be earlier than end date"
+msgstr "開始日期必須早於結束日期"
+
+msgid "This service supports combined quotas only. Update Bandix to use separate quotas."
+msgstr "此服務端僅支援合計配額。升級 Bandix 後可使用獨立配額。"
+
+msgid "Try using filters or smaller page size"
+msgstr "請嘗試使用篩選或減少每頁筆數"
+
+msgid "Update available"
+msgstr "有可用更新"
+
+msgid "Update available, click to go to settings"
+msgstr "有可用更新，點擊前往設定"
+
+msgid "When enabled, all devices will be rate limited. Devices in the list are exempt (whitelist)."
+msgstr "啟用後，所有裝置均會限速，清單中的裝置除外（白名單）。"
+
+msgid "WiFi Channel"
+msgstr "WiFi 頻道"
+
+msgid "Wired"
+msgstr "有線"
+
+msgid "Wireless"
+msgstr "無線"
+
+msgid "days"
+msgstr "天"
+
+msgid "hours"
+msgstr "小時"
+
+msgid "seconds"
+msgstr "秒"
+
+msgid "weeks"
+msgstr "週"

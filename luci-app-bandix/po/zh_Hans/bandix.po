@@ -650,11 +650,11 @@ msgstr "网速单位"
 msgid "Select the speed display unit format"
 msgstr "选择网速显示的单位格式"
 
-msgid "Bytes Units (B/s, KB/s, MB/s)"
-msgstr "字节单位 (B/s, KB/s, MB/s)"
+msgid "Bytes Units (B/s, KiB/s, MiB/s)"
+msgstr "字节单位 (B/s, KiB/s, MiB/s)"
 
-msgid "Bits Units (bps, Kbps, Mbps)"
-msgstr "比特单位 (bps, Kbps, Mbps)"
+msgid "Bits Units (bps, kbps, Mbps)"
+msgstr "比特单位 (bps, kbps, Mbps)"
 
 msgid "Interface Theme"
 msgstr "界面主题"
@@ -689,8 +689,8 @@ msgstr "设置设备离线判断的超时时间（秒）。超过此时间未活
 msgid "Realtime Traffic Period"
 msgstr "实时流量周期"
 
-msgid "10 minutes interval uses about 60 KB per device"
-msgstr "10分钟历史周期，每个设备占用 60KB"
+msgid "10 minutes interval uses about 60 KiB per device"
+msgstr "10分钟历史周期，每个设备占用 60 KiB"
 
 msgid "Data Flush Interval"
 msgstr "数据 flush 间隔"
@@ -1605,3 +1605,144 @@ msgstr "本页匹配"
 
 msgid "No matching connections on this page"
 msgstr "本页没有匹配的连接"
+
+msgid "Upload"
+msgstr "上传"
+
+msgid "Download"
+msgstr "下载"
+
+msgid "Used"
+msgstr "已用"
+
+msgid "Unit"
+msgstr "单位"
+
+msgid "Combined"
+msgstr "合计"
+
+msgid "Upload Quota"
+msgstr "上传配额"
+
+msgid "Download Quota"
+msgstr "下载配额"
+
+msgid "Upload blocked"
+msgstr "上传已阻断"
+
+msgid "Download blocked"
+msgstr "下载已阻断"
+
+msgid "Upload and download blocked"
+msgstr "上传、下载已阻断"
+
+msgid "Clear combined limits"
+msgstr "清除合计限制"
+
+msgid "Combined quota (upload + download)"
+msgstr "合计配额（上传 + 下载）"
+
+msgid "A combined limit blocks both directions when reached. Set it to 0 to remove that limit."
+msgstr "达到合计上限会同时阻断上传和下载；设为 0 可取消该限制。"
+
+msgid "WAN upload and download have separate quotas. Only the exhausted direction is blocked. Enter 0 for unlimited."
+msgstr "WAN 上传、下载分别计量，超额只阻断对应方向；输入 0 表示不限量。"
+
+msgid "Update the Bandix service to configure separate upload and download quotas."
+msgstr "请更新 Bandix 服务端，以设置独立的上传、下载配额。"
+
+msgid "Add"
+msgstr "添加"
+
+msgid "Combined quota"
+msgstr "合计配额"
+
+msgid "Edit"
+msgstr "编辑"
+
+msgid "Edit Schedule Rule"
+msgstr "编辑定时规则"
+
+msgid "Failed"
+msgstr "失败"
+
+msgid "Failed to connect to Bandix service"
+msgstr "无法连接 Bandix 服务"
+
+msgid "Failed to load data"
+msgstr "加载数据失败"
+
+msgid "Failed to load whitelist"
+msgstr "加载白名单失败"
+
+msgid "Failed to save schedule rule: "
+msgstr "保存定时规则失败： "
+
+msgid "Interface"
+msgstr "接口"
+
+msgid "Invalid MAC address"
+msgstr "MAC 地址无效"
+
+msgid "Invalid value"
+msgstr "输入值无效"
+
+msgid "Multiple time slots"
+msgstr "多个时间段"
+
+msgid "No data"
+msgstr "暂无数据"
+
+msgid "Not saved"
+msgstr "未保存"
+
+msgid "Only the selected mode takes effect. Switching modes preserves usage and clears the other limits when saved."
+msgstr "仅选中的模式生效。切换模式后保存，会保留已用流量并清除另一模式的上限。"
+
+msgid "Please select both start and end dates"
+msgstr "请选择开始和结束日期"
+
+msgid "Quota mode"
+msgstr "配额模式"
+
+msgid "Router"
+msgstr "路由器"
+
+msgid "Separate upload / download"
+msgstr "独立上传／下载配额"
+
+msgid "Show All"
+msgstr "显示全部"
+
+msgid "Show Top %d"
+msgstr "显示前 %d 台"
+
+msgid "Showing all %d devices"
+msgstr "显示全部 %d 台设备"
+
+msgid "Showing top %d of %d devices"
+msgstr "显示前 %d 台，共 %d 台设备"
+
+msgid "Start date must be earlier than end date"
+msgstr "开始日期必须早于结束日期"
+
+msgid "This service supports combined quotas only. Update Bandix to use separate quotas."
+msgstr "此服务端仅支持合计配额。升级 Bandix 后可使用独立配额。"
+
+msgid "Try using filters or smaller page size"
+msgstr "请尝试使用筛选或减少每页条数"
+
+msgid "WiFi Channel"
+msgstr "WiFi 信道"
+
+msgid "days"
+msgstr "天"
+
+msgid "hours"
+msgstr "小时"
+
+msgid "seconds"
+msgstr "秒"
+
+msgid "weeks"
+msgstr "周"

@@ -653,11 +653,11 @@ msgstr "Единицы скорости"
 msgid "Select the speed display unit format"
 msgstr "Выберите формат единиц отображения скорости"
 
-msgid "Bytes Units (B/s, KB/s, MB/s)"
-msgstr "Единицы в байтах (B/s, KB/s, MB/s)"
+msgid "Bytes Units (B/s, KiB/s, MiB/s)"
+msgstr "Единицы в байтах (B/s, KiB/s, MiB/s)"
 
-msgid "Bits Units (bps, Kbps, Mbps)"
-msgstr "Единицы в битах (bps, Kbps, Mbps)"
+msgid "Bits Units (bps, kbps, Mbps)"
+msgstr "Единицы в битах (bps, kbps, Mbps)"
 
 msgid "Interface Theme"
 msgstr "Тема интерфейса"
@@ -692,8 +692,8 @@ msgstr "Установить таймаут определения офлайн 
 msgid "Realtime Traffic Period"
 msgstr "Период трафика в реальном времени"
 
-msgid "10 minutes interval uses about 60 KB per device"
-msgstr "Интервал 10 минут использует около 60 КБ на устройство"
+msgid "10 minutes interval uses about 60 KiB per device"
+msgstr "Интервал 10 минут использует около 60 KiB на устройство"
 
 msgid "Data Flush Interval"
 msgstr "Интервал сброса данных"

@@ -18,14 +18,18 @@ function unwrap(reply) {
 	if (!reply || reply.status !== 'success' || !reply.data) throw new Error(reply && (reply.message || reply.error) || _('GeoIP service is unavailable. Enable connection monitoring and apply settings, or update Bandix.'));
 	return reply.data;
 }
+function locale() {
+	// Standard LuCI exposes the active language on <html>, not in L.env.
+	return (L.env.lang || document.documentElement.lang || 'en').replace(/_/g, '-');
+}
 function localized(names) {
-	var language = (L.env.lang || document.documentElement.lang || 'en').replace(/_/g, '-');
+	var language = locale();
 	var key = /^zh/i.test(language) ? 'zh-CN' : language.split('-')[0];
 	return names && (names[key] || names.en) || '';
 }
 function countryName(info) {
 	if (info.country_code && typeof Intl !== 'undefined' && Intl.DisplayNames) {
-		try { return new Intl.DisplayNames([(L.env.lang || 'en').replace(/_/g, '-')], { type: 'region' }).of(info.country_code); } catch (e) { /* use database names */ }
+		try { return new Intl.DisplayNames([locale()], { type: 'region' }).of(info.country_code); } catch (e) { /* use database names */ }
 	}
 	return localized(info.country_names) || info.country_code || '';
 }
@@ -119,7 +123,7 @@ return baseclass.extend({
 			var builds = databases.map(function (db) {
 				var date = '—';
 				if (db.build_epoch) {
-					try { date = new Date(db.build_epoch * 1000).toLocaleDateString((L.env.lang || 'en').replace(/_/g, '-')); }
+					try { date = new Date(db.build_epoch * 1000).toLocaleDateString(locale()); }
 					catch (e) { date = new Date(db.build_epoch * 1000).toLocaleDateString(); }
 				}
 				return databaseName(db.kind) + ': ' + date;

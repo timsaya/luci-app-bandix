@@ -129,7 +129,7 @@ function getThemeColors() {
 
 function formatSize(bytes) {
     if (!bytes || bytes === 0) return '0 B';
-    var units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+    var units = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
     var i = Math.floor(Math.log(bytes) / Math.log(1024));
     return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + ' ' + units[i];
 }
@@ -148,12 +148,13 @@ function flowEndpointCell(addr, port, information) {
         E('span', { 'class': 'flows-addr' }, text),
         E('span', { 'class': 'flows-port' }, port ? ':' + port : '')
     ])];
-    if (description) children.push(E('div', {
-        'class': 'flows-geoip', title: description.details
-    }, [
-        E('div', {}, description.location || description.summary),
-        description.organization ? E('div', { 'class': 'flows-geoip-network' }, description.organization) : null
-    ]));
+    if (description) {
+        var location = [E('div', {}, description.location || description.summary)];
+        if (description.organization) location.push(E('div', { 'class': 'flows-geoip-network' }, description.organization));
+        children.push(E('div', {
+            'class': 'flows-geoip', title: description.details
+        }, location));
+    }
     return E('td', { 'class': 'flows-addr-cell' }, children);
 }
 

@@ -70,6 +70,8 @@
 					"updateScheduleLimit",
 					"getTrafficQuotas",
 					"setTrafficQuota",
+					"setDirectionalTrafficQuota",
+					"setTrafficQuotaConfig",
 					"deleteTrafficQuota",
 					"getGeoipStatus",
 					"manageGeoip"

@@ -64,7 +64,7 @@ LuCI Bandix is developed based on the LuCI framework, offering network traffic m
 - Support for LAN/WAN speed monitoring
 - Support device TCP/UDP connection number monitoring
 - Support for WAN speed limitation
-- Per-device minute, hourly, daily, weekly, monthly, and lifetime WAN traffic quotas with automatic blocking
+- Independent per-device upload and download WAN quotas for minute, hourly, daily, weekly, monthly, and lifetime periods, with blocking per direction
 - Support IPv4/IPv6
 - Persistent data storage
 - Support real-time/daily/weekly/monthly monitoring
@@ -127,6 +127,28 @@ Requires a Bandix service supporting `DELETE /api/traffic/devices/batch`. Deleti
 removes device records, traffic history, hostname bindings, rate limit whitelist
 entries, scheduled limits and quotas. Online devices may be rediscovered. LuCI
 sends sequential batches of 50; the batch deletion RPC requires write permissions.
+
+Traffic sizes and byte rates use binary prefixes (KiB, MiB, GiB and KiB/s, MiB/s, GiB/s), with a factor of 1024 per step. Bit rates use decimal prefixes (kbps, Mbps, Gbps), with a factor of 1000 per step. API values remain raw bytes or bytes per second; existing limits and usage are unchanged.
+
+## Traffic quota modes
+
+The device list has one **Settings** button on desktop and mobile. Its dialog
+contains **Rate Limits** and **Traffic Quota** tabs; switching tabs preserves
+unsaved inputs. The quota tab defaults to **Combined quota**. Choose either
+combined upload + download or **Separate upload / download**: only the selected
+mode takes effect. Saving a mode switch clears the other mode's limits while
+retaining accumulated usage. Each mode offers minute, hourly, daily, weekly,
+monthly and lifetime limits. Enter `0` for unlimited; choose B, KiB, MiB, GiB or TiB.
+
+Combined quotas remain writable on older services. Separate mode is available
+only when `GET /api/traffic/quotas` returns `data.supports_quota_modes: true`.
+The write-only `setTrafficQuotaConfig` RPC validates the mode and limits, checks
+support before sending a directional request, and uses a JSON string to preserve
+byte values beyond rpcd's integer parameter range.
+
+Polling updates usage without overwriting unsaved inputs or mode selection.
+On mobile, upload and download columns stack and the save button stays at the
+bottom. Deleting a quota removes both limits and usage after confirmation.
 
 ## Connection detail search
 

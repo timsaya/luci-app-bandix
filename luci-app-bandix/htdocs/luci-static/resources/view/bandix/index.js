@@ -5,6 +5,7 @@
 'require rpc';
 'require poll';
 'require bandix.devices as devices';
+'require bandix.quota as quotaUi';
 
 // 颜色常量定义
 var BANDIX_COLOR_UPLOAD = '#f97316';     // 橙色 - 上传/上行
@@ -188,7 +189,7 @@ function getThemeType() {
 
 function formatSize(bytes) {
     if (bytes === 0) return '0 B';
-    const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+    const units = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + ' ' + units[i];
 }
@@ -201,12 +202,12 @@ function formatByterate(bytes_per_sec, unit) {
     if (unit === 'bits') {
         // 转换为比特单位
         const bits_per_sec = bytes_per_sec * 8;
-        const units = ['bps', 'Kbps', 'Mbps', 'Gbps', 'Tbps'];
+        const units = ['bps', 'kbps', 'Mbps', 'Gbps', 'Tbps'];
         const i = Math.floor(Math.log(bits_per_sec) / Math.log(1000));
         return parseFloat((bits_per_sec / Math.pow(1000, i)).toFixed(2)) + ' ' + units[i];
     } else {
         // 默认字节单位
-        const units = ['B/s', 'KB/s', 'MB/s', 'GB/s', 'TB/s'];
+        const units = ['B/s', 'KiB/s', 'MiB/s', 'GiB/s', 'TiB/s'];
         const i = Math.floor(Math.log(bytes_per_sec) / Math.log(1024));
         return parseFloat((bytes_per_sec / Math.pow(1024, i)).toFixed(2)) + ' ' + units[i];
     }
@@ -252,17 +253,18 @@ function parseSpeed(speedStr) {
     if (!speedStr || speedStr === '0' || speedStr === '0 B/s' || speedStr === '0 bps') return 0;
 
     // 匹配字节单位
-    const bytesMatch = speedStr.match(/^([\d.]+)\s*([KMGT]?B\/s)$/i);
+    const bytesMatch = speedStr.match(/^([\d.]+)\s*((?:[KMGT]i?)?B\/s)$/i);
     if (bytesMatch) {
         const value = parseFloat(bytesMatch[1]);
-        const unit = bytesMatch[2].toUpperCase();
+        // Older UI strings used KB/s for the same binary value.
+        const unit = bytesMatch[2].toUpperCase().replace(/^([KMGT])B\//, '$1IB/');
 
         const bytesMultipliers = {
             'B/S': 1,
-            'KB/S': 1024,
-            'MB/S': 1024 * 1024,
-            'GB/S': 1024 * 1024 * 1024,
-            'TB/S': 1024 * 1024 * 1024 * 1024
+            'KIB/S': 1024,
+            'MIB/S': 1024 * 1024,
+            'GIB/S': 1024 * 1024 * 1024,
+            'TIB/S': 1024 * 1024 * 1024 * 1024
         };
 
         return value * (bytesMultipliers[unit] || 1);
@@ -474,13 +476,6 @@ var callSetDefaultRateLimit = rpc.declare({
 var callGetTrafficQuotas = rpc.declare({
     object: 'luci.bandix',
     method: 'getTrafficQuotas',
-    expect: {}
-});
-
-var callSetTrafficQuota = rpc.declare({
-    object: 'luci.bandix',
-    method: 'setTrafficQuota',
-    params: ['mac', 'minute_bytes', 'hourly_bytes', 'daily_bytes', 'weekly_bytes', 'monthly_bytes', 'total_bytes'],
     expect: {}
 });
 
@@ -2051,6 +2046,34 @@ return view.extend({
             }
             .traffic-quota-input-row .form-input { min-width: 0; flex: 1; }
             .traffic-quota-input-row .cbi-input-select { width: 82px; flex-shrink: 0; }
+            #device-settings-modal .bandix-modal { max-width: 720px; display: flex; flex-direction: column; overflow: hidden; }
+            #device-settings-modal .bandix-modal-body { overflow-y: auto; min-height: 0; }
+            #device-settings-modal .bandix-modal-header,
+            #device-settings-modal .bandix-modal-footer { flex-shrink: 0; }
+            #device-settings-modal [hidden] { display: none !important; }
+            .device-settings-tabs { display: flex; gap: 6px; padding: 0 20px; flex-shrink: 0; border-bottom: 1px solid ${scheme === 'dark' ? '#444' : '#ddd'}; }
+            .device-settings-tabs button { appearance: none; background: transparent; border: 0; border-bottom: 2px solid transparent; padding: 12px 18px; color: inherit; font: inherit; cursor: pointer; opacity: 0.65; }
+            .device-settings-tabs button[aria-selected="true"] { border-bottom-color: currentColor; opacity: 1; font-weight: 600; }
+            .device-settings-tabs button:focus-visible { outline: 2px solid currentColor; outline-offset: -3px; }
+            .traffic-quota-form { color-scheme: ${scheme === 'dark' ? 'dark' : 'light'}; }
+            .traffic-quota-directions {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 16px;
+            }
+            .traffic-quota-direction {
+                min-width: 0;
+                padding: 14px;
+                border: 1px solid ${scheme === 'dark' ? 'rgba(255,255,255,0.16)' : 'rgba(0,0,0,0.12)'};
+                border-radius: 8px;
+            }
+            .traffic-quota-period { margin-top: 12px; }
+            .traffic-quota-period .form-label { margin-bottom: 4px; font-size: 0.8125rem; }
+            .traffic-quota-period-usage { font-size: 0.75rem; opacity: 0.8; margin-top: 4px; overflow-wrap: anywhere; }
+            .traffic-quota-exceeded { color: #ef4444; font-weight: 600; }
+            .traffic-quota-help, .traffic-quota-message { font-size: 0.8125rem; margin: 0 0 12px; line-height: 1.6; }
+            .traffic-quota-message:empty { display: none; }
+            .traffic-quota-combined { margin-top: 16px; }
             .traffic-quota-usage {
                 margin-top: 12px;
                 padding: 10px 12px;
@@ -2093,6 +2116,7 @@ return view.extend({
 
             @media (max-width: 600px) {
                 .traffic-quota-grid { grid-template-columns: 1fr; }
+                .traffic-quota-directions { grid-template-columns: 1fr; }
             }
 			
 			/* 统计区域样式 */
@@ -3366,108 +3390,64 @@ return view.extend({
             });
         }
 
-        function createQuotaInput(period, label) {
-            return E('div', { 'class': 'form-group', 'style': 'margin-bottom: 0;' }, [
-                E('label', { 'class': 'form-label' }, label),
-                E('div', { 'class': 'traffic-quota-input-row' }, [
-                    E('input', {
-                        'type': 'number',
-                        'min': '0',
-                        'step': '0.01',
-                        'class': 'form-input',
-                        'id': 'traffic-quota-' + period + '-value',
-                        'placeholder': '0'
-                    }),
-                    E('select', { 'class': 'cbi-input-select', 'id': 'traffic-quota-' + period + '-unit' }, [
-                        E('option', { 'value': '1' }, 'B'),
-                        E('option', { 'value': '1024' }, 'KB'),
-                        E('option', { 'value': '1048576' }, 'MB'),
-                        E('option', { 'value': '1073741824' }, 'GB'),
-                        E('option', { 'value': '1099511627776' }, 'TB')
-                    ])
-                ])
-            ]);
-        }
-
-        // 创建设备设置模态框
-        var bandixModal = E('div', { 'class': 'bandix-modal-overlay', 'id': 'rate-limit-bandix-modal' }, [
-            E('div', { 'class': 'modal-content bandix-modal' }, [
-                E('div', { 'class': 'bandix-modal-body', }, [
-                    E('div', { 'class': 'device-summary', 'id': 'bandix-modal-device-summary' }),
-                    E('div', { 'class': 'form-group' }, [
-                        E('label', { 'class': 'form-label' }, _('Hostname')),
-                        E('div', { 'style': 'display: flex; gap: 8px; align-items: center;' }, [
-                            E('input', { 'type': 'text', 'class': 'form-input', 'id': 'device-hostname-input', 'placeholder': _('Please enter hostname'), 'style': 'flex: 1;' }),
-                            E('button', { 'class': 'cbi-button cbi-button-positive', 'id': 'hostname-save-btn', 'style': 'flex-shrink: 0;' }, _('Save'))
-                        ]),
-                        E('div', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-top: 4px;' }, _('Set Hostname'))
-                    ]),
-                    // 定时限速
-                    E('div', { 'id': 'schedule-limit-tab' }, [
-                        // 描述和添加规则按钮
-                        E('div', { 'style': 'display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;' }, [
-                            E('span', { 'style': 'font-size: 0.875rem; opacity: 0.7;' }, _('Set rate limit rules for different time periods')),
-                            E('button', {
-                                'type': 'button',
-                                'class': 'cbi-button cbi-button-action',
-                                'id': 'schedule-add-rule-btn',
-                                'style': 'display: flex; align-items: center; gap: 4px;'
-                            }, [
-                                E('span', {}, '+'),
-                                _('Add Rule')
-                            ])
-                        ]),
-                        // 规则列表区域
-                        E('div', { 'class': 'schedule-rules-list', 'id': 'schedule-rules-list' })
-                    ])
-                ]),
-                E('div', { 'class': 'bandix-modal-footer' }, [
-                    E('button', { 'class': 'cbi-button cbi-button-reset', 'id': 'bandix-modal-close' }, _('Close'))
-                ])
-            ])
-        ]);
-
-        document.body.appendChild(bandixModal);
-
-        // 创建独立的流量配额模态框
-        var trafficQuotaModal = E('div', { 'class': 'bandix-modal-overlay', 'id': 'traffic-quota-bandix-modal' }, [
-            E('div', { 'class': 'modal-content bandix-modal' }, [
+        // One device settings dialog; tabs retain their drafts while switching.
+        var quotaForm = quotaUi.create({
+            formatSize: formatSize, writable: !!L.hasViewPermission(),
+            changed: function () { quotaFormDirty = true; setTrafficQuotaFormDisabled(quotaFormBusy); }
+        });
+        var deviceSettingsModal = E('div', { 'class': 'bandix-modal-overlay', 'id': 'device-settings-modal' }, [
+            E('div', { 'class': 'modal-content bandix-modal', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'device-settings-title' }, [
                 E('div', { 'class': 'bandix-modal-header' }, [
-                    E('h3', { 'class': 'bandix-modal-title' }, _('Traffic Quota'))
+                    E('h3', { 'class': 'bandix-modal-title', id: 'device-settings-title' }, _('Device Settings'))
                 ]),
-                E('div', { 'class': 'bandix-modal-body' }, [
-                    E('div', { 'class': 'device-summary', 'id': 'traffic-quota-device-summary' }),
-                    E('div', { 'class': 'traffic-quota-section', 'style': 'margin-top: 0; padding-top: 0; border-top: none;' }, [
-                        E('div', { 'class': 'traffic-quota-header' }, [
-                            E('div', { 'style': 'font-weight: 600;' }, _('Quota Status')),
-                            E('span', { 'class': 'traffic-quota-status', 'id': 'traffic-quota-status' }, _('Not configured'))
+                E('div', { 'class': 'device-settings-tabs', role: 'tablist', 'aria-label': _('Device Settings') }, [
+                    E('button', { type: 'button', role: 'tab', id: 'device-settings-rate-tab', 'aria-controls': 'device-settings-rate-panel', 'aria-selected': 'true', tabindex: '0' }, _('Rate Limits')),
+                    E('button', { type: 'button', role: 'tab', id: 'device-settings-quota-tab', 'aria-controls': 'device-settings-quota-panel', 'aria-selected': 'false', tabindex: '-1' }, _('Traffic Quota'))
+                ]),
+                E('div', { 'class': 'bandix-modal-body', id: 'device-settings-body' }, [
+                    E('div', { 'class': 'device-summary', 'id': 'bandix-modal-device-summary' }),
+                    E('div', { id: 'device-settings-rate-panel', role: 'tabpanel', 'aria-labelledby': 'device-settings-rate-tab' }, [
+                        E('div', { 'class': 'form-group' }, [
+                            E('label', { 'class': 'form-label' }, _('Hostname')),
+                            E('div', { 'style': 'display: flex; gap: 8px; align-items: center;' }, [
+                                E('input', { 'type': 'text', 'class': 'form-input', 'id': 'device-hostname-input', 'placeholder': _('Please enter hostname'), 'style': 'flex: 1;' }),
+                                E('button', { 'class': 'cbi-button cbi-button-positive', 'id': 'hostname-save-btn', 'style': 'flex-shrink: 0;' }, _('Save'))
+                            ]),
+                            E('div', { 'style': 'font-size: 0.75rem; color: #6b7280; margin-top: 4px;' }, _('Set Hostname'))
                         ]),
-                        E('div', { 'style': 'font-size: 0.75rem; opacity: 0.7;' },
-                            _('WAN upload and download are counted together. Enter 0 for unlimited.')),
-                        E('div', { 'class': 'traffic-quota-grid' }, [
-                            createQuotaInput('minute', _('Minute Quota')),
-                            createQuotaInput('hourly', _('Hourly Quota')),
-                            createQuotaInput('daily', _('Daily Quota')),
-                            createQuotaInput('weekly', _('Weekly Quota')),
-                            createQuotaInput('monthly', _('Monthly Quota')),
-                            createQuotaInput('total', _('Lifetime Quota'))
-                        ]),
-                        E('div', { 'class': 'traffic-quota-usage', 'id': 'traffic-quota-usage' }, [
-                            E('div', { 'style': 'opacity: 0.7;' }, _('No quota usage data'))
-                        ]),
-                        E('div', { 'style': 'display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px;' }, [
-                            E('button', { 'class': 'cbi-button cbi-button-negative', 'id': 'traffic-quota-delete-btn', 'style': 'display: none;' }, _('Delete Quota')),
-                            E('button', { 'class': 'cbi-button cbi-button-positive', 'id': 'traffic-quota-save-btn' }, _('Save Quota'))
+                        // 定时限速
+                        E('div', { 'id': 'schedule-limit-tab' }, [
+                            // 描述和添加规则按钮
+                            E('div', { 'style': 'display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;' }, [
+                                E('span', { 'style': 'font-size: 0.875rem; opacity: 0.7;' }, _('Set rate limit rules for different time periods')),
+                                E('button', {
+                                    'type': 'button',
+                                    'class': 'cbi-button cbi-button-action',
+                                    'id': 'schedule-add-rule-btn',
+                                    'style': 'display: flex; align-items: center; gap: 4px;'
+                                }, [
+                                    E('span', {}, '+'),
+                                    _('Add Rule')
+                                ])
+                            ]),
+                            // 规则列表区域
+                            E('div', { 'class': 'schedule-rules-list', 'id': 'schedule-rules-list' })
                         ])
-                    ])
+
+                    ]),
+                    E('div', { id: 'device-settings-quota-panel', role: 'tabpanel', 'aria-labelledby': 'device-settings-quota-tab', hidden: '' }, [quotaForm.root])
                 ]),
-                E('div', { 'class': 'bandix-modal-footer' }, [
-                    E('button', { 'class': 'cbi-button cbi-button-reset', 'id': 'traffic-quota-modal-close' }, _('Close'))
+                E('div', { 'class': 'bandix-modal-footer', id: 'device-settings-rate-footer' }, [
+                    E('button', { 'class': 'cbi-button cbi-button-reset', 'id': 'bandix-modal-close' }, _('Close'))
+                ]),
+                E('div', { 'class': 'bandix-modal-footer', id: 'device-settings-quota-footer', hidden: '' }, [
+                    E('button', { 'class': 'cbi-button cbi-button-negative', 'id': 'traffic-quota-delete-btn', 'style': 'display: none;' }, _('Delete Quota')),
+                    E('button', { 'class': 'cbi-button cbi-button-reset', 'id': 'traffic-quota-modal-close' }, _('Close')),
+                    E('button', { 'class': 'cbi-button cbi-button-positive', 'id': 'traffic-quota-save-btn' }, _('Save Quota'))
                 ])
             ])
         ]);
-
-        document.body.appendChild(trafficQuotaModal);
+        document.body.appendChild(deviceSettingsModal);
 
         // 创建添加规则模态框
         var addRuleModal = E('div', { 'class': 'bandix-modal-overlay', 'id': 'add-rule-bandix-modal' }, [
@@ -3558,10 +3538,10 @@ return view.extend({
                         E('div', { 'style': 'display: flex; gap: 8px;' }, [
                             E('input', { 'type': 'number', 'min': '0', 'step': '0.01', 'class': 'form-input', 'id': 'whitelist_default_wan_tx', 'placeholder': '0', 'style': 'flex: 1;' }),
                             E('select', { 'class': 'cbi-input-select', 'id': 'whitelist_default_wan_tx_unit', 'style': 'width: 110px; flex-shrink: 0;' }, [
-                                E('option', { 'value': '1024' }, 'KB/s'),
-                                E('option', { 'value': '1048576' }, 'MB/s'),
-                                E('option', { 'value': '1073741824' }, 'GB/s'),
-                                E('option', { 'value': '125' }, 'Kbps'),
+                                E('option', { 'value': '1024' }, 'KiB/s'),
+                                E('option', { 'value': '1048576' }, 'MiB/s'),
+                                E('option', { 'value': '1073741824' }, 'GiB/s'),
+                                E('option', { 'value': '125' }, 'kbps'),
                                 E('option', { 'value': '125000' }, 'Mbps'),
                                 E('option', { 'value': '125000000' }, 'Gbps')
                             ])
@@ -3573,10 +3553,10 @@ return view.extend({
                         E('div', { 'style': 'display: flex; gap: 8px;' }, [
                             E('input', { 'type': 'number', 'min': '0', 'step': '0.01', 'class': 'form-input', 'id': 'whitelist_default_wan_rx', 'placeholder': '0', 'style': 'flex: 1;' }),
                             E('select', { 'class': 'cbi-input-select', 'id': 'whitelist_default_wan_rx_unit', 'style': 'width: 110px; flex-shrink: 0;' }, [
-                                E('option', { 'value': '1024' }, 'KB/s'),
-                                E('option', { 'value': '1048576' }, 'MB/s'),
-                                E('option', { 'value': '1073741824' }, 'GB/s'),
-                                E('option', { 'value': '125' }, 'Kbps'),
+                                E('option', { 'value': '1024' }, 'KiB/s'),
+                                E('option', { 'value': '1048576' }, 'MiB/s'),
+                                E('option', { 'value': '1073741824' }, 'GiB/s'),
+                                E('option', { 'value': '125' }, 'kbps'),
                                 E('option', { 'value': '125000' }, 'Mbps'),
                                 E('option', { 'value': '125000000' }, 'Gbps')
                             ])
@@ -3970,21 +3950,21 @@ return view.extend({
             downloadUnitSelect.innerHTML = '';
 
             if (speedUnit === 'bits') {
-                uploadUnitSelect.appendChild(E('option', { 'value': '125' }, 'Kbps'));
+                uploadUnitSelect.appendChild(E('option', { 'value': '125' }, 'kbps'));
                 uploadUnitSelect.appendChild(E('option', { 'value': '125000' }, 'Mbps'));
                 uploadUnitSelect.appendChild(E('option', { 'value': '125000000' }, 'Gbps'));
 
-                downloadUnitSelect.appendChild(E('option', { 'value': '125' }, 'Kbps'));
+                downloadUnitSelect.appendChild(E('option', { 'value': '125' }, 'kbps'));
                 downloadUnitSelect.appendChild(E('option', { 'value': '125000' }, 'Mbps'));
                 downloadUnitSelect.appendChild(E('option', { 'value': '125000000' }, 'Gbps'));
             } else {
-                uploadUnitSelect.appendChild(E('option', { 'value': '1024' }, 'KB/s'));
-                uploadUnitSelect.appendChild(E('option', { 'value': '1048576' }, 'MB/s'));
-                uploadUnitSelect.appendChild(E('option', { 'value': '1073741824' }, 'GB/s'));
+                uploadUnitSelect.appendChild(E('option', { 'value': '1024' }, 'KiB/s'));
+                uploadUnitSelect.appendChild(E('option', { 'value': '1048576' }, 'MiB/s'));
+                uploadUnitSelect.appendChild(E('option', { 'value': '1073741824' }, 'GiB/s'));
 
-                downloadUnitSelect.appendChild(E('option', { 'value': '1024' }, 'KB/s'));
-                downloadUnitSelect.appendChild(E('option', { 'value': '1048576' }, 'MB/s'));
-                downloadUnitSelect.appendChild(E('option', { 'value': '1073741824' }, 'GB/s'));
+                downloadUnitSelect.appendChild(E('option', { 'value': '1024' }, 'KiB/s'));
+                downloadUnitSelect.appendChild(E('option', { 'value': '1048576' }, 'MiB/s'));
+                downloadUnitSelect.appendChild(E('option', { 'value': '1073741824' }, 'GiB/s'));
             }
 
             if (editingRule) {
@@ -4206,65 +4186,40 @@ return view.extend({
         var currentDevice = null;
         var currentQuotaDevice = null;
         var quotaFormDirty = false;
+        var quotaFormBusy = false;
         var editingRule = null;
-        var showRateLimitModal;
+        var scheduleRulesRequestId = 0;
 
-        trafficQuotaModal.querySelectorAll('.traffic-quota-input-row input, .traffic-quota-input-row select').forEach(function (input) {
-            input.addEventListener(input.tagName === 'SELECT' ? 'change' : 'input', function () {
-                quotaFormDirty = true;
+        function selectDeviceSettingsTab(tab, focus) {
+            document.getElementById('device-settings-body').scrollTop = 0;
+            ['rate', 'quota'].forEach(function (name) {
+                var selected = name === tab;
+                var button = document.getElementById('device-settings-' + name + '-tab');
+                button.setAttribute('aria-selected', String(selected));
+                button.tabIndex = selected ? 0 : -1;
+                document.getElementById('device-settings-' + name + '-panel').hidden = !selected;
+                document.getElementById('device-settings-' + name + '-footer').hidden = !selected;
+                if (selected && focus) button.focus();
+            });
+        }
+
+        ['rate', 'quota'].forEach(function (tab) {
+            var button = document.getElementById('device-settings-' + tab + '-tab');
+            button.addEventListener('click', function () { selectDeviceSettingsTab(tab); });
+            button.addEventListener('keydown', function (event) {
+                var next;
+                if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') next = tab === 'rate' ? 'quota' : 'rate';
+                else if (event.key === 'Home') next = 'rate';
+                else if (event.key === 'End') next = 'quota';
+                if (next) { event.preventDefault(); selectDeviceSettingsTab(next, true); }
             });
         });
 
-        // 显示模态框
-        showRateLimitModal = function (device) {
+        function showDeviceSettingsModal(device) {
+            if (quotaFormBusy) return;
             currentDevice = device;
-            var bandixModal = document.getElementById('rate-limit-bandix-modal');
-            var deviceSummary = document.getElementById('bandix-modal-device-summary');
-            // 清空定时限速规则列表并加载
-            var rulesList = document.getElementById('schedule-rules-list');
-            if (rulesList) {
-                rulesList.innerHTML = '<div class="schedule-rules-empty">' +
-                    _('No scheduled rules yet, click "Add Rule" to start setting') +
-                    '</div>';
-            }
-
-            // 加载定时限速规则列表
-            loadScheduleRules();
-
-            var modalContent = [
-                E('div', { 'class': 'device-summary-name' }, device.host || device.ip4),
-                E('div', { 'class': 'device-summary-details' }, device.ip4 + ' (' + device.mac + ')')
-            ];
-            var modalBadges = buildDeviceUplinkChBadges(device);
-            if (modalBadges.length) {
-                modalContent.push(E('div', { 'class': 'device-summary-badges device-uplink-badges-wrap' }, modalBadges));
-            }
-            deviceSummary.innerHTML = E('div', {}, modalContent).innerHTML;
-
-            // 设置当前hostname值
-            document.getElementById('device-hostname-input').value = device.host || '';
-
-
-            // 显示模态框并添加动画
-            bandixModal.classList.add('show');
-        }
-
-        // 隐藏模态框
-        function hideRateLimitModal() {
-            var bandixModal = document.getElementById('rate-limit-bandix-modal');
-            bandixModal.classList.remove('show');
-
-            // 等待动画完成后清理
-            setTimeout(function () {
-                currentDevice = null;
-            }, 300);
-        }
-
-        function showTrafficQuotaModal(device) {
             currentQuotaDevice = device;
             quotaFormDirty = false;
-            var modal = document.getElementById('traffic-quota-bandix-modal');
-            var deviceSummary = document.getElementById('traffic-quota-device-summary');
             var modalContent = [
                 E('div', { 'class': 'device-summary-name' }, device.host || device.ip4),
                 E('div', { 'class': 'device-summary-details' }, device.ip4 + ' (' + device.mac + ')')
@@ -4273,23 +4228,29 @@ return view.extend({
             if (modalBadges.length) {
                 modalContent.push(E('div', { 'class': 'device-summary-badges device-uplink-badges-wrap' }, modalBadges));
             }
-            deviceSummary.innerHTML = E('div', {}, modalContent).innerHTML;
+            var summary = document.getElementById('bandix-modal-device-summary');
+            summary.replaceChildren(E('div', {}, modalContent));
+            document.getElementById('device-hostname-input').value = device.host || '';
+            selectDeviceSettingsTab('rate');
             renderTrafficQuotaForm(getTrafficQuotaForDevice(device.mac), false);
-            modal.classList.add('show');
+            loadScheduleRules();
             loadTrafficQuotaForm();
+            document.getElementById('device-settings-modal').classList.add('show');
         }
 
-        function hideTrafficQuotaModal() {
-            document.getElementById('traffic-quota-bandix-modal').classList.remove('show');
-            setTimeout(function () {
-                currentQuotaDevice = null;
-                quotaFormDirty = false;
-            }, 300);
+        function hideDeviceSettingsModal() {
+            document.getElementById('device-settings-modal').classList.remove('show');
+            currentDevice = null;
+            currentQuotaDevice = null;
+            quotaFormDirty = false;
+            scheduleRulesRequestId++;
         }
 
         // 加载定时限速规则列表
         function loadScheduleRules() {
             if (!currentDevice) return;
+            var deviceMac = currentDevice.mac;
+            var requestId = ++scheduleRulesRequestId;
 
             var rulesList = document.getElementById('schedule-rules-list');
             if (!rulesList) return;
@@ -4297,6 +4258,7 @@ return view.extend({
             rulesList.innerHTML = '<div style="text-align: center; padding: 20px; opacity: 0.6; font-size: 0.875rem;">' + _('Loading...') + '</div>';
 
             callGetScheduleLimits().then(function (res) {
+                if (!currentDevice || currentDevice.mac !== deviceMac || requestId !== scheduleRulesRequestId) return;
                 // 检查响应格式
                 if (!res) {
                     rulesList.innerHTML = '<div style="text-align: center; padding: 20px; opacity: 0.6; font-size: 0.875rem;">' + _('No schedule rules') + '</div>';
@@ -4326,7 +4288,7 @@ return view.extend({
 
                 // 过滤出当前设备的规则
                 var deviceRules = limits.filter(function (rule) {
-                    return rule && rule.mac === currentDevice.mac;
+                    return rule && rule.mac === deviceMac;
                 });
 
                 // 清空列表
@@ -4404,6 +4366,7 @@ return view.extend({
                     rulesList.appendChild(ruleItem);
                 });
             }).catch(function (error) {
+                if (!currentDevice || currentDevice.mac !== deviceMac || requestId !== scheduleRulesRequestId) return;
                 console.error('Failed to load schedule rules:', error);
                 var errorMsg = _('Failed to load schedule rules');
                 if (error && error.message) {
@@ -4433,14 +4396,15 @@ return view.extend({
             saveButton.classList.add('btn-loading');
             saveButton.disabled = true;
 
-            callSetHostname(currentDevice.mac, newHostname).then(function (result) {
+            var savedDevice = currentDevice;
+            callSetHostname(savedDevice.mac, newHostname).then(function (result) {
                 // 恢复按钮状态
                 saveButton.innerHTML = originalText;
                 saveButton.classList.remove('btn-loading');
                 saveButton.disabled = false;
 
                 // 更新当前设备信息
-                currentDevice.host = newHostname;
+                savedDevice.host = newHostname;
 
                 // 刷新设备数据
                 updateDeviceData();
@@ -4457,20 +4421,21 @@ return view.extend({
         document.getElementById('hostname-save-btn').addEventListener('click', saveHostname);
 
         document.getElementById('traffic-quota-save-btn').addEventListener('click', function () {
-            if (!currentQuotaDevice) return;
+            if (!currentQuotaDevice || !quotaForm.canSave()) return;
             var mac = currentQuotaDevice.mac;
-            var values = ['minute', 'hourly', 'daily', 'weekly', 'monthly', 'total'].map(readQuotaInput);
-            if (values.some(function (value) { return value === null; })) {
-                ui.addNotification(null, E('p', {}, _('Quota values must be non-negative and within the supported range.')), 'error');
+            var payload;
+            try { payload = quotaForm.read(mac); } catch (error) {
+                ui.addNotification(null, E('p', {}, error.message), 'error');
                 return;
             }
             var button = this;
             button.disabled = true;
             setTrafficQuotaFormDisabled(true);
-            callSetTrafficQuota(mac, values[0], values[1], values[2], values[3], values[4], values[5]).then(function (result) {
+            quotaUi.save(payload).then(function (result) {
                 if (result && result.success === false) throw new Error(result.error || _('Failed to save traffic quota'));
                 return fetchAllTrafficQuotas(true);
             }).then(function () {
+                setTrafficQuotaFormDisabled(false);
                 if (currentQuotaDevice && currentQuotaDevice.mac === mac) {
                     quotaFormDirty = false;
                     renderTrafficQuotaForm(getTrafficQuotaForDevice(mac), false);
@@ -4478,23 +4443,26 @@ return view.extend({
                 updateDeviceData();
             }).catch(function (error) {
                 ui.addNotification(null, E('p', {}, _('Failed to save traffic quota') + ': ' + (error.message || error)), 'error');
+                if (currentQuotaDevice) renderTrafficQuotaForm(getTrafficQuotaForDevice(currentQuotaDevice.mac), true);
             }).finally(function () {
-                button.disabled = false;
                 setTrafficQuotaFormDisabled(false);
             });
         });
 
         document.getElementById('traffic-quota-delete-btn').addEventListener('click', function () {
-            if (!currentQuotaDevice) return;
+            if (!currentQuotaDevice || quotaFormBusy || !L.hasViewPermission()) return;
             var mac = currentQuotaDevice.mac;
             showConfirmDialog(
                 _('Delete Traffic Quota'),
                 _('Delete this quota and all of its accumulated usage?'),
                 function () {
+                    if (quotaFormBusy) return;
+                    setTrafficQuotaFormDisabled(true);
                     callDeleteTrafficQuota(mac).then(function (result) {
-                        if (result && result.success === false) throw new Error(result.error || _('Failed to delete traffic quota'));
+                        if (!result || result.success !== true) throw new Error(result && result.error || _('Failed to delete traffic quota'));
                         return fetchAllTrafficQuotas(true);
                     }).then(function () {
+                        setTrafficQuotaFormDisabled(false);
                         if (currentQuotaDevice && currentQuotaDevice.mac === mac) {
                             quotaFormDirty = false;
                             renderTrafficQuotaForm(null, false);
@@ -4502,14 +4470,15 @@ return view.extend({
                         updateDeviceData();
                     }).catch(function (error) {
                         ui.addNotification(null, E('p', {}, _('Failed to delete traffic quota') + ': ' + (error.message || error)), 'error');
-                    });
+                        if (currentQuotaDevice) renderTrafficQuotaForm(getTrafficQuotaForDevice(currentQuotaDevice.mac), true);
+                    }).finally(function () { setTrafficQuotaFormDisabled(false); });
                 }
             );
         });
 
         // 绑定关闭按钮事件
-        document.getElementById('bandix-modal-close').addEventListener('click', hideRateLimitModal);
-        document.getElementById('traffic-quota-modal-close').addEventListener('click', hideTrafficQuotaModal);
+        document.getElementById('bandix-modal-close').addEventListener('click', hideDeviceSettingsModal);
+        document.getElementById('traffic-quota-modal-close').addEventListener('click', hideDeviceSettingsModal);
 
         // 历史趋势：状态与工具
         var latestDevices = [];
@@ -4523,6 +4492,8 @@ return view.extend({
         var allTrafficQuotas = [];
         var trafficQuotasRequest = null;
         var trafficQuotasLoadError = null;
+        var trafficQuotasReady = false;
+        var trafficQuotasDirectional = false;
 
         function fetchAllTrafficQuotas(forceRefresh) {
             if (trafficQuotasRequest) {
@@ -4540,15 +4511,19 @@ return view.extend({
                     quotas = res.data.quotas;
                 } else if (res && Array.isArray(res.quotas)) {
                     quotas = res.quotas;
+                } else {
+                    throw new Error(_('Failed to load traffic quotas'));
                 }
                 allTrafficQuotas = quotas;
+                trafficQuotasReady = true;
+                trafficQuotasDirectional = !!(res.data && res.data.supports_quota_modes === true);
                 trafficQuotasLoadError = null;
                 return quotas;
             }).catch(function (error) {
                 console.error('Failed to fetch traffic quotas:', error);
-                allTrafficQuotas = [];
                 trafficQuotasLoadError = error && error.message ? error.message : _('Failed to load traffic quotas');
-                return [];
+                if (forceRefresh) throw error;
+                return allTrafficQuotas;
             }).finally(function () {
                 trafficQuotasRequest = null;
             });
@@ -4564,77 +4539,21 @@ return view.extend({
             return null;
         }
 
-        function quotaPeriods(quota) {
-            return [
-                { key: 'minute', label: _('Minute'), limit: quota.minute_bytes || 0, used: quota.minute_used_bytes || 0 },
-                { key: 'hourly', label: _('Hourly'), limit: quota.hourly_bytes || 0, used: quota.hourly_used_bytes || 0 },
-                { key: 'daily', label: _('Daily'), limit: quota.daily_bytes || 0, used: quota.daily_used_bytes || 0 },
-                { key: 'weekly', label: _('Weekly'), limit: quota.weekly_bytes || 0, used: quota.weekly_used_bytes || 0 },
-                { key: 'monthly', label: _('Monthly'), limit: quota.monthly_bytes || 0, used: quota.monthly_used_bytes || 0 },
-                { key: 'total', label: _('Lifetime'), limit: quota.total_bytes || 0, used: quota.total_used_bytes || 0 }
-            ];
-        }
-
-        function setQuotaInput(period, bytes) {
-            var valueInput = document.getElementById('traffic-quota-' + period + '-value');
-            var unitSelect = document.getElementById('traffic-quota-' + period + '-unit');
-            if (!valueInput || !unitSelect) return;
-            var units = [1099511627776, 1073741824, 1048576, 1024, 1];
-            var unit = period === 'minute' ? 1048576 : 1073741824;
-            if (bytes > 0) {
-                for (var i = 0; i < units.length; i++) {
-                    if (bytes >= units[i] && bytes % units[i] === 0) {
-                        unit = units[i];
-                        break;
-                    }
-                }
-            }
-            unitSelect.value = String(unit);
-            valueInput.value = bytes > 0 ? String(bytes / unit) : '0';
-        }
-
-        function readQuotaInput(period) {
-            var value = Number(document.getElementById('traffic-quota-' + period + '-value').value || 0);
-            var unit = Number(document.getElementById('traffic-quota-' + period + '-unit').value || 1);
-            var bytes = Math.round(value * unit);
-            if (!Number.isFinite(bytes) || bytes < 0 || !Number.isSafeInteger(bytes)) return null;
-            return bytes;
-        }
-
         function setTrafficQuotaFormDisabled(disabled) {
-            trafficQuotaModal.querySelectorAll('.traffic-quota-input-row input, .traffic-quota-input-row select').forEach(function (input) {
-                input.disabled = disabled;
-            });
+            quotaFormBusy = disabled;
+            quotaForm.setBusy(disabled);
+            document.getElementById('traffic-quota-save-btn').disabled = !quotaForm.canSave();
+            document.getElementById('traffic-quota-delete-btn').disabled = disabled || !L.hasViewPermission();
         }
 
         function renderTrafficQuotaForm(quota, preserveInputs) {
-            if (!preserveInputs) {
-                var periods = ['minute', 'hourly', 'daily', 'weekly', 'monthly', 'total'];
-                periods.forEach(function (period) {
-                    setQuotaInput(period, quota ? (quota[period + '_bytes'] || 0) : 0);
-                });
-            }
-
-            var status = document.getElementById('traffic-quota-status');
-            var usage = document.getElementById('traffic-quota-usage');
-            var deleteBtn = document.getElementById('traffic-quota-delete-btn');
-            if (!status || !usage || !deleteBtn) return;
-
-            status.classList.toggle('blocked', !!(quota && quota.blocked));
-            status.classList.toggle('unconfigured', !quota);
-            status.textContent = !quota ? (trafficQuotasLoadError ? _('Unavailable') : _('Not configured')) : (quota.blocked ? _('Blocked') : _('Active'));
-            deleteBtn.style.display = quota ? '' : 'none';
-            usage.innerHTML = '';
-            if (!quota) {
-                usage.appendChild(E('div', { 'style': 'opacity: 0.7;' }, trafficQuotasLoadError || _('Usage starts when a quota is first saved.')));
-                return;
-            }
-            quotaPeriods(quota).forEach(function (period) {
-                usage.appendChild(E('div', { 'class': 'traffic-quota-usage-row' }, [
-                    E('span', {}, period.label),
-                    E('span', {}, formatSize(period.used) + ' / ' + (period.limit > 0 ? formatSize(period.limit) : _('Unlimited')))
-                ]));
+            quotaForm.render(quota, {
+                ready: trafficQuotasReady, supported: trafficQuotasDirectional, error: trafficQuotasLoadError,
+                preserveInputs: preserveInputs || quotaFormBusy
             });
+            var deleteBtn = document.getElementById('traffic-quota-delete-btn');
+            deleteBtn.style.display = quota ? '' : 'none';
+            setTrafficQuotaFormDisabled(quotaFormBusy);
         }
 
         function loadTrafficQuotaForm() {
@@ -4649,23 +4568,7 @@ return view.extend({
         }
 
         function buildTrafficQuotaCell(mac) {
-            var quota = getTrafficQuotaForDevice(mac);
-            if (!quota) return null;
-            var periods = quotaPeriods(quota).filter(function (period) { return period.limit > 0; });
-            var mostUsed = null;
-            periods.forEach(function (period) {
-                var ratio = period.used / period.limit;
-                if (!mostUsed || ratio > mostUsed.ratio) mostUsed = { period: period, ratio: ratio };
-            });
-            var text = quota.blocked ? _('Quota exceeded') : _('Quota active');
-            if (mostUsed) {
-                text = mostUsed.period.label + ': ' + formatSize(mostUsed.period.used) + ' / ' + formatSize(mostUsed.period.limit);
-            }
-            return E('div', {
-                'class': 'traffic-quota-cell',
-                'style': quota.blocked ? 'color: #ef4444; font-weight: 600;' : '',
-                'title': quota.blocked ? _('WAN traffic is blocked because a quota was reached.') : _('Traffic Quota')
-            }, text);
+            return quotaUi.summary(getTrafficQuotaForDevice(mac), formatSize);
         }
 
         // 获取所有定时限速规则
@@ -6379,7 +6282,7 @@ return view.extend({
                     var isOnline = isDeviceOnline(device);
                     var deviceQuota = getTrafficQuotaForDevice(device.mac);
 
-                    var buttonText = 'R';
+                    var buttonText = _('Settings');
 
                     var actionButton = E('button', {
                         'class': 'cbi-button cbi-button-action',
@@ -6387,16 +6290,7 @@ return view.extend({
                     }, buttonText);
 
                     actionButton.addEventListener('click', function () {
-                        showRateLimitModal(device);
-                    });
-
-                    var quotaButton = E('button', {
-                        'class': 'cbi-button cbi-button-neutral',
-                        'title': _('Traffic Quota')
-                    }, 'Q');
-
-                    quotaButton.addEventListener('click', function () {
-                        showTrafficQuotaModal(device);
+                        showDeviceSettingsModal(device);
                     });
 
                     var deleteButton = E('button', {
@@ -6433,7 +6327,7 @@ return view.extend({
                             }),
                             device.host || '-',
                             deviceQuota && deviceQuota.blocked
-                                ? E('span', { 'class': 'traffic-quota-blocked-badge' }, _('Quota blocked'))
+                                ? E('span', { 'class': 'traffic-quota-blocked-badge' }, quotaUi.blockedText(deviceQuota))
                                 : ''
                         ]),
                         E('div', { 'class': 'device-ip' }, [
@@ -6658,7 +6552,6 @@ return view.extend({
                         // 操作
                         E('td', { 'class': 'device-actions' }, [
                             actionButton,
-                            quotaButton,
                             deleteButton
                         ])
                     ]);
@@ -6694,19 +6587,9 @@ return view.extend({
                                         'title': _('Settings')
                                     }, buttonText);
                                     cardActionBtn.addEventListener('click', function () {
-                                        showRateLimitModal(device);
+                                        showDeviceSettingsModal(device);
                                     });
                                     return cardActionBtn;
-                                })(),
-                                (function () {
-                                    var cardQuotaBtn = E('button', {
-                                        'class': 'cbi-button cbi-button-neutral',
-                                        'title': _('Traffic Quota')
-                                    }, 'Q');
-                                    cardQuotaBtn.addEventListener('click', function () {
-                                        showTrafficQuotaModal(device);
-                                    });
-                                    return cardQuotaBtn;
                                 })(),
                                 (function () {
                                     var cardDeleteBtn = E('button', {
@@ -7059,7 +6942,7 @@ return view.extend({
             return increments.map(normalizeTrafficIncrementItem).filter(function (x) { return x; });
         }
 
-        // 为了规避 ubus 1MB 响应限制，长时间范围按块分段请求
+        // 为了规避 ubus 1MiB 响应限制，长时间范围按块分段请求
         var TRAFFIC_INCREMENT_CHUNK_MS_HOURLY = 14 * 24 * 60 * 60 * 1000;  // 14 天
         var TRAFFIC_INCREMENT_CHUNK_MS_DAILY = 60 * 24 * 60 * 60 * 1000;   // 60 天
 
