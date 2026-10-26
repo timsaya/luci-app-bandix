@@ -144,3 +144,10 @@ LuCI automatically follows the configured address and uses loopback for wildcard
 listeners. The HTTP API has no authentication; restrict non-loopback access to trusted clients.
 Changing the address requires a service binary supporting `--host`. Existing
 configurations without this option keep the loopback default.
+
+## Wi-Fi band display
+
+Bands are identified from the primary channel frequency `w_freq` (MHz) returned by Bandix, supporting 2.4, 5 and 6 GHz.
+Channel numbers overlap across bands, so `w_ch` alone is no longer used to infer the band.
+Update both the server and LuCI. Older servers or unavailable frequencies show a neutral channel label instead of guessing the band.
+Run `node --test tests/wifi.test.cjs` to verify this behavior.

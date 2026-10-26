@@ -5372,21 +5372,14 @@ return view.extend({
             return timeDiff <= offlineThreshold;
         }
 
-        function channelToBand(ch) {
-            var c = Number(ch);
-            if (c < 1) return null;
-            if (c <= 14) return '2.4 GHz';
-            if (c <= 165) return '5 GHz';
-            if (c <= 233) return '6 GHz';
+        function wifiBand(device) {
+            if (device.conn !== 'wifi') return null;
+            var frequency = Number(device.w_freq);
+            if (!Number.isInteger(frequency)) return null;
+            if (frequency >= 2400 && frequency < 2500) return { label: '2.4 GHz', css: 'g24' };
+            if (frequency >= 4900 && frequency < 5925) return { label: '5 GHz', css: 'g5' };
+            if (frequency >= 5925 && frequency <= 7125) return { label: '6 GHz', css: 'g6' };
             return null;
-        }
-
-        function channelToBandClass(ch) {
-            var c = Number(ch);
-            if (c <= 14) return 'g24';
-            if (c <= 165) return 'g5';
-            if (c <= 233) return 'g6';
-            return '';
         }
 
         function buildDeviceUplinkChBadges(device) {
@@ -5394,16 +5387,15 @@ return view.extend({
             if (device.uplink && String(device.uplink).trim() !== '') {
                 badges.push(E('span', { 'class': 'device-uplink-badge', 'title': _('Interface') }, device.uplink.trim()));
             }
-            if (device.w_ch && Number(device.w_ch) > 0) {
+            if (device.conn === 'wifi' && Number(device.w_ch) > 0) {
                 var ch = Number(device.w_ch);
-                var band = channelToBand(ch);
-                var bandClass = channelToBandClass(ch);
-                if (band && bandClass) {
-                    badges.push(E('span', {
-                        'class': 'device-ch-badge device-ch-' + bandClass,
-                        'title': _('WiFi Channel') + ' ' + ch
-                    }, band));
-                }
+                var band = wifiBand(device);
+                var title = _('WiFi Channel') + ' ' + ch;
+                if (band) title += ' · ' + Number(device.w_freq) + ' MHz';
+                badges.push(E('span', {
+                    'class': 'device-ch-badge ' + (band ? 'device-ch-' + band.css : 'device-uplink-badge'),
+                    'title': title
+                }, band ? band.label : _('WiFi Channel') + ' ' + ch));
             }
             return badges;
         }
@@ -5411,9 +5403,9 @@ return view.extend({
         function formatDeviceUplinkCh(device) {
             var parts = [];
             if (device.uplink && String(device.uplink).trim() !== '') parts.push(device.uplink.trim());
-            if (device.w_ch && Number(device.w_ch) > 0) {
-                var band = channelToBand(Number(device.w_ch));
-                if (band) parts.push(band);
+            if (device.conn === 'wifi' && Number(device.w_ch) > 0) {
+                var band = wifiBand(device);
+                parts.push(band ? band.label : _('WiFi Channel') + ' ' + Number(device.w_ch));
             }
             return parts.join(' · ');
         }
