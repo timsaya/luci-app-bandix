@@ -35,7 +35,14 @@ jobs:
           url_tags: https://api.github.com/repos/${{ env.luci-app-bandix }}/releases/latest
         run: |
           cd luci-app-bandix
-          latest_version=$(awk -F ':=' '/^PKG_VERSION:=/ {print $2}' Makefile | tr -d ' \n')
+          package_version=$(awk -F ':=' '/^PKG_VERSION:=/ {print $2}' Makefile | tr -d ' \n')
+          package_release=$(awk -F ':=' '/^PKG_RELEASE:=/ {print $2}' Makefile | tr -d ' \n')
+          if [ -z "$package_version" ] || [[ ! "$package_release" =~ ^[0-9]+$ ]]; then
+            echo "Invalid PKG_VERSION or PKG_RELEASE in Makefile" >&2
+            exit 1
+          fi
+          # Include the package revision in version checks, release tags and uploads.
+          latest_version="${package_version}-r${package_release}"
           echo "latest_version=${latest_version}" >> $GITHUB_OUTPUT
 
           remote_latest_version=$(wget -qO- -t1 -T2 ${{env.url_tags}} | jq -r '.tag_name')
@@ -47,7 +54,8 @@ jobs:
           fi
           echo "Remote latest: $remote_latest_version"
           
-          # 去掉远程版本的 v 前缀进行比较
+          # Compare the full version, including -rN. Legacy tags without a revision
+          # intentionally trigger a new release using the revision-aware format.
           remote_version_without_v=${remote_latest_version#v}
 
           if [ "$latest_version" = "$remote_version_without_v" ]; then
