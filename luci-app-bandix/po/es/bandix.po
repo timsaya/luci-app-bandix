@@ -647,6 +647,18 @@ msgstr "Interfaz de monitoreo"
 msgid "Select the LAN network interface to monitor"
 msgstr "Seleccione la interfaz de red LAN para monitorear"
 
+msgid "Actively Resolve Unknown Sources"
+msgstr "Resolver activamente orígenes desconocidos"
+
+msgid "Use rate-limited ARP and IPv6 Neighbor Discovery requests to resolve observed source addresses that are missing from the neighbor table and belong to a local subnet of the monitored interface."
+msgstr "Usar solicitudes ARP y de descubrimiento de vecinos IPv6 con frecuencia limitada para resolver las direcciones de origen observadas que no figuren en la tabla de vecinos y pertenezcan a una subred local de la interfaz supervisada."
+
+msgid "Excluded IP Addresses"
+msgstr "Direcciones IP excluidas"
+
+msgid "Enter each IPv4 or IPv6 address to exclude from device traffic statistics separately."
+msgstr "Introduzca por separado cada dirección IPv4 o IPv6 que desee excluir de las estadísticas de tráfico de los dispositivos."
+
 msgid "Speed Units"
 msgstr "Unidades de velocidad"
 

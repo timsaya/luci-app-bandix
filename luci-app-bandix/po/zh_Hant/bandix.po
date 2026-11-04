@@ -647,6 +647,18 @@ msgstr "監控網卡"
 msgid "Select the LAN network interface to monitor"
 msgstr "選擇要監控的LAN網路介面"
 
+msgid "Actively Resolve Unknown Sources"
+msgstr "主動解析未知來源位址"
+
+msgid "Use rate-limited ARP and IPv6 Neighbor Discovery requests to resolve observed source addresses that are missing from the neighbor table and belong to a local subnet of the monitored interface."
+msgstr "對實際觀察到、屬於監聽介面本地子網路且鄰居表中沒有紀錄的來源位址，限頻傳送 ARP 或 IPv6 鄰居探索請求，以解析其 MAC。"
+
+msgid "Excluded IP Addresses"
+msgstr "排除 IP 位址"
+
+msgid "Enter each IPv4 or IPv6 address to exclude from device traffic statistics separately."
+msgstr "請逐項輸入要從裝置流量統計中排除的 IPv4 或 IPv6 位址。"
+
 msgid "Speed Units"
 msgstr "网速單位"
 

@@ -647,6 +647,18 @@ msgstr "監視インターフェース"
 msgid "Select the LAN network interface to monitor"
 msgstr "監視するLANネットワークインターフェースを選択"
 
+msgid "Actively Resolve Unknown Sources"
+msgstr "不明な送信元を能動的に解決"
+
+msgid "Use rate-limited ARP and IPv6 Neighbor Discovery requests to resolve observed source addresses that are missing from the neighbor table and belong to a local subnet of the monitored interface."
+msgstr "監視インターフェースのローカルサブネットに属し、近隣テーブルに記録のない実際に観測された送信元アドレスに対して、頻度を制限して ARP または IPv6 近隣探索リクエストを送信し、MAC アドレスを解決します。"
+
+msgid "Excluded IP Addresses"
+msgstr "除外する IP アドレス"
+
+msgid "Enter each IPv4 or IPv6 address to exclude from device traffic statistics separately."
+msgstr "機器の通信量の統計から除外する IPv4 または IPv6 アドレスを 1 件ずつ入力してください。"
+
 msgid "Speed Units"
 msgstr "速度単位"
 
