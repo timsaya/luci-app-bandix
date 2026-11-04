@@ -647,6 +647,12 @@ msgstr "Interfaz de monitoreo"
 msgid "Select the LAN network interface to monitor"
 msgstr "Seleccione la interfaz de red LAN para monitorear"
 
+msgid "Resolve Unknown IPv4 Sources"
+msgstr "Resolver orígenes IPv4 desconocidos"
+
+msgid "Use rate-limited ARP requests to resolve observed IPv4 source addresses that are missing from the neighbor table and belong to the monitored interface subnet."
+msgstr "Enviar solicitudes ARP con una frecuencia limitada para resolver las direcciones IPv4 de origen observadas que no figuren en la tabla de vecinos y pertenezcan a la subred de la interfaz supervisada."
+
 msgid "Excluded IP Addresses"
 msgstr "Direcciones IP excluidas"
 

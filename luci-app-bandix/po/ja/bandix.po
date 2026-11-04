@@ -647,6 +647,12 @@ msgstr "監視インターフェース"
 msgid "Select the LAN network interface to monitor"
 msgstr "監視するLANネットワークインターフェースを選択"
 
+msgid "Resolve Unknown IPv4 Sources"
+msgstr "不明な IPv4 送信元を解決"
+
+msgid "Use rate-limited ARP requests to resolve observed IPv4 source addresses that are missing from the neighbor table and belong to the monitored interface subnet."
+msgstr "実際に観測された IPv4 送信元のうち、近隣テーブルに記録がなく監視インターフェースと同じサブネットに属するアドレスに対して、頻度を制限して ARP リクエストを送信します。"
+
 msgid "Excluded IP Addresses"
 msgstr "除外する IP アドレス"
 

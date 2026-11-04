@@ -46,6 +46,8 @@ LuCI Bandix is developed based on the LuCI framework, offering network traffic m
 
    For a client at `192.168.1.100` forwarding through `192.168.1.2`, Bandix can credit the client when the gateway sees its original IP and can resolve its MAC from the neighbor table. If the relay rewrites the source IP using NAT or the client cannot be identified, Bandix skips that traffic.
 
+   **Resolve Unknown IPv4 Sources** is disabled by default. Enable it to send rate-limited ARP requests for observed IPv4 source addresses that are missing from the neighbor table and belong to the monitored interface subnet. Resolved MAC addresses help attribute forwarded traffic to its original device.
+
 ## Screenshots
 
 ![LuCI Bandix Screenshot](docs/images/index-1.png)

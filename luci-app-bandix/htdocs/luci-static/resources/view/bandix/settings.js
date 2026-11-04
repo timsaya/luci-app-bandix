@@ -783,6 +783,12 @@ return view.extend({
 		o.default = '0';
 		o.rmempty = false;
 
+		o = s.option(form.Flag, 'traffic_arp_resolve', _('Resolve Unknown IPv4 Sources'),
+			_('Use rate-limited ARP requests to resolve observed IPv4 source addresses that are missing from the neighbor table and belong to the monitored interface subnet.'));
+		o.default = '0';
+		o.rmempty = false;
+		o.depends('enabled', '1');
+
 		o = s.option(form.DynamicList, 'traffic_exclude_ips', _('Excluded IP Addresses'),
 			_('Enter each IPv4 or IPv6 address to exclude from device traffic statistics separately.'));
 		o.datatype = 'ipaddr("nomask")';

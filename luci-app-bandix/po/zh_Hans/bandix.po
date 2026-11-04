@@ -644,6 +644,12 @@ msgstr "监控网卡"
 msgid "Select the LAN network interface to monitor"
 msgstr "选择要监控的LAN网络接口"
 
+msgid "Resolve Unknown IPv4 Sources"
+msgstr "解析未知 IPv4 源地址"
+
+msgid "Use rate-limited ARP requests to resolve observed IPv4 source addresses that are missing from the neighbor table and belong to the monitored interface subnet."
+msgstr "对实际观察到、与监听接口处于同一子网且邻居表中无记录的 IPv4 源地址，限频发送 ARP 请求以解析其 MAC。"
+
 msgid "Excluded IP Addresses"
 msgstr "排除 IP 地址"
 
