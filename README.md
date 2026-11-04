@@ -42,6 +42,9 @@ LuCI Bandix is developed based on the LuCI framework, offering network traffic m
 
    After installation, you can access the Bandix application through the LuCI web interface under the "Network" menu. Go to the Bandix settings page and select your LAN interface to enable proper monitoring. Make sure to check the "Enable" option to start the service.
 
+   Under **Traffic Monitor Settings**, enable traffic monitoring. To exclude a forwarding device from traffic accounting, add its address (for example, `192.168.1.2`) to **Excluded IP Addresses**. Enter one IPv4 or IPv6 address per item, then save and apply.
+
+   For a client at `192.168.1.100` forwarding through `192.168.1.2`, Bandix can credit the client when the gateway sees its original IP and can resolve its MAC from the neighbor table. If the relay rewrites the source IP using NAT or the client cannot be identified, Bandix skips that traffic.
 
 ## Screenshots
 

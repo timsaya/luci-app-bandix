@@ -647,6 +647,12 @@ msgstr "監視インターフェース"
 msgid "Select the LAN network interface to monitor"
 msgstr "監視するLANネットワークインターフェースを選択"
 
+msgid "Excluded IP Addresses"
+msgstr "除外する IP アドレス"
+
+msgid "Enter each IPv4 or IPv6 address to exclude from device traffic statistics separately."
+msgstr "機器の通信量の統計から除外する IPv4 または IPv6 アドレスを 1 件ずつ入力してください。"
+
 msgid "Speed Units"
 msgstr "速度単位"
 

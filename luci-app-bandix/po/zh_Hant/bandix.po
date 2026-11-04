@@ -647,6 +647,12 @@ msgstr "監控網卡"
 msgid "Select the LAN network interface to monitor"
 msgstr "選擇要監控的LAN網路介面"
 
+msgid "Excluded IP Addresses"
+msgstr "排除 IP 位址"
+
+msgid "Enter each IPv4 or IPv6 address to exclude from device traffic statistics separately."
+msgstr "請逐項輸入要從裝置流量統計中排除的 IPv4 或 IPv6 位址。"
+
 msgid "Speed Units"
 msgstr "网速單位"
 

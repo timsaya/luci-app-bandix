@@ -647,6 +647,12 @@ msgstr "Interfejs monitora"
 msgid "Select the LAN network interface to monitor"
 msgstr "Wybierz interfejs sieci LAN do monitorowania"
 
+msgid "Excluded IP Addresses"
+msgstr "Wykluczone adresy IP"
+
+msgid "Enter each IPv4 or IPv6 address to exclude from device traffic statistics separately."
+msgstr "Wpisz osobno każdy adres IPv4 lub IPv6, który ma zostać wykluczony ze statystyk ruchu urządzeń."
+
 msgid "Speed Units"
 msgstr "Jednostki prędkości"
 

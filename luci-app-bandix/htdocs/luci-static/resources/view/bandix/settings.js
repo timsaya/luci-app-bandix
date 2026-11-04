@@ -783,6 +783,12 @@ return view.extend({
 		o.default = '0';
 		o.rmempty = false;
 
+		o = s.option(form.DynamicList, 'traffic_exclude_ips', _('Excluded IP Addresses'),
+			_('Enter each IPv4 or IPv6 address to exclude from device traffic statistics separately.'));
+		o.datatype = 'ipaddr("nomask")';
+		o.placeholder = '192.168.1.2';
+		o.rmempty = true;
+
 		// 3. 连接监控设置部分 (connections)
 		s = m.section(form.NamedSection, 'connections', 'connections', _('Connection Monitor Settings'));
 		s.description = _('Configure connection monitoring related parameters');
