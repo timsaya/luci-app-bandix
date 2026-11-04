@@ -783,11 +783,21 @@ return view.extend({
 		o.default = '0';
 		o.rmempty = false;
 
-		o = s.option(form.Flag, 'traffic_arp_resolve', _('Resolve Unknown IPv4 Sources'),
-			_('Use rate-limited ARP requests to resolve observed IPv4 source addresses that are missing from the neighbor table and belong to the monitored interface subnet.'));
+		o = s.option(form.Flag, 'traffic_neighbor_resolve', _('Actively Resolve Unknown Sources'),
+			_('Use rate-limited ARP and IPv6 Neighbor Discovery requests to resolve observed source addresses that are missing from the neighbor table and belong to a local subnet of the monitored interface.'));
 		o.default = '0';
 		o.rmempty = false;
 		o.depends('enabled', '1');
+		o.cfgvalue = function (section_id) {
+			var value = uci.get('bandix', section_id, 'traffic_neighbor_resolve');
+			if (value == null)
+				value = uci.get('bandix', section_id, 'traffic_arp_resolve');
+			return value || '0';
+		};
+		o.write = function (section_id, value) {
+			uci.set('bandix', section_id, 'traffic_neighbor_resolve', value);
+			uci.unset('bandix', section_id, 'traffic_arp_resolve');
+		};
 
 		o = s.option(form.DynamicList, 'traffic_exclude_ips', _('Excluded IP Addresses'),
 			_('Enter each IPv4 or IPv6 address to exclude from device traffic statistics separately.'));

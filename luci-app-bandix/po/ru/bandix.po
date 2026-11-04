@@ -647,11 +647,11 @@ msgstr "Интерфейс мониторинга"
 msgid "Select the LAN network interface to monitor"
 msgstr "Выберите сетевой интерфейс LAN для мониторинга"
 
-msgid "Resolve Unknown IPv4 Sources"
-msgstr "Определять неизвестные источники IPv4"
+msgid "Actively Resolve Unknown Sources"
+msgstr "Активно определять неизвестные источники"
 
-msgid "Use rate-limited ARP requests to resolve observed IPv4 source addresses that are missing from the neighbor table and belong to the monitored interface subnet."
-msgstr "Отправлять ARP-запросы с ограниченной частотой для обнаруженных исходных IPv4-адресов, отсутствующих в таблице соседей и принадлежащих подсети наблюдаемого интерфейса."
+msgid "Use rate-limited ARP and IPv6 Neighbor Discovery requests to resolve observed source addresses that are missing from the neighbor table and belong to a local subnet of the monitored interface."
+msgstr "Отправлять ARP-запросы и запросы обнаружения соседей IPv6 с ограниченной частотой для определения MAC-адресов обнаруженных источников, отсутствующих в таблице соседей и принадлежащих локальной подсети наблюдаемого интерфейса."
 
 msgid "Excluded IP Addresses"
 msgstr "Исключённые IP-адреса"

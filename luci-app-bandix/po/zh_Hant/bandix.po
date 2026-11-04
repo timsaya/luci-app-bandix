@@ -647,11 +647,11 @@ msgstr "監控網卡"
 msgid "Select the LAN network interface to monitor"
 msgstr "選擇要監控的LAN網路介面"
 
-msgid "Resolve Unknown IPv4 Sources"
-msgstr "解析未知 IPv4 來源位址"
+msgid "Actively Resolve Unknown Sources"
+msgstr "主動解析未知來源位址"
 
-msgid "Use rate-limited ARP requests to resolve observed IPv4 source addresses that are missing from the neighbor table and belong to the monitored interface subnet."
-msgstr "對實際觀察到、與監聽介面位於同一子網路且鄰居表中沒有紀錄的 IPv4 來源位址，限頻傳送 ARP 請求以解析其 MAC。"
+msgid "Use rate-limited ARP and IPv6 Neighbor Discovery requests to resolve observed source addresses that are missing from the neighbor table and belong to a local subnet of the monitored interface."
+msgstr "對實際觀察到、屬於監聽介面本地子網路且鄰居表中沒有紀錄的來源位址，限頻傳送 ARP 或 IPv6 鄰居探索請求，以解析其 MAC。"
 
 msgid "Excluded IP Addresses"
 msgstr "排除 IP 位址"
